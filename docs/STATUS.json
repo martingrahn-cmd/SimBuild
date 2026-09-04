@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-04T17:41:27.999Z",
+  "updatedAt": "2026-09-04T18:40:15.861Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -26,16 +26,52 @@
     },
     "environment": {
       "wave": 1,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] CPU sky-sample port broken by scratch aliasing: world.weather.skyLight ~0 by day, brighter at night; fog.color black: atmosphere.js skyRadiance() line 135 passes its scratch vector _q into opticalDepth(), which reuses _q (line 103) and clobbers the shared _d density (line 104); lines 137-1",
+        "[blocker] Noon frames washed out and flat (p1 >= 43/255, shadows only ~30% darker than lit ground, sat 0.19-0.34): Partly preset fogDensity 0.00034 gives ~16% haze at 520 m and ~26% at 900 m; environmentIntensity 0.8 from a full-sky PMREM plus sun 5.14 at exposure 1.25 puts ambient too close to dire",
+        "[blocker] Showcase ground tiles visibly as a regular 13 m lattice in every aerial/skyline frame (moire streaks at grazing angles): aerial_grass_rock repeats every 13 m over 8 km; mix(envT1,envT2,0.3) at 0.23 scale and a 2.2 km macro tint do not break the lattice. Fix: per-cell random rotation/offset",
+        "[major] Golden hour and sunset are sepia monochrome and under-exposed (sunset_17p9 p50 = 26, half the frame < 10%; aerial_6p5 p99 = 105): Exposure curve adds only +0.25 at low sun while transmittance and the PMREM ambient are both Mie-orange, so shadows go brown instead of CS2's cool blue. Fix: expo",
+        "[major] Cloud layer reads as a flat 2D noise sheet with no volume; clouds stay crisp above a fog white-out: Single 1500 m shell with one lit/occluded factor, stratus smear toward the horizon, no vertical lighting gradient, no fog attenuation. Fix: 4-8 step raymarch through a 300-600 m slab (or two o",
+        "[major] Fog preset shows a hard horizon seam: dome band (mid-grey, crisp clouds) does not match the fogged ground (light grey): Ground fog samples the LUT in the view direction, but the dome draws clouds/haze on top of the LUT and receives no in-scatter fog. Fix: apply the same envFog extinction/in-",
+        "[major] Dry grass turns glossy with corduroy specular streaks at grazing sun: normalScale 1.5 plus ARM roughness at grazing GGX angles gives a wet sheen with wetness 0. Fix: floor roughness ~0.85 for dry grass, normalScale <= 0.8, or a Fresnel horizon fade on the ground.",
+        "[minor] Night ground tint is olive-green instead of CS2's desaturated blue-grey: Exposure 3.0 on green albedo dominates the blue moon tint. Fix: desaturate diffuse by night (~0.5), night exposure ~2.2, cooler MOON_TINT.",
+        "[minor] Stars are uniform 5-6 px soft blobs (reads like snow); milky way invisible: Fix: radius <= 1.5 px at 1080p, size and brightness from magnitude with more variance; make the band faintly visible.",
+        "[minor] Night window emissive clips to flat white; distant facades shimmer: uWinNight = night*0.55 at exposure 3.0 saturates AgX and loses the warm/cool tints; 3 m window grid aliases on far towers. Fix: emissive ~0.25, fade the grid by mip level/distance.",
+        "[minor] Rain barely visible; streak colour depends on the broken skyLight: 9000 thin streaks in a 140 m box read as a few grey scratches at 1080p; rain.js uColor = skyLight*2.2+0.02 is ~0.02 grey while issue 1 stands. Fix: wider/longer streaks with distance-based width, more density near the camera,",
+        "[minor] Triangles (111,554; 129,554 with rain) exceed the module's own declared budget of 60,000: SphereGeometry(3.2,48,32) x 9 and a 48x32 dome. Fix: 32x16 spheres and dome, or declare the budget honestly.",
+        "[minor] Lighting.sweep() traverses the entire scene every frame: lighting.js 52-57; fine for 40 objects, will eat the 2 ms per-module budget in democity. Fix: hook materials on section change events / module:ready instead of per-frame traversal.",
+        "[minor] Every night is a full moon, visible by day opposite the sun: moonDir = sun + 12.35 h. Fix: offset by a day-of-month phase; cosmetic."
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6,
+          "pass": false,
+          "errors": 0,
+          "draws": 11,
+          "report": "docs/critic/environment_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "Physically based single-scattering sky LUT (Rayleigh/Mie/ozone) feeding PMREM: sky colour, sun aureole and 17:30 horizon haze are right; IBL on the sphere ladder matches the sky",
+        "Correct sun path east->south->west computed locally and published; core sunAzimuth bug documented in docs/core-requests/environment.md rather than worked around silently",
+        "CSM 3x2048 PCF with fade and camera-adaptive maxFar: soft, correctly placed contact shadows at all times; sun->moon switch keeps shadows at night",
+        "Per-window random warm/cool night lights with reveals on the showcase towers; the night frames are the most CS2-like output",
+        "Weather: five presets, ?weather honoured at boot, setWeather with clamping and weather:changed events, wetness dynamics, sun-projected cloud shadows, GPU-only rain in one draw",
+        "Hygiene: only this module adds lights or touches renderer state; 10 draws vs 15 budget; 0.3 ms update; zero errors and zero NaNs across the clock; deterministic; rng-only randomness; CC0 assets in the manifest"
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 11,
+      "apiContractOk": false
     },
     "roads": {
       "wave": 1,
@@ -177,7 +213,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "infoviews": {
       "wave": "2b",
@@ -185,7 +225,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "transit": {
       "wave": 3,
@@ -193,7 +237,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     }
   },
   "wholeGame": {
@@ -206,7 +254,6 @@
     "passed": [],
     "needsWork": [
       "terrain:unscored:r0",
-      "environment:unscored:r0",
       "roads:unscored:r0",
       "simulation:unscored:r0",
       "ui:unscored:r0",
@@ -217,7 +264,11 @@
       "props:unscored:r0",
       "traffic:unscored:r0",
       "tools:unscored:r0",
-      "democity:unscored:r0"
+      "democity:unscored:r0",
+      "services:unscored:r0",
+      "infoviews:unscored:r0",
+      "transit:unscored:r0",
+      "environment:6:r1"
     ],
     "weakest": "terrain"
   }
