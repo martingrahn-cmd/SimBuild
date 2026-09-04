@@ -1,25 +1,144 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-04T10:40:00Z",
+  "updatedAt": "2026-09-04T17:40:54.896Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
-  "core": { "status": "ready", "notes": ["verification loop verified on environment stub: 4 draws, shadows OK, 1080p"] },
-  "modules": {
-    "terrain":     { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "environment": { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "roads":       { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "simulation":  { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "ui":          { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "audio":       { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "effects":     { "wave": 1, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "zoning":      { "wave": 2, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "buildings":   { "wave": 2, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "props":       { "wave": 2, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "traffic":     { "wave": 2, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "tools":       { "wave": 2, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] },
-    "democity":    { "wave": 3, "round": 0, "score": null, "status": "stub", "openIssues": [], "history": [] }
+  "core": {
+    "status": "ready",
+    "notes": [
+      "verification loop verified on environment stub: 4 draws, shadows OK, 1080p"
+    ]
   },
-  "wholeGame": { "score": null, "blindJudges": [], "openIssues": [] },
-  "coreRequests": []
+  "modules": {
+    "terrain": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "environment": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "roads": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "simulation": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "ui": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "audio": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "effects": {
+      "wave": 1,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "zoning": {
+      "wave": 2,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "buildings": {
+      "wave": 2,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "props": {
+      "wave": 2,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "traffic": {
+      "wave": 2,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "tools": {
+      "wave": 2,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "democity": {
+      "wave": 3,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    }
+  },
+  "wholeGame": {
+    "score": null,
+    "blindJudges": [],
+    "openIssues": []
+  },
+  "coreRequests": [],
+  "summary": {
+    "passed": [],
+    "needsWork": [
+      "terrain:unscored:r0",
+      "environment:unscored:r0",
+      "roads:unscored:r0",
+      "simulation:unscored:r0",
+      "ui:unscored:r0",
+      "audio:unscored:r0",
+      "effects:unscored:r0",
+      "zoning:unscored:r0",
+      "buildings:unscored:r0",
+      "props:unscored:r0",
+      "traffic:unscored:r0",
+      "tools:unscored:r0",
+      "democity:unscored:r0"
+    ],
+    "weakest": "terrain"
+  }
 }

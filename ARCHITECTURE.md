@@ -295,3 +295,14 @@ Techniques expected: instancing, merged static geometry, frustum culling on inst
 ## 13. Scoring (critics)
 
 0–10 vs Cities: Skylines II at the same time of day and zoom. 10 = indistinguishable, 8.5 = AAA with nits, 7 = good indie, 5 = programmer art, 3 = broken. Pass = **≥ 8.5 with zero console errors** and within budget. Scores and ranked issues live in `docs/STATUS.json` and `docs/critic/<module>_r<n>.md`. Never inflate.
+
+## 14. Critic verdict files & STATUS aggregation
+
+Each critic round writes two files: `docs/critic/<module>_r<n>.md` (human report) and `docs/critic/<module>_r<n>.json`:
+```json
+{ "module": "roads", "round": 2, "score": 7.5, "pass": false, "consoleErrors": 0, "maxDrawCalls": 44, "apiContractOk": true,
+  "issues": [{ "rank": 1, "severity": "major", "title": "...", "detail": "...", "evidence": "shots/roads/r2/closeup_12.png" }],
+  "strengths": ["..."], "summary": "...", "shots": ["..."] }
+```
+`node tools/status.mjs` folds the newest verdict per module into `docs/STATUS.json` (score, pass, round, openIssues, history, summary.weakest).
+Every iteration of the build loop starts by reading STATUS.json and resumes from the weakest module at its next round.

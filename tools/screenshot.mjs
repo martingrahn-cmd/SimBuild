@@ -57,7 +57,12 @@ try {
   const perf = await page.evaluate(async (secs) => {
     const s = window.__sim;
     const f0 = s.engine.stats.frames; const t0 = performance.now();
-    await new Promise((r) => setTimeout(r, secs * 1000));
+    // software GL can take >1 s per frame: wait for the window OR at least 3 frames (max 12 s)
+    while (true) {
+      await new Promise((r) => setTimeout(r, 100));
+      const el = performance.now() - t0, fr = s.engine.stats.frames - f0;
+      if ((el >= secs * 1000 && fr >= 3) || el > 12000) break;
+    }
     const frames = s.engine.stats.frames - f0; const ms = performance.now() - t0;
     const st = s.stats();
     return { fps: +(frames / (ms / 1000)).toFixed(1), measuredFrames: frames, ...st };
