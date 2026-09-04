@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import { makeNoise2D } from './rng.js';
 
 // CC0 asset loader. Every loader resolves even on failure (procedural fallback + warning).
@@ -16,7 +16,7 @@ export class Assets {
     this.anisotropy = Math.min(8, this.maxAnisotropy);
     this._tex = new THREE.TextureLoader();
     this._gltf = new GLTFLoader();
-    this._hdr = new RGBELoader();
+    this._hdr = new HDRLoader();
     this.procedural = new Procedural(this);
   }
   async loadManifest() {

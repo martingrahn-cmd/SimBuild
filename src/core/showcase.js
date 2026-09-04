@@ -13,6 +13,7 @@ export function parseParams(search = window.location.search) {
     modules: p.get('modules') ? p.get('modules').split(',') : null, // explicit list override (debug)
     verbose: p.get('verbose') === '1',
     weather: p.get('weather') || null, // 'clear' | 'cloudy' | 'rain' | 'fog'
+    mode: p.get('mode') || 'demo', // 'demo' stages the demo city; 'play' starts an empty map
   };
 }
 

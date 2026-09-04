@@ -1,0 +1,94 @@
+{
+  "getHeight00": 14.170174598693848,
+  "getHeightIsNumber": true,
+  "samples": [
+    14.170174598693848,
+    15.817996978759766,
+    17.79909896850586,
+    5.700201511383057,
+    64.29861450195312,
+    22.313278198242188,
+    11.867754936218262
+  ],
+  "varies": true,
+  "clampedOutside": true,
+  "normal": [
+    0.010082928633206468,
+    0.9999259445304871,
+    -0.006814690381146425
+  ],
+  "normalUnit": true,
+  "slope": 0.01217015887869741,
+  "slopeOk": true,
+  "isWaterOrigin": false,
+  "isWaterSeaWest": false,
+  "isWaterRiver": true,
+  "isWaterTypeOk": true,
+  "raycastHit": {
+    "point": [
+      0,
+      14.170174598693848,
+      0
+    ],
+    "normal": [
+      0.0043396789495024875,
+      0.9994472203280299,
+      0.03296090055185904
+    ]
+  },
+  "raycastMatchesHeight": true,
+  "raycastMissIsNull": true,
+  "obliqueHit": true,
+  "heightsIsF32": true,
+  "heightsLen": 263169,
+  "heightsLenOk": true,
+  "resolution": 513,
+  "cellSize": 4,
+  "modifyReturn": true,
+  "modifyDelta": 12,
+  "modifyChanged": true,
+  "versionBumped": true,
+  "versionBefore": 0,
+  "versionAfter": 1,
+  "eventEmitted": true,
+  "eventPayload": {
+    "x": 120,
+    "z": 80,
+    "radius": 30
+  },
+  "moduleStatus": {
+    "status": "ready",
+    "errors": 0,
+    "ms": 0,
+    "initMs": 2407
+  },
+  "dataHeightsSameBuffer": true,
+  "otherModesOk": true,
+  "restoredApprox": true,
+  "simKeys": [
+    "ready",
+    "readyAt",
+    "verbose",
+    "errors",
+    "warnings",
+    "world",
+    "events",
+    "clock",
+    "camera",
+    "engine",
+    "registry",
+    "stats",
+    "setTime",
+    "setCamera",
+    "setSpeed",
+    "modulesStatus",
+    "params",
+    "wanted",
+    "save",
+    "load",
+    "saves"
+  ],
+  "meshPixelBytesDiffer": 621651,
+  "meshVisiblyChanged": true,
+  "errorsDuringCheck": []
+}

@@ -91,6 +91,18 @@ export function createWorld(seed = 1337) {
       demand: { residential: 0.5, commercial: 0.3, industrial: 0.3, office: 0.2 },
       taxRate: 0.1, history: [],
     },
+    services: {
+      items: new Map(),
+      kinds: ['power_coal', 'power_wind', 'power_solar', 'water_pump', 'sewage', 'landfill', 'incinerator', 'clinic', 'hospital', 'school', 'high_school', 'university', 'police', 'fire', 'park_small', 'park_large', 'plaza'],
+      supply: { power: 0, water: 0, sewage: 0, garbage: 0 },
+      demand: { power: 0, water: 0, sewage: 0, garbage: 0 },
+      version: 0,
+      coverage: () => 0,
+      place: () => null,
+      remove: () => {},
+    },
+    infoview: { active: null, data: null, legend: null, buildingTint: () => null },
+    transit: { lines: new Map(), stops: new Map(), version: 0 },
     selection: { kind: null, id: null },
     flags: { showcase: null, headless: false },
   };

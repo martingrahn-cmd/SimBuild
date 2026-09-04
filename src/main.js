@@ -10,6 +10,7 @@ import { Registry } from './core/registry.js';
 import { parseParams, selectModules } from './core/showcase.js';
 import { installDebug } from './core/debug.js';
 import { MODULE_NAMES } from './core/constants.js';
+import { createSaveSystem } from './core/save.js';
 
 const bootMsg = (m) => { const el = document.getElementById('bootmsg'); if (el) el.textContent = m; };
 
@@ -40,6 +41,7 @@ async function boot() {
   world.flags.showcase = params.showcase;
   world.flags.headless = params.headless;
   world.flags.weather = params.weather;
+  world.flags.mode = params.mode;
   const events = new EventBus((err, name, owner) => console.error(`[events:${name}]${owner ? ` (${owner})` : ''}`, err));
   const engine = new Engine(canvas, { quality: params.quality, headless: params.headless });
   const clock = new Clock(world, events);
@@ -76,12 +78,18 @@ async function boot() {
   // showcase staging
   const showcaseName = params.showcase && params.showcase !== 'all' ? params.showcase : 'democity';
   const rec = registry.get(showcaseName);
-  if (rec && rec.status === 'ready' && rec.def.showcase?.setup) {
+  const saveSystem = createSaveSystem(core, registry);
+  sim.save = (slot) => saveSystem.save(slot); sim.load = (slot) => saveSystem.load(slot); sim.saves = saveSystem;
+  const playMode = params.mode === 'play' && showcaseName === 'democity';
+  if (playMode) {
+    bootMsg('NEW GAME');
+    if (rec?.def.showcase?.cameras) for (const [k, v] of Object.entries(rec.def.showcase.cameras)) camera.registerPreset(k, v);
+  } else if (rec && rec.status === 'ready' && rec.def.showcase?.setup) {
     bootMsg('STAGING ' + showcaseName);
     if (rec.def.showcase.cameras) for (const [k, v] of Object.entries(rec.def.showcase.cameras)) camera.registerPreset(k, v);
     try { await rec.def.showcase.setup(rec.ctx); }
     catch (e) { rec.ctx.log.error(`showcase.setup failed: ${e?.message}`, e); events.emit('module:error', { module: showcaseName, phase: 'showcase', error: e }); }
-  } else if (params.showcase) {
+  } else if (params.showcase && wanted.includes(showcaseName)) {
     console.error(`[main] showcase "${params.showcase}" unavailable (status: ${rec?.status || 'missing'})`);
   }
 

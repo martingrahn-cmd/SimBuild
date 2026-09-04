@@ -306,3 +306,50 @@ Each critic round writes two files: `docs/critic/<module>_r<n>.md` (human report
 ```
 `node tools/status.mjs` folds the newest verdict per module into `docs/STATUS.json` (score, pass, round, openIssues, history, summary.weakest).
 Every iteration of the build loop starts by reading STATUS.json and resumes from the weakest module at its next round.
+
+## 15. Completeness additions (added after wave 1 review)
+
+A city builder is not complete without services, overlays, transit, progression and persistence. Three modules are added and
+four specs are extended. Folder rules are unchanged: one builder per folder.
+
+### New modules
+- **`services`** (wave 2b, deps: roads, zoning, buildings, simulation) — placeable service buildings with coverage:
+  power plant (coal/wind/solar), water pumping station + sewage outlet, landfill/incinerator, clinic/hospital, elementary/high school/university,
+  police, fire station, small/large park, plaza. Each has a footprint, road frontage requirement, cost/upkeep, capacity, and a coverage
+  radius (road-distance based for services; road-adjacency for electricity/water like CS2, no pipes). Owns `world.services`:
+  `{ items: Map<id,{id,kind,x,y,z,heading,level,capacity,load}>, kinds, coverage(kind,x,z) -> 0..1, supply:{power,water,sewage,garbage}, demand:{...}, place(kind,x,z,heading)->id|null, remove(id), version }`
+  and emits `services:changed`. Buildings without power/water do not grow (simulation reads `coverage`). Service buildings render with the
+  same PBR/procedural quality as `buildings` (distinct silhouettes: cooling towers, wind turbines, water tower, school yard, fire tower).
+- **`infoviews`** (wave 2b, deps: roads, zoning, buildings, simulation, services) — CS2-style info views: traffic flow, land value, pollution
+  (ground/air/noise), happiness, education, health, fire risk, crime, power/water/garbage coverage, population density. Each is a
+  colour-graded heatmap projected on the terrain (one full-screen decal/texture per view, ≤ 5 draw calls) plus building tinting via a
+  shared uniform the `buildings` module honours (`world.infoview.active`, `world.infoview.buildingTint(id)`), and a legend panel.
+  Owns `world.infoview = { active: null|string, data: Float32Array grid 256², legend }`, listens to `ui:action {action:'infoview'}`.
+- **`transit`** (wave 3, deps: roads, traffic, props, ui) — bus lines: create a line by picking stops (bus stop props), route via
+  roads graph, buses run the loop (instanced through `traffic` api `spawnVehicle(kind,'bus', route)`), passengers boarded from nearby
+  buildings, line panel (ridership, colour). Stretch: tram/metro as elevated/tunnel lines. Owns `world.transit`.
+
+### Extended specs
+- **simulation**: pollution (industry/traffic → ground/air/noise grids 256²), land value (from services, parks, water, pollution, density),
+  crime/fire risk/health/education levels per building from `services.coverage`, milestones (population thresholds unlock
+  service categories and tools; emits `sim:milestone {level,name,unlocks}`), outside-connection trade income, loans. Exposes the grids
+  via `world.economy.grids` for infoviews. `serialize()/deserialize()` for everything it owns.
+- **traffic**: outside connections — highway edges reaching the map border spawn/despawn external traffic (commuters, trucks) and
+  buses on request from `transit`; `api.spawnVehicle(kind, route)`, `api.despawn(id)`, `api.flowGrid()` (256² congestion for infoviews).
+- **ui**: main menu (New game with seed/map preset, Load, Settings: quality/audio/keys), pause menu (Esc), save/load panels, milestone
+  toast, infoview selector, transit line panel, photo mode (hide UI, free camera, `P` key), minimap (terrain colour + roads, canvas).
+- **tools**: service-building placement (ghost with footprint + coverage circle, road-frontage validation) driven by `services.kinds`.
+- **democity**: also places services so the demo city has coverage, pollution and land value, and runs one bus line.
+
+### Save / load / play mode
+- Every module that owns world data implements `api.serialize() -> plain JSON` and `api.deserialize(data)` (idempotent, rebuilds meshes).
+- Core `src/core/save.js` collects them under `{version, seed, time, modules:{name:data}}`, stores slots in `localStorage` (`simbuild.save.<slot>`)
+  and offers JSON download/upload; `window.__sim.save(slot)`, `window.__sim.load(slot)`; UI calls through `ui:action {action:'save'|'load'}`.
+- URL `?mode=play` starts an empty map (no democity staging) with starting money; `?mode=demo` (default) stages the demo city.
+- Autosave every game day (can be disabled in settings).
+
+### Updated waves
+1. environment, terrain, roads, simulation, ui, audio, effects
+2. zoning, buildings, props, traffic, tools
+2b. services, infoviews
+3. democity, transit

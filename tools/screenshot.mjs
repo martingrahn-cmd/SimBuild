@@ -72,7 +72,7 @@ try {
     const ext = gl.getExtension('WEBGL_debug_renderer_info');
     return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : 'unknown';
   });
-  await page.screenshot({ path: out, type: 'png' });
+  await page.screenshot({ path: out, type: 'png', timeout });
   const errors = [...new Set([...(perf.errors || []), ...consoleErrors, ...pageErrors])];
   const simErrors = await page.evaluate(() => window.__sim.errors.slice());
   const simWarnings = await page.evaluate(() => window.__sim.warnings.slice());
@@ -88,7 +88,7 @@ try {
   result.error = String(e?.message || e);
   result.errors = [...new Set([...consoleErrors, ...pageErrors])];
   result.warnings = consoleWarnings.slice(0, 50);
-  try { await page.screenshot({ path: out, type: 'png' }); result.png = out; } catch {}
+  try { await page.screenshot({ path: out, type: 'png', timeout: 60000 }); result.png = out; } catch {}
 } finally {
   await browser.close();
 }

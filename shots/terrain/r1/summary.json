@@ -1,0 +1,130 @@
+{
+  "module": "terrain",
+  "round": "1",
+  "at": "2026-09-04T18:11:21.435Z",
+  "shots": [
+    {
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/terrain/r1/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 11,
+      "triangles": 129050,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/terrain/r1/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 12.7,
+      "drawCalls": 11,
+      "triangles": 129050,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "camera": "street",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "street",
+      "time": 12,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "street",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "street",
+      "time": 22,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/terrain/r1/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/terrain/r1/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 12,
+      "triangles": 196152,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/r1/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/terrain/r1/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 12,
+      "triangles": 196152,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "closeup",
+      "time": 12,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "closeup",
+      "time": 22,
+      "ok": false,
+      "errors": 0
+    }
+  ],
+  "maxDrawCalls": 12,
+  "maxTriangles": 196152,
+  "minFps": 12.7,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

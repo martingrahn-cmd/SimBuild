@@ -170,6 +170,30 @@
         "phase": "build",
         "round": 1
       }
+    },
+    "services": {
+      "wave": "2b",
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "infoviews": {
+      "wave": "2b",
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
+    },
+    "transit": {
+      "wave": 3,
+      "round": 0,
+      "score": null,
+      "status": "stub",
+      "openIssues": [],
+      "history": []
     }
   },
   "wholeGame": {
