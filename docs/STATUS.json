@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-04T17:40:54.896Z",
+  "updatedAt": "2026-09-04T17:41:27.999Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -17,7 +17,12 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "critic",
+        "round": 1
+      },
+      "builtRound": 1
     },
     "environment": {
       "wave": 1,
@@ -25,7 +30,12 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "critic",
+        "round": 1
+      },
+      "builtRound": 1
     },
     "roads": {
       "wave": 1,
@@ -33,7 +43,12 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "critic",
+        "round": 1
+      },
+      "builtRound": 1
     },
     "simulation": {
       "wave": 1,
@@ -41,7 +56,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "ui": {
       "wave": 1,
@@ -49,7 +68,12 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "critic",
+        "round": 1
+      },
+      "builtRound": 1
     },
     "audio": {
       "wave": 1,
@@ -57,7 +81,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "effects": {
       "wave": 1,
@@ -65,7 +93,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "zoning": {
       "wave": 2,
@@ -73,7 +105,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "buildings": {
       "wave": 2,
@@ -81,7 +117,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "props": {
       "wave": 2,
@@ -89,7 +129,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "traffic": {
       "wave": 2,
@@ -97,7 +141,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "tools": {
       "wave": 2,
@@ -105,7 +153,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     },
     "democity": {
       "wave": 3,
@@ -113,7 +165,11 @@
       "score": null,
       "status": "stub",
       "openIssues": [],
-      "history": []
+      "history": [],
+      "next": {
+        "phase": "build",
+        "round": 1
+      }
     }
   },
   "wholeGame": {
