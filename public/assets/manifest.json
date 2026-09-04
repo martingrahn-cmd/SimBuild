@@ -2,13 +2,151 @@
   "policy": "CC0 only. Sources: polyhaven (https://polyhaven.com, CC0), ambientcg (https://ambientcg.com, CC0), or procedural.",
   "assets": [
     {
-      "name": "asphalt_02", "source": "polyhaven", "license": "CC0", "url": "https://polyhaven.com/a/asphalt_02",
-      "files": { "diffuse": "diff.jpg", "normal": "nor.jpg", "arm": "arm.jpg", "displacement": "disp.jpg" },
+      "name": "asphalt_02",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/asphalt_02",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg",
+        "displacement": "disp.jpg"
+      },
       "urls": {
         "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
         "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
         "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_arm_1k.jpg",
         "displacement": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_disp_1k.jpg"
+      }
+    },
+    {
+      "name": "aerial_grass_rock",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/aerial_grass_rock",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_arm_1k.jpg"
+      }
+    },
+    {
+      "name": "brown_mud_leaves_01",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/brown_mud_leaves_01",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_leaves_01/brown_mud_leaves_01_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_leaves_01/brown_mud_leaves_01_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_leaves_01/brown_mud_leaves_01_arm_1k.jpg"
+      }
+    },
+    {
+      "name": "rock_face",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/rock_face",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_face/rock_face_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_face/rock_face_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_face/rock_face_arm_1k.jpg"
+      }
+    },
+    {
+      "name": "aerial_beach_01",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/aerial_beach_01",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_beach_01/aerial_beach_01_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_beach_01/aerial_beach_01_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_beach_01/aerial_beach_01_arm_1k.jpg"
+      }
+    },
+    {
+      "name": "concrete_wall_008",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/concrete_wall_008",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg",
+        "displacement": "disp.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_arm_1k.jpg",
+        "displacement": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_disp_1k.jpg"
+      }
+    },
+    {
+      "name": "concrete_floor_worn_001",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/concrete_floor_worn_001",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_arm_1k.jpg"
+      }
+    },
+    {
+      "name": "gravel_floor_02",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/gravel_floor_02",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_floor_02/gravel_floor_02_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_floor_02/gravel_floor_02_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_floor_02/gravel_floor_02_arm_1k.jpg"
+      }
+    },
+    {
+      "name": "leafy_grass",
+      "source": "polyhaven",
+      "license": "CC0",
+      "url": "https://polyhaven.com/a/leafy_grass",
+      "files": {
+        "diffuse": "diff.jpg",
+        "normal": "nor.jpg",
+        "arm": "arm.jpg"
+      },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_arm_1k.jpg"
       }
     }
   ]

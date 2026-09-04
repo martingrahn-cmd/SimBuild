@@ -1,0 +1,127 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=roads&time=22&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "roads",
+  "time": 22,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 34498,
+  "fps": 0,
+  "measuredFrames": 0,
+  "frameMs": 2.9,
+  "drawCalls": 47,
+  "triangles": 272280,
+  "programs": 24,
+  "textures": 37,
+  "geometries": 40,
+  "heapMB": 45.5,
+  "moduleMs": {
+    "terrain": 0,
+    "environment": 0.40000000037252903,
+    "roads": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      193.8,
+      404.8,
+      283.2
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 520
+  },
+  "modules": {
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1169
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.4,
+      "initMs": 173
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 60
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "RGBELoader has been deprecated. Please use HDRLoader instead."
+  ],
+  "png": "shots/roads/dev_aerial_22.png"
+}

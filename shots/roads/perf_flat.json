@@ -1,0 +1,127 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=roads&time=12&camera=corner&seed=1337&quality=high&headless=1&speed=0&modules=environment%2Croads",
+  "showcase": "roads",
+  "time": 12,
+  "camera": "corner",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 15499,
+  "fps": 12.7,
+  "measuredFrames": 3,
+  "frameMs": 0.9,
+  "drawCalls": 30,
+  "triangles": 133578,
+  "programs": 11,
+  "textures": 22,
+  "geometries": 30,
+  "heapMB": 31.8,
+  "moduleMs": {
+    "environment": 0.7999999988824129,
+    "roads": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      70,
+      23,
+      74
+    ],
+    "target": [
+      46,
+      15.6,
+      48
+    ],
+    "distance": 36.1
+  },
+  "modules": {
+    "terrain": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.8,
+      "initMs": 282
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 407
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "[roads] dependency \"terrain\" not ready (status: registered)",
+    "RGBELoader has been deprecated. Please use HDRLoader instead."
+  ],
+  "png": "shots/roads/perf_flat.png"
+}

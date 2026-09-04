@@ -1,0 +1,23 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=effects&time=12&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "effects",
+  "time": 12,
+  "camera": "closeup",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.screenshot: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n",
+  "errors": [
+    "[vite] Internal Server Error\nFailed to resolve import \"./showcase.js\" from \"src/modules/simulation/index.js\". Does the file exist?\n    at TransformPluginContext._formatLog (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31147:39)\n    at TransformPluginContext.error (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31144:14)\n    at normalizeUrl (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28083:18)\n    at async file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28153:30\n    at async Promise.all (index 4)\n    at async TransformPluginContext.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28119:4)\n    at async EnvironmentPluginContainer.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:30932:14)\n    at async loadAndTransform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:20671:26)\n    at async viteTransformMiddleware (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:25205:20)",
+    "HTTP 500 http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537415294",
+    "[main] module simulation failed to import: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537415294"
+  ],
+  "warnings": [
+    "RGBELoader has been deprecated. Please use HDRLoader instead.",
+    "requestfailed: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537415294 net::ERR_ABORTED"
+  ],
+  "png": "shots/effects/rdev1/closeup_12.png"
+}

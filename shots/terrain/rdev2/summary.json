@@ -1,0 +1,189 @@
+{
+  "module": "terrain",
+  "round": "dev2",
+  "at": "2026-09-04T13:16:44.256Z",
+  "note": "6 shots that timed out under concurrent builder load were re-shot individually with tools/screenshot.mjs; summary rebuilt from the per-shot JSONs",
+  "shots": [
+    {
+      "png": "shots/terrain/rdev2/aerial_6p5.png",
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 11,
+      "triangles": 129050,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 11,
+      "triangles": 129050,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 11,
+      "triangles": 129050,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 11,
+      "triangles": 129050,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 152738,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 152738,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 152738,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 152738,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 196152,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 196152,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 196152,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 196152,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/closeup_6p5.png",
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 153190,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 153190,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/closeup_17p5.png",
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 153190,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/terrain/rdev2/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 12,
+      "triangles": 153190,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 12,
+  "maxTriangles": 196152,
+  "minFps": 0,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

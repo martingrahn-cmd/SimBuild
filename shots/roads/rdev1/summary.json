@@ -1,0 +1,189 @@
+{
+  "module": "roads",
+  "round": "dev1",
+  "at": "2026-09-04T14:30:00Z",
+  "shots": [
+    {
+      "png": "shots/roads/rdev1/aerial_6p5.png",
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 49,
+      "triangles": 272424,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 47,
+      "triangles": 272280,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 50,
+      "triangles": 272496,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 47,
+      "triangles": 272280,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 43,
+      "triangles": 292682,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 41,
+      "triangles": 285104,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 47,
+      "triangles": 292970,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 42,
+      "triangles": 287654,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 57,
+      "triangles": 339814,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 57,
+      "triangles": 339814,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 56,
+      "triangles": 339742,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 55,
+      "triangles": 327006,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/closeup_6p5.png",
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 43,
+      "triangles": 291982,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 42,
+      "triangles": 286954,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/closeup_17p5.png",
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 46,
+      "triangles": 292198,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/rdev1/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 44,
+      "triangles": 289576,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 57,
+  "maxTriangles": 339814,
+  "minFps": 0,
+  "totalErrors": 0,
+  "uniqueErrors": [],
+  "note": "6 shots re-taken individually after page.screenshot 30 s timeouts under SwiftShader load"
+}

@@ -1,0 +1,126 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=effects&time=6.5&camera=skyline&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "effects",
+  "time": 6.5,
+  "camera": "skyline",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 50612,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 2396.6,
+  "drawCalls": 41,
+  "triangles": 121766,
+  "programs": 34,
+  "textures": 41,
+  "geometries": 23,
+  "heapMB": 30.4,
+  "moduleMs": {
+    "environment": 0.5,
+    "effects": 0.10000000149011612
+  },
+  "hour": 6.5,
+  "cameraState": {
+    "position": [
+      718.4,
+      183.4,
+      -522.9
+    ],
+    "target": [
+      0,
+      40,
+      0
+    ],
+    "distance": 900
+  },
+  "modules": {
+    "terrain": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.5,
+      "initMs": 165
+    },
+    "roads": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 4
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "RGBELoader has been deprecated. Please use HDRLoader instead."
+  ],
+  "png": "shots/effects/rdev1/skyline_6p5.png"
+}

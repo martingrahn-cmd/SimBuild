@@ -1,0 +1,127 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=environment&time=12&camera=street&seed=1337&quality=high&headless=1&speed=0&weather=rain",
+  "showcase": "environment",
+  "time": 12,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 33451,
+  "fps": 0,
+  "measuredFrames": 0,
+  "frameMs": 0.8,
+  "drawCalls": 11,
+  "triangles": 125554,
+  "programs": 16,
+  "textures": 18,
+  "geometries": 16,
+  "heapMB": 26.9,
+  "moduleMs": {
+    "environment": 0.20000000018626451
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      86.2,
+      10.7,
+      76.7
+    ],
+    "target": [
+      40,
+      0,
+      40
+    ],
+    "distance": 60
+  },
+  "modules": {
+    "terrain": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 282
+    },
+    "roads": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "RGBELoader has been deprecated. Please use HDRLoader instead.",
+    "[.WebGL-0x3fac0230e600] GL_INVALID_OPERATION: glDrawElements: Two textures of different types use the same sampler location.",
+    "[.WebGL-0x3fac0230e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Two textures of different types use the same sampler location."
+  ],
+  "png": "shots/environment/dev_street_12_rain.png"
+}
