@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vite/
+shots/*.png
+shots/**/*.png
+*.log
+.DS_Store

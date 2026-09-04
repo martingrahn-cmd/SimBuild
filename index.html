@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SimBuild</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 fill=%27%23203050%27/%3E%3C/svg%3E" />
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0a0d14; font-family: "Segoe UI", Inter, system-ui, sans-serif; color: #e8ecf2; }
+    #app { position: fixed; inset: 0; }
+    #app canvas { display: block; width: 100%; height: 100%; }
+    #ui { position: fixed; inset: 0; pointer-events: none; }
+    #ui > * { pointer-events: auto; }
+    #boot { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #16202f 0%, #070a10 100%); z-index: 100; transition: opacity .6s; }
+    #boot .title { font-size: 40px; letter-spacing: .3em; font-weight: 200; }
+    #boot .sub { font-size: 12px; opacity: .6; margin-top: 8px; letter-spacing: .2em; text-align: center; }
+    #boot.hidden { opacity: 0; pointer-events: none; }
+    #errbanner { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(160,30,30,.85); color: #fff; font-size: 12px; padding: 6px 10px; display: none; z-index: 200; white-space: pre-wrap; max-height: 30vh; overflow: auto; }
+  </style>
+</head>
+<body>
+  <div id="app"><canvas id="c"></canvas></div>
+  <div id="ui"></div>
+  <div id="boot"><div><div class="title">SIMBUILD</div><div class="sub" id="bootmsg">LOADING</div></div></div>
+  <div id="errbanner"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "policy": "CC0 only. Sources: polyhaven (https://polyhaven.com, CC0), ambientcg (https://ambientcg.com, CC0), or procedural.",
+  "assets": [
+    {
+      "name": "asphalt_02", "source": "polyhaven", "license": "CC0", "url": "https://polyhaven.com/a/asphalt_02",
+      "files": { "diffuse": "diff.jpg", "normal": "nor.jpg", "arm": "arm.jpg", "displacement": "disp.jpg" },
+      "urls": {
+        "diffuse": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
+        "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
+        "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_arm_1k.jpg",
+        "displacement": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_disp_1k.jpg"
+      }
+    }
+  ]
+}
