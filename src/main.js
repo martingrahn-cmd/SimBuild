@@ -14,24 +14,33 @@ import { createSaveSystem } from './core/save.js';
 
 const bootMsg = (m) => { const el = document.getElementById('bootmsg'); if (el) el.textContent = m; };
 
-async function loadModuleDefs() {
-  // Each module is imported in isolation: a syntax/import error in one never blocks the others.
+async function loadModuleDefs(showcase, explicit) {
+  // Import in isolation: a syntax/import error in one module never blocks the others.
+  // In showcase mode only the wanted set is imported, so a module another builder is mid-edit on
+  // cannot land its import error in this showcase's error log.
   const loaders = import.meta.glob('./modules/*/index.js');
-  const defs = [];
-  for (const name of MODULE_NAMES) {
-    const key = `./modules/${name}/index.js`;
-    const loader = loaders[key];
-    if (!loader) { console.warn(`[main] module ${name} has no index.js`); continue; }
+  const defs = new Map();
+  async function importOne(name) {
+    if (defs.has(name)) return defs.get(name);
+    const loader = loaders[`./modules/${name}/index.js`];
+    if (!loader) { console.warn(`[main] module ${name} has no index.js`); return null; }
+    defs.set(name, null); // cycle guard
     try {
       const m = await loader();
       const def = m.default;
-      if (!def || def.name !== name) { console.error(`[main] module ${name}: default export must be a Module with name "${name}"`); continue; }
-      defs.push(def);
+      if (!def || def.name !== name) { console.error(`[main] module ${name}: default export must be a Module with name "${name}"`); return null; }
+      defs.set(name, def);
+      for (const d of def.dependencies || []) await importOne(d);
+      return def;
     } catch (e) {
       console.error(`[main] module ${name} failed to import:`, e);
+      return null;
     }
   }
-  return defs;
+  const wantAll = !showcase || showcase === 'all' || showcase === 'democity';
+  const names = explicit || (wantAll ? MODULE_NAMES : ['environment', showcase]);
+  for (const n of names) await importOne(n);
+  return [...defs.values()].filter(Boolean);
 }
 
 async function boot() {
@@ -64,7 +73,7 @@ async function boot() {
   await assets.loadManifest();
 
   bootMsg('LOADING MODULES');
-  const defs = await loadModuleDefs();
+  const defs = await loadModuleDefs(params.showcase, params.modules);
   for (const d of defs) registry.register(d);
   const wanted = params.modules || selectModules(params.showcase, defs);
   sim.wanted = wanted;

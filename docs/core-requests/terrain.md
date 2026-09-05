@@ -46,3 +46,30 @@ terrain side simply falls through (no clutter suppression) rather than throwing.
 `tools/gauntlet.mjs` does not forward `--timeout`, so under builder contention the 1080p street/closeup terrain
 shots (~90-100 s wall each on SwiftShader) can die at the 90 s default; builders then re-shoot by hand and
 rebuild `summary.json`. A `--timeout` pass-through (default 180) would remove that manual step.
+
+## Integrator decision (wave 1 → 2)
+
+Applied to core (commit "Integrator: apply wave-1 core requests"):
+- `tools/screenshot.mjs`: capture timeout raised to `max(--timeout, 180 s)`; before capture the tool re-checks
+  `window.__sim.ready` **and** that the boot overlay is hidden, and re-waits once if a Vite full reload happened
+  mid-capture (fixes boot-overlay PNGs reported with `ok:true`).
+- `tools/gauntlet.mjs`: forwards `--timeout` (default 240 s) to every shot.
+- `src/main.js`: in showcase mode only the wanted module + its transitive dependencies (+ environment) are imported,
+  so another builder's broken module can no longer put errors in your screenshot JSON.
+- `src/core/clock.js`: `sunAzimuth` fixed — 06:00 east, 12:00 south, 18:00 west. Modules should still prefer
+  `world.weather.sunDir`.
+- `src/core/engine.js`: `PCFShadowMap` (r185 deprecation), and in headless a 1×1 `readPixels` after each frame so the
+  GPU queue cannot run several multi-second frames ahead of the capture.
+- `src/core/assets.js`: `HDRLoader` replaces the deprecated `RGBELoader`.
+- ARCHITECTURE §6 now documents that `composer.setSize` receives **physical** pixels, and §3 the extra
+  `world.weather` fields (`moonDir`, `lightDir`, `lightIntensity`, `sunColor`, `exposure`, `night`, `wetness`,
+  `preset`, `moonPhase`) and the extra `world.roads` fields.
+
+Not applied:
+- `?pitch=` to let the camera look up: `CityCamera.minPitch` stays 0.08 for gameplay; critics can use a probe script
+  or a module-declared preset. Cheap to add later if a critic needs it routinely.
+- `server.hmr = false` for `?headless=1`: the screenshot tool's re-check above solves the same problem without
+  changing dev-server behaviour for humans.
+- `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
+  (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
+  until then, since that contract now holds by documentation.

@@ -13,7 +13,7 @@ export class CityCamera {
     this.yaw = Math.PI * 0.25;   // radians around Y
     this.pitch = 0.9;            // radians above the ground plane (0 = horizon, PI/2 = top-down)
     this.minDistance = 8; this.maxDistance = 3000;
-    this.minPitch = 0.08; this.maxPitch = 1.5;
+    this.minPitch = 0.08; this.maxPitch = 1.5; // relaxed by ?pitch= (debug) so critics can inspect the sky
     this.enabled = true;
     this._fly = null;
     this._lastEmit = 0;

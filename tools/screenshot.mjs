@@ -53,6 +53,12 @@ try {
   await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
   // settle: let LOD/shadows update
   await page.waitForTimeout(400);
+  // A concurrent save makes Vite full-reload the page; re-wait once so we never capture the boot overlay.
+  const stillReady = async () => page.evaluate(() => window.__sim?.ready === true && !!document.getElementById('boot')?.classList.contains('hidden')).catch(() => false);
+  if (!(await stillReady())) {
+    await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
+    await page.waitForTimeout(600);
+  }
   // fps measurement: count frames over `measure` seconds
   const perf = await page.evaluate(async (secs) => {
     const s = window.__sim;
@@ -72,7 +78,11 @@ try {
     const ext = gl.getExtension('WEBGL_debug_renderer_info');
     return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : 'unknown';
   });
-  await page.screenshot({ path: out, type: 'png', timeout });
+  if (!(await stillReady())) {
+    await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
+    await page.waitForTimeout(600);
+  }
+  await page.screenshot({ path: out, type: 'png', timeout: Math.max(timeout, 180000) });
   const errors = [...new Set([...(perf.errors || []), ...consoleErrors, ...pageErrors])];
   const simErrors = await page.evaluate(() => window.__sim.errors.slice());
   const simWarnings = await page.evaluate(() => window.__sim.warnings.slice());

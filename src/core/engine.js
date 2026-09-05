@@ -14,7 +14,7 @@ export class Engine {
     });
     this.renderer.setPixelRatio(headless ? 1 : Math.min(window.devicePixelRatio || 1, this.q.pixelRatio));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap; // r185: PCFSoftShadowMap is deprecated
     this.renderer.toneMapping = THREE.AgXToneMapping;
     this.renderer.toneMappingExposure = 1.0;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -52,6 +52,13 @@ export class Engine {
       if (this.composer) { this.composer = null; }
     }
     for (const fn of this._after) { try { fn(dt, camera); } catch (e) { console.error('[engine:after]', e); } }
+    if (this.headless) {
+      // Keep the GPU queue from running multiple multi-second frames ahead so screenshot latency stays ~1 frame.
+      try {
+        const gl = this.renderer.getContext();
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this._syncPixel || (this._syncPixel = new Uint8Array(4)));
+      } catch { /* context lost: ignore */ }
+    }
     const ms = performance.now() - t0;
     const s = this.stats;
     s.frameMs = ms; s.drawCalls = info.render.calls; s.triangles = info.render.triangles;

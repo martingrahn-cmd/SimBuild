@@ -36,9 +36,10 @@ export class Clock {
     const a = ((hour - 6) / 24) * Math.PI * 2; // 6h: sunrise, 18h: sunset
     return Math.sin(a) * (Math.PI / 2) * 0.72;
   }
-  /** Azimuth radians, 0 = north (-Z), clockwise from above. */
+  /** Azimuth radians, 0 = north (-Z), clockwise from above. 06:00 => east, 12:00 => south, 18:00 => west.
+   *  Modules should prefer world.weather.sunDir (published by environment) over recomputing this. */
   sunAzimuth(hour = this.hour) {
-    return ((hour / 24) * Math.PI * 2 + Math.PI); // 12h => south
+    return Math.PI / 2 + ((hour - 6) / 12) * Math.PI;
   }
   isNight(hour = this.hour) { return this.sunElevation(hour) < -0.05; }
 }

@@ -96,6 +96,12 @@ world = {
     version: 0,                      // bump on any change
     addNode(x,z) -> id, addEdge(a,b,type,opts) -> id, removeEdge(id), removeNode(id),
     nearestEdge(x,z,maxDist) -> {edge, t, point, dist} | null,
+    coverage / isRoad(x,z) -> 0..1,  // paved mask; terrain skips ground clutter where this is non-zero
+    // edges also carry: trimA/trimB, bridge, ring (roundabout member), merge/accel (ramps)
+    // types also carry: asphaltHalf, cornerR, laneW, shoulder, median, oneWay; plus a 'ramp' type
+    // terrain owes: writeHeights(ix0,iz0,ix1,iz1) or flattenStrip(pts,{drop,grade}) so roads' cut/fill is an
+    //   explicit contract rather than "write heights then call modify() with strength 0"
+
     sample(edgeId, t) -> {x,y,z, tangent:{x,z}, normal:{x,z}},   // t ∈ [0,1] along edge
     laneCenter(edgeId, laneIndex, t) -> {x,y,z,tangent},          // lane 0 = rightmost in a→b direction
     frontage(edgeId) -> [{side:'left'|'right', from:t, to:t, x, z, heading}] // for zoning
@@ -224,7 +230,7 @@ Names are `section:verb`. Payloads are plain objects. Emit after the world mutat
 `clock`: `hour`, `day`, `speed`, `paused`, `set(hour)`, `setSpeed(n)`, `pause()`, `resume()`, `sunElevation(hour)`.
 `camera`: `camera` (PerspectiveCamera, fov 45, near 1, far 6000), `target`, `distance`, `presets` (`aerial`, `street`, `skyline`, `closeup`, `overview`, `night_street`), `apply(presetName | {position, target})`, `flyTo({position,target}, seconds)`, `enableControls(bool)`, `screenToGround(ndcX, ndcY) -> {x,z}|null` (uses terrain raycast).
 `assets`: `pbr(name, {repeat})` → `{map, normalMap, roughnessMap, aoMap, displacementMap?}` from `public/assets/<name>/` per manifest; `hdri(name)`; `gltf(url)`; `procedural.noiseTexture(opts)`, `procedural.gradient(opts)`, all cached; every loader resolves even on failure (with a procedural fallback + `log.warn`).
-`engine`: `renderer`, `scene`, `setComposer(composerLike)` (`effects` only), `stats` (`{fps, frameMs, drawCalls, triangles, programs, textures}`), `onBeforeRender(fn)`, `onAfterRender(fn)`.
+`engine`: `renderer`, `scene`, `setComposer(composerLike)` (`effects` only; its `setSize` receives **physical** pixels — call `composer.setPixelRatio(1)`), `stats` (`{fps, frameMs, drawCalls, triangles, programs, textures}`), `onBeforeRender(fn)`, `onAfterRender(fn)`.
 `rng.fork(label)` yields an independent stream derived from `world.seed` + label. Use of `Math.random` is forbidden in modules (lint-checked by the gauntlet).
 
 ## 7. Showcase mode & URL parameters
