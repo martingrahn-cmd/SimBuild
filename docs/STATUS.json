@@ -494,5 +494,27 @@
       "ui:7:r1"
     ],
     "weakest": "audio"
+  },
+  "promptQuality": {
+    "library": "docs/prompts/ \u2014 PROMPT-STANDARD.md (12 properties, 0-10, pass 8.5), BUILDER/CRITIC/INTEGRATOR/WHOLE-GAME-CRITIC/BLIND-JUDGE role prompts, modules/<name>.md specs",
+    "calibrationExperiment": {
+      "date": "2026-09-05",
+      "question": "does the spec reviewer discriminate quality, or anchor at 8 regardless of content?",
+      "method": "same rubric, blind, 2 replicas each over a deliberately weak control spec and 2 real specs",
+      "weakControl": [
+        4.0,
+        4.0
+      ],
+      "realSpecs": [
+        9.3,
+        9.3,
+        9.3,
+        9.0
+      ],
+      "discriminationGap": 5.2,
+      "finding": "the blind calibrated reviewer discriminates (5.2-point gap). The ADVERSARIAL reviewer used in the spec workflow returned 8.0 and buildableWithoutGuessing=false for 16 of 16 specs - true defect lists, non-discriminating scores. Finder and scorer are now separate roles; every scoring batch carries the unlabelled control and is void if the control scores above 5."
+    },
+    "defectsPreserved": "docs/prompts/_review/*.json \u2014 169 finder defects across 16 specs, being repaired in a reduction pass",
+    "toolingGapClosed": "pinned-crop measurement (--crops / window.__sim.cropRects) did not exist, so several specs' acceptance items failed by construction; added to core and both role prompts"
   }
 }

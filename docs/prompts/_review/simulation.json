@@ -1,0 +1,88 @@
+{
+ "module": "simulation",
+ "reviewer": "adversarial finder (score not authoritative; see PROMPT-STANDARD \"How to review a prompt\")",
+ "score": 8,
+ "gaps": [
+  {
+   "property": "2 (falsifiable) + 3 (numeric)",
+   "problem": "Item 6's `blackout` scenario is ungradeable and, as written, will not fire. The module only starves when `env.servicesActive()` is true, which economy.js/index.js:118 defines as `ctx.modules.services && world.services.items.size > 0` \u2014 forcing `coverage()` to 0 (which the core stub already does) provokes nothing, and \u00a77 explicitly requires 0-coverage to mean 'outside connection baseline, keep growing' (item 15 depends on that). Worse, the kinds the spec names (`power_*`, `water_pump`, `sewage`) are not the kinds the code queries: economy.js:420-421 asks for `coverage('power')`, `coverage('water')`, `coverage('garbage')`, none of which are in `world.services.kinds`, so the real services module will report zero utilities forever. And because `scenarios` are produced by the builder's own selftest harness, the critic has no way to confirm the intervention was applied at all.",
+   "fix": "Say exactly what the blackout intervention is and how it is reproduced: `node src/modules/simulation/selftest.mjs --scenario blackout` must set `servicesActive() -> true` and every utility kind to 0, and the JSON must record `scenarios.blackout.applied = {servicesActive:true, kindsForced:[...]}` so the critic can re-run it and diff. Separately, add a line to \u00a77 requiring simulation to derive utilities from the real kind enum \u2014 `power = max(power_coal, power_wind, power_solar)`, `water = min(water_pump, sewage)`, `garbage = max(landfill, incinerator)` \u2014 and state that `coverage('power'|'water'|'garbage')` are not valid kinds."
+  },
+  {
+   "property": "2 (falsifiable)",
+   "problem": "Item 23 requires `visible >= 0.9` on each row's label strip, but the `api.showcaseProbe()` return shape it declares gives `rows:[{label:'POPULATION'|'JOBS'|'TREASURY', bars:[...]}]` \u2014 `label` is a string with no `rect` and no `visible`. The critic cannot compute the clause from the contract the same item defines, and item 23 is the fix for r1's ranked issue 10 (the opaque bar wall), so a round hangs on it.",
+   "fix": "Change the declared shape to `rows:[{label:{text, rect:{x,y,w,h}, visible:0..1}, bars:[...]}]` and keep the `visible >= 0.9` threshold against that field."
+  },
+  {
+   "property": "3 (numeric)",
+   "problem": "Item 5 is self-contradictory over part of its own range. `milestone.level` is the 0-based index into `MILESTONES` (economy.js:147 initialises level 0 = 'Hamlet'), so `level >= 8` is 'Big Town' at population 16 000 \u2014 but the same item admits day-120 population as low as 12 000. A builder tuning to 13 000 satisfies the headline band and fails the level clause; nothing in the spec says whether `level` is 0- or 1-based, so the two of them will disagree about which clause is wrong.",
+   "fix": "State 'level is the 0-based index into `api.constants.MILESTONES`' and make the two clauses agree: population in [16 000, 80 000] with `milestone.level >= 8`, or keep [12 000, 80 000] and require `level >= 7`."
+  },
+  {
+   "property": "2 (falsifiable) + 3 (numeric)",
+   "problem": "Item 21's closing sentence, 'No emissive surface may be brighter than the pool it casts', has no measurement method and, read literally, is both unachievable and wrong: a light source is always brighter than the ground it lights, in CS2 and in life. BUILDER.md's generic mode is 'emissive sprites that glow brighter than the surface they sit on' \u2014 the spec has paraphrased it into a different and stricter rule. A critic enforcing it literally forces the builder to dim the emissives below their own pools and makes the night frames worse.",
+   "fix": "Replace with a ratio the critic can compute on the crop: 'for each of the >= 3 pools, mean L of the pool must be >= 0.35 x the mean L of the emissive geometry adjacent to it' \u2014 i.e. the pool must exist and scale with the source, not exceed it."
+  },
+  {
+   "property": "2 (falsifiable)",
+   "problem": "Item 20's boundary-row detector defeats itself when the module succeeds. `yh` is the row maximising |L(y+1) - L(y-1)| over the middle half of rows \u2014 but the same item demands the horizon fade to `\u0394L <= 12`, at which point the strongest gradient in the middle half of a skyline frame is the data sculpture or a plinth edge, not the horizon. The guard ('so a lamp or a bar top cannot win it') is the 0.25H-0.75H restriction, which is exactly where the terrace sits at the 900 m skyline camera. A compliant frame can fail, and the argument is unwinnable in round 2.",
+   "fix": "Derive `yh` from geometry rather than from the image: take the projected horizon row from the camera (report it from a probe alongside the frame), or define `yh` as the row where L first crosses the midpoint between the mean of the top 10 % of rows and the mean of the bottom 10 % of rows, and require the detected row to be within 40 px of the projected horizon or the measurement is void."
+  },
+  {
+   "property": "3 (numeric)",
+   "problem": "Item 14's pollution clause has no sampling region: 'mean `air` pollution sampled 200 m downwind of that centroid ... >= 2 x the mean 200 m upwind'. The land-value clause in the same item says 'within 150 m of', so the omission reads as deliberate and both sides will pick differently (single cell vs 150 m disc vs 200 m disc). It also compares two points that are both inside the industrial wedge (300-720 m), so the ratio depends entirely on an unstated radius.",
+   "fix": "Write it the same way as the land-value clause: 'mean over all cells within 150 m of (centroid + 200 m * normalise(world.weather.wind)) >= 2 x the mean over all cells within 150 m of (centroid - 200 m * normalise(wind))'."
+  },
+  {
+   "property": "2 (falsifiable)",
+   "problem": "Item 27 requires 'panel DOM update <= 0.3 ms measured around `Panel.update`', but `Panel` is module-internal and no API exposes it. Everywhere else the spec adds a handle when it needs one (item 23 adds `showcaseProbe()`, item 12 adds `stats()`); here it names an internal symbol the critic cannot reach, so the row is unmeasurable and will be reported as 'trust the builder'.",
+   "fix": "Require `api.stats()` to carry `panelUpdateMs:{mean, max}` accumulated over the last 60 updates, and grade item 27 against that field."
+  },
+  {
+   "property": "3 (numeric)",
+   "problem": "The texture-memory budget is not computable. \u00a75 says '<= 40 MB \u2014 at most three 1k PBR sets + one 4096x512 label atlas', checked by 'manifest entries x resolution', which is not a formula (bytes per pixel? mips? channels?). Under the ordinary accounting the two halves of the row contradict each other: three 1k PBR sets of four maps at RGBA8 with mips is ~67 MB, and even base-level RGB is ~38 MB before the 8.4 MB atlas. Builder and critic will produce different numbers from the same manifest.",
+   "fix": "State the formula and make the number match it: 'texture bytes = sum over unique textures of w x h x 4 x 1.333 (RGBA8 with mips); budget <= 70 MB' \u2014 or keep 40 MB and cut the allowance to two 1k sets plus the atlas."
+  },
+  {
+   "property": "4 (anchored)",
+   "problem": "Item 24's visual half is the one place where opinions are still wearing a checklist: '>= 3 distinguishable tree species by silhouette', '>= 4 crown-colour variants', 'no visible icosahedron facets', 'hedges with rounded ends and a dark base band with contact AO'. No reference crop is named for planting (the spec cites cs2_4/cs2_8/cs2_2 only for light and horizon), and 'distinguishable' has no anchor, so a critic who calls three silhouettes indistinguishable and a builder who says they are distinct both have a case. The instance-variety half is properly probed; the appearance half is not.",
+   "fix": "Name the reference crop (e.g. `$REF/cs2_4.jpg` foreground planting) and add a numeric proxy for the two countable claims: species silhouettes must differ in crown-height:crown-width ratio by >= 20 % pairwise, and the >= 4 crown-colour variants must be >= 8 \u0394E apart in Lab, both read from the instance colour/scale attributes by probe."
+  },
+  {
+   "property": "3 (numeric)",
+   "problem": "Item 12's probe fixes the horizon at `api.step(2400)` \u2014 one game day from an empty freshly-zoned world \u2014 and asserts `levelUpsApplied >= 1` on top of `spawnsAccepted >= 20`. Nothing in the spec establishes that a level-up is reachable in a building's first game day; if the builder's level-up rule needs occupancy history (as any plausible rule does), the item is unachievable as written and the builder either special-cases the probe or loses the item.",
+   "fix": "Either raise the horizon (`api.step(2400 * 5)`, stating that item 12 is a five-day probe) or state the precondition explicitly: 'a level-1 building at >= 90 % occupancy for >= 1 game day is eligible, so >= 1 level-up must occur within the probe window.'"
+  },
+  {
+   "property": "5 (bounded blast radius)",
+   "problem": "The module spec carries a pending change to a role file: item 19 says 'adding `shots/<module>/dev*` to BUILDER.md's \"What you may write\" is a pending role-file change, not a licence to write anywhere else'. BUILDER.md's writable list does not mention `shots/` at all (only CRITIC.md's git-status check does), so the builder's write permission for its own probe scripts exists only inside this module spec \u2014 exactly the sixteen-edits drift the standard's role-prompt rule forbids.",
+   "fix": "Add `shots/<your-module>/dev<round>/**` to BUILDER.md's 'What you may write' now, and delete the pending-change paragraph from item 19, leaving only the module-specific part (the two directories and 'the critic's run stands')."
+  },
+  {
+   "property": "2 (falsifiable) / cross-module contract",
+   "problem": "The \u00a72 grids contract has drifted from what a neighbour depends on. infoviews' spec pins `grids() -> {size:256, cellSize:8, ground, air, noise, landValue, version, index(x,z), sample(name,x,z)}`; simulation's \u00a72 declares the same object without `index(x,z)` and leaves `cellSize` unpinned, and item 14 grades only 'the documented shape'. The code (grids.js:20-29) does expose `index`, so today it works by accident \u2014 a builder who trims the contract to what \u00a72 lists breaks infoviews silently.",
+   "fix": "Copy infoviews' shape into \u00a72 verbatim \u2014 pin `cellSize: 8` and include `index(x, z)` and `version` \u2014 and have item 14 assert every field of it."
+  },
+  {
+   "property": "3 (numeric) \u2014 minor",
+   "problem": "Two small unmeasurable leftovers. Item 17 requires 'the four RCI bars use the four zone colours' but no hex values exist anywhere in the repo (`src/core/constants.js` has no zone palette) and \u00a78 names them only as green/blue/orange/purple. Item 18 requires the panel's `z-index` to be 'below the `ui` module's HUD', but `#ui`'s root sets no z-index (ui/styles.js only sets 5/20/50 on descendants), so the comparison has no operand.",
+   "fix": "Put the four hexes in \u00a78 and reference them from item 17; and in item 18 replace the z-index clause with a concrete pair ('`#sim-ui` sets `z-index: 3`; a core request raises `#ui` to 10') or drop it and rely on the existing non-overlap check in `dev_all12.png`."
+  },
+  {
+   "property": "2 (falsifiable) \u2014 minor",
+   "problem": "Item 7 states 'profiling lines are permitted in `selftest.mjs` only', which contradicts ARCHITECTURE \u00a711 ('no Date.now()/performance.now() in module logic except for profiling'), the r1 critic's explicit acceptance of the pre-roll `performance.now` in index.js, and \u00a75's own budget row, which is checked via 'the `log.info` pre-roll line' \u2014 a line that requires timing inside index.js. No damage from the operative grep (it matches `Math.random` and `Date.now()` only), but the prose invites a builder to delete the measurement \u00a75 depends on.",
+   "fix": "Change the parenthetical to: 'the grep excludes selftest.mjs because it profiles; `performance.now()` remains permitted for the pre-roll timing line in index.js and nowhere else in logic.'"
+  }
+ ],
+ "strengths": [
+  "World-data block in \u00a72 is a verbatim copy of ARCHITECTURE \u00a73's `economy` section (checked character by character), and the \u00a715 extensions are correctly attributed rather than invented.",
+  "Every dependency API in \u00a77 was verified against the real code and is correct: zoning `paint/refresh/freeLots/lotAt/cellAt/stats`, buildings `requestSpawn(lot)/setLevel/demolish/get/at/count/flush/spawnFreeLots/stats` (and the absence of `requestLevelUp`), `world.roads.addNode/addEdge` installed by roads/network.js:288-289, `ctx.rng` (float/range/int-inclusive/bool/pick/weighted/gauss/shuffle/fork), `ctx.clock.dayLengthSeconds=600`, `ctx.assets.procedural.gradient({size,stops,horizontal,srgb})`, `ctx.camera.registerPreset`, `environment.setupMaterial/hookScene`, and save.js's dependency-ordered `await deserialize`. Nothing is invented.",
+  "Line-level citations are accurate: `src/main.js:88` really is the `showcase=all -> democity` line, `src/core/debug.js:24` really is the `heapMB: performance.memory ? ... : null` line, democity's `showcase.setup` really is an empty function. The \u00a78 claim that the industrial wedge's area-weighted centroid is ~(500,0) computes to 496 m from the actual DISTRICT table in virtualcity.js.",
+  "Known failure modes (\u00a76) are all real r1 findings with the critic's own numbers (55.6 vs 43, 7.4%/172, 0.0% unemployment, 74->83 monotone, 780 px panel, tick drift of 45, `e.money = e.money ?? 150000`, `requestLevelUp` missing) \u2014 zero generic advice.",
+  "Budget (\u00a75) is consistent with ARCHITECTURE \u00a79 in every row (module ms tighter than the 2 ms cap, init 2.5 s inside 15 s, triangles inside 3 M, in-game draw calls 0 matching \u00a79's allocation table which omits simulation), and item 25 correctly refuses to apply a frame-level budget to a scene the module does not own.",
+  "Role separation is deliberate and mostly clean: determinism, instancing, allocation, reporting and never-inflate are delegated to BUILDER.md by name; the non-visual scoring definition is delegated to CRITIC.md; where a generic failure mode is repeated, the spec says so explicitly and adds only the module-specific number.",
+  "Prerequisite gaps and ownership disputes are pre-resolved rather than left to round 2: the democity-stub branch in item 12, the critic-vs-builder tiling/horizon script ownership with 'the critic's run stands', the explicit permission to shrink the backdrop, the `max(0, ...)` floor on the milestone-reward ceiling, and the virtual-city DISTRICT table declared contract.",
+  "The economy half is genuinely mechanical: items 1-5 and 7-11 are all thresholds over a named JSON with a named producing command and a named probe handle (`window.__sim.registry.modules.get('simulation').api`), and item 10's tick arithmetic (PREROLL_DAYS*2400 + hour*100) is internally consistent at all four times."
+ ],
+ "verdict": "8.0 \u2014 FAIL (pass is 8.5). This is the strongest module spec in the repo and it is not a 9. Property-by-property it is nearly complete: \u00a72 is a verbatim \u00a73 copy, every one of the ~40 dependency signatures in \u00a77 checks out against the real code, the three line-number citations are exact, \u00a76's failure modes are all r1's own numbers, \u00a75 is consistent with ARCHITECTURE \u00a79 in every row, and the hard ownership questions (who runs tiling.mjs, what happens when the democity stub blocks item 12, whether shrinking the backdrop is cheating) are pre-resolved in writing. Role separation is handled by delegation, not duplication.\n\nIt fails on the two lenses that matter. As a builder I counted about ten places I would have to guess, and four of them are load-bearing: how a blackout is distinguished from the permanently-zero stub coverage (the spec's literal instruction cannot fire the item, and the kind names it uses are not the kind names the code queries \u2014 a defect that also leaves real-services integration dead); whether population 13 000 passes item 5 or fails it on `milestone.level`; how to compute the texture-memory number; and how `Panel.update` is instrumented for item 27. As a critic I can mechanically grade roughly 19 of the 27 items. Of the remaining eight, item 6 cannot be independently reproduced at all, item 23's label clause asks for a field the contract it defines does not contain, item 20's horizon detector locks onto the sculpture precisely when the builder succeeds at the fade, item 21's 'no emissive brighter than its pool' has no method and inverts the physics of every night reference it cites, item 14's pollution clause omits the sampling radius its sibling clause supplies, and item 24's visual half has no anchor.\n\nNone of these are style complaints; each is a specific round-2 argument with a named cost. Fixing the top eight gaps \u2014 most are one or two sentences \u2014 puts this at 9."
+}
