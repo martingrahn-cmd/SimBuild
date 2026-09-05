@@ -1,0 +1,56 @@
+{
+  "status": {
+    "status": "ready",
+    "errors": 0,
+    "ms": 0.1,
+    "initMs": 105
+  },
+  "stats": {
+    "edges": 70,
+    "nodes": 50,
+    "tris": 55587,
+    "meshes": 16,
+    "bridges": 3,
+    "flattenCalls": 1,
+    "terrainVerts": 9733,
+    "ms": 503.40000000037253
+  },
+  "checks": {
+    "noTerrainThroughRoad": true,
+    "ringDetected": true,
+    "roundaboutNodes": true,
+    "rebuildIdempotent": false,
+    "orphanNodesRemoved": true,
+    "lampsAndFrontage": true
+  },
+  "initial": {
+    "nodes": 50,
+    "edges": 70,
+    "meshes": 16,
+    "tris": 55587
+  },
+  "terrain": {
+    "samples": 26414,
+    "sunk": 0,
+    "worst": 0,
+    "worstAt": null,
+    "above": 28
+  },
+  "landBridges": [],
+  "rings": 8,
+  "roundaboutNodes": 4,
+  "idempotent": {
+    "tris0": 55587,
+    "tris1": 55587,
+    "verts0": 9733,
+    "verts1": 1,
+    "heightsChanged": 0,
+    "ms": 484
+  },
+  "lamps": 4,
+  "frontage": 2,
+  "roadsOnlyDrawCalls": 16,
+  "allDrawCalls": 38,
+  "errors": [],
+  "consoleErrors": []
+}

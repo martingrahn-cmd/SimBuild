@@ -8,7 +8,8 @@
 import * as THREE from 'three';
 
 export const VERTEX_PARS = /* glsl */`
-attribute vec4 aChunk;
+attribute vec4 aChunk;   // originX, originZ, size, lod
+attribute vec4 aNbr;     // lod of the -x, +x, -z, +z neighbour chunks (edge stitching)
 uniform highp sampler2D uHeightTex;
 uniform sampler2D uNormalTex;
 uniform float uWorldMin;
@@ -21,9 +22,28 @@ varying vec3 vWPos;
 // used by both the lit material and the depth (shadow) material
 export const VERTEX_BEGIN = /* glsl */`
 vec2 tWxz = aChunk.xy + position.xz * aChunk.z;
-ivec2 tGi = ivec2((tWxz - uWorldMin) / uCell + 0.5);
-float tH = texelFetch(uHeightTex, tGi, 0).r;
-tH -= position.y * (5.0 + aChunk.w * 7.0) * uSkirt + uLodDrop;   // constant drop: no caster step (= shadow line) at LOD seams
+ivec2 tOi = ivec2((aChunk.xy - uWorldMin) / uCell + 0.5);   // chunk origin texel
+vec2 tRel = position.xz * 32.0;                              // texel offset inside the chunk (chunk = 32 cells)
+float tH;
+// edge vertices that face a coarser neighbour are snapped onto that neighbour's (linear) edge: crack-free seams
+float tNb = -1.0;
+bool tEx = position.x < 0.001 || position.x > 0.999;
+bool tEz = position.z < 0.001 || position.z > 0.999;
+if (tEx) tNb = position.x < 0.5 ? aNbr.x : aNbr.y;
+else if (tEz) tNb = position.z < 0.5 ? aNbr.z : aNbr.w;
+if (tNb > aChunk.w + 0.5) {
+  float tS = exp2(tNb);                                      // texels per coarse cell
+  float tA = tEx ? tRel.y : tRel.x;
+  float t0 = floor(tA / tS + 1e-4) * tS;
+  float tF = clamp((tA - t0) / tS, 0.0, 1.0);
+  float t1 = min(t0 + tS, 32.0);
+  ivec2 i0 = tEx ? ivec2(int(tRel.x + 0.5), int(t0 + 0.5)) : ivec2(int(t0 + 0.5), int(tRel.y + 0.5));
+  ivec2 i1 = tEx ? ivec2(int(tRel.x + 0.5), int(t1 + 0.5)) : ivec2(int(t1 + 0.5), int(tRel.y + 0.5));
+  tH = mix(texelFetch(uHeightTex, tOi + i0, 0).r, texelFetch(uHeightTex, tOi + i1, 0).r, tF);
+} else {
+  tH = texelFetch(uHeightTex, tOi + ivec2(tRel + 0.5), 0).r;
+}
+tH -= position.y * 0.8 * uSkirt + uLodDrop;   // token skirt (seams are stitched); constant drop = no caster step at LOD seams
 vec3 transformed = vec3(tWxz.x, tH, tWxz.y);
 vWPos = transformed;
 `;
@@ -100,7 +120,12 @@ vec4 mac2 = vec4(0.5), mac3 = vec4(0.5);
 vec4 mac2 = texture2D(uMacro, wp / 170.0 + 0.37);
 vec4 mac3 = texture2D(uMacro, wp / 41.0 + 0.71);
 #endif
-float fine = clamp(land.a + (texture2D(uMacro, rotC0 * wp / 11.0 + 0.19).r - 0.5) * 0.7, 0.0, 1.0);
+vec4 macF = texture2D(uMacro, rotC0 * wp / 11.0 + 0.19);
+float fine = clamp(land.a + (macF.r - 0.5) * 0.7, 0.0, 1.0);
+// land-cover edges: re-threshold the 4 m/texel map with the fine noise so patch borders are organic, not blocky
+float landDirt = smoothstep(0.22, 0.78, land.r + (macF.g - 0.5) * 0.55 + (mac3.r - 0.5) * 0.25);
+float landLush = smoothstep(0.15, 0.85, land.b + (macF.b - 0.5) * 0.4);
+land.r = landDirt; land.b = landLush;
 
 float slope = 1.0 - gN.y;
 float alt = smoothstep(140.0, 330.0, th);
@@ -140,7 +165,10 @@ if (wGrass > 0.02) {
   vec2 uvC = (rotD * wp + (mac.ba - 0.5) * 11.0) / 47.0;
   float lB = dot(texture2D(uGrassMap, uvB).rgb, LUMW), lC = dot(texture2D(uGrassMap, uvC).rgb, LUMW);
   float lum = min(1.7, mix(lB, lC, smoothstep(0.3, 0.7, mac2.g)) / 0.125);
-  float det = mix(1.0, lum, 0.5 - 0.25 * far);
+  float det = mix(1.0, lum, 0.55 - 0.15 * far);
+  // aerial grain: a third, unwarped coarse sample at 23 m keeps 0.5-3 m texture alive where the fine layer is gone
+  float lD = dot(texture2D(uGrassMap, (rotD * wpR) / 23.0 + 0.41).rgb, LUMW) / 0.125;
+  det *= mix(1.0, 0.7 + 0.3 * lD, (1.0 - nearK) * 0.8 + 0.2);
   float grassAO = 1.0;
   vec3 hue = vec3(1.0);
   #ifndef T_NO_FINE
@@ -177,11 +205,11 @@ if (wDirt > 0.02) {
   vec2 uvB = (wpR + (mac.ba - 0.5) * 14.0) / 38.0;
   vec3 cd = texture2D(uDirtMap, uvB).rgb;
   float dl = dot(cd, LUMW) / 0.09;
-  vec3 c = mix(vec3(0.125, 0.095, 0.058), vec3(0.215, 0.180, 0.120), mac2.b) * mix(1.0, dl, 0.45 - 0.2 * far) * (0.85 + 0.3 * fine);
+  vec3 c = mix(vec3(0.092, 0.082, 0.062), vec3(0.185, 0.165, 0.125), mac2.b) * mix(1.0, dl, 0.45 - 0.15 * far) * (0.85 + 0.3 * fine);
   if (nearK > 0.001) {
     vec2 uvA = wp / 6.0;
     vec3 cn = texture2D(uDirtMap, uvA).rgb;
-    c = mix(c, c * normalize(cn + 0.02) * 1.6 * (0.5 + 0.5 * dot(cn, LUMW) / 0.09), nearK * 0.5);
+    c = mix(c, c * normalize(cn + 0.02) * 1.6 * (0.5 + 0.5 * dot(cn, LUMW) / 0.09), nearK * 0.3);
     vec3 n2 = tNor(uDirtNor, uvA);
     pert += vec3(n2.x, 0.0, n2.y * uNormalFlip) * wDirt * 0.8;
   }
@@ -307,7 +335,7 @@ export function createTerrainMaterial(data, tex, opts = {}) {
       .replace('#include <aomap_fragment>', 'reflectedLight.indirectDiffuse *= splatAO;\nreflectedLight.directDiffuse *= mix(1.0, splatAO, 0.5);\nreflectedLight.indirectSpecular *= splatAO;');
     mat.userData.shader = shader;
   };
-  mat.customProgramCacheKey = () => 'terrain-splat-v2:' + Object.keys(mat.defines || {}).join(',');
+  mat.customProgramCacheKey = () => 'terrain-splat-v3:' + Object.keys(mat.defines || {}).join(',');
   mat.userData.uniforms = uniforms;
   return mat;
 }
@@ -353,7 +381,7 @@ vec3 splatN = gN;`)
       .replace('#include <normal_fragment_begin>', 'float faceDirection = gl_FrontFacing ? 1.0 : - 1.0;\nvec3 normal = normalize((viewMatrix * vec4(splatN, 0.0)).xyz);\nvec3 nonPerturbedNormal = normal;')
       .replace('#include <normal_fragment_maps>', '');
   };
-  mat.customProgramCacheKey = () => 'terrain-lite-v2';
+  mat.customProgramCacheKey = () => 'terrain-lite-v3';
   return mat;
 }
 
@@ -373,7 +401,7 @@ export function createTerrainDepthMaterial(data) {
       .replace('#include <common>', '#include <common>\n' + VERTEX_PARS)
       .replace('#include <begin_vertex>', VERTEX_BEGIN);
   };
-  mat.customProgramCacheKey = () => 'terrain-depth-v2';
+  mat.customProgramCacheKey = () => 'terrain-depth-v3';
   return mat;
 }
 

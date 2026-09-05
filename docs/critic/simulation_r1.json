@@ -1,0 +1,40 @@
+{
+  "module": "simulation",
+  "round": 1,
+  "score": 6.5,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 32,
+  "apiContractOk": true,
+  "issues": [
+    { "rank": 1, "severity": "major", "title": "Lawn tiling is obvious at every wide zoom", "detail": "6000 m plane with a 13 m photo repeat; the two-sample rotated blend leaves a regular diagonal lattice/checker across aerial, skyline and stats frames, and skyline frames end in a razor horizon with no aerial perspective. Use per-cell random rotation/offset (hex/Wang tiling), a 200-400 m macro octave that modulates scale, fade fully to the environment fog colour beyond ~2 km, or stage on the terrain module's ground when available.", "evidence": "shots/simulation/r1/aerial_12.png" },
+    { "rank": 2, "severity": "major", "title": "Nights are dusk: lawn, trees and hedges fully lit at 22:00", "detail": "aerial_22 mean luminance 55.6, street_22 88, closeup_22 81 (environment's own night frame: 43). The ground shader's tint*1.45 boost and the foliage indirectDiffuse += 0.08 term keep everything lit; the emissive bars light nothing around them. Remove the x1.45, scale ground/foliage albedo by (1-0.5*night), add a few point lights or emissive pool decals at the plinths.", "evidence": "shots/simulation/r1/aerial_22.png" },
+    { "rank": 3, "severity": "major", "title": "Economy balance is flat: 0.0% unemployment for 90 days, monotone treasury, near-empty C/I/O bars", "detail": "Selftest: unemployment 0.0% every day (outsideJobs 220 + capacity always >= labour), happiness 74->83% monotone, net income never dips, treasury a straight climb dominated by milestone rewards; demand C 10-15%, I 13-15%, O 4% (builder claimed 25-45%). Shrink outsideJobs with population, target 3-6% frictional unemployment, scale service costs with milestones, size rewards to ~3 days of net, give C/I/O a balanced-market floor of ~0.3.", "evidence": "shots/simulation/r1/stats_12.png" },
+    { "rank": 4, "severity": "major", "title": "Panel is clipped at 1280x720", "detail": "The ~780 px tall absolute-positioned panel loses the Activity chart and footer below a 720 px viewport; no scroll or compact mode. Add max-height: calc(100vh - 36px) with overflow-y auto, or a compact layout below 800 px.", "evidence": "shots/simulation/r1/stats_12_720p.png" },
+    { "rank": 5, "severity": "major", "title": "deserialize() leaves derived fields zeroed for one tick; reset() keeps the old treasury", "detail": "Immediately after deserialize(): jobs, employed, income, expenses, net, households, housingVacancy = 0, landValue 0.3, attractiveness 0.5 until the next step (apicheck roundTripRestores=false; replay after load is identical). reset() does e.money = e.money ?? 150000 so a reset keeps the current money (probe: 213,866). Factor a _derive() out of step() and call it at the end of deserialize(); reset money to a START_MONEY constant.", "evidence": "shots/simulation/r1/apicheck.out.json" },
+    { "rank": 6, "severity": "minor", "title": "Panel clock disagrees with scene time and screenshots are not repeatable", "detail": "Economy hour runs at x20 while ?time= freezes the sun: 12:50 at noon, 18:21 at 17:30, 22:38 at 22:00; tick counter differs per run (145,250/145,285/145,295). In frozen-clock/headless mode pre-roll to exactly the clock hour and hold; drive the panel clock from world.time.hour.", "evidence": "shots/simulation/r1/aerial_17p5.png" },
+    { "rank": 7, "severity": "minor", "title": "Hedges read as green static", "detail": "Jittered boxes with an 8% alpha-test cut-out of a 256^2 canvas texture, hard-cut ends, no base AO; visible in every street/pillars/closeup frame. Use layered leaf cards or a 1k tileable hedge texture with rounded end caps and a dark base band.", "evidence": "shots/simulation/r1/street_12.png" },
+    { "rank": 8, "severity": "minor", "title": "Trees are lollipops", "detail": "Icosahedron canopies and stacked cones with one cut-out texture, no LOD/impostors, no wind, 300 instances; crude within closeup radius. Leaf-card canopies for 3 species, impostors for the far ring, 2x density.", "evidence": "shots/simulation/r1/closeup_12.png" },
+    { "rank": 9, "severity": "minor", "title": "Skyline frames washed out with a hard horizon", "detail": "skyline_17p5 mean 172 with 7.4% blown pixels; all skyline frames end in a sharp line with no haze. Partly environment (its r2 verdict flags 17:30), but the 6 km plane and the 45% distance fade are this module's: fade fully to fog colour beyond 2 km.", "evidence": "shots/simulation/r1/skyline_17p5.png" },
+    { "rank": 10, "severity": "minor", "title": "Data plaza legibility: treasury row hides the other rows, labels unreadable from standard cameras", "detail": "From street/pillars cameras the 30-bar treasury row is an opaque wall in front of population and jobs; plinth label strips are only legible from the pillars preset. Step or fan the rows, thin the bars, add labels on the plinth top faces.", "evidence": "shots/simulation/r1/street_17p5.png" },
+    { "rank": 11, "severity": "minor", "title": "Cross-module coupling: panel mounts into #ui and imports ui's fonts", "detail": "panel.js appends to the ui module's DOM root and imports ../ui/fonts/*.woff2. Mount under a module-owned root and load the font from public/assets via the manifest.", "evidence": "src/modules/simulation/panel.js" }
+  ],
+  "strengths": [
+    "Deterministic core: same seed => byte-identical 90-day state in node and across two headless page loads; save/load resume identical; 11 us/tick; selftest.mjs runs without a browser",
+    "Clean event contract: sim:tick at fixed 4 Hz game time accumulated from time:tick x speed, sim:demand every 25 ticks, payload objects reused, tick-drop guard with one warning",
+    "Every hook into other modules tolerates stubs (freeLots, requestSpawn, coverage, isWater, road edges); the virtual city makes the showcase self-sufficient",
+    "Scope beyond spec already present: milestones with unlocks/rewards, loans, 256^2 pollution/noise/land-value grids at world.economy.grids, per-building service levels, activity curves for traffic and lights",
+    "The statistics panel is the closest thing in the project to CS2's HUD: dark glass, Aileron, tabular numbers, KPI grid with trends, milestone badge, RCI bars, sparklines, budget bars, 24 h activity curve",
+    "Bars/pillars glass shader (gradient, cap, 2 m floor lines, night emissive) and running-bond paving with per-slab tone and grime are solid material work",
+    "Draw-call discipline: 10 meshes, all instanced or merged, 32 draws including CSM passes, zero console errors from the module"
+  ],
+  "summary": "Deterministic, well-engineered economy (byte-identical runs, exact save/load replay, 4 Hz fixed step, stub-tolerant, CS2-grade stats panel) let down by flat balance (0% unemployment, straight-line treasury, near-empty C/I/O bars), a 720p panel clip, a reset()/deserialize() correctness gap, and a showcase plaza whose 6 km lawn shows an obvious tiling lattice, dusk-bright nights, static-noise hedges and lollipop trees. 6.5, not 8.5.",
+  "shots": [
+    "shots/simulation/r1/aerial_6p5.png", "shots/simulation/r1/aerial_12.png", "shots/simulation/r1/aerial_17p5.png", "shots/simulation/r1/aerial_22.png",
+    "shots/simulation/r1/street_6p5.png", "shots/simulation/r1/street_12.png", "shots/simulation/r1/street_17p5.png", "shots/simulation/r1/street_22.png",
+    "shots/simulation/r1/skyline_6p5.png", "shots/simulation/r1/skyline_12.png", "shots/simulation/r1/skyline_17p5.png", "shots/simulation/r1/skyline_22.png",
+    "shots/simulation/r1/closeup_6p5.png", "shots/simulation/r1/closeup_12.png", "shots/simulation/r1/closeup_17p5.png", "shots/simulation/r1/closeup_22.png",
+    "shots/simulation/r1/stats_12.png", "shots/simulation/r1/stats_22.png", "shots/simulation/r1/pillars_12.png", "shots/simulation/r1/pillars_22.png",
+    "shots/simulation/r1/stats_12_720p.png"
+  ]
+}

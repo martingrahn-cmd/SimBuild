@@ -1,0 +1,26 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=terrain&time=12&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "terrain",
+  "time": 12,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+  "errors": [],
+  "warnings": [
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/gen/landcover.js net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/mesh.js?t=1788583594119 net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/gen/heightmap.js net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/gen/noise.js net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/material.js?t=1788583611000 net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/showcase.js net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/data.js net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/detail.js?t=1788583611000 net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/src/modules/terrain/water.js net::ERR_ABORTED"
+  ],
+  "png": "shots/terrain/dev/g_street_12.png"
+}

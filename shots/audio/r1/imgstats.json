@@ -1,0 +1,58 @@
+{
+  "shots/audio/r1/closeup_6p5.png": {
+    "mean": 94.6,
+    "sd": 27.9,
+    "pctOver240": 0,
+    "pctUnder8": 0,
+    "rgb": [
+      95,
+      97,
+      70
+    ],
+    "sky": 132.9,
+    "ground": 83.2,
+    "bootFrame": false
+  },
+  "shots/audio/r1/closeup_12.png": {
+    "mean": 20.3,
+    "sd": 8.7,
+    "pctOver240": 0,
+    "pctUnder8": 0,
+    "rgb": [
+      14,
+      21,
+      31
+    ],
+    "sky": 15.9,
+    "ground": 19,
+    "bootFrame": true
+  },
+  "shots/audio/r1/closeup_17p5.png": {
+    "mean": 97.7,
+    "sd": 26.6,
+    "pctOver240": 0,
+    "pctUnder8": 0,
+    "rgb": [
+      100,
+      100,
+      72
+    ],
+    "sky": 123.1,
+    "ground": 89.5,
+    "bootFrame": false
+  },
+  "shots/audio/r1/closeup_22.png": {
+    "mean": 56.2,
+    "sd": 19.1,
+    "pctOver240": 0.02,
+    "pctUnder8": 0.06,
+    "rgb": [
+      47,
+      60,
+      45
+    ],
+    "sky": 75.6,
+    "ground": 52.3,
+    "bootFrame": false
+  }
+}

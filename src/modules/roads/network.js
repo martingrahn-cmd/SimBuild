@@ -38,7 +38,7 @@ export class Network {
     }
     const id = this._nextId++;
     const y = this.world.terrain.getHeight(x, z);
-    this.nodes.set(id, { id, x, y, z, edges: new Set() });
+    this.nodes.set(id, { id, x, y, z, designY: y, edges: new Set() });
     return id;
   }
 
@@ -68,6 +68,9 @@ export class Network {
     this.cache.delete(id);
     const na = this.nodes.get(e.a), nb = this.nodes.get(e.b);
     na?.edges.delete(id); nb?.edges.delete(id);
+    // orphan cleanup: a node with no edges left disappears with its last edge
+    if (na && na.edges.size === 0) this.nodes.delete(na.id);
+    if (nb && nb.edges.size === 0) this.nodes.delete(nb.id);
     this.dirty = true;
     if (!silent) this._bump({ added: [], removed: [id], nodes: [e.a, e.b] });
   }
@@ -122,10 +125,30 @@ export class Network {
       let dx = xs[i1] - xs[i0], dz = zs[i1] - zs[i0];
       const l = Math.hypot(dx, dz) || 1; tx[i] = dx / l; tz[i] = dz / l;
     }
-    const ys = new Float64Array(n);
-    for (let i = 0; i < n; i++) ys[i] = this.world.terrain.getHeight(xs[i], zs[i]);
+    // design heights: the terrain as it was when the edge was drawn. The builder cuts/fills the terrain under the
+    // road afterwards, so re-sampling live heights would move the road on every rebuild; design heights make
+    // rebuild() idempotent. They are refreshed only when something else (a sculpt tool) edits the terrain.
+    const ys = new Float64Array(n), design = new Float64Array(n);
+    for (let i = 0; i < n; i++) ys[i] = design[i] = this.world.terrain.getHeight(xs[i], zs[i]);
     e.length = len;
-    this.cache.set(e.id, { n, xs, zs, ys, s, tx, tz, len, water: new Uint8Array(n), terrain: new Float64Array(n), bridge: new Uint8Array(n) });
+    this.cache.set(e.id, { n, xs, zs, ys, design, s, tx, tz, len, water: new Uint8Array(n), terrain: new Float64Array(n), bridge: new Uint8Array(n) });
+  }
+
+  /** Re-sample design heights for edges touching a terrain region ({x,z,radius} or {all:true}). Returns count. */
+  resampleDesign(region) {
+    let count = 0;
+    for (const e of this.edges.values()) {
+      const c = this.poly(e.id);
+      let hit = !!region?.all;
+      if (!hit && region && Number.isFinite(region.x)) {
+        const r = (region.radius ?? 20) + 40;
+        for (let i = 0; i < c.n && !hit; i++) { const dx = c.xs[i] - region.x, dz = c.zs[i] - region.z; if (dx * dx + dz * dz < r * r) hit = true; }
+      }
+      if (!hit) continue;
+      for (let i = 0; i < c.n; i++) c.design[i] = this.world.terrain.getHeight(c.xs[i], c.zs[i]);
+      count++;
+    }
+    return count;
   }
 
   poly(edgeId) {
@@ -155,10 +178,23 @@ export class Network {
     const k = (d - c.s[lo]) / seg;
     out.x = c.xs[lo] + (c.xs[hi] - c.xs[lo]) * k;
     out.z = c.zs[lo] + (c.zs[hi] - c.zs[lo]) * k;
-    out.y = c.ys[lo] + (c.ys[hi] - c.ys[lo]) * k;
+    // height: the builder's smoothed profile blended analytically into the node plateaus (exact at the trims,
+    // so strips meet intersection polygons without a step); before any rebuild, the design heights
+    out.y = c.blend ? this.blendY(c, d, c.smooth[lo] + (c.smooth[hi] - c.smooth[lo]) * k) : c.ys[lo] + (c.ys[hi] - c.ys[lo]) * k;
     let tx = c.tx[lo] + (c.tx[hi] - c.tx[lo]) * k, tz = c.tz[lo] + (c.tz[hi] - c.tz[lo]) * k;
     const l = Math.hypot(tx, tz) || 1; out.tx = tx / l; out.tz = tz / l;
     return out;
+  }
+
+  /** Node-plateau blend of a smoothed height ysm at arc distance d (c.blend = {yA,yB,tA,tB,L} set by the builder). */
+  blendY(c, d, ysm) {
+    const B = c.blend;
+    let y = ysm;
+    const kA = (d - B.tA) / B.L;
+    if (kA <= 0) y = B.yA; else if (kA < 1) y = B.yA + (ysm - B.yA) * (kA * kA * (3 - 2 * kA));
+    const kB = (c.len - B.tB - d) / B.L;
+    if (kB <= 0) y = B.yB; else if (kB < 1) y = B.yB + (y - B.yB) * (kB * kB * (3 - 2 * kB));
+    return y;
   }
 
   // ------------------------------------------------------------------ public API (world.roads)
@@ -239,7 +275,7 @@ export class Network {
         if (d2 < bestD2) {
           bestD2 = d2;
           const d = c.s[i - 1] + (c.s[i] - c.s[i - 1]) * k;
-          best = { edge: e, t: d / c.len, point: { x: px, y: c.ys[i - 1] + (c.ys[i] - c.ys[i - 1]) * k, z: pz }, dist: Math.sqrt(d2) };
+          best = { edge: e, t: d / c.len, point: { x: px, y: this.sampleAt(e.id, d, this._tmpS || (this._tmpS = {})).y, z: pz }, dist: Math.sqrt(d2) };
         }
       }
     }

@@ -1,0 +1,42 @@
+{
+ "module": "terrain",
+ "round": 2,
+ "summary": "Round 2 fixes in critic rank order, all verified by screenshot (shots/terrain/rdev2, 16/16 OK, 0 console errors, all modules ready in ?showcase=all). (1) Confetti on water: the ground clutter is hidden during the reflection pass and, the real culprit found this round, the reflection lookup distortion was 3.0*w (36% of the screen) so the sunlit far bank was scattered across the river; now 0.35*w \u2014 rivers show a clean rippled bank/sky reflection. (2) Aerial relief/contrast: aerial_12 luminance std 8.8 -> 17.3 (p5-p95 74-129 vs 118-146): darker measured-albedo palette, land-cover map (1024\u00b2, organic edges re-thresholded in-shader with the fine noise), Worley field patchwork, dirt patches/tracks, forest-floor patches, a third unwarped grass sample for 0.5-3 m grain at 500 m, more photo-detail contrast at distance; and LOD seams are now stitched in the vertex shader (aNbr neighbour-LOD attribute snaps finer edges onto coarser ones), which removed the faint chunk-grid lines the aerial showed. (3) Street-level ground: two instanced clutter layers of tapered 4-row blade clumps (7 blades, 14k near instances at 0.45 m; 5-blade wide tufts to 140 m) with per-clump hue/brightness/dryness variation, dithered shrink fade, root AO, and no fill when the camera is high; both coloured from the same grass palette as the ground and lit with the ground normal. (4) Night: clutter uses the ground normal + palette so nothing self-lights (street_22/closeup_22 verified). (5) Mountains: soft-capped ridged peaks, secondary ridges, talus apron, rock->scree->grass band over 30-60 m; the west headlands are now rounded fbm domes with a damped rocky crest (the 'Mount Doom' cone is gone) and the island has a rounded summit. (6) Shore: sand width varies with slope+noise, grey-tan tint, mud/reed banks alternate with beaches, softened wet line. (7) Shadows cast from the visible LOD (no proxy stair-steps; verified aerial_6p5/17p5). (8) Swirl tiling broken by macro patchwork + extra rotated sample. (9) Reflection floor raised 0.16->0.24. (10) Valley preset re-framed from low on the valley wall. Integrator notes: blades/tufts skip world.roads.isRoad(x,z) cells and re-fill on roads:changed / coverage.version change; dirt tint browner (less pink) to restore noon albedo contrast; ?showcase=all aerial 12 shot: 0 errors, 16/16 modules ready, 32 draws. Core requests updated (docs/core-requests/terrain.md: sky dome per rendering camera still open; gauntlet --timeout pass-through). No git commits.",
+ "drawCalls": 19,
+ "triangles": 1018696,
+ "errors": 0,
+ "screenshotsViewed": [
+  "shots/terrain/rdev2/aerial_6p5.png",
+  "shots/terrain/rdev2/aerial_22.png",
+  "shots/terrain/rdev2/street_6p5.png",
+  "shots/terrain/rdev2/street_17p5.png",
+  "shots/terrain/rdev2/skyline_12.png",
+  "shots/terrain/rdev2/skyline_22.png",
+  "shots/terrain/rdev2/closeup_12.png",
+  "shots/terrain/rdev2/closeup_22.png",
+  "shots/terrain/dev/h_aerial_12.png",
+  "shots/terrain/dev/h_street_12.png",
+  "shots/terrain/dev/h_closeup_17p5.png",
+  "shots/terrain/dev/i_street_12.png",
+  "shots/terrain/dev/i_closeup_17p5.png",
+  "shots/terrain/dev/i_skyline_6p5.png",
+  "shots/terrain/dev/i_coast_12.png",
+  "shots/terrain/dev/j_closeup_17p5.png",
+  "shots/terrain/dev/j_coast_12.png",
+  "shots/terrain/dev/j_street_22.png",
+  "shots/terrain/dev/j_valley_12.png",
+  "shots/terrain/dev/all_aerial_12.png",
+  "shots/terrain/dev/g_aerial_12.png"
+ ],
+ "remainingWeaknesses": [
+  "Noon aerial is still soft and low-contrast overall (mean 102, p95 129): flat plains cast no shadows and the environment's noon haze/exposure veils everything; CS2's crispness at 500 m also comes from trees/buildings that other modules add.",
+  "Street level is a clump-based clutter field, not CS2's continuous grass carpet: bare ground shows between clumps beyond ~10 m and the blade layer's fade at 17-30 m is still faintly visible as a band.",
+  "Mid-range tufts read as small dark specks on the plain (closeup/valley); they could be lighter and shadow-casting.",
+  "Water reflection still lacks the sky dome's clouds/sun disc (environment dome follows only the main camera; core request open) and the reflected bank is vertically over-stretched by the ripple tilt at grazing angles.",
+  "Land-cover 'tracks' and field fence lines are plain dirt lines; without hedge/tree props they can read as worm-like paths from the air.",
+  "Triangles at street/closeup ~1.0 M (of a self-declared 1.3 M) and 19 draw calls of 20 with environment included: little headroom.",
+  "Plains within +-600 m: mean slope 7.6 %, 75 % of cells under 8 % (includes the river valley walls and hill ring); the spec's 'mostly < 8 %' is met only loosely.",
+  "Real-GPU fps not measured (fpsGpu null)."
+ ],
+ "selfScore": 7.3
+}

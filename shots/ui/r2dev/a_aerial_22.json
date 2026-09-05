@@ -1,0 +1,142 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=ui&time=22&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "ui",
+  "time": 22,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 55412,
+  "fps": 13.1,
+  "measuredFrames": 3,
+  "frameMs": 2.4,
+  "drawCalls": 14,
+  "triangles": 42468,
+  "programs": 15,
+  "textures": 25,
+  "geometries": 17,
+  "heapMB": 38.2,
+  "moduleMs": {
+    "environment": 0.5,
+    "ui": 0.10000000149011612
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      193.8,
+      390.7,
+      283.2
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 520
+  },
+  "modules": {
+    "terrain": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.5,
+      "initMs": 108
+    },
+    "roads": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 8
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "services": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "infoviews": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "transit": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/ui/r2dev/a_aerial_22.png"
+}

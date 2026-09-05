@@ -90,9 +90,9 @@ export function generateLandcover(rng, gen, size = 512) {
       const patchN = 0.5 + 0.5 * nA.fbm(x / 80 + 1, z / 80 + 5, 4, 2.0, 0.5) + 0.15 * nA.fbm(x / 18, z / 18, 2);
       let dirt = smoothstep(0.70, 0.81, patchN) * 0.75 * plains;
       const trackN = 1 - Math.abs(nE.fbm(x / 260 + 2, z / 260 + 4, 2, 2.0, 0.5));
-      const track = smoothstep(0.955, 0.985, trackN) * plains * (1 - smoothstep(0.06, 0.12, slope));
-      const fence = (cellKind > 0.45 ? 1 : 0) * (1 - smoothstep(1.5, 5.0, edge)) * plains * 0.8;
-      dirt = Math.max(dirt, track * 0.85, fence * (0.5 + 0.5 * cellKind));
+      const track = smoothstep(0.968, 0.99, trackN) * plains * (1 - smoothstep(0.06, 0.12, slope));
+      const fence = (cellKind > 0.45 ? 1 : 0) * (1 - smoothstep(2.0, 6.0, edge)) * plains * 0.6;
+      dirt = Math.max(dirt, track * 0.7, fence * (0.45 + 0.4 * cellKind));
       dirt = Math.max(dirt, smoothstep(0.25, 0.8, flowV) * 0.6);
       // bare ground where the forest floor is deepest (leaf litter) and on cattle-trodden field corners
       dirt = Math.max(dirt, smoothstep(0.75, 1.0, lush) * 0.35 * (0.5 + 0.5 * nA.fbm(x / 30, z / 30, 2)));

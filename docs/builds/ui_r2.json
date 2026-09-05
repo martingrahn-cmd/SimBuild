@@ -1,0 +1,30 @@
+{
+  "module": "ui",
+  "round": 2,
+  "summary": "Round 2 fixed every ranked critic issue and added the section-15 screens. Layout (issues 1, 2): RCI is a 2x2 grid that fits its 46 px chip; toolbar buttons 44 px with the milestone chip collapsing to badge-only under 1560 px; the sub-panel is positioned with CSS max() so it never overlaps the info/transit panel (has-left) or the right-column panels (has-side); verified by DOM rect checks at 1280x720 and 1920x1080 (no overlaps, RCI children inside their box). Asset cards (3): new cards.js draws 92x58 isometric SVG thumbnails on dark gradient cards for every road (kerbs, sidewalks, lane paint, medians, barriers, one-way arrows), intersection, zone (density blocks), prop, service building (17 kinds), terrain brush, bulldoze and info view. Locked state (4): full-colour icons at 0.72 opacity with a 14 px lock badge and an 'Unlocks at <milestone>' tooltip, on toolbar buttons and cards. Backdrop (5): icosahedron trees replaced by card trees (procedural leaf-cluster alpha atlas, 3 crossed + 2 tilted cards with spherical normals, autumn tints via instanceColor, alpha-tested shadows), ground/trees desaturate and darken at night via a uNight uniform, 210 instanced street lamps with emissive heads plus an instanced additive glow mesh (halo cross + ground pool) that fades in with the night factor. Section 15 (6): main menu (Continue / New game with city name, seed + Random, map preset, budget / Load / Settings), Esc pause menu (pauses the clock, restores on resume), save/load slot panels driven by window.__sim.saves.slots() with Download/Upload JSON and slot delete, settings (quality with apply-and-reload, master volume + mute via modules.audio, autosave, minimap, dev corner, key list), milestone toast (sim:milestone -> toast + chip + unlock refresh), infoview selector (12 views, emits ui:action infoview [name|null]) with a top-left legend panel that honours world.infoview.legend, transit line panel (world.transit.lines or staged Map; ridership, buses stepper, colour swatches, stops, focus/edit/delete actions), photo mode (P / camera button hides the HUD with a fading hint), canvas minimap (terrain height ramp + hillshade + water from world.terrain.heights, roads with bezier ctrl points from world.roads, camera ground footprint, click-to-fly, redraw on terrain:changed/roads:changed, 5 Hz composite), statistics panel with sparklines from world.economy.history and tax/loan controls, journal of past notifications. Dev corner (8) gated behind ?dev=1 / backtick with '—' before frames are counted; single happiness face (9); bordered secondary buttons (10); five right-cluster buttons with real behaviour (11); 22 px chip icons and trend chips (12); icon tabs (7). Service categories are built from world.services.kinds and gated by world.economy.milestone.unlocked. Also fixed a latent SVG path error in the zoning/props tool-mode icons. Verified: 16/16 gauntlet frames (shots/ui/rdev2), 0 console errors, ui ready everywhere, max 14 draws (12 by day, 14 with night glow; in-game DOM UI = 0 draws), 42,468 tris; 720p overlap check, 12 panel screens, behavioural check via Playwright (Esc chain, Space, P, speed buttons, milestone toast, save slot round trip), and ?showcase=all aerial 12 with the real terrain/simulation feeding the minimap and milestone chip (0 errors).",
+  "drawCalls": 14,
+  "triangles": 42468,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/ui/rdev2/aerial_6p5.png", "shots/ui/rdev2/aerial_17p5.png", "shots/ui/rdev2/street_17p5.png", "shots/ui/rdev2/skyline_6p5.png",
+    "shots/ui/rdev2/skyline_12.png", "shots/ui/rdev2/skyline_22.png", "shots/ui/rdev2/closeup_6p5.png", "shots/ui/rdev2/closeup_22.png",
+    "shots/ui/r2dev/a_ui_12.png", "shots/ui/r2dev/a_street_12.png", "shots/ui/r2dev/a_street_22.png", "shots/ui/r2dev/a_aerial_22.png",
+    "shots/ui/r2dev/b_street_22.png", "shots/ui/r2dev/b_closeup_12.png", "shots/ui/r2dev/b_aerial_22.png", "shots/ui/r2dev/c_aerial_12_720p.png",
+    "shots/ui/r2dev/p_lines.png", "shots/ui/r2dev/p_pause.png", "shots/ui/r2dev/p_main.png", "shots/ui/r2dev/p_new.png", "shots/ui/r2dev/p_save.png",
+    "shots/ui/r2dev/p_settings.png", "shots/ui/r2dev/p_services.png", "shots/ui/r2dev/p_info.png", "shots/ui/r2dev/p_photo.png", "shots/ui/r2dev/p_dev.png",
+    "shots/ui/r2dev/p_journal.png", "shots/ui/r2dev/q_zoning.png", "shots/ui/r2dev/q_settings.png", "shots/ui/r2dev/all_aerial_12.png",
+    "shots/ui/r2dev/base_street_22.png"
+  ],
+  "remainingWeaknesses": [
+    "Backdrop buildings are still textured boxes with a window-grid shader (no reveals, balconies, roof clutter); the real buildings/props modules are stubs, so the showcase cannot reuse their meshes yet",
+    "Card trees read well from street level but are recognisably cards at closeup (silhouettes are round blobs; no trunk branching); lamp halos clip to near-white under the night exposure",
+    "Minimap camera footprint is a clamped quadrilateral, not a true trapezoid, when the top of the frame is above the horizon; sample terrain is only used in the ui showcase",
+    "Transit panel and info panel share the left slot (mutually exclusive) — the transit panel is not visible in the default showcase frame (use ?uipanel=lines)",
+    "Statistics sparklines use world.economy.history (daily) only; no fine per-tick history yet, and no per-category budget breakdown",
+    "Policies button emits ui:action policies but has no panel; settings 'quality' applies by reloading the page",
+    "In-game the UI is 0 draw calls; the declared budget (20) is for the showcase backdrop, which uses 12-14 with environment",
+    "Long card labels are ellipsised at 10.5 px (tooltip carries the full name); 720p keeps everything on screen but the info panel scrolls",
+    "Photo mode hint uses a CSS fade (not dt-driven); the 'New game' flow hands map/money over via URL params that core does not consume yet (documented in docs/core-requests/ui.md)"
+  ],
+  "selfScore": 7.9
+}

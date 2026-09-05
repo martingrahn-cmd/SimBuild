@@ -1,5 +1,5 @@
 // Showcase staging for the roads module: a street grid with an avenue, alleys, a crossroads with
-// crosswalks, a roundabout-ish one-way loop, a curved dual-carriageway highway with an on-ramp, and a
+// crosswalks, a roundabout, a curved dual-carriageway highway with an on-ramp, and a
 // street bridge across the river to the north. Everything is derived from world.terrain so it follows the seed.
 
 export const CAMERAS = {
@@ -37,20 +37,23 @@ export function stage(ctx) {
   chain([[-80, 100], [-80, 160]], 'alley');
   // a gently curved residential street off the east side
   {
-    const a = node(200, 160), b = node(300, 230);
-    edge(a, b, 'street', { ctrl: { x: 200, z: 235 } });
-    const c = node(300, 230), d = node(300, 40);
-    edge(c, d, 'street', { ctrl: { x: 320, z: 140 } });
+    const a = node(200, 160), b = node(300, 196);
+    edge(a, b, 'street', { ctrl: { x: 204, z: 204 } });
+    const c = node(300, 196), d = node(300, 40);
+    edge(c, d, 'street', { ctrl: { x: 322, z: 120 } });
   }
 
-  // ---- roundabout-ish one-way loop west of the grid
+  // ---- roundabout west of the grid: an 8-segment one-way ring (bezier arcs) with four radial entries
   {
-    const cx = -200, cz = -40, r = 30;
-    const E = node(cx + r, cz), S = node(cx, cz + r), W = node(cx - r, cz), N = node(cx, cz - r);
-    edge(E, S, 'street', { oneWay: true, ctrl: { x: cx + r, z: cz + r } });
-    edge(S, W, 'street', { oneWay: true, ctrl: { x: cx - r, z: cz + r } });
-    edge(W, N, 'street', { oneWay: true, ctrl: { x: cx - r, z: cz - r } });
-    edge(N, E, 'street', { oneWay: true, ctrl: { x: cx + r, z: cz - r } });
+    const cx = -200, cz = -40, r = 28;
+    const ringIds = [];
+    for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; ringIds.push(node(cx + Math.cos(a) * r, cz + Math.sin(a) * r)); }
+    const rc = r / Math.cos(Math.PI / 8);
+    for (let i = 0; i < 8; i++) {
+      const a = ((i + 0.5) / 8) * Math.PI * 2;
+      edge(ringIds[i], ringIds[(i + 1) % 8], 'street', { oneWay: true, ctrl: { x: cx + Math.cos(a) * rc, z: cz + Math.sin(a) * rc } });
+    }
+    const E = ringIds[0], S = ringIds[2], W = ringIds[4], N = ringIds[6];
     edge(S, node(cx, AVE_Z), 'street');
     edge(E, node(-120, cz), 'street');
     edge(N, node(cx, -200), 'street');

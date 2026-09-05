@@ -253,11 +253,70 @@ const propCard = (kind) => {
 const bulldozeCard = () => wrap(`<g transform="translate(6 1)">${bulldoze().replace(/<\/?svg[^>]*>/g, '')}</g>`, '0 0 44 34');
 const modeIcon = (mode) => {
   const d = { straight: 'M5 26 L27 6', curve: 'M5 26 Q8 6 27 6', free: 'M5 24 C10 6 16 30 27 8', grid: 'M6 6h20v20H6zM16 6v20M6 16h20',
-    snap: 'M8 8h16v16H8z M16 4v8 M16 20v8 M4 16h8 M20 16h8', parallel: 'M8 26 L20 6 M14 26 L26 6', magnet: 'M8 6 v12 a8 8 0 0 0 16 0 V6 h-5 v12 a3 3 0 0 1 -6 0 V6 z' }[mode];
+    snap: 'M8 8h16v16H8z M16 4v8 M16 20v8 M4 16h8 M20 16h8', parallel: 'M8 26 L20 6 M14 26 L26 6', magnet: 'M8 6 v12 a8 8 0 0 0 16 0 V6 h-5 v12 a3 3 0 0 1 -6 0 V6 z',
+    fill: 'M6 6h20v20H6z M6 12h20 M6 18h20 M12 6v20 M18 6v20', paint: 'M20 5 L27 12 L13 26 L6 26 L6 19 z M17 8 L24 15', marquee: 'M6 6h5 M14 6h4 M21 6h5 M6 11v4 M6 18v3 M26 11v4 M26 18v3 M6 26h5 M14 26h4 M21 26h5',
+    single: 'M16 5 v6 M16 21v6 M5 16h6 M21 16h6 M16 12a4 4 0 1 0 0.01 0', line: 'M5 25 L27 7 M5 25 a2 2 0 1 0 0.01 0 M27 7 a2 2 0 1 0 0.01 0 M16 16 a2 2 0 1 0 0.01 0', brush: 'M8 16 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0 M16 4v4 M16 24v4' }[mode] || 'M6 16h20';
   return wrap(`<path d="${d}" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
 };
 
+
+// -------------------------------------------------------------------------------- round 2 additions
+const garbage = () => wrap(`
+  <path d="M16 3 l6 9 h-3.5 l3.5 6 -2.4 1.4 -3.6 -6.2 h-3.5 z" fill="${P.green}"/>
+  <path d="M5 21 l4.5 -9.5 3.2 5.5 -1.7 3 h6.5 v2.8 H8.8 l-1.5 2.6 z" fill="${P.greenD}"/>
+  <path d="M27 21 l-4.5 -9.5 -3.2 5.5 1.7 3 h-6.5 v2.8 h8.7 l1.5 2.6 z" fill="${P.greenL}"/>`);
+const citizens = () => wrap(`
+  <circle cx="16" cy="8" r="4.5" fill="${P.white}"/><path d="M8 26 a8 8 0 0 1 16 0 v2 H8 z" fill="${P.white}"/>
+  <circle cx="7" cy="11" r="3.2" fill="${P.blueL}"/><path d="M1 24 a6 6 0 0 1 9 -5 c-2 1.5 -3.5 4 -3.5 7 H1 z" fill="${P.blueL}"/>
+  <circle cx="25" cy="11" r="3.2" fill="${P.blueL}"/><path d="M31 24 a6 6 0 0 0 -9 -5 c2 1.5 3.5 4 3.5 7 H31 z" fill="${P.blueL}"/>`);
+const journal = () => wrap(`
+  <path d="M6 4 h17 a3 3 0 0 1 3 3 v21 H9 a3 3 0 0 1 -3 -3 z" fill="${P.blueL}"/>
+  <path d="M9 4 h14 v20 H9 a3 3 0 0 0 0 6 h17" fill="none" stroke="${P.blueD}" stroke-width="2"/>
+  <g stroke="${P.blueD}" stroke-width="2" stroke-linecap="round"><path d="M12 10h8M12 14h8M12 18h5"/></g>`);
+const mapIcon = () => wrap(`
+  <path d="M3 8 l9 -3 8 3 9 -3 v19 l-9 3 -8 -3 -9 3 z" fill="${P.green}"/>
+  <path d="M12 5 v19 M20 8 v19" stroke="${P.greenD}" stroke-width="1.6"/>
+  <path d="M5 16 q6 -4 12 0 t12 -2" stroke="${P.blueL}" stroke-width="2.4" fill="none"/>
+  <path d="M8 22 l16 -12" stroke="${P.white}" stroke-width="1.8" stroke-dasharray="3 2"/>`);
+const transitLines = () => wrap(`
+  <path d="M6 24 C6 12 26 20 26 8" stroke="${P.green}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <circle cx="6" cy="24" r="4" fill="${P.white}" stroke="${P.green}" stroke-width="2.5"/>
+  <circle cx="26" cy="8" r="4" fill="${P.white}" stroke="${P.green}" stroke-width="2.5"/>
+  <circle cx="16" cy="16" r="3.2" fill="${P.white}" stroke="${P.green}" stroke-width="2"/>`);
+const trophy = () => wrap(`
+  <path d="M9 4 h14 v9 a7 7 0 0 1 -14 0 z" fill="${P.yellow}"/>
+  <path d="M9 6 H4 v3 a5 5 0 0 0 5 5 z M23 6 h5 v3 a5 5 0 0 1 -5 5 z" fill="${P.yellowD}"/>
+  <rect x="14" y="19" width="4" height="5" fill="${P.yellowD}"/><rect x="9" y="24" width="14" height="4" rx="1" fill="${P.yellowD}"/>
+  <path d="M12 6 h3 v6 h-3 z" fill="#fff4b0" opacity=".5"/>`);
+const save = () => wrap(`
+  <path d="M5 5 h18 l4 4 v18 H5 z" fill="${P.blue}"/><rect x="9" y="5" width="11" height="7" fill="${P.darkD}" opacity=".7"/><rect x="16" y="6" width="3" height="5" fill="${P.blueL}"/>
+  <rect x="9" y="17" width="14" height="10" rx="1" fill="${P.white}" opacity=".9"/>`);
+const load = () => wrap(`
+  <path d="M3 9 h9 l3 3 h14 v15 H3 z" fill="${P.yellow}"/><path d="M3 15 h26 v12 H3 z" fill="${P.yellowD}"/>
+  <path d="M16 17 v8 M12.5 21.5 l3.5 3.5 3.5 -3.5" stroke="${P.white}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+const download = () => wrap(`<path d="M16 4 v16 M9 13 l7 7 7 -7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 24 v4 h22 v-4" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>`);
+const upload = () => wrap(`<path d="M16 20 v-16 M9 11 l7 -7 7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 24 v4 h22 v-4" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>`);
+const trash = () => wrap(`<path d="M7 9 h18 l-1.5 19 h-15 z" fill="currentColor" opacity=".85"/><rect x="5" y="6" width="22" height="3" rx="1" fill="currentColor"/><rect x="12" y="3" width="8" height="3" rx="1" fill="currentColor"/>`);
+const check = () => wrap(`<path d="M6 17 L13 24 L26 9" stroke="currentColor" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+const chevronRight = () => wrap(`<path d="M12 7 L21 16 L12 25" stroke="currentColor" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+const back = () => wrap(`<path d="M20 7 L11 16 L20 25" stroke="currentColor" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+const lockBadge = () => wrap(`<circle cx="16" cy="16" r="15" fill="#0d1219" stroke="#3a4655" stroke-width="1.5"/><rect x="9.5" y="15" width="13" height="10" rx="2" fill="#dbe3ee"/><path d="M12 15 v-3 a4 4 0 0 1 8 0 v3" stroke="#dbe3ee" stroke-width="2.4" fill="none"/>`);
+const bolt = electricity;
+const drop = water;
+const cross = health;
+const flame = fire;
+const badge = police;
+const mortar = education;
+const smog = () => wrap(`<path d="M6 25 a5 5 0 0 1 0 -10 a8 8 0 0 1 15 -3 a6 6 0 0 1 5 13 z" fill="${P.grey}"/><path d="M12 8 c-2 -3 1 -4 -1 -6 M18 7 c-2 -3 1 -4 -1 -6" stroke="${P.greyD}" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="6" y="27" width="20" height="2.5" rx="1" fill="${P.brown}"/>`);
+const density = () => wrap(`<g fill="${P.blue}"><rect x="4" y="18" width="5" height="10"/><rect x="11" y="10" width="5" height="18"/><rect x="18" y="4" width="5" height="24"/><rect x="25" y="14" width="4" height="14"/></g>`);
+const sliders = () => wrap(`<g stroke="${P.greyL}" stroke-width="2.6" stroke-linecap="round"><path d="M5 9h22M5 16h22M5 23h22"/></g><circle cx="11" cy="9" r="3" fill="${P.blue}"/><circle cx="21" cy="16" r="3" fill="${P.blue}"/><circle cx="14" cy="23" r="3" fill="${P.blue}"/>`);
+const speaker = () => wrap(`<path d="M4 12 h6 l7 -6 v20 l-7 -6 H4 z" fill="${P.white}"/><path d="M21 11 a6 6 0 0 1 0 10 M24.5 7.5 a11 11 0 0 1 0 17" stroke="${P.white}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+const monitor = () => wrap(`<rect x="3" y="5" width="26" height="17" rx="2" fill="${P.greyL}"/><rect x="5" y="7" width="22" height="13" fill="${P.blueD}"/><rect x="12" y="23" width="8" height="3" fill="${P.grey}"/><rect x="9" y="26" width="14" height="2" rx="1" fill="${P.grey}"/>`);
+const keyboard = () => wrap(`<rect x="2" y="8" width="28" height="16" rx="2.5" fill="${P.greyL}"/><g fill="${P.dark}"><rect x="5" y="11" width="3" height="3"/><rect x="10" y="11" width="3" height="3"/><rect x="15" y="11" width="3" height="3"/><rect x="20" y="11" width="3" height="3"/><rect x="25" y="11" width="2" height="3"/><rect x="5" y="16" width="3" height="3"/><rect x="10" y="16" width="12" height="3"/><rect x="24" y="16" width="3" height="3"/></g>`);
+const busLine = () => wrap(`<rect x="4" y="6" width="24" height="19" rx="4" fill="${P.green}"/><rect x="6.5" y="9" width="8" height="7" rx="1.5" fill="${P.blueL}"/><rect x="17.5" y="9" width="8" height="7" rx="1.5" fill="${P.blueL}"/><circle cx="10" cy="26" r="3" fill="${P.dark}"/><circle cx="22" cy="26" r="3" fill="${P.dark}"/><path d="M2 29 h28" stroke="${P.green}" stroke-width="2" stroke-dasharray="3 2"/>`);
+
 export const ICONS = {
+  garbage, citizens, journal, map: mapIcon, transitLines, trophy, save, load, download, upload, trash, check, chevronRight, back, lockBadge, bolt, drop, cross, flame, badge, mortar, smog, density, sliders, speaker, monitor, keyboard, busLine,
   roads, zoning, terrain, props, bulldoze, info, electricity, water, health, fire, police, education, transit, parks,
   layers, stats, camera, gear, help, bell,
   play, pause, chevrons, sun, cloud, rain: rainIcon, moon, people, money, face, trendUp, trendDown, close, chevronDown, chevronUp, plus, minus, star,

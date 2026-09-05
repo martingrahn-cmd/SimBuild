@@ -1,0 +1,32 @@
+{
+  "module": "roads",
+  "round": 2,
+  "summary": "Round 2 fixed the critic's ranked list in order. (1) Terrain through the carriageway: the brush-based flatten is gone; the builder now computes an exact target for every heightfield vertex under the road corridor (asphalt + sidewalk + 0.8 m verge, profile - 0.25 m), clamps the surroundings to a 1:1.5 graded cut/fill, writes heights directly and triggers one zero-strength terrain.modify for the derived rebuild (one terrain:changed, ~0.5 s for 70 edges). Probe: 0 of 26 414 asphalt samples below terrain (was 271, worst -0.44 m). Roads keep design heights captured when an edge is drawn, so rebuild() is idempotent (identical tri count, 0 vertices rewritten on a second pass) and external sculpts re-sample only the affected edges. Profiles are grade-limited to 15% with balanced cut/fill; on-land 'bridges' now only appear above 6 m of fill (the black parapet 'tents' on three streets are gone). (2) Grass through asphalt: terrain consumes the coverage mask; the node part of the mask is now the real paved region (arm rectangles + corner sidewalks), not a disc, so no bald grass discs and no sheer disc cuts around intersections (the loop's knoll cut is gone). (3) Bridge ends: abutment block with wing walls at every embankment/deck transition, pier caps narrower than the deck, verge marches to the graded ground. (4) Noon contrast: asphalt albedo 0.29 (sRGB ~75-80 in sun), concrete 0.93 (sidewalk ~105-150), darker kerb faces, shader kerb-side AO and gutter grime; two-scale rotated albedo blend kills the 4 m tiling. (5) The mid-distance 'white speckle' was not specular at all: the packed per-vertex flag integer was a smooth varying and got scrambled between rows wherever the acceleration-lane width changed; flags are now a flat varying and ext rides in its own channel; line coverage is box-filtered and dashes blend to mean coverage far away; normal strength and a roughness floor fade with distance. (6/7) Roundabout: one-way cycles are detected (edge.ring), the showcase ring is 8 bezier arcs (true circle) with 4 radial entries; intersection arm frames are re-anchored on the curve at the trim distance and the island-side corner follows the curve, so no facets or notches; ring arms carry no crosswalks/stop lines/arrows, entries get give-way teeth and a set-back zebra; the plateau blend is evaluated analytically in sampleAt so strips meet polygons with no step (the green seams). (8) Crosswalks moved 1.4 m past the corner tangent, stop line at 5 m. (9-12) Bold polyline arrows with real heads, gore hatching + nose at the ramp merge, lighter barrier top, verge march. (13) removeEdge drops orphan nodes; serialize/deserialize added. (14) 1024 m tiles: 16 meshes for the showcase (roads-only draw calls 16 incl. shadow passes). Showcase collision fixed (residential curve moved off the highway corridor). Verification: 27/27 captures ok (16 standard + 11 presets), 0 console errors, 0 warnings from roads, module ready everywhere, showcase=all aerial noon 0 errors with all 16 modules ready. gauntlet.mjs itself could not be used end to end: its fixed 90 s page.screenshot timeout failed every street/closeup shot on the shared box (load 12 on 4 cores), so the same matrix was driven through tools/screenshot.mjs --timeout 240 (shots/roads/dev2/run_matrix.sh) and summary.json composed in the same format.",
+  "drawCalls": 44,
+  "drawCallsRoadsOnly": 16,
+  "triangles": 1208995,
+  "trianglesRoadsOnly": 55587,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/roads/rdev2/aerial_6p5.png", "shots/roads/rdev2/aerial_12.png", "shots/roads/rdev2/aerial_22.png",
+    "shots/roads/rdev2/street_6p5.png", "shots/roads/rdev2/street_12.png", "shots/roads/rdev2/street_17p5.png", "shots/roads/rdev2/street_22.png",
+    "shots/roads/rdev2/skyline_12.png", "shots/roads/rdev2/skyline_22.png",
+    "shots/roads/rdev2/closeup_12.png", "shots/roads/rdev2/closeup_17p5.png", "shots/roads/rdev2/closeup_22.png",
+    "shots/roads/rdev2/kerb_12.png", "shots/roads/rdev2/armtop_12.png",
+    "shots/roads/dev2/g_merge_12.png", "shots/roads/dev2/g_highway_12.png", "shots/roads/dev2/c_bridge_12.png", "shots/roads/dev2/c_coastwest_12.png",
+    "shots/roads/dev2/b_loop_12.png", "shots/roads/dev2/b_closeup_12.png", "shots/roads/dev2/all_aerial_12.png",
+    "shots/roads/dev2/crop_sparkle_g.png", "shots/roads/dev2/crop_seam_b.png", "shots/roads/dev2/crop_closeup_kerb.png"
+  ],
+  "remainingWeaknesses": [
+    "Vertical structure faces (bridge deck sides, piers, abutments, parapet outer faces) render near-black at noon because the scene has almost no sky ambient (environment's skyLight ~0 by day); the same faces look right at 17:30. Roads cannot fix this without adding light.",
+    "No contact shadow under kerbs at noon beyond the shader AO band; CSM kerb shadows only read at low sun. Real SSAO belongs to effects.",
+    "Bridges are plain box girders with a flat abutment wall; no railings/lighting, no arch/truss variants. The abutment side wall at the beach end reads as a large flat slab.",
+    "Steep hills get 15%-grade cuts with 1:1.5 graded slopes only; no retaining-wall mesh where a cut exceeds ~3 m (ARCHITECTURE 12 mentions retaining walls).",
+    "Highways lack rumble strips, edge crash barriers and overhead signage; the gore area is painted only.",
+    "Roundabout island is bare terrain inside the kerb (no apron, no planting); the ring carries two lanes with a dashed divider which reads busy at aerial zoom.",
+    "Asphalt tiling is reduced by the two-scale blend but a faint crack pattern is still visible in top-down views (armtop).",
+    "Sidewalks are flat slabs with no paving-slab joints, driveways or tactile paving; no lamps/props (props module).",
+    "gauntlet.mjs summary was composed by the builder's own script because the tool's 90 s screenshot timeout fails under shared load; the critic should re-run with a longer timeout if the tool gains one."
+  ],
+  "selfScore": 7.5
+}

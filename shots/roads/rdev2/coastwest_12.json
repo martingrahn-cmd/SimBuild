@@ -1,0 +1,143 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=roads&time=12&camera=coastwest&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "roads",
+  "time": 12,
+  "camera": "coastwest",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 93665,
+  "fps": 0,
+  "measuredFrames": 1,
+  "frameMs": 1.4,
+  "drawCalls": 23,
+  "triangles": 355487,
+  "programs": 21,
+  "textures": 40,
+  "geometries": 24,
+  "heapMB": 57.6,
+  "moduleMs": {
+    "terrain": 0,
+    "environment": 0.2000000011175871,
+    "roads": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      -560,
+      40,
+      250
+    ],
+    "target": [
+      -540,
+      6,
+      362
+    ],
+    "distance": 118.7
+  },
+  "modules": {
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4713
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 297
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 105
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "services": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "infoviews": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "transit": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/roads/rdev2/coastwest_12.png"
+}

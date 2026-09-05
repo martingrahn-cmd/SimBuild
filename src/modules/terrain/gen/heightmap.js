@@ -82,7 +82,9 @@ export function generateHeightmap(rng, opts = {}) {
       const mW = smoothstep(-720, -1010, x) * smoothstep(600, 1010, Math.abs(z)) * smoothstep(-1024, -930, x) * smoothstep(1024, 940, Math.abs(z))
         * (0.55 + 0.45 * (0.5 + 0.5 * nBase.fbm(wx / 220 + 6, wz / 220 - 5, 3)));   // asymmetric: no smooth cone
       if (mW > 0) {
-        const hw = -12 + mountain(nMount, wx, wz, mW, 2, 1, 0.38) * 0.5;
+        // rounded coastal hills with a rocky crest (no single cone): fbm dome + a damped share of the ridged relief
+        const dome = 0.5 + 0.5 * nBase.fbm(wx / 210 + 6, wz / 210 - 5, 4, 2.0, 0.5);
+        const hw = -12 + mW * (26 + 40 * dome) + mountain(nMount, wx, wz, mW, 2, 1, 0.45) * 0.22;
         h = Math.max(h, hw);
       }
       // ---- island (add back) ----
@@ -92,10 +94,11 @@ export function generateHeightmap(rng, opts = {}) {
         const ex = (ddx * 0.83 + ddz * 0.56) / 1.35, ez = (-ddx * 0.56 + ddz * 0.83) / 0.85;
         const r = Math.sqrt(ex * ex + ez * ez) / island.r + 0.12 * nBase.fbm(x / 70 + 2, z / 70, 3);
         if (r < 1.5) {
-          const bump = Math.pow(1 - smoothstep(0.1, 1.4, r), 1.35);
+          // rounded summit (plateau-ish top, no witch-hat spire), rocky flanks from a damped ridged field
+          const bump = Math.pow(1 - smoothstep(0.12, 1.4, r), 1.15);
           const rid = nMount.ridged(x / 150 + 9, z / 150 + 4, 5, 2.05, 0.5, 1.25);
           const shelf = smoothstep(1.2, 0.5, r) * 4.5;
-          const ih = -6 + shelf + 30 * bump * (0.45 + 0.55 * rid) + 6 * bump * nBase.fbm(x / 40, z / 40, 3);
+          const ih = -6 + shelf + 24 * bump * (0.65 + 0.35 * rid) + 5 * bump * nBase.fbm(x / 40, z / 40, 3);
           h = Math.max(h, ih);
         }
       }

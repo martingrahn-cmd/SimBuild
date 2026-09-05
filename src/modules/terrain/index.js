@@ -76,9 +76,9 @@ export default {
     S.macro = makeMacroNoiseTexture([new Noise2D(nr.fork('a')), new Noise2D(nr.fork('b')), new Noise2D(nr.fork('c')), new Noise2D(nr.fork('d'))], 256);
     S.ripple = makeRippleNormal(new Noise2D(ctx.rng.fork('ripple')), 256, 1.4);
     const t1 = performance.now();
-    S.land = makeLandTexture(generateLandcover(ctx.rng.fork('landcover'), gen, 512));
+    S.land = makeLandTexture(generateLandcover(ctx.rng.fork('landcover'), gen, ctx.quality === 'low' ? 512 : 1024));
     S.seaMask = makeSeaMask(gen, 64);
-    log.info(`land-cover map 512² in ${(performance.now() - t1).toFixed(0)} ms`);
+    log.info(`land-cover map ${ctx.quality === 'low' ? 512 : 1024}² in ${(performance.now() - t1).toFixed(0)} ms`);
 
     // ---- mesh ----
     S.material = createTerrainMaterial(data, { grass, grassFine, dirt, rock, sand, scree, macro: S.macro, land: S.land });
@@ -96,7 +96,10 @@ export default {
     });
     ctx.group.add(S.water.mesh);
     // near-camera ground clutter: blades + mid-range tufts (2 draw calls), palette-matched to the ground
-    S.grass = new GrassScatter(data, ctx.rng.fork('grass'), { seaLevel: data.seaLevel, layer: LAYERS.TERRAIN, macro: S.macro, land: S.land });
+    S.grass = new GrassScatter(data, ctx.rng.fork('grass'), { seaLevel: data.seaLevel, layer: LAYERS.TERRAIN, macro: S.macro, land: S.land, world });
+    // roads publish a coverage mask (world.roads.isRoad); no blades/tufts on asphalt or sidewalks. The mask is
+    // rebuilt after the roads module settles, so we poll its version each frame (cheap) and also listen to the event.
+    events.on('roads:changed', () => { if (S.grass) S.grass.invalidate(); }, 'terrain');
     ctx.group.add(S.grass.group);
     // hand materials that are not permanently in the scene graph to the environment's shadow/fog hooks
     const env = ctx.modules.environment;

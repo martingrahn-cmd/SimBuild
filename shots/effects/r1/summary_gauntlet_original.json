@@ -1,0 +1,140 @@
+{
+  "module": "effects",
+  "round": "1",
+  "at": "2026-09-05T06:17:21.138Z",
+  "shots": [
+    {
+      "png": "shots/effects/r1/aerial_6p5.png",
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/effects/r1/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 10,
+      "drawCalls": 41,
+      "triangles": 814984,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/effects/r1/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 814984,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/effects/r1/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 814984,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/effects/r1/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/effects/r1/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/effects/r1/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/effects/r1/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 814984,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/effects/r1/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "skyline",
+      "time": 12,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/effects/r1/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 814984,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/effects/r1/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "closeup",
+      "time": 12,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/effects/r1/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": false,
+      "errors": 0
+    }
+  ],
+  "maxDrawCalls": 41,
+  "maxTriangles": 814984,
+  "minFps": 10,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

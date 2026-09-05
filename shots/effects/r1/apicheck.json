@@ -1,0 +1,778 @@
+{
+  "initial": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 2.2608695652173916,
+        "strength": 0.16
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "aoOff": {
+    "composer": true,
+    "drawCalls": 38,
+    "tris": 814981,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 2.2608695652173916,
+        "strength": 0.16
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "aoDiff": {
+    "name": "ao",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 79.7,
+      "p1": 0,
+      "p5": 5,
+      "p50": 88,
+      "p95": 140,
+      "p99": 169
+    },
+    "b": {
+      "mean": 80.5,
+      "p1": 0,
+      "p5": 7,
+      "p50": 89,
+      "p95": 140,
+      "p99": 169
+    },
+    "diff": {
+      "meanAbs": 0.8,
+      "fracGt8": 0.0244,
+      "fracGt24": 0,
+      "fracADarker": 0.0837,
+      "fracABrighter": 0.0001
+    }
+  },
+  "bloomOffDay": {
+    "composer": true,
+    "drawCalls": 28,
+    "tris": 814971,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": false
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 2.2608695652173916,
+        "strength": 0
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "bloomDiffDay": {
+    "name": "bloom_day",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 79.7,
+      "p1": 0,
+      "p5": 5,
+      "p50": 88,
+      "p95": 140,
+      "p99": 169
+    },
+    "b": {
+      "mean": 79.7,
+      "p1": 0,
+      "p5": 5,
+      "p50": 88,
+      "p95": 140,
+      "p99": 169
+    },
+    "diff": {
+      "meanAbs": 0,
+      "fracGt8": 0,
+      "fracGt24": 0,
+      "fracADarker": 0,
+      "fracABrighter": 0
+    }
+  },
+  "flatDiffDay": {
+    "name": "flat_day",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 79.7,
+      "p1": 0,
+      "p5": 5,
+      "p50": 88,
+      "p95": 140,
+      "p99": 169
+    },
+    "b": {
+      "mean": 99,
+      "p1": 14,
+      "p5": 25,
+      "p50": 108,
+      "p95": 159,
+      "p99": 173
+    },
+    "diff": {
+      "meanAbs": 19.61,
+      "fracGt8": 0.9083,
+      "fracGt24": 0.3047,
+      "fracADarker": 0.9668,
+      "fracABrighter": 0.0106
+    }
+  },
+  "disableRet": false,
+  "disabled": {
+    "composer": false,
+    "drawCalls": 19,
+    "tris": 814962,
+    "state": {
+      "enabled": false,
+      "installed": false,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [],
+      "bloom": null,
+      "size": null
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "directDiff": {
+    "name": "direct",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 79.7,
+      "p1": 0,
+      "p5": 5,
+      "p50": 88,
+      "p95": 140,
+      "p99": 169
+    },
+    "b": {
+      "mean": 98,
+      "p1": 12,
+      "p5": 22,
+      "p50": 108,
+      "p95": 159,
+      "p99": 173
+    },
+    "diff": {
+      "meanAbs": 18.76,
+      "fracGt8": 0.8966,
+      "fracGt24": 0.2787,
+      "fracADarker": 0.9584,
+      "fracABrighter": 0.0164
+    }
+  },
+  "enableRet": true,
+  "reenabled": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 2.2608695652173916,
+        "strength": 0.16
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "resized": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 2.2608695652173916,
+        "strength": 0.16
+      },
+      "size": [
+        960,
+        540
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "resizedBack": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 2.2608695652173916,
+        "strength": 0.16
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 12
+  },
+  "night": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 1,
+      "golden": 0,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 0.7857142857142858,
+        "strength": 0.42
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 22
+  },
+  "bloomDiffNight": {
+    "name": "bloom_night",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 48.1,
+      "p1": 3,
+      "p5": 10,
+      "p50": 46,
+      "p95": 99,
+      "p99": 119
+    },
+    "b": {
+      "mean": 46,
+      "p1": 3,
+      "p5": 9,
+      "p50": 45,
+      "p95": 96,
+      "p99": 117
+    },
+    "diff": {
+      "meanAbs": 2.11,
+      "fracGt8": 0.0484,
+      "fracGt24": 0.0116,
+      "fracADarker": 0.0004,
+      "fracABrighter": 0.1562
+    }
+  },
+  "aoDiffNight": {
+    "name": "ao_night",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 48.1,
+      "p1": 3,
+      "p5": 10,
+      "p50": 46,
+      "p95": 99,
+      "p99": 119
+    },
+    "b": {
+      "mean": 48.9,
+      "p1": 5,
+      "p5": 11,
+      "p50": 46,
+      "p95": 99,
+      "p99": 120
+    },
+    "diff": {
+      "meanAbs": 0.81,
+      "fracGt8": 0.0254,
+      "fracGt24": 0,
+      "fracADarker": 0.0966,
+      "fracABrighter": 0.0001
+    }
+  },
+  "golden": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0.6425988204894774,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 0.8762246728500355,
+        "strength": 0.16
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 17.5
+  },
+  "bloomDiffGolden": {
+    "name": "bloom_golden",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 85.6,
+      "p1": 39,
+      "p5": 47,
+      "p50": 80,
+      "p95": 139,
+      "p99": 167
+    },
+    "b": {
+      "mean": 85.6,
+      "p1": 39,
+      "p5": 47,
+      "p50": 80,
+      "p95": 139,
+      "p99": 167
+    },
+    "diff": {
+      "meanAbs": 0,
+      "fracGt8": 0,
+      "fracGt24": 0,
+      "fracADarker": 0,
+      "fracABrighter": 0
+    }
+  },
+  "flatDiffGolden": {
+    "name": "flat_golden",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 85.6,
+      "p1": 39,
+      "p5": 47,
+      "p50": 80,
+      "p95": 139,
+      "p99": 167
+    },
+    "b": {
+      "mean": 97,
+      "p1": 57,
+      "p5": 64,
+      "p50": 91,
+      "p95": 143,
+      "p99": 160
+    },
+    "diff": {
+      "meanAbs": 13.23,
+      "fracGt8": 0.7239,
+      "fracGt24": 0.0925,
+      "fracADarker": 0.8484,
+      "fracABrighter": 0.0734
+    }
+  },
+  "determinism": {
+    "name": "det",
+    "w": 1280,
+    "h": 720,
+    "a": {
+      "mean": 85.6,
+      "p1": 39,
+      "p5": 47,
+      "p50": 80,
+      "p95": 139,
+      "p99": 167
+    },
+    "b": {
+      "mean": 85.6,
+      "p1": 39,
+      "p5": 47,
+      "p50": 80,
+      "p95": 139,
+      "p99": 167
+    },
+    "diff": {
+      "meanAbs": 0,
+      "fracGt8": 0,
+      "fracGt24": 0,
+      "fracADarker": 0,
+      "fracABrighter": 0
+    }
+  },
+  "final": {
+    "composer": true,
+    "drawCalls": 41,
+    "tris": 814984,
+    "state": {
+      "enabled": true,
+      "installed": true,
+      "failed": false,
+      "preset": "default",
+      "night": 0,
+      "golden": 0.6425988204894774,
+      "passes": [
+        {
+          "name": "RenderPass",
+          "enabled": true
+        },
+        {
+          "name": "AmbientPass",
+          "enabled": true
+        },
+        {
+          "name": "UnrealBloomPass",
+          "enabled": true
+        },
+        {
+          "name": "OutputPass",
+          "enabled": true
+        },
+        {
+          "name": "SMAAPass",
+          "enabled": true
+        },
+        {
+          "name": "GradePass",
+          "enabled": true
+        }
+      ],
+      "bloom": {
+        "threshold": 0.8762246728500355,
+        "strength": 0.16
+      },
+      "size": [
+        1280,
+        720
+      ]
+    },
+    "status": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6
+    },
+    "errors": 0,
+    "hour": 17.5
+  },
+  "simErrors": [],
+  "simWarnings": [],
+  "consoleErrors": []
+}

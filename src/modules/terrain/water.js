@@ -84,7 +84,7 @@ void main() {
 
   // planar reflection (geometry, alpha-masked) over the sky radiance LUT (equirect) or a flat sky colour
   vec4 ruv = vRefUv;
-  ruv.xy += tilt * 3.0 * ruv.w;
+  ruv.xy += tilt * 0.35 * ruv.w;   // small: a large offset scatters the reflected bank into confetti
   vec4 rt = texture2DProj(tReflect, ruv);
   vec3 Nsky = normalize(vec3(tilt.x * 2.5, 1.0, tilt.y * 2.5));   // facets reflect higher (bluer) sky than the mean plane
   vec3 R = reflect(-V, Nsky);
@@ -102,12 +102,14 @@ void main() {
 
   float NdV = max(0.0, dot(N, V));
   float F = 0.02 + 0.98 * pow(1.0 - NdV, 5.0);
-  vec3 col = mix(body, refl, clamp(F * 0.9 + 0.16, 0.0, 0.92));
+  vec3 col = mix(body, refl, clamp(F * 0.9 + 0.24, 0.0, 0.93));
 
   // sun / moon glints (the environment's current light: sun by day, moon at night)
   vec3 H = normalize(uLightDir + V);
   float NdH = max(0.0, dot(N, H));
-  float spec = pow(NdH, mix(520.0, 60.0, farW)) * mix(3.0, 0.35, farW) + pow(NdH, 24.0) * 0.05;
+  // glints: tight near the camera, a broad soft glitter path further out (no per-pixel confetti at 100-400 m)
+  float midW = smoothstep(40.0, 320.0, dist);
+  float spec = pow(NdH, mix(420.0, 70.0, max(midW, farW))) * mix(2.2, 0.4, max(midW, farW)) + pow(NdH, 24.0) * 0.05;
   col += uLightColor * spec * smoothstep(-0.02, 0.15, uLightDir.y);
 
   // shore foam + waterline

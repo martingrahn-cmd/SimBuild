@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-05T04:39:02.067Z",
+  "updatedAt": "2026-09-05T09:32:21.591Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -40,10 +40,10 @@
         }
       ],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 2
       },
-      "builtRound": 1,
+      "builtRound": 2,
       "pass": false,
       "strengths": [
         "Zero console errors and status ready in every shot; 11-16 draw calls vs budget 20; max 255,248 triangles vs budget 900,000.",
@@ -59,24 +59,22 @@
     },
     "environment": {
       "wave": 1,
-      "round": 1,
-      "score": 6,
+      "round": 2,
+      "score": 7,
       "status": "needs-work",
       "openIssues": [
-        "[blocker] CPU sky-sample port broken by scratch aliasing: world.weather.skyLight ~0 by day, brighter at night; fog.color black: atmosphere.js skyRadiance() line 135 passes its scratch vector _q into opticalDepth(), which reuses _q (line 103) and clobbers the shared _d density (line 104); lines 137-1",
-        "[blocker] Noon frames washed out and flat (p1 >= 43/255, shadows only ~30% darker than lit ground, sat 0.19-0.34): Partly preset fogDensity 0.00034 gives ~16% haze at 520 m and ~26% at 900 m; environmentIntensity 0.8 from a full-sky PMREM plus sun 5.14 at exposure 1.25 puts ambient too close to dire",
-        "[blocker] Showcase ground tiles visibly as a regular 13 m lattice in every aerial/skyline frame (moire streaks at grazing angles): aerial_grass_rock repeats every 13 m over 8 km; mix(envT1,envT2,0.3) at 0.23 scale and a 2.2 km macro tint do not break the lattice. Fix: per-cell random rotation/offset",
-        "[major] Golden hour and sunset are sepia monochrome and under-exposed (sunset_17p9 p50 = 26, half the frame < 10%; aerial_6p5 p99 = 105): Exposure curve adds only +0.25 at low sun while transmittance and the PMREM ambient are both Mie-orange, so shadows go brown instead of CS2's cool blue. Fix: expo",
-        "[major] Cloud layer reads as a flat 2D noise sheet with no volume; clouds stay crisp above a fog white-out: Single 1500 m shell with one lit/occluded factor, stratus smear toward the horizon, no vertical lighting gradient, no fog attenuation. Fix: 4-8 step raymarch through a 300-600 m slab (or two o",
-        "[major] Fog preset shows a hard horizon seam: dome band (mid-grey, crisp clouds) does not match the fogged ground (light grey): Ground fog samples the LUT in the view direction, but the dome draws clouds/haze on top of the LUT and receives no in-scatter fog. Fix: apply the same envFog extinction/in-",
-        "[major] Dry grass turns glossy with corduroy specular streaks at grazing sun: normalScale 1.5 plus ARM roughness at grazing GGX angles gives a wet sheen with wetness 0. Fix: floor roughness ~0.85 for dry grass, normalScale <= 0.8, or a Fresnel horizon fade on the ground.",
-        "[minor] Night ground tint is olive-green instead of CS2's desaturated blue-grey: Exposure 3.0 on green albedo dominates the blue moon tint. Fix: desaturate diffuse by night (~0.5), night exposure ~2.2, cooler MOON_TINT.",
-        "[minor] Stars are uniform 5-6 px soft blobs (reads like snow); milky way invisible: Fix: radius <= 1.5 px at 1080p, size and brightness from magnitude with more variance; make the band faintly visible.",
-        "[minor] Night window emissive clips to flat white; distant facades shimmer: uWinNight = night*0.55 at exposure 3.0 saturates AgX and loses the warm/cool tints; 3 m window grid aliases on far towers. Fix: emissive ~0.25, fade the grid by mip level/distance.",
-        "[minor] Rain barely visible; streak colour depends on the broken skyLight: 9000 thin streaks in a 140 m box read as a few grey scratches at 1080p; rain.js uColor = skyLight*2.2+0.02 is ~0.02 grey while issue 1 stands. Fix: wider/longer streaks with distance-based width, more density near the camera,",
-        "[minor] Triangles (111,554; 129,554 with rain) exceed the module's own declared budget of 60,000: SphereGeometry(3.2,48,32) x 9 and a 48x32 dome. Fix: 32x16 spheres and dome, or declare the budget honestly.",
-        "[minor] Lighting.sweep() traverses the entire scene every frame: lighting.js 52-57; fine for 40 objects, will eat the 2 ms per-module budget in democity. Fix: hook materials on section change events / module:ready instead of per-frame traversal.",
-        "[minor] Every night is a full moon, visible by day opposite the sun: moonDir = sun + 12.35 h. Fix: offset by a day-of-month phase; cosmetic."
+        "[major] 17:30 frames milky and blown toward the sun: skyline_17p5 mean 151 / p50 152 / p99 247: exposure 2.97 at 8.5 deg sun stacked with the x1.45 golden-hour punch, the dome aureole (pow(mu,300)*0.14 + pow(mu,80)*0.035) and the fog in-scatter (fogSunCol = 0.32*sunIntensity) wash the half of the fr",
+        "[major] Per-pixel static inside mid-distance windows at night: Every night frame shows random bright/dark pixels inside window cells on towers 100-400 m away. showcase.js passes vInst = float(gl_InstanceID) as an interpolated varying into the sin-fract hash (envHash(cell + vInst*7.31)); the 1e-5 int",
+        "[major] Clouds still read as a soft 2D sheet: Cumulus are low-contrast blotches that smear to the horizon, overcast is a structureless grey gradient, nothing has a 3D silhouette or bright-top/dark-base shading. Remap density with a narrow band for crisp edges, raise erosion contrast, add a second de",
+        "[major] Night sky grey and too bright; square stars; no moon in the moonrise preset: skyline_22 sky ~90/255 mid grey-blue (CS2 night is deep navy): airglow + light-pollution floor at exposure 2.8. Stars are 2-3 px squares. moonrise_22 shows no moon (moon near zenith at 22:00 on day 1). Halve the nig",
+        "[major] Noon dull rather than punchy; near-black shadows under blocks: aerial_12 p99 118: sun-lit concrete tops are mid-grey and the frame has no bright values; sunset_12 p1 17 under the front block. CS2 noon has bright lit roofs, saturated grass and cool readable shadows. Exposure 1.35-1.5 at high ",
+        "[minor] Cloud shadows are vague 20 m blobs: At noon they read as dirty patches on the ground rather than cloud shapes. 512^2 map, sharper mask smoothstep(0.35,0.6,d), include the erosion detail.",
+        "[minor] Rain streaks are thick uniform dashes; wetness barely responds: 40-60 px white dashes at 1080p vs CS2's fine streaks; ground darkening invisible because wetness is 0.065 at capture. Width 0.015 + dist*0.001, half length, alpha 0.4, two layers, and force wetness = rain at init when the clock ",
+        "[minor] Ground reads as green felt: Luminance-only moss photo x tint gives a soft low-frequency surface with no clump/blade detail at closeup; dirt patches are faint smudges. Add a 0.3 m detail normal, a grass-clump albedo layer and stronger dirt contrast.",
+        "[minor] Razor-flat horizon in every skyline frame: The 8 km plane meets the dome in a hard line; CS2 always has a haze band or distant terrain. Add a low far ridge ring or a stronger integrated haze over the last 3 km.",
+        "[minor] Sunlit grass turns to ochre sand at sunrise/sunset: Directly lit ground is fully orange-brown at 17.9/6.2 because the sun colour at 1-2 deg is normalised by maxc(sunT) and stays fully saturated. Mix the sun colour 20% toward white below 5 deg, keep blue skylight in the ambient.",
+        "[minor] Triangle budget within 174 triangles of its limit with rain: 59,826 of a declared 60,000 when rain is on (18,000 rain quads). Declare an honest budget (e.g. 70,000) or halve the rain instance count with wider streaks.",
+        "[minor] Screenshot tool reports ok:true for boot-overlay frames (infrastructure): 4 of 31 captures were the SIMBUILD loading screen (Vite full reload from other builders saving mid-capture, fps=0 in the JSON) and were re-shot by the critic; core-request #2 still open. Not the module's fault, but sum"
       ],
       "history": [
         {
@@ -86,25 +84,34 @@
           "errors": 0,
           "draws": 11,
           "report": "docs/critic/environment_r1.md"
+        },
+        {
+          "round": 2,
+          "score": 7,
+          "pass": false,
+          "errors": 0,
+          "draws": 10,
+          "report": "docs/critic/environment_r2.md"
         }
       ],
       "next": {
-        "phase": "critic",
-        "round": 2
+        "phase": "build",
+        "round": 3
       },
       "builtRound": 2,
       "pass": false,
       "strengths": [
-        "Physically based single-scattering sky LUT (Rayleigh/Mie/ozone) feeding PMREM: sky colour, sun aureole and 17:30 horizon haze are right; IBL on the sphere ladder matches the sky",
-        "Correct sun path east->south->west computed locally and published; core sunAzimuth bug documented in docs/core-requests/environment.md rather than worked around silently",
-        "CSM 3x2048 PCF with fade and camera-adaptive maxFar: soft, correctly placed contact shadows at all times; sun->moon switch keeps shadows at night",
-        "Per-window random warm/cool night lights with reveals on the showcase towers; the night frames are the most CS2-like output",
-        "Weather: five presets, ?weather honoured at boot, setWeather with clamping and weather:changed events, wetness dynamics, sun-projected cloud shadows, GPU-only rain in one draw",
-        "Hygiene: only this module adds lights or touches renderer state; 10 draws vs 15 budget; 0.3 ms update; zero errors and zero NaNs across the clock; deterministic; rng-only randomness; CC0 assets in the manifest"
+        "Physically based sky with a sun-masked ambient LUT feeding PMREM: sky colour, haze, IBL and blue shadows are consistent; skyLight and fog.color are real values (r1 blocker fixed at the source)",
+        "Sunset/sunrise transformed: bright warm sky, sun disc, orange-lit faces, cool readable shadows",
+        "Hex-tiled texture bombing + dirt layer + macro tints removed the 13 m lattice and grazing moire; dry-grass roughness floor removed the corduroy sheen",
+        "Fog is seamless between dome and ground; ?weather= at boot, setWeather clamping/events/presets all work",
+        "CSM 3x2048 PCF with camera-adaptive far, correct contact shadows at every time, sun-to-moon switch at night, cloud shadows projected along the sun",
+        "Night: desaturated blue-grey ground, per-window warm/cool lights with reveals, moon speculars",
+        "Engineering hygiene: only this module adds lights / touches renderer state; 10 draws, 41.8k triangles, 0.1 ms update, event-driven material sweep, deterministic, all randomness via ctx.rng, zero errors and warnings"
       ],
       "consoleErrors": 0,
-      "maxDrawCalls": 11,
-      "apiContractOk": false
+      "maxDrawCalls": 10,
+      "apiContractOk": true
     },
     "roads": {
       "wave": 1,
@@ -138,10 +145,10 @@
         }
       ],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 2
       },
-      "builtRound": 1,
+      "builtRound": 2,
       "pass": false,
       "strengths": [
         "world.roads API complete and correct: arc-length sampling, quadratic bezier edges, lane 0 on the right, frontage on both sides, nearestEdge, cascade removal, version + roads:changed discipline; zero console errors in 29 captures and two probes",
@@ -156,16 +163,50 @@
     },
     "simulation": {
       "wave": 1,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6.5,
+      "status": "needs-work",
+      "openIssues": [
+        "[major] Lawn tiling is obvious at every wide zoom: 6000 m plane with a 13 m photo repeat; the two-sample rotated blend leaves a regular diagonal lattice/checker across aerial, skyline and stats frames, and skyline frames end in a razor horizon with no aerial perspective. Use per-cell random rotation",
+        "[major] Nights are dusk: lawn, trees and hedges fully lit at 22:00: aerial_22 mean luminance 55.6, street_22 88, closeup_22 81 (environment's own night frame: 43). The ground shader's tint*1.45 boost and the foliage indirectDiffuse += 0.08 term keep everything lit; the emissive bars light nothing ar",
+        "[major] Economy balance is flat: 0.0% unemployment for 90 days, monotone treasury, near-empty C/I/O bars: Selftest: unemployment 0.0% every day (outsideJobs 220 + capacity always >= labour), happiness 74->83% monotone, net income never dips, treasury a straight climb dominated by milestone rewards; ",
+        "[major] Panel is clipped at 1280x720: The ~780 px tall absolute-positioned panel loses the Activity chart and footer below a 720 px viewport; no scroll or compact mode. Add max-height: calc(100vh - 36px) with overflow-y auto, or a compact layout below 800 px.",
+        "[major] deserialize() leaves derived fields zeroed for one tick; reset() keeps the old treasury: Immediately after deserialize(): jobs, employed, income, expenses, net, households, housingVacancy = 0, landValue 0.3, attractiveness 0.5 until the next step (apicheck roundTripRestores=false; replay aft",
+        "[minor] Panel clock disagrees with scene time and screenshots are not repeatable: Economy hour runs at x20 while ?time= freezes the sun: 12:50 at noon, 18:21 at 17:30, 22:38 at 22:00; tick counter differs per run (145,250/145,285/145,295). In frozen-clock/headless mode pre-roll to exactly the clock ",
+        "[minor] Hedges read as green static: Jittered boxes with an 8% alpha-test cut-out of a 256^2 canvas texture, hard-cut ends, no base AO; visible in every street/pillars/closeup frame. Use layered leaf cards or a 1k tileable hedge texture with rounded end caps and a dark base band.",
+        "[minor] Trees are lollipops: Icosahedron canopies and stacked cones with one cut-out texture, no LOD/impostors, no wind, 300 instances; crude within closeup radius. Leaf-card canopies for 3 species, impostors for the far ring, 2x density.",
+        "[minor] Skyline frames washed out with a hard horizon: skyline_17p5 mean 172 with 7.4% blown pixels; all skyline frames end in a sharp line with no haze. Partly environment (its r2 verdict flags 17:30), but the 6 km plane and the 45% distance fade are this module's: fade fully to fog colour beyond 2",
+        "[minor] Data plaza legibility: treasury row hides the other rows, labels unreadable from standard cameras: From street/pillars cameras the 30-bar treasury row is an opaque wall in front of population and jobs; plinth label strips are only legible from the pillars preset. Step or fan the rows, thin t",
+        "[minor] Cross-module coupling: panel mounts into #ui and imports ui's fonts: panel.js appends to the ui module's DOM root and imports ../ui/fonts/*.woff2. Mount under a module-owned root and load the font from public/assets via the manifest."
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6.5,
+          "pass": false,
+          "errors": 0,
+          "draws": 32,
+          "report": "docs/critic/simulation_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "Deterministic core: same seed => byte-identical 90-day state in node and across two headless page loads; save/load resume identical; 11 us/tick; selftest.mjs runs without a browser",
+        "Clean event contract: sim:tick at fixed 4 Hz game time accumulated from time:tick x speed, sim:demand every 25 ticks, payload objects reused, tick-drop guard with one warning",
+        "Every hook into other modules tolerates stubs (freeLots, requestSpawn, coverage, isWater, road edges); the virtual city makes the showcase self-sufficient",
+        "Scope beyond spec already present: milestones with unlocks/rewards, loans, 256^2 pollution/noise/land-value grids at world.economy.grids, per-building service levels, activity curves for traffic and lights",
+        "The statistics panel is the closest thing in the project to CS2's HUD: dark glass, Aileron, tabular numbers, KPI grid with trends, milestone badge, RCI bars, sparklines, budget bars, 24 h activity curve",
+        "Bars/pillars glass shader (gradient, cap, 2 m floor lines, night emissive) and running-bond paving with per-slab tone and grime are solid material work",
+        "Draw-call discipline: 10 meshes, all instanced or merged, 32 draws including CSM passes, zero console errors from the module"
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 32,
+      "apiContractOk": true
     },
     "ui": {
       "wave": 1,
@@ -197,10 +238,10 @@
         }
       ],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 2
       },
-      "builtRound": 1,
+      "builtRound": 2,
       "pass": false,
       "strengths": [
         "Layout skeleton is genuinely CS2: bottom toolbar + status strip, milestone chip, colourful category icons, round buttons right, clock/date/season/city/pop/happiness/money chips, top-right notifications, left info panel, blue accent",
@@ -228,16 +269,49 @@
     },
     "effects": {
       "wave": 1,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] Golden-hour frames are washed out: At 17:30 the sun-side half of skyline_17p5 (and the left third of aerial_17p5) is a flat cream haze: luma p50 163, p99 251, far terrain vanishes. Verified not bloom (bloom on/off diff 0.00; the flat preset shows the same wash) - it is environment fog in-s",
+        "[blocker] Night is a milky blue dusk; only lamp heads ever glow: Night frames sit at mean 45-56, p5 10-18 with facades mid-grey-blue; lit windows are flat pastel rectangles (winLevel 0.11 -> ~0.3 after exposure, below bloom threshold 0.79); skyline_22 has no city glow. CS2 night (cs2_8) is deep dark",
+        "[major] Noon shadows crushed to black: street_12, closeup_12, lamps_12, plaza_12 have p1 = 0 and p5 <= 5 (plaza_12 mean 40): fixed black point 0.045 + S-contrast 1.16 + AO power on already dark shadows. CS2 keeps cool, readable shadows (cs2_4, cs2_5). Fix: derive the black point from the frame's own",
+        "[major] Split toning paints every non-sunlit surface cyan-blue at golden hour: Roads, kerbs, sidewalks and roofs are uniformly steel-blue in street_6p5, street_17p5, closeup_6p5, closeup_17p5: uShadowTint.b (+0.022 + 0.05*golden) stacks on the sky's blue ambient. Fix: halve the golden-hour tint, wei",
+        "[major] AO is imperceptible and halos the tree cards: AO on/off pixel diff: meanAbs 0.8 luma, 2.4 % of pixels change by > 8, none by > 24; facade/ground junctions in closeup_12 and plaza_12 show no contact darkening, while the diff draws leaf-shaped outlines around the alpha-cut foliage. Fix: intens",
+        "[major] Near-field DOF turns foreground trees into blobs: At the 42 m lamps preset the 8-tap gather with maxCoC 3.5 px smears the left tree into a green blob (lamps_12, lamps_22). Fix: start near blur only below 0.35x focus distance, cap CoC <= 2 px above 30 m camera distance, gather at half res wit",
+        "[minor] Staged showcase is programmer art: Flat boxes, cut-out card trees with hard silhouettes, no parapets/HVAC, a road cut through the hills with vertical walls. It is the only stage the chain is judged on. Fix: 3-4 clustered impostor cards per tree with normal-blended lighting, roof clutter, sof",
+        "[minor] No rain streak / wet-lens / wet reflection pass: Spec section 12 asks for rain streaks and wet reflection; rain currently only bumps bloom strength and desaturates. Fix: a screen-space streak sprite pass gated by weather.rain plus a wet-road specular hint published for roads.",
+        "[minor] Sun never blooms, no glare: 17:30 aerial bloom on/off diff is 0 even with the sun near the frame edge; there is no sun glare at all. Fix: drive a small anamorphic/ghost glare from the environment sun-disc screen position instead of relying on the threshold.",
+        "[minor] Gauntlet run unreliable under load: 12 of 16 tools/gauntlet.mjs shots failed on the fixed 90 s tool timeout and on Vite full reloads while other builders shot on the same box; the critic re-shot them with --timeout 300 on a no-HMR Vite instance (summary_gauntlet_original.json vs summary.json"
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6,
+          "pass": false,
+          "errors": 0,
+          "draws": 41,
+          "report": "docs/critic/effects_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "Clean, well-isolated chain: HDR half-float target, depth shared by AO/DOF, every pass wrapped; init or render failure drops back to direct rendering; setEnabled(false) restores exactly the 19 direct draws and setEnabled(true) reinstalls.",
+        "Cheap: the post chain is 22 draw calls, ~0.1 ms JS per frame, no per-frame allocations; frames are byte-deterministic.",
+        "Bloom is restrained and exposure-aware: only lamp heads cross the threshold at night, zero daytime halo pollution (verified by pixel diff).",
+        "CAS sharpen + SMAA give crisp lane markings and facades without ringing (street_12).",
+        "The 06:30 frames (aerial_6p5, skyline_6p5) show the grade can work: warm sun, cool readable shadows, aerial haze on far hills.",
+        "Lamp-head halos with additive ground pools (closeup_22, plaza_22) are the right idea for CS2-style street lighting.",
+        "Honest build record: self-score 6.5 and the listed weaknesses match what the frames show."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 41,
+      "apiContractOk": true
     },
     "zoning": {
       "wave": 2,
@@ -357,9 +431,7 @@
   "summary": {
     "passed": [],
     "needsWork": [
-      "simulation:unscored:r0",
       "audio:unscored:r0",
-      "effects:unscored:r0",
       "zoning:unscored:r0",
       "buildings:unscored:r0",
       "props:unscored:r0",
@@ -370,10 +442,12 @@
       "infoviews:unscored:r0",
       "transit:unscored:r0",
       "terrain:6:r1",
-      "environment:6:r1",
       "roads:6:r1",
+      "effects:6:r1",
+      "simulation:6.5:r1",
+      "environment:7:r2",
       "ui:7:r1"
     ],
-    "weakest": "simulation"
+    "weakest": "audio"
   }
 }

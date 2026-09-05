@@ -8,7 +8,7 @@ Suggested fix (environment-owned, tiny): position the dome in `mesh.onBeforeRend
 from `camera.matrixWorld` instead of the main camera, or make the dome vertex shader ignore translation
 (`gl_Position = projectionMatrix * mat4(mat3(modelViewMatrix)) * vec4(position, 1.0)` with `.xyww`).
 Until then, the water composites the reflection RT over the equirect sky LUT (`uEnvSky`) using the RT alpha,
-so reflections stay correct but lose the dome's clouds and sun disc. Status after round 2: still open.
+so reflections stay correct but lose the dome's clouds and sun disc. Status after round 2 (build): still open.
 
 ## 2. environment: noon tonal calibration (observation, not a blocker)
 With the current noon rig (sun ≈ 3–4 + sky 0.5, `toneMappingExposure` 1.15, AgX) a physically plausible
@@ -35,3 +35,14 @@ Cosmetic. `world.terrain.raycast` is allocation-free apart from the result; a ca
 `registry.initAll(MODULE_NAMES)` initialises `terrain` before `environment` unless the module declares
 `dependencies: ['environment']` (terrain does). Consider initialising by `WAVES` order so `environment` is
 always first.
+
+## 6. roads: `world.roads.coverage` / `isRoad` (integration note, no change needed)
+Terrain's ground clutter (blades/tufts) now skips every cell where `world.roads.isRoad(x, z)` is non-zero and
+re-fills when `world.roads.coverage.version` changes (polled per frame, cheap) or on `roads:changed`. Please keep
+`coverage.version` bumped whenever the mask is rebuilt; if roads ever publish the mask before `isRoad` exists the
+terrain side simply falls through (no clutter suppression) rather than throwing.
+
+## 7. gauntlet: pass `--timeout` through to screenshot.mjs
+`tools/gauntlet.mjs` does not forward `--timeout`, so under builder contention the 1080p street/closeup terrain
+shots (~90-100 s wall each on SwiftShader) can die at the 90 s default; builders then re-shoot by hand and
+rebuild `summary.json`. A `--timeout` pass-through (default 180) would remove that manual step.

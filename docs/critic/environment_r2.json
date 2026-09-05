@@ -1,0 +1,43 @@
+{
+  "module": "environment",
+  "round": 2,
+  "score": 7.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 10,
+  "apiContractOk": true,
+  "issues": [
+    { "rank": 1, "severity": "major", "title": "17:30 frames milky and blown toward the sun", "detail": "skyline_17p5 mean 151 / p50 152 / p99 247: exposure 2.97 at 8.5 deg sun stacked with the x1.45 golden-hour punch, the dome aureole (pow(mu,300)*0.14 + pow(mu,80)*0.035) and the fog in-scatter (fogSunCol = 0.32*sunIntensity) wash the half of the frame facing the sun; closeup/street_17p5 sit under a grey-cream veil with a white sky top. Cap exposure ~2.2 at 8 deg, divide in-scatter/aureole by the exposure boost, keep the zenith blue (twilight floor strongest at the zenith, Mie falloff above 30 deg view elevation).", "evidence": "shots/environment/r2/skyline_17p5.png" },
+    { "rank": 2, "severity": "major", "title": "Per-pixel static inside mid-distance windows at night", "detail": "Every night frame shows random bright/dark pixels inside window cells on towers 100-400 m away. showcase.js passes vInst = float(gl_InstanceID) as an interpolated varying into the sin-fract hash (envHash(cell + vInst*7.31)); the 1e-5 interpolation round-off is multiplied by 43758 so on/tint flip per pixel. Use a flat varying or floor(vInst+0.5) and an integer hash.", "evidence": "shots/environment/r2/crop_closeup22_windows.png" },
+    { "rank": 3, "severity": "major", "title": "Clouds still read as a soft 2D sheet", "detail": "Cumulus are low-contrast blotches that smear to the horizon, overcast is a structureless grey gradient, nothing has a 3D silhouette or bright-top/dark-base shading. Remap density with a narrow band for crisp edges, raise erosion contrast, add a second denser layer, 8-12 steps below 20 deg elevation, shade by height in the slab; give overcast +-15% low-frequency structure.", "evidence": "shots/environment/r2/skyline_6p5.png" },
+    { "rank": 4, "severity": "major", "title": "Night sky grey and too bright; square stars; no moon in the moonrise preset", "detail": "skyline_22 sky ~90/255 mid grey-blue (CS2 night is deep navy): airglow + light-pollution floor at exposure 2.8. Stars are 2-3 px squares. moonrise_22 shows no moon (moon near zenith at 22:00 on day 1). Halve the night floor with a deeper blue, exposure ~2.2, gaussian fwidth-antialiased stars, time-aware moonrise preset or a moon offset that puts it 10-25 deg up at 21-23 h.", "evidence": "shots/environment/r2/skyline_22.png" },
+    { "rank": 5, "severity": "major", "title": "Noon dull rather than punchy; near-black shadows under blocks", "detail": "aerial_12 p99 118: sun-lit concrete tops are mid-grey and the frame has no bright values; sunset_12 p1 17 under the front block. CS2 noon has bright lit roofs, saturated grass and cool readable shadows. Exposure 1.35-1.5 at high sun, environmentIntensity ~0.6, verify concrete albedo x ARM lands near 0.6 linear.", "evidence": "shots/environment/r2/aerial_12.png" },
+    { "rank": 6, "severity": "minor", "title": "Cloud shadows are vague 20 m blobs", "detail": "At noon they read as dirty patches on the ground rather than cloud shapes. 512^2 map, sharper mask smoothstep(0.35,0.6,d), include the erosion detail.", "evidence": "shots/environment/r2/aerial_12.png" },
+    { "rank": 7, "severity": "minor", "title": "Rain streaks are thick uniform dashes; wetness barely responds", "detail": "40-60 px white dashes at 1080p vs CS2's fine streaks; ground darkening invisible because wetness is 0.065 at capture. Width 0.015 + dist*0.001, half length, alpha 0.4, two layers, and force wetness = rain at init when the clock is paused.", "evidence": "shots/environment/r2/street_12_rain.png" },
+    { "rank": 8, "severity": "minor", "title": "Ground reads as green felt", "detail": "Luminance-only moss photo x tint gives a soft low-frequency surface with no clump/blade detail at closeup; dirt patches are faint smudges. Add a 0.3 m detail normal, a grass-clump albedo layer and stronger dirt contrast.", "evidence": "shots/environment/r2/crop_closeup12_ground.png" },
+    { "rank": 9, "severity": "minor", "title": "Razor-flat horizon in every skyline frame", "detail": "The 8 km plane meets the dome in a hard line; CS2 always has a haze band or distant terrain. Add a low far ridge ring or a stronger integrated haze over the last 3 km.", "evidence": "shots/environment/r2/skyline_12.png" },
+    { "rank": 10, "severity": "minor", "title": "Sunlit grass turns to ochre sand at sunrise/sunset", "detail": "Directly lit ground is fully orange-brown at 17.9/6.2 because the sun colour at 1-2 deg is normalised by maxc(sunT) and stays fully saturated. Mix the sun colour 20% toward white below 5 deg, keep blue skylight in the ambient.", "evidence": "shots/environment/r2/sunset_17p9.png" },
+    { "rank": 11, "severity": "minor", "title": "Triangle budget within 174 triangles of its limit with rain", "detail": "59,826 of a declared 60,000 when rain is on (18,000 rain quads). Declare an honest budget (e.g. 70,000) or halve the rain instance count with wider streaks.", "evidence": "shots/environment/r2/street_12_rain.json" },
+    { "rank": 12, "severity": "minor", "title": "Screenshot tool reports ok:true for boot-overlay frames (infrastructure)", "detail": "4 of 31 captures were the SIMBUILD loading screen (Vite full reload from other builders saving mid-capture, fps=0 in the JSON) and were re-shot by the critic; core-request #2 still open. Not the module's fault, but summary.json can lie.", "evidence": "shots/environment/r2/gauntlet.log" }
+  ],
+  "strengths": [
+    "Physically based sky with a sun-masked ambient LUT feeding PMREM: sky colour, haze, IBL and blue shadows are consistent; skyLight and fog.color are real values (r1 blocker fixed at the source)",
+    "Sunset/sunrise transformed: bright warm sky, sun disc, orange-lit faces, cool readable shadows",
+    "Hex-tiled texture bombing + dirt layer + macro tints removed the 13 m lattice and grazing moire; dry-grass roughness floor removed the corduroy sheen",
+    "Fog is seamless between dome and ground; ?weather= at boot, setWeather clamping/events/presets all work",
+    "CSM 3x2048 PCF with camera-adaptive far, correct contact shadows at every time, sun-to-moon switch at night, cloud shadows projected along the sun",
+    "Night: desaturated blue-grey ground, per-window warm/cool lights with reveals, moon speculars",
+    "Engineering hygiene: only this module adds lights / touches renderer state; 10 draws, 41.8k triangles, 0.1 ms update, event-driven material sweep, deterministic, all randomness via ctx.rng, zero errors and warnings"
+  ],
+  "summary": "All round-1 blockers are genuinely fixed (skyLight contract, ground lattice, noon veil, sepia sunset, fog seam, grass sheen) and the module delivers a coherent physically based day/night cycle with a working weather system, 0 errors, 10 draws and a clean API contract. It stops at good-indie: 17:30 frames are milky and blown toward the sun, noon is dull rather than punchy, clouds remain a soft 2D sheet, the night sky is grey instead of navy, and an interpolated-varying hash puts per-pixel static in every mid-distance window at night. 7.0, fail.",
+  "shots": [
+    "shots/environment/r2/aerial_6p5.png", "shots/environment/r2/aerial_12.png", "shots/environment/r2/aerial_17p5.png", "shots/environment/r2/aerial_22.png",
+    "shots/environment/r2/street_6p5.png", "shots/environment/r2/street_12.png", "shots/environment/r2/street_17p5.png", "shots/environment/r2/street_22.png",
+    "shots/environment/r2/skyline_6p5.png", "shots/environment/r2/skyline_12.png", "shots/environment/r2/skyline_17p5.png", "shots/environment/r2/skyline_22.png",
+    "shots/environment/r2/closeup_6p5.png", "shots/environment/r2/closeup_12.png", "shots/environment/r2/closeup_17p5.png", "shots/environment/r2/closeup_22.png",
+    "shots/environment/r2/sunset_12.png", "shots/environment/r2/sky_12.png", "shots/environment/r2/sunrise_12.png", "shots/environment/r2/moonrise_12.png",
+    "shots/environment/r2/sky_22.png", "shots/environment/r2/moonrise_22.png", "shots/environment/r2/sunset_17p9.png", "shots/environment/r2/sunrise_6p2.png",
+    "shots/environment/r2/street_12_rain.png", "shots/environment/r2/skyline_12_fog.png", "shots/environment/r2/skyline_12_cloudy.png", "shots/environment/r2/aerial_12_720p.png",
+    "shots/environment/r2/crop_closeup22_windows.png", "shots/environment/r2/crop_closeup12_ground.png", "shots/environment/r2/crop_skyline22_sky.png"
+  ]
+}

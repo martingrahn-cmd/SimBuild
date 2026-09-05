@@ -1,0 +1,120 @@
+{
+  "module": "effects",
+  "round": 1,
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 41,
+  "apiContractOk": true,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "Golden-hour frames are washed out",
+      "detail": "At 17:30 the sun-side half of skyline_17p5 (and the left third of aerial_17p5) is a flat cream haze: luma p50 163, p99 251, far terrain vanishes. Verified not bloom (bloom on/off diff 0.00; the flat preset shows the same wash) - it is environment fog in-scatter at exposure ~3, but effects owns tone mapping/grade and shipped the frame. Fix: core request to environment to cap in-scatter, and in GradePass add depth-aware dehaze (depth texture is already bound) plus an auto black point from a 1x1 downsample of the HDR buffer so frame p1 lands at 8-15 regardless of haze.",
+      "evidence": "shots/effects/r1/skyline_17p5.png"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "Night is a milky blue dusk; only lamp heads ever glow",
+      "detail": "Night frames sit at mean 45-56, p5 10-18 with facades mid-grey-blue; lit windows are flat pastel rectangles (winLevel 0.11 -> ~0.3 after exposure, below bloom threshold 0.79); skyline_22 has no city glow. CS2 night (cs2_8) is deep darks with warm sodium glow. Fix: drop the night lift (0.006/0.010/0.022) and negative gamma, let facades go dark, raise lit-window emissive to 2-4x the bloom threshold or bloom an emissive-only mask/MRT, warm lamp and window tint to ~2700 K while keeping the sky blue.",
+      "evidence": "shots/effects/r1/skyline_22.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "Noon shadows crushed to black",
+      "detail": "street_12, closeup_12, lamps_12, plaza_12 have p1 = 0 and p5 <= 5 (plaza_12 mean 40): fixed black point 0.045 + S-contrast 1.16 + AO power on already dark shadows. CS2 keeps cool, readable shadows (cs2_4, cs2_5). Fix: derive the black point from the frame's own p1 (64x36 histogram) capped at 0.02, use a soft toe instead of a hard subtract, lower contrast to ~1.08 around the pivot.",
+      "evidence": "shots/effects/r1/plaza_12.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "Split toning paints every non-sunlit surface cyan-blue at golden hour",
+      "detail": "Roads, kerbs, sidewalks and roofs are uniformly steel-blue in street_6p5, street_17p5, closeup_6p5, closeup_17p5: uShadowTint.b (+0.022 + 0.05*golden) stacks on the sky's blue ambient. Fix: halve the golden-hour tint, weight it by 1 - smoothstep(0, 0.25, luma) only, and desaturate shadows 10-15 % toward neutral so asphalt reads warm-grey as in cs2_4.",
+      "evidence": "shots/effects/r1/street_17p5.png"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "AO is imperceptible and halos the tree cards",
+      "detail": "AO on/off pixel diff: meanAbs 0.8 luma, 2.4 % of pixels change by > 8, none by > 24; facade/ground junctions in closeup_12 and plaza_12 show no contact darkening, while the diff draws leaf-shaped outlines around the alpha-cut foliage. Fix: intensity 1.7 -> ~3, add a small contact radius (0.6-1.5 m), reject foliage via a depth-discontinuity/thickness test, expose a debug AO-only view for tuning.",
+      "evidence": "shots/effects/r1/apicheck_diff_ao.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "Near-field DOF turns foreground trees into blobs",
+      "detail": "At the 42 m lamps preset the 8-tap gather with maxCoC 3.5 px smears the left tree into a green blob (lamps_12, lamps_22). Fix: start near blur only below 0.35x focus distance, cap CoC <= 2 px above 30 m camera distance, gather at half res with 16 taps and pre-multiplied CoC.",
+      "evidence": "shots/effects/r1/lamps_12.png"
+    },
+    {
+      "rank": 7,
+      "severity": "minor",
+      "title": "Staged showcase is programmer art",
+      "detail": "Flat boxes, cut-out card trees with hard silhouettes, no parapets/HVAC, a road cut through the hills with vertical walls. It is the only stage the chain is judged on. Fix: 3-4 clustered impostor cards per tree with normal-blended lighting, roof clutter, soften the terrain cut, or stage on the buildings/props showcases once they exist.",
+      "evidence": "shots/effects/r1/skyline_12.png"
+    },
+    {
+      "rank": 8,
+      "severity": "minor",
+      "title": "No rain streak / wet-lens / wet reflection pass",
+      "detail": "Spec section 12 asks for rain streaks and wet reflection; rain currently only bumps bloom strength and desaturates. Fix: a screen-space streak sprite pass gated by weather.rain plus a wet-road specular hint published for roads.",
+      "evidence": "src/modules/effects/index.js"
+    },
+    {
+      "rank": 9,
+      "severity": "minor",
+      "title": "Sun never blooms, no glare",
+      "detail": "17:30 aerial bloom on/off diff is 0 even with the sun near the frame edge; there is no sun glare at all. Fix: drive a small anamorphic/ghost glare from the environment sun-disc screen position instead of relying on the threshold.",
+      "evidence": "shots/effects/r1/apicheck_diff_bloom_golden.png"
+    },
+    {
+      "rank": 10,
+      "severity": "minor",
+      "title": "Gauntlet run unreliable under load",
+      "detail": "12 of 16 tools/gauntlet.mjs shots failed on the fixed 90 s tool timeout and on Vite full reloads while other builders shot on the same box; the critic re-shot them with --timeout 300 on a no-HMR Vite instance (summary_gauntlet_original.json vs summary.json). Keep pushing core requests 1/5/6 so the official run completes.",
+      "evidence": "shots/effects/r1/gauntlet.log"
+    }
+  ],
+  "strengths": [
+    "Clean, well-isolated chain: HDR half-float target, depth shared by AO/DOF, every pass wrapped; init or render failure drops back to direct rendering; setEnabled(false) restores exactly the 19 direct draws and setEnabled(true) reinstalls.",
+    "Cheap: the post chain is 22 draw calls, ~0.1 ms JS per frame, no per-frame allocations; frames are byte-deterministic.",
+    "Bloom is restrained and exposure-aware: only lamp heads cross the threshold at night, zero daytime halo pollution (verified by pixel diff).",
+    "CAS sharpen + SMAA give crisp lane markings and facades without ringing (street_12).",
+    "The 06:30 frames (aerial_6p5, skyline_6p5) show the grade can work: warm sun, cool readable shadows, aerial haze on far hills.",
+    "Lamp-head halos with additive ground pools (closeup_22, plaza_22) are the right idea for CS2-style street lighting.",
+    "Honest build record: self-score 6.5 and the listed weaknesses match what the frames show."
+  ],
+  "summary": "Technically sound post chain (22 draws, 0 errors, deterministic, API contract fully met) whose on-screen result is still programmer art with a grade that hurts as often as it helps: 17:30 frames wash out to cream haze, night is a milky blue dusk with flat pastel windows and no city glow, noon shadows crush to p5 <= 5, everything unlit turns cyan at golden hour, the AO is invisible and the near DOF smears foreground trees. 6.0; fix the night and golden-hour grades first.",
+  "shots": [
+    "shots/effects/r1/aerial_6p5.png",
+    "shots/effects/r1/aerial_12.png",
+    "shots/effects/r1/aerial_17p5.png",
+    "shots/effects/r1/aerial_22.png",
+    "shots/effects/r1/street_6p5.png",
+    "shots/effects/r1/street_12.png",
+    "shots/effects/r1/street_17p5.png",
+    "shots/effects/r1/street_22.png",
+    "shots/effects/r1/skyline_6p5.png",
+    "shots/effects/r1/skyline_12.png",
+    "shots/effects/r1/skyline_17p5.png",
+    "shots/effects/r1/skyline_22.png",
+    "shots/effects/r1/closeup_6p5.png",
+    "shots/effects/r1/closeup_12.png",
+    "shots/effects/r1/closeup_17p5.png",
+    "shots/effects/r1/closeup_22.png",
+    "shots/effects/r1/lamps_12.png",
+    "shots/effects/r1/lamps_22.png",
+    "shots/effects/r1/plaza_12.png",
+    "shots/effects/r1/plaza_22.png",
+    "shots/effects/r1/street_12_720p.png",
+    "shots/effects/r1/apicheck_day_on.png",
+    "shots/effects/r1/apicheck_day_direct.png",
+    "shots/effects/r1/apicheck_diff_ao.png",
+    "shots/effects/r1/apicheck_diff_bloom_night.png",
+    "shots/effects/r1/apicheck_diff_bloom_golden.png",
+    "shots/effects/r1/apicheck_resized_960.png"
+  ]
+}

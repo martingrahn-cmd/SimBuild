@@ -1,0 +1,233 @@
+[
+  {
+    "file": "aerial_12.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 97.9,
+    "min": 8.29,
+    "max": 194.07580000000002,
+    "sat": 0.457,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "aerial_17p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 90.9,
+    "min": 24.9434,
+    "max": 196.02339999999998,
+    "sat": 0.432,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "aerial_22.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 55.6,
+    "min": 7.864800000000001,
+    "max": 186.01780000000002,
+    "sat": 0.488,
+    "darkPct": 0.1,
+    "brightPct": 0
+  },
+  {
+    "file": "aerial_6p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 90.4,
+    "min": 26.0838,
+    "max": 220.79600000000002,
+    "sat": 0.437,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "closeup_12.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 101.2,
+    "min": 4.5026,
+    "max": 195.0758,
+    "sat": 0.206,
+    "darkPct": 0.3,
+    "brightPct": 0
+  },
+  {
+    "file": "closeup_17p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 114,
+    "min": 23.929,
+    "max": 207.40519999999998,
+    "sat": 0.218,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "closeup_22.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 80.9,
+    "min": 4.4344,
+    "max": 215.004,
+    "sat": 0.375,
+    "darkPct": 0.3,
+    "brightPct": 0
+  },
+  {
+    "file": "closeup_6p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 113.4,
+    "min": 22.929000000000002,
+    "max": 223.5874,
+    "sat": 0.201,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "pillars_12.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 102.2,
+    "min": 2.7192,
+    "max": 197.14799999999997,
+    "sat": 0.211,
+    "darkPct": 0.8,
+    "brightPct": 0
+  },
+  {
+    "file": "pillars_22.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 88.7,
+    "min": 3.651,
+    "max": 213.004,
+    "sat": 0.383,
+    "darkPct": 0.2,
+    "brightPct": 0
+  },
+  {
+    "file": "skyline_12.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 124.6,
+    "min": 11.217799999999999,
+    "max": 190.1616,
+    "sat": 0.282,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "skyline_17p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 171.6,
+    "min": 31.871199999999998,
+    "max": 254.78339999999997,
+    "sat": 0.221,
+    "darkPct": 0,
+    "brightPct": 7.4
+  },
+  {
+    "file": "skyline_22.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 78.6,
+    "min": 10.6522,
+    "max": 234.2126,
+    "sat": 0.304,
+    "darkPct": 0.1,
+    "brightPct": 0
+  },
+  {
+    "file": "skyline_6p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 135.6,
+    "min": 32.0156,
+    "max": 204.84239999999997,
+    "sat": 0.243,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "stats_12.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 103.8,
+    "min": 6.005199999999999,
+    "max": 194.2884,
+    "sat": 0.356,
+    "darkPct": 0.2,
+    "brightPct": 0
+  },
+  {
+    "file": "stats_12_720p.png",
+    "w": 1280,
+    "h": 720,
+    "mean": 100,
+    "min": 6.005199999999999,
+    "max": 239.2298,
+    "sat": 0.345,
+    "darkPct": 0.1,
+    "brightPct": 0
+  },
+  {
+    "file": "stats_22.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 65.2,
+    "min": 5.1496,
+    "max": 187.13819999999998,
+    "sat": 0.392,
+    "darkPct": 0.2,
+    "brightPct": 0
+  },
+  {
+    "file": "street_12.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 100.5,
+    "min": 2.7152000000000003,
+    "max": 195.302,
+    "sat": 0.235,
+    "darkPct": 0.4,
+    "brightPct": 0
+  },
+  {
+    "file": "street_17p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 127.5,
+    "min": 22.0694,
+    "max": 241.62179999999995,
+    "sat": 0.223,
+    "darkPct": 0,
+    "brightPct": 0
+  },
+  {
+    "file": "street_22.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 88.2,
+    "min": 3.5787999999999998,
+    "max": 223.353,
+    "sat": 0.398,
+    "darkPct": 0.2,
+    "brightPct": 0
+  },
+  {
+    "file": "street_6p5.png",
+    "w": 1920,
+    "h": 1080,
+    "mean": 122.8,
+    "min": 23.784599999999998,
+    "max": 227.90619999999998,
+    "sat": 0.212,
+    "darkPct": 0,
+    "brightPct": 0
+  }
+]

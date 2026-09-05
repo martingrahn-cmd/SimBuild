@@ -65,6 +65,8 @@ export class TerrainMesh {
     this.group.name = 'terrain-chunks';
     this.meshes = [];
     this.attrs = [];
+    this.nbrAttrs = [];
+    this.proxyNbrAttrs = [];
     const maxInst = this.chunks * this.chunks;
     for (let l = 0; l < LOD_CELLS.length; l++) {
       const patch = buildPatch(LOD_CELLS[l]);
@@ -75,6 +77,9 @@ export class TerrainMesh {
       const attr = new THREE.InstancedBufferAttribute(arr, 4);
       attr.setUsage(THREE.DynamicDrawUsage);
       geo.setAttribute('aChunk', attr);
+      const nbr = new THREE.InstancedBufferAttribute(new Float32Array(maxInst * 4), 4);
+      nbr.setUsage(THREE.DynamicDrawUsage);
+      geo.setAttribute('aNbr', nbr);
       geo.instanceCount = 0;
       geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), data.size * 2);
       geo.boundingBox = new THREE.Box3(new THREE.Vector3(-data.size, -1000, -data.size), new THREE.Vector3(data.size, 1000, data.size));
@@ -93,6 +98,7 @@ export class TerrainMesh {
       this.group.add(mesh);
       this.meshes.push(mesh);
       this.attrs.push(attr);
+      this.nbrAttrs.push(nbr);
     }
     // reflection proxies: LOD1 patches near, LOD2 beyond, rendered only into the water reflection with the
     // cheap material; in the main pass their instance count is forced to 0 (onBeforeRender), so they cost
@@ -107,6 +113,9 @@ export class TerrainMesh {
       const attr = new THREE.InstancedBufferAttribute(new Float32Array(maxInst * 4), 4);
       attr.setUsage(THREE.DynamicDrawUsage);
       geo.setAttribute('aChunk', attr);
+      const nbr = new THREE.InstancedBufferAttribute(new Float32Array(maxInst * 4), 4);
+      nbr.setUsage(THREE.DynamicDrawUsage);
+      geo.setAttribute('aNbr', nbr);
       geo.instanceCount = 0;
       geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), data.size * 2);
       const mesh = new THREE.Mesh(geo, proxyMaterial || material);
@@ -123,6 +132,7 @@ export class TerrainMesh {
       this.group.add(mesh);
       this.proxies.push(mesh);
       this.proxyAttrs.push(attr);
+      this.proxyNbrAttrs.push(nbr);
     }
     this.boxes = [];
     this.centers = [];
@@ -136,6 +146,8 @@ export class TerrainMesh {
     this._lastCam = new THREE.Matrix4();
     this._lastProj = new THREE.Matrix4();
     this._counts = [0, 0, 0];
+    this._lodAll = new Int8Array(this.chunks * this.chunks);
+    this._plodAll = new Int8Array(this.chunks * this.chunks);
     this._dirty = true;
     this.stats = { visible: 0, lod: [0, 0, 0] };
   }
@@ -164,36 +176,47 @@ export class TerrainMesh {
     const pcounts = this._pcounts || (this._pcounts = [0, 0]); pcounts[0] = pcounts[1] = 0;
     const dP = 420 * this.lodScale;
     const hs = this.chunkSize * 0.5;
+    const n = this.chunks, lodAll = this._lodAll, plodAll = this._plodAll;
+    // pass 1: LOD of every chunk from its distance (also the culled ones: neighbours need it for edge stitching)
     for (let i = 0; i < this.boxes.length; i++) {
-      if (!this._frustum.intersectsBox(this.boxes[i])) continue;
       const c = this.centers[i];
-      // 2D distance from the camera to the chunk footprint
       const dx = Math.max(0, Math.abs(cam.x - c.x) - hs), dz = Math.max(0, Math.abs(cam.z - c.y) - hs);
       const dy = Math.max(0, cam.y - this.data.chunkMax[i]);
       const dist = Math.sqrt(dx * dx + dz * dz + dy * dy * 0.5);
-      const lod = dist < d0 ? 0 : dist < d1 ? 1 : 2;
-      const arr = this.attrs[lod].array;
+      lodAll[i] = dist < d0 ? 0 : dist < d1 ? 1 : 2;
+      plodAll[i] = dist < dP ? 1 : 2;
+    }
+    // pass 2: visible chunks -> instances; aNbr carries the LOD of the -x/+x/-z/+z neighbours so the vertex
+    // shader can snap a finer edge onto a coarser neighbour's edge (crack-free seams, no visible skirt walls)
+    for (let i = 0; i < this.boxes.length; i++) {
+      if (!this._frustum.intersectsBox(this.boxes[i])) continue;
+      const c = this.centers[i];
+      const cx = i % n, cz = (i / n) | 0;
+      const lod = lodAll[i];
+      const arr = this.attrs[lod].array, nb = this.nbrAttrs[lod].array;
       const k = counts[lod]++ * 4;
       arr[k] = c.x - hs; arr[k + 1] = c.y - hs; arr[k + 2] = this.chunkSize; arr[k + 3] = lod;
-      const pl = dist < dP ? 0 : 1;
-      const parr = this.proxyAttrs[pl].array;
+      nb[k] = cx > 0 ? lodAll[i - 1] : lod; nb[k + 1] = cx < n - 1 ? lodAll[i + 1] : lod;
+      nb[k + 2] = cz > 0 ? lodAll[i - n] : lod; nb[k + 3] = cz < n - 1 ? lodAll[i + n] : lod;
+      const pl = plodAll[i] - 1;
+      const parr = this.proxyAttrs[pl].array, pnb = this.proxyNbrAttrs[pl].array;
       const pk = pcounts[pl]++ * 4;
       parr[pk] = c.x - hs; parr[pk + 1] = c.y - hs; parr[pk + 2] = this.chunkSize; parr[pk + 3] = pl + 1;
+      pnb[pk] = cx > 0 ? plodAll[i - 1] : pl + 1; pnb[pk + 1] = cx < n - 1 ? plodAll[i + 1] : pl + 1;
+      pnb[pk + 2] = cz > 0 ? plodAll[i - n] : pl + 1; pnb[pk + 3] = cz < n - 1 ? plodAll[i + n] : pl + 1;
     }
     for (let l = 0; l < 2; l++) {
-      const attr = this.proxyAttrs[l];
-      attr.clearUpdateRanges();
-      attr.addUpdateRange(0, pcounts[l] * 4);
-      attr.needsUpdate = true;
+      const attr = this.proxyAttrs[l], nb = this.proxyNbrAttrs[l];
+      attr.clearUpdateRanges(); attr.addUpdateRange(0, pcounts[l] * 4); attr.needsUpdate = true;
+      nb.clearUpdateRanges(); nb.addUpdateRange(0, pcounts[l] * 4); nb.needsUpdate = true;
       this.proxies[l].geometry.instanceCount = pcounts[l];
       this.proxies[l].visible = pcounts[l] > 0;
     }
     let vis = 0;
     for (let l = 0; l < 3; l++) {
-      const attr = this.attrs[l];
-      attr.clearUpdateRanges();
-      attr.addUpdateRange(0, counts[l] * 4);
-      attr.needsUpdate = true;
+      const attr = this.attrs[l], nb = this.nbrAttrs[l];
+      attr.clearUpdateRanges(); attr.addUpdateRange(0, counts[l] * 4); attr.needsUpdate = true;
+      nb.clearUpdateRanges(); nb.addUpdateRange(0, counts[l] * 4); nb.needsUpdate = true;
       this.meshes[l].geometry.instanceCount = counts[l];
       this.meshes[l].visible = counts[l] > 0;
       this.stats.lod[l] = counts[l];
