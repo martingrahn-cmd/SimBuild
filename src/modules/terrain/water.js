@@ -30,6 +30,9 @@ uniform float uRes;
 uniform float uSeaLevel;
 uniform vec3 uSunDir;
 uniform vec3 uSunColor;
+uniform vec3 uLightDir;
+uniform vec3 uLightColor;
+uniform sampler2D uSeaMask;
 uniform vec3 uSkyColor;
 uniform vec3 uDeepColor;
 uniform vec3 uShallowColor;
@@ -83,38 +86,40 @@ void main() {
   vec4 ruv = vRefUv;
   ruv.xy += tilt * 3.0 * ruv.w;
   vec4 rt = texture2DProj(tReflect, ruv);
-  vec3 R = reflect(-V, N);
-  R.y = max(R.y, 0.015);
+  vec3 Nsky = normalize(vec3(tilt.x * 2.5, 1.0, tilt.y * 2.5));   // facets reflect higher (bluer) sky than the mean plane
+  vec3 R = reflect(-V, Nsky);
+  R.y = max(R.y, 0.03);
   R = normalize(R);
   vec2 suv = vec2(atan(R.z, R.x) * 0.15915494309 + 0.5, asin(clamp(R.y, -1.0, 1.0)) * 0.31830988618 + 0.5);
   vec3 skyRefl = uHasEnvSky > 0.5 ? texture2D(uEnvSky, suv).rgb : uSkyColor * (0.9 + 0.6 * (1.0 - R.y));
   vec3 refl = mix(skyRefl, rt.rgb, clamp(rt.a, 0.0, 1.0)) * uReflStrength;
 
   // body colour: absorption with depth, lit by sky + sun
-  float absorb = 1.0 - exp(-depth * 0.14);
+  float absorb = 1.0 - exp(-depth * 0.22);
   vec3 body = mix(uShallowColor, uDeepColor, absorb);
   vec3 light = uSkyColor * 0.85 + uSunColor * 0.35 * max(0.0, uSunDir.y);
   body *= light;
 
   float NdV = max(0.0, dot(N, V));
-  float F = 0.03 + 0.97 * pow(1.0 - NdV, 5.0);
-  vec3 col = mix(body, refl, clamp(F * 0.92 + 0.12, 0.0, 1.0));
+  float F = 0.02 + 0.98 * pow(1.0 - NdV, 5.0);
+  vec3 col = mix(body, refl, clamp(F * 0.9 + 0.16, 0.0, 0.92));
 
-  // sun glints
-  vec3 H = normalize(uSunDir + V);
+  // sun / moon glints (the environment's current light: sun by day, moon at night)
+  vec3 H = normalize(uLightDir + V);
   float NdH = max(0.0, dot(N, H));
   float spec = pow(NdH, mix(520.0, 60.0, farW)) * mix(3.0, 0.35, farW) + pow(NdH, 24.0) * 0.05;
-  col += uSunColor * spec * smoothstep(-0.02, 0.15, uSunDir.y);
+  col += uLightColor * spec * smoothstep(-0.02, 0.15, uLightDir.y);
 
   // shore foam + waterline
   float fn = texture2D(uMacro, p / 26.0 + uTime * vec2(0.012, 0.004)).r * 0.6
            + texture2D(uMacro, p / 8.5 - uTime * vec2(0.02, 0.011)).g * 0.4;
-  float band = smoothstep(2.2, 0.0, depth);
+  float sea = texture2D(uSeaMask, (p - uWorldMin) / (uCell * (uRes - 1.0))).r;
+  float band = smoothstep(2.4, 0.0, depth) * (0.25 + 0.75 * sea);
   float wave = 0.5 + 0.5 * sin(depth * 3.2 - uTime * 1.3 + fn * 4.0);
-  float foam = band * smoothstep(0.42, 0.7, fn * 0.7 + wave * 0.3 + band * 0.15);
-  float edge = smoothstep(0.35, 0.0, depth);
-  vec3 foamCol = vec3(0.92, 0.95, 0.96) * (uSkyColor * 0.55 + uSunColor * 0.45 * max(0.0, uSunDir.y) + 0.02);
-  float foamK = clamp(foam * 0.75 + edge * 0.45, 0.0, 1.0);
+  float foam = band * smoothstep(0.45, 0.75, fn * 0.7 + wave * 0.3 + band * 0.15);
+  float edge = smoothstep(0.3, 0.0, depth) * smoothstep(0.35, 0.65, fn) * (0.3 + 0.7 * sea);
+  vec3 foamCol = vec3(0.85, 0.88, 0.88) * (uSkyColor * 0.5 + uSunColor * 0.4 * max(0.0, uSunDir.y) + 0.01);
+  float foamK = clamp(foam * 0.6 + edge * 0.18, 0.0, 1.0);
   col = mix(col, foamCol, foamK);
 
   // horizon: blend into the sky so the plane edge / far clip never shows
@@ -135,7 +140,7 @@ void main() {
 `;
 
 export class Water {
-  constructor(data, { ripple, macro, size = 1024, mainCamera, seaLevel = 0, extent = 11000, onReflection = null }) {
+  constructor(data, { ripple, macro, seaMask = null, size = 1024, mainCamera, seaLevel = 0, extent = 11000, onReflection = null }) {
     this.onReflection = onReflection;
     this.data = data;
     this.mainCamera = mainCamera;
@@ -149,11 +154,13 @@ export class Water {
       uTexMat: { value: this.texMat }, uTime: { value: 0 },
       uWorldMin: { value: -data.half }, uCell: { value: data.cell }, uRes: { value: data.res }, uSeaLevel: { value: seaLevel },
       uSunDir: { value: new THREE.Vector3(0, 1, 0) }, uSunColor: { value: new THREE.Color(1, 0.95, 0.85) },
+      uLightDir: { value: new THREE.Vector3(0, 1, 0) }, uLightColor: { value: new THREE.Color(1, 0.95, 0.85) }, uSeaMask: { value: null },
       uSkyColor: { value: new THREE.Color(0.55, 0.7, 0.9) },
-      uDeepColor: { value: new THREE.Color(0.02, 0.09, 0.13) }, uShallowColor: { value: new THREE.Color(0.14, 0.40, 0.38) },
+      uDeepColor: { value: new THREE.Color(0.014, 0.05, 0.085) }, uShallowColor: { value: new THREE.Color(0.09, 0.23, 0.245) },
       uReflStrength: { value: 1.0 }, uDay: { value: 1 }, uHasEnvSky: { value: 0 }, uEdgeFade: { value: new THREE.Vector2(2300, 4400) },
     }]);
     this.uniforms.tReflect.value = this.rt.texture;
+    this.uniforms.uSeaMask.value = seaMask;
     this.uniforms.uHeightTex.value = data.heightTex;
     this.uniforms.uTexMat.value = this.texMat;
     this.material = new THREE.ShaderMaterial({
@@ -192,9 +199,11 @@ export class Water {
     this.enabled = true;
     this.mesh.onBeforeRender = (renderer, scene, camera) => this._renderReflection(renderer, scene, camera);
   }
-  setSun(dir, color, skyColor, day) {
+  setSun(dir, color, skyColor, day, lightDir = dir, lightColor = color) {
     this.uniforms.uSunDir.value.copy(dir);
     this.uniforms.uSunColor.value.copy(color);
+    this.uniforms.uLightDir.value.copy(lightDir);
+    this.uniforms.uLightColor.value.copy(lightColor);
     this.uniforms.uSkyColor.value.copy(skyColor);
     this.uniforms.uDay.value = day;
   }
@@ -276,6 +285,30 @@ export class Water {
     this.mesh.visible = true;
   }
   dispose() { this.rt.dispose(); this.material.dispose(); this.mesh.geometry.dispose(); }
+}
+
+/** R8 mask (world-aligned): 1 on the open sea / estuary (surf), 0 on the river and lakes */
+export function makeSeaMask(gen, size = 64) {
+  const data = new Uint8Array(size * size);
+  const res = gen.res, cell = gen.cell, half = gen.size / 2;
+  for (let ty = 0; ty < size; ty++) for (let tx = 0; tx < size; tx++) {
+    const x = -half + (tx + 0.5) * (gen.size / size), z = -half + (ty + 0.5) * (gen.size / size);
+    const iz = Math.max(0, Math.min(res - 1, Math.round((z + half) / cell)));
+    const ix = Math.max(0, Math.min(res - 1, Math.round((x + half) / cell)));
+    const coastX = gen.coast ? gen.coast.xAt[iz] : -1e9;
+    let v = x < coastX + 40 ? 1 : 0;
+    if (!v && gen.river && x < -420) {
+      const dr = Math.abs(z - gen.river.zAt[ix]);
+      v = dr < gen.river.halfWidth[ix] + 60 ? Math.max(0, Math.min(1, (-420 - x) / 200)) : 0;
+    }
+    data[ty * size + tx] = Math.round(v * 255);
+  }
+  const t = new THREE.DataTexture(data, size, size, THREE.RedFormat, THREE.UnsignedByteType);
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+  t.magFilter = t.minFilter = THREE.LinearFilter;
+  t.generateMipmaps = false;
+  t.needsUpdate = true;
+  return t;
 }
 
 /** tileable ripple normal map (fbm-based) */

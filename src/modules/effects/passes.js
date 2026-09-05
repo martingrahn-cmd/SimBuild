@@ -31,13 +31,16 @@ uniform vec2 uFade;         // fade start / end (m)
 varying vec2 vUv;
 #define N 12
 void main() {
-  float d0 = texture2D(tDepth, vUv).x;
+  // snap to the centre of a full-resolution depth texel: this pass runs at reduced resolution, and a
+  // half-res pixel centre lands exactly on a depth texel boundary, where nearest sampling is ambiguous
+  vec2 uv0 = (floor(vUv / uDepthTexel) + 0.5) * uDepthTexel;
+  float d0 = texture2D(tDepth, uv0).x;
   if (d0 >= 0.999999) { gl_FragColor = vec4(1.0, uProj.w, 0.0, 1.0); return; }
   float lin = linFromDepth(d0);
-  vec3 p = viewPos(vUv, lin);
+  vec3 p = viewPos(uv0, lin);
   vec2 tx = vec2(uDepthTexel.x, 0.0), ty = vec2(0.0, uDepthTexel.y);
-  vec3 pr = viewPos(vUv + tx, linDepthAt(vUv + tx)), pl = viewPos(vUv - tx, linDepthAt(vUv - tx));
-  vec3 pu = viewPos(vUv + ty, linDepthAt(vUv + ty)), pd = viewPos(vUv - ty, linDepthAt(vUv - ty));
+  vec3 pr = viewPos(uv0 + tx, linDepthAt(uv0 + tx)), pl = viewPos(uv0 - tx, linDepthAt(uv0 - tx));
+  vec3 pu = viewPos(uv0 + ty, linDepthAt(uv0 + ty)), pd = viewPos(uv0 - ty, linDepthAt(uv0 - ty));
   vec3 dx = abs(pr.z - p.z) < abs(p.z - pl.z) ? pr - p : p - pl;
   vec3 dy = abs(pu.z - p.z) < abs(p.z - pd.z) ? pu - p : p - pd;
   vec3 n = normalize(cross(dx, dy));
@@ -49,8 +52,9 @@ void main() {
     float fi = float(i);
     float a = rot + fi * 2.399963;
     float r = sqrt((fi + 0.5) / float(N)) * rpx;
-    vec2 suv = vUv + vec2(cos(a), sin(a)) * r * uTexel;
+    vec2 suv = uv0 + vec2(cos(a), sin(a)) * r * uTexel;
     if (suv.x < 0.0 || suv.x > 1.0 || suv.y < 0.0 || suv.y > 1.0) continue;
+    suv = (floor(suv / uDepthTexel) + 0.5) * uDepthTexel;
     float ls = linDepthAt(suv);
     vec3 v = viewPos(suv, ls) - p;
     float vv = dot(v, v);
@@ -129,15 +133,20 @@ void main() {
 `;
 
 // Final display-referred pass (input is tone-mapped sRGB from OutputPass + AA).
+// Order: CAS sharpen -> lift/gamma/gain -> filmic S contrast -> split toning (cool shadows / warm highlights)
+// -> saturation + vibrance -> temperature/tint -> vignette -> dither.
 const GRADE_FRAG = /* glsl */`
 uniform sampler2D tDiffuse;
 uniform vec2 uTexel;
 uniform vec3 uLift, uGamma, uGain;
 uniform vec4 uGrade;      // saturation, contrast, temperature, vignette
+uniform vec4 uCurve;      // pivot, vibrance, tint (green<0, magenta>0), black point
+uniform vec3 uShadowTint, uHighTint;
 uniform vec2 uSharpen;    // amount, dither amplitude
 varying vec2 vUv;
 vec3 tex(vec2 uv) { return texture2D(tDiffuse, uv).rgb; }
 float ign(vec2 p) { return fract(52.9829189 * fract(dot(p, vec2(0.06711056, 0.00583715)))); }
+float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 void main() {
   vec3 c = tex(vUv);
   vec3 n = tex(vUv + vec2(0.0, uTexel.y)), s = tex(vUv - vec2(0.0, uTexel.y));
@@ -151,12 +160,27 @@ void main() {
   // lift / gamma / gain
   c = c * uGain + uLift * (1.0 - c);
   c = pow(max(c, 0.0), 1.0 / uGamma);
-  // saturation and gentle contrast
-  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
-  c = mix(vec3(l), c, uGrade.x);
-  c = (c - 0.5) * uGrade.y + 0.5;
-  // colour temperature (warm > 0, cool < 0)
-  c *= vec3(1.0 + uGrade.z * 0.10, 1.0 + uGrade.z * 0.025, 1.0 - uGrade.z * 0.10);
+  // black point: pull the darkest values down a touch (haze compensation), keeps 0..1
+  c = max(c - uCurve.w, 0.0) / (1.0 - uCurve.w);
+  // filmic S contrast around the pivot: smoothstep blend never clips, linear part adds punch
+  float k = uGrade.y - 1.0;
+  vec3 sc = c * c * (3.0 - 2.0 * c);
+  c = mix(c, sc, clamp(k * 1.6, 0.0, 0.8));
+  c = uCurve.x + (c - uCurve.x) * (1.0 + k * 0.35);
+  c = clamp(c, 0.0, 1.0);
+  // split toning by luminance
+  float l = luma(c);
+  float shw = 1.0 - smoothstep(0.0, 0.50, l);
+  float hiw = smoothstep(0.40, 1.0, l);
+  c += uShadowTint * shw * (0.25 + 0.75 * l / 0.5);
+  c += uHighTint * hiw;
+  // saturation + vibrance (boosts muted colours more than already vivid ones)
+  l = luma(c);
+  float satNow = (max(max(c.r, c.g), c.b) - min(min(c.r, c.g), c.b)) / max(max(max(c.r, c.g), c.b), 1e-3);
+  float satK = uGrade.x + uCurve.y * (1.0 - satNow);
+  c = mix(vec3(l), c, satK);
+  // colour temperature (warm > 0, cool < 0) and green/magenta tint
+  c *= vec3(1.0 + uGrade.z * 0.10, 1.0 + uGrade.z * 0.025 - uCurve.z * 0.06, 1.0 - uGrade.z * 0.10 + uCurve.z * 0.03);
   // vignette
   vec2 q = (vUv - 0.5) * vec2(1.0, 0.85);
   c *= 1.0 - uGrade.w * smoothstep(0.30, 0.95, length(q) * 1.6);
@@ -254,6 +278,7 @@ export class GradePass extends Pass {
       tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2(1 / 1920, 1 / 1080) },
       uLift: { value: new THREE.Vector3(0, 0, 0) }, uGamma: { value: new THREE.Vector3(1, 1, 1) }, uGain: { value: new THREE.Vector3(1, 1, 1) },
       uGrade: { value: new THREE.Vector4(1, 1, 0, 0) }, uSharpen: { value: new THREE.Vector2(0.3, 1 / 255) },
+      uCurve: { value: new THREE.Vector4(0.42, 0, 0, 0) }, uShadowTint: { value: new THREE.Vector3(0, 0, 0) }, uHighTint: { value: new THREE.Vector3(0, 0, 0) },
     });
     this.u = this.material.uniforms;
     this.quad = new FullScreenQuad(this.material);

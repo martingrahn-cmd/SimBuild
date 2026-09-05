@@ -1,0 +1,20 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=audio&time=17.5&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "audio",
+  "time": 17.5,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+  "errors": [
+    "THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:143: 'atmScatterG' : no matching overloaded function found\nERROR: 0:143: '=' : dimension mismatch\nERROR: 0:143: '=' : cannot convert from 'const mediump float' to 'highp 3-component vector of float'\nERROR: 0:144: 'atmScatterG' : no matching overloaded function found\n\u0000\n\n  138:   sdir.y = max(sdir.y, 0.003);\n  139:   sdir = normalize(sdir);\n  140:   vec3 ro = vec3(0.0, atmRe + 150.0, 0.0);\n  141:   float tMax = atmSphere(ro, sdir, atmRa).y;\n  142:   float g = mix(0.76, 0.0, uAmbient);\n> 143:   vec3 L = atmScatterG(ro, sdir, tMax, uSunDir, uSunI, 0.9, g);\n  144:   L += atmScatterG(ro, sdir, tMax, uMoonDir, uMoonI, 0.9, g);\n  145:   // night floor: airglow + light-pollution horizon glow (keeps the night sky deep blue, never black)\n  146:   L += uNight * (vec3(0.0030, 0.0046, 0.0105) * (0.75 + 0.25 * (1.0 - sdir.y)) + vec3(0.020, 0.013, 0.007) * exp(-sdir.y * 7.0));\n  147:   // overcast: desaturate and flatten toward a bright-zenith grey\n  148:   float lum = dot(L, vec3(0.2126, 0.7152, 0.0722));\n  149:   vec3 over = vec3(lum) * (0.85 + 0.55 * sdir.y) * vec3(0.97, 0.985, 1.0);"
+  ],
+  "warnings": [
+    "WebGL: INVALID_OPERATION: useProgram: program not valid"
+  ],
+  "png": "shots/audio/rdev1/street_17p5.png"
+}

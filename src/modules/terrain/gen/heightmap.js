@@ -49,8 +49,9 @@ export function generateHeightmap(rng, opts = {}) {
       const rE = Math.max(x, Math.abs(z));
       const westFade = smoothstep(-840, -430, x);
       const mHill = smoothstep(540, 920, rE) * westFade;
-      const hillN = 0.5 + 0.5 * nBase.fbm(wx / 330 + 3, wz / 330 - 7, 4, 2.0, 0.45);
-      h += 48 * hillN * mHill;
+      const hillN = 0.32 + 0.32 * nBase.fbm(wx / 330 + 3, wz / 330 - 7, 4, 2.0, 0.45)
+        + 0.36 * nMount.ridged(wx / 240 + 4, wz / 240 - 2, 5, 2.05, 0.5, 1.15);
+      h += 52 * hillN * mHill;
       // coastal hills / headlands on the west
       const mWest = smoothstep(-520, -980, x) * smoothstep(120, 520, Math.abs(z));
       h += 40 * (0.5 + 0.5 * nBase.fbm(wx / 300 - 9, wz / 300 + 4, 4)) * mWest;
@@ -58,9 +59,7 @@ export function generateHeightmap(rng, opts = {}) {
       // ridged mountains at the edges
       const mM = smoothstep(560, 1010, rE) * westFade;
       if (mM > 0) {
-        const rid = nMount.ridged(wx / 520, wz / 520, 7, 2.05, 0.52, 1.35);
-        const uplift = 45 * mM;
-        h += uplift + 300 * Math.pow(rid, 1.4) * Math.pow(mM, 1.3);
+        h += mountain(nMount, wx, wz, mM, 0, 0);
       }
 
       // ---- river valley (carve) ----
@@ -69,28 +68,34 @@ export function generateHeightmap(rng, opts = {}) {
         if (dr < 420) {
           const d = dr + 18 * nRiver.fbm(x / 120 + 3, z / 120, 3) + 4 * nRiver.fbm(x / 28, z / 28, 2);
           const w = river.halfWidth[ix];
-          h = Math.min(h, riverProfile(d, w, nRiver, x, z));
+          const shoreW = 10 + 26 * (0.5 + 0.5 * nRiver.fbm(x / 210 + 5, z / 210 - 3, 2));   // 10..36 m beaches
+          h = Math.min(h, riverProfile(d, w, nRiver, x, z, shoreW, ix));
         }
       }
       // ---- coast (carve) ----
       {
         const dx = x - xc;
-        h = Math.min(h, coastProfile(dx, nCoast, x, z));
+        const beachW = 12 + 40 * (0.5 + 0.5 * nCoast.fbm(z / 260 + 3, x / 260, 2));   // 12..52 m
+        h = Math.min(h, coastProfile(dx, nCoast, x, z, beachW));
       }
       // ---- rugged headlands in the far west corners (added after the carve: rise straight out of the sea) ----
-      const mW = smoothstep(-720, -1010, x) * smoothstep(600, 1010, Math.abs(z)) * smoothstep(-1024, -930, x) * smoothstep(1024, 940, Math.abs(z));
+      const mW = smoothstep(-720, -1010, x) * smoothstep(600, 1010, Math.abs(z)) * smoothstep(-1024, -930, x) * smoothstep(1024, 940, Math.abs(z))
+        * (0.55 + 0.45 * (0.5 + 0.5 * nBase.fbm(wx / 220 + 6, wz / 220 - 5, 3)));   // asymmetric: no smooth cone
       if (mW > 0) {
-        const rid = nMount.ridged(wx / 520 + 2, wz / 520 + 1, 7, 2.05, 0.52, 1.35);
-        const hw = -12 + 30 * mW + 230 * Math.pow(rid, 1.4) * Math.pow(mW, 1.3);
+        const hw = -12 + mountain(nMount, wx, wz, mW, 2, 1, 0.38) * 0.5;
         h = Math.max(h, hw);
       }
       // ---- island (add back) ----
       {
+        // elongated NW-SE, ridged crest, a low grassy shelf on the lee side
         const ddx = x - island.x, ddz = z - island.z;
-        const r = Math.sqrt(ddx * ddx + ddz * ddz) / island.r;
-        if (r < 1.4) {
-          const bump = Math.pow(1 - smoothstep(0.15, 1.35, r), 1.6);
-          const ih = -6 + 34 * bump * (0.75 + 0.35 * nBase.fbm(x / 60, z / 60, 3));
+        const ex = (ddx * 0.83 + ddz * 0.56) / 1.35, ez = (-ddx * 0.56 + ddz * 0.83) / 0.85;
+        const r = Math.sqrt(ex * ex + ez * ez) / island.r + 0.12 * nBase.fbm(x / 70 + 2, z / 70, 3);
+        if (r < 1.5) {
+          const bump = Math.pow(1 - smoothstep(0.1, 1.4, r), 1.35);
+          const rid = nMount.ridged(x / 150 + 9, z / 150 + 4, 5, 2.05, 0.5, 1.25);
+          const shelf = smoothstep(1.2, 0.5, r) * 4.5;
+          const ih = -6 + shelf + 30 * bump * (0.45 + 0.55 * rid) + 6 * bump * nBase.fbm(x / 40, z / 40, 3);
           h = Math.max(h, ih);
         }
       }
@@ -138,15 +143,21 @@ function makeRiver(nz, res, half, cell) {
   return { zAt, halfWidth, zr, distance };
 }
 
-function riverProfile(d, w, nz, x, z) {
+function riverProfile(d, w, nz, x, z, shoreW = 22, ix = 0) {
   if (d < w) {
     const t = d / w;
-    return -7.5 + 5.5 * t * t + 0.6 * nz.fbm(x / 30, z / 30, 2);
+    return -8.0 + 6.0 * t * t + 0.6 * nz.fbm(x / 30, z / 30, 2);
   }
   const b = d - w;
-  if (b < 22) return lerp(-2, 3.0, b / 22);          // shore
-  const f = b - 22;                                    // floodplain → valley wall
-  return 3.0 + 0.045 * f + 0.0024 * f * f;
+  if (b < shoreW) return lerp(-2, 2.6, b / shoreW);    // shore / beach (width varies along the river)
+  // floodplain (gently rising, 2.6..5 m) then a valley wall up to the plains; the plain-side rise is steep
+  // enough to read as a valley (10-16 %) but only ~80 m wide, so the plains above stay buildable
+  const f = b - shoreW;
+  const flood = 35 + 30 * (0.5 + 0.5 * nz.fbm(x / 300 + 1, z / 300 + 8, 2));   // 35..65 m floodplain
+  if (f < flood) return 2.6 + 2.4 * (f / flood);
+  const g = f - flood;
+  const wallN = 0.5 + 0.5 * nz.fbm(x / 90 + 4, z / 90 + 2, 3);
+  return 5.0 + (0.14 + 0.08 * wallN) * g + 0.0016 * g * g;
 }
 
 function makeCoast(nz, res, half, cell) {
@@ -158,15 +169,32 @@ function makeCoast(nz, res, half, cell) {
   return { xAt };
 }
 
-function coastProfile(dx, nz, x, z) {
+function coastProfile(dx, nz, x, z, beachW = 26) {
   if (dx < 0) {
     // sea floor: gentle shelf then drop
     const shelf = -1.5 + 0.05 * dx + 0.0003 * dx * dx * (dx > -200 ? 0 : -1);
     return Math.max(-60, shelf) + 0.8 * nz.fbm(x / 45, z / 45, 2);
   }
-  if (dx < 26) return -1.5 + (4.6 / 26) * dx;          // beach: -1.5 → 3.1 m over 26 m
-  const f = dx - 26;
+  if (dx < beachW) return -1.5 + 4.6 * (dx / beachW);   // beach: -1.5 → 3.1 m
+  const f = dx - beachW;
   return 3.1 + 0.035 * f + 0.0016 * f * f;
+}
+
+/**
+ * Ridged mountain relief in metres for a mask m (0..1): a primary ridged field with a soft-capped peak
+ * (no single spire), secondary ridges at half scale, and a talus apron that eases the foot into the hills.
+ */
+function mountain(nz, wx, wz, m, ox, oz, sc = 1) {
+  const rid = nz.ridged(wx / (520 * sc) + ox, wz / (520 * sc) + oz, 7, 2.05, 0.52, 1.3);
+  const rid2 = nz.ridged(wx / (210 * sc) + ox + 7, wz / (210 * sc) + oz - 3, 5, 2.05, 0.5, 1.2);
+  const mk = Math.pow(m, 1.3);
+  // soft cap: pow(rid,1.35) saturates toward 1 instead of spiking (1 - exp(-k x)) / (1 - exp(-k))
+  const pk = Math.pow(rid, 1.35);
+  const capped = (1 - Math.exp(-2.2 * pk)) / (1 - Math.exp(-2.2));
+  const primary = 270 * capped;
+  const secondary = 70 * rid2 * (0.35 + 0.65 * rid);
+  const talus = 22 * m * (1 - mk);   // apron: fills the foot with gentle scree slopes
+  return 45 * m + (primary + secondary) * mk + talus;
 }
 
 /**

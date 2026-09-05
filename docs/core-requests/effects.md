@@ -32,3 +32,32 @@ In headless mode effects issues a 1×1 `readPixels` after the composer render so
 runs more than one (multi-second) frame ahead — this keeps screenshot capture latency ≈ one frame.
 If the engine did this centrally for `headless` (after `renderer.render`/composer), every module's
 screenshots would benefit, not just the ones with the post chain installed.
+
+## 4. `src/main.js`: in showcase mode, import only the wanted modules (blocking for clean JSON)
+
+`loadModuleDefs()` dynamically imports every module folder before `selectModules()` runs. While another
+builder is mid-edit (e.g. `simulation/index.js` importing a file that does not exist yet), Vite returns a
+500 for that module and main logs `[main] module simulation failed to import …` — which lands in the
+`errors[]` of *every other module's* screenshot JSON, so an effects gauntlet can show 3–4 console errors
+that have nothing to do with effects. Suggested: parse the URL first and only import
+`selectModules(showcase)` (the wanted set); or, at minimum, keep import failures of modules that are not in
+the wanted set out of `window.__sim.errors` (log them as warnings).
+
+## 5. Vite full reloads while a screenshot is in flight
+
+Every save in any `src/modules/**` file triggers a full page reload in the headless browser (no HMR accept
+handlers), so a screenshot whose page is mid-render when another builder saves captures the `#boot`
+"LOADING" overlay with `ok: true` (the tool saw `ready` before the reload). Harmless when builders work
+alone; with four builders on one box it corrupts ~1 in 6 shots. Two cheap fixes: `tools/screenshot.mjs`
+could check `document.getElementById('boot').classList.contains('hidden')` right before capture and
+re-wait for `ready` if the page navigated; or the dev server could run with `server.hmr = false` for the
+gauntlet URL (`?headless=1`) so reloads never hit tool-driven pages.
+
+## 6. `tools/gauntlet.mjs`: forward `--timeout` to `screenshot.mjs`
+
+Under a load average of 8+ (two builders shooting, SwiftShader threads) a single 1080p frame of the effects
+showcase takes 8–10 s and `ready` (5 frames + asset settle) arrives after 60–120 s, so the gauntlet's fixed
+90 s tool timeout fails most shots (`page.waitForFunction: Timeout 90000ms exceeded`). `screenshot.mjs`
+already honours `--timeout`; the gauntlet just needs to pass it through (default 90, builders use 300).
+Workaround used for the effects dev gauntlet: a private wrapper that invokes `tools/screenshot.mjs` with
+`--timeout 300` for the same 16-shot matrix and writes the same `summary.json` shape.

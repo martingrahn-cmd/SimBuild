@@ -1,0 +1,30 @@
+// profile: frame ms with everything, without the sky dome, without the ground
+import { chromium } from 'playwright';
+const exe = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const browser = await chromium.launch({ executablePath: exe, headless: true, args: ['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--no-sandbox'] });
+const page = await (await browser.newContext({ viewport: { width: +(process.env.W||640), height: +(process.env.H||360) } })).newPage();
+const cam = process.argv[2] || 'skyline', time = process.argv[3] || '12';
+await page.goto(`http://127.0.0.1:5173/?showcase=environment&headless=1&time=${time}&camera=${cam}`, { waitUntil: 'domcontentloaded', timeout: 300000 });
+await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout: 300000, polling: 200 });
+const r = await page.evaluate(async () => {
+  const s = window.__sim; const scene = s.engine.scene;
+  const find = (n) => { let o = null; scene.traverse((x) => { if (x.name === n) o = x; }); return o; };
+  const sky = find('sky-dome'), ground = find('showcase-ground'), blocks = find('showcase-blocks');
+  const meas = async () => { const f0 = s.engine.stats.frames; const t0 = performance.now(); while (s.engine.stats.frames - f0 < 4) await new Promise(r => setTimeout(r, 30)); return +((performance.now() - t0) / 4).toFixed(0); };
+  const out = {};
+  out.full = await meas();
+  sky.visible = false; out.noSky = await meas(); sky.visible = true;
+  ground.visible = false; out.noGround = await meas(); ground.visible = true;
+  blocks.visible = false; out.noBlocks = await meas(); blocks.visible = true;
+  blocks.castShadow = false; out.blocksNoCast = await meas(); blocks.castShadow = true;
+  out.full2 = await meas();
+  sky.visible = false; ground.visible = false; out.blocksOnly = await meas(); sky.visible = true; ground.visible = true;
+  const w = s.world.weather; const d = s.registry.get('environment').def.api._debug().S;
+  out.skyLight = [w.skyLight.r, w.skyLight.g, w.skyLight.b].map(v => +v.toFixed(4));
+  out.zenith = d.zenith.map(v => +v.toFixed(4)); out.mid = d.mid.map(v => +v.toFixed(4)); out.horizon = d.horizon.map(v => +v.toFixed(4));
+  out.exposure = w.exposure; out.envI = scene.environmentIntensity; out.sunI = w.sunIntensity; out.fog = scene.fog.color.getHexString();
+  out.errors = s.errors; out.warnings = s.warnings;
+  return out;
+});
+console.log(JSON.stringify(r));
+await browser.close();

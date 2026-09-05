@@ -1,0 +1,28 @@
+{
+  "module": "environment",
+  "round": 2,
+  "summary": "Round 2 addressed all 14 critic issues in rank order. (1) Fixed the CPU sky-sample aliasing in atmosphere.js (opticalDepth now has its own scratch vector/density arrays): world.weather.skyLight is real hemisphere sky radiance (noon ~0.10/0.17/0.31, night ~0.005-0.02), fog.color is the real horizon colour, rain colour comes from the LUT zenith. (2) Noon is crisp: fog presets cut to clear 8e-5 / partly 1.1e-4 / cloudy 3e-4 / rain 6.5e-4 / fog 6e-3, exposure 1.15 at high sun, environmentIntensity 0.5 at noon from a new sun-masked 128x64 ambient LUT (isotropic Mie) so PMREM ambient stays sky-blue; ground albedo dropped to realistic grass levels. (3) Showcase ground uses hex-tiled texture bombing (3 taps, per-cell random rotation+offset, contrast-preserving weights) for the grass diffuse/normal/ARM, a brown_mud_leaves_01 dirt layer blended by 22/62/250 m macro noise, luminance-only use of the yellow moss photo with hue from lush/mid/dry macro tints: the 13 m lattice and grazing-angle moire are gone in every aerial/skyline frame. (4) Golden hour/sunset: exposure 2.0-3.6 below 12 deg sun, a multiple-scattering twilight-blue floor in the LUT and CPU samples, sun-intensity floor near the horizon plus a golden-hour punch, ambient ramp as the sun drops: sunset has bright warm sky, orange-lit faces and readable cool shadows instead of sepia black. (5) Clouds: 5-step raymarch through a 560 m slab with entry/exit coverage, rounded vertical profile, two-octave cauliflower erosion, Beer-Powder direct term plus multi-scatter glow, height-graded ambient, undersides lit when the sun is low, aerial perspective; dome drawn last (depth pinned at far plane) so the march only runs on visible sky. (6) Fog seam removed: dome applies the same height-fog transmittance + sun in-scatter as the ground, LUT below-horizon darkening made continuous, and below the horizon the dome shows the fogged-ground colour by the 7 km fog amount (measured: 160,168,171 continuous across the old seam). (7) Grass roughness floored at 0.86 when dry, normalScale 0.7: no corduroy sheen at 17:30. (8) Night ground desaturated 55 % toward blue-grey, MOON_SCALE 0.10, night exposure 2.8, cooler MOON_TINT. (9) Stars ~1.3 px with magnitude-driven size/brightness and more count; milky way boosted. (10) Window emissive 0.28 with warm/cool tints kept; grid anti-aliased by fwidth and faded to its average when smaller than ~3 px. (11) Rain: r^2 radial density near the camera, width/length grow with distance, soft tips, colour from the LUT zenith / exposure: streaks clearly read at 1080p. (12) Triangles 41,826 (spheres 32x18, dome 32x20) within the declared 60k. (13) Lighting no longer traverses the scene every frame: sweeps on module:ready / app:ready / any *:changed event and when the top-level child count changes (O(#modules) check). (14) Moon phase advances with clock.day over a 29.53-day lunation (day 1 = full); world.weather.moonPhase published. Also: cloud drift is seeded from the game hour and only advances while the clock runs, so shots at the same ?time= see the same sky; cloud-shadow map re-renders only per 20 m of drift and its mask is cloud-shaped (smoothstep) at 0.6 strength. Verified with ~35 dev screenshots plus the full gauntlet (shots/environment/rdev2, 16/16 ok after re-shooting 3 frames that other builders' file saves reloaded mid-capture).",
+  "drawCalls": 10,
+  "triangles": 41826,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/environment/rdev2/aerial_6p5.png", "shots/environment/rdev2/aerial_12.png", "shots/environment/rdev2/aerial_17p5.png", "shots/environment/rdev2/aerial_22.png",
+    "shots/environment/rdev2/street_6p5.png", "shots/environment/rdev2/street_12.png", "shots/environment/rdev2/street_17p5.png", "shots/environment/rdev2/street_22.png",
+    "shots/environment/rdev2/skyline_6p5.png", "shots/environment/rdev2/skyline_12.png", "shots/environment/rdev2/skyline_17p5.png", "shots/environment/rdev2/skyline_22.png",
+    "shots/environment/rdev2/closeup_6p5.png", "shots/environment/rdev2/closeup_12.png", "shots/environment/rdev2/closeup_22.png",
+    "shots/environment/dev_sunset_17p9.png", "shots/environment/dev_skyline_12_fog.png", "shots/environment/dev_street_12_rain.png", "shots/environment/dev_aerial_17p5.png", "shots/environment/dev_aerial_22.png",
+    "shots/environment/dev/lookup_12.png", "shots/environment/dev/lookup_17p5.png"
+  ],
+  "remainingWeaknesses": [
+    "Cumulus seen near the horizon (the only place the game cameras see them) still read as a soft, fairly flat sheet; no crisp 3D silhouettes or distinct puffs",
+    "Golden-hour aerial (17:30) is still lower-contrast than CS2's: a grazing sun on flat ground gives little direct light, the boosts help but the frame stays slightly milky",
+    "Ground is a tinted moss photo: at closeup it reads as green felt; dirt patches are subtle and there are no worn paths or rock",
+    "Stars are sparse and the milky way is barely visible; no moon visible in most night frames",
+    "Sunset sky is mauve/warm to the top of the frame rather than fading to blue",
+    "PMREM now comes from the sun-masked LUT, so chrome reflections lack the sun aureole",
+    "Cloud shadows are 23 m-texel blobs from the 256^2 map; fine from the air, soft at street level",
+    "SwiftShader frames take 5-12 s (dome march + hex-tiled ground): screenshots are fragile under load and real-GPU fps is unmeasured",
+    "Frames lost to Vite full reloads caused by other builders saving mid-capture had to be re-shot (core-request #2 still open)"
+  ],
+  "selfScore": 7.5
+}

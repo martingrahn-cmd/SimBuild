@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=simulation&time=6.5&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "simulation",
+  "time": 6.5,
+  "camera": "closeup",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+  "errors": [],
+  "warnings": [],
+  "png": "shots/simulation/rdev1/closeup_6p5.png"
+}

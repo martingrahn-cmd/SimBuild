@@ -1,0 +1,41 @@
+{
+  "module": "terrain",
+  "round": 1,
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 16,
+  "apiContractOk": true,
+  "issues": [
+    { "rank": 1, "severity": "blocker", "title": "Grass tufts render into the planar reflection as confetti on water", "detail": "Tuft InstancedMesh is on the TERRAIN layer the reflection camera includes, and its distance fade uses cameraPosition (mirrored camera is under the water, so nothing fades). Yellow/orange speckle covers every river and the estuary. Hide S.grass.mesh in the onReflection(true) callback or put tufts on a layer reflCam disables.", "evidence": "shots/terrain/r1/crops/valley_12_water_speckle.png" },
+    { "rank": 2, "severity": "blocker", "title": "Aerial frames washed-out and relief-free", "detail": "aerial_12 luminance std 8.8, p5-p95 118-146: no readable relief or shadow at 500 m. Fog already ~30% at 500-700 m, albedo pulled to luminance (mix(lum,c,0.45), min(c,0.62)), flat plains never self-shadow, cavity AO too weak. Coordinate a haze curve with environment that keeps <800 m clear, restore albedo contrast/saturation, add real 20 m / 200 m macro variation (dirt patches, worn paths, meadow vs pasture), add curvature/slope darkening.", "evidence": "shots/terrain/r1/aerial_12.png" },
+    { "rank": 3, "severity": "major", "title": "Street-level ground is programmer art (sprite tufts on a smeared ground)", "detail": "Three identical 3-quad tuft variants on a 3 m jittered grid, uniform scale, no shadows/AO, hard 140 m radius with pale blobs at the fade edge; fine ground layer barely visible. Needs dense blade geometry near the camera with size/hue variation and dithered fade, a visible high-frequency ground layer, and ground-contact darkening.", "evidence": "shots/terrain/r1/street_12.png" },
+    { "rank": 4, "severity": "major", "title": "Night tufts are self-lit against a dark ground", "detail": "instanceColor x bright blade atlas with an upward normal vs ground at L~23 makes the sprites glow. Derive tuft albedo from the ground tint at that point, use the ground normal, let the night exposure drive them.", "evidence": "shots/terrain/r1/closeup_22.png" },
+    { "rank": 5, "severity": "major", "title": "Spire peak, smooth-cone islands/hills, abrupt rock-to-grass skirt, speckle-aliased rock", "detail": "Main ridge ends in one aliased witch-hat spire; island and outlying hills are featureless cones; rock meets grass in a hard line; distant rock shows dark speckle noise. Clamp/soften ridged pow peaks, add secondary ridges and talus, blend rock->scree->grass over 30-60 m with slope noise, fade rock detail normals with distance.", "evidence": "shots/terrain/r1/crops/skyline_12_spike_peak.png" },
+    { "rank": 6, "severity": "major", "title": "Uniform pinkish sand ribbon around every water body", "detail": "Constant width, hard edge, pink tint; at night the wet/foam line is a white outline. Vary beach width by slope and noise, tint grey-tan, mix shingle/mud/reed edges, soften the wet line.", "evidence": "shots/terrain/r1/skyline_6p5.png" },
+    { "rank": 7, "severity": "major", "title": "Blocky, stair-stepped terrain shadows", "detail": "Shadows are cast by the 8 m / 16 m LOD proxies (plus uLodDrop) rather than the 4 m heightfield, so valley-wall shadows step and blob. Cast from LOD0 (or a 4 m proxy) in cascade 0 and soften with PCF.", "evidence": "shots/terrain/r1/crops/aerial_17p5_shadow_steps.png" },
+    { "rank": 8, "severity": "minor", "title": "Brush-stroke swirl repetition of the coarse grass layer at aerial scale", "detail": "The warped-UV coarse layer produces a recognisable curved-stroke motif across the whole plain. Lower warp amplitude, add a third rotated sample or stochastic tiling, break with macro variation.", "evidence": "shots/terrain/r1/aerial_6p5.png" },
+    { "rank": 9, "severity": "minor", "title": "Water reflections weak and incomplete", "detail": "No visible ridge reflection at noon, no moon glint at 22, reflection lacks clouds/sun disc because the environment sky dome only follows the main camera (already filed in docs/core-requests/terrain.md). Raise reflection strength/Fresnel floor at grazing angles.", "evidence": "shots/terrain/r1/skyline_12.png" },
+    { "rank": 10, "severity": "minor", "title": "Valley preset has no valley", "detail": "River is a -7.5 m channel with a 22 m shore lerp cut into a near-flat floodplain; the showcase preset oversells it. Acceptable for buildability; frame the preset from lower on the valley wall or add gentle terraces.", "evidence": "shots/terrain/r1/valley_12.png" },
+    { "rank": 11, "severity": "minor", "title": "Tooling/core (not scored): boot overlay leak and 30 s screenshot timeout", "detail": "#boot 0.6 s opacity fade leaked into the first coast_22 capture under SwiftShader starvation although __sim.ready was true; tools/screenshot.mjs hard-codes a 30 s page.screenshot timeout so 10/16 gauntlet shots died under 3-critic contention. Hide the overlay without a transition in headless mode; expose a --shotTimeout flag.", "evidence": "shots/terrain/r1/summary.json" }
+  ],
+  "strengths": [
+    "Zero console errors and status ready in every shot; 11-16 draw calls vs budget 20; max 255,248 triangles vs budget 900,000.",
+    "API contract complete and correct: getHeight/getNormal/getSlope/isWater/raycast verified in-page; heights Float32Array 513x513; modify raises 12 m, bumps version, emits terrain:changed and visibly updates the mesh; fully deterministic (no Math.random).",
+    "Instanced R32F-height chunk/LOD/skirt/proxy architecture is right and cheap; edits are a texture upload.",
+    "Heightfield generator delivers eroded ridges, a meandering river, estuary, island and coast, and exposes them via world.terrain.features for roads/democity.",
+    "Golden-hour skylines (6.5 and 17.5) are genuinely good: long soft shadows, straw-dry grass tint, sea glint - keep the palette.",
+    "Water fundamentals work: planar reflection (island reflects), shore transparency, depth tint, foam band, wet-shoreline darkening and underwater tint."
+  ],
+  "summary": "Clean engineering (0 errors, 16/20 draws, API contract OK, deterministic) but the look is a 6: washed-out relief-free aerials (std 8.8), sprite tufts on a smeared ground at street level, self-lit tufts at night, spire/cone mountains, a uniform pink shore ribbon, and a blocker bug where the grass tufts are reflected in every river as confetti. Fix the reflection leak, the haze/contrast/macro-variation of the plains, and replace the tuft sprites before the next round.",
+  "shots": [
+    "shots/terrain/r1/aerial_6p5.png", "shots/terrain/r1/aerial_12.png", "shots/terrain/r1/aerial_17p5.png", "shots/terrain/r1/aerial_22.png",
+    "shots/terrain/r1/street_6p5.png", "shots/terrain/r1/street_12.png", "shots/terrain/r1/street_17p5.png", "shots/terrain/r1/street_22_720p.png",
+    "shots/terrain/r1/skyline_6p5.png", "shots/terrain/r1/skyline_12.png", "shots/terrain/r1/skyline_17p5.png", "shots/terrain/r1/skyline_22.png",
+    "shots/terrain/r1/closeup_6p5.png", "shots/terrain/r1/closeup_12.png", "shots/terrain/r1/closeup_17p5.png", "shots/terrain/r1/closeup_22.png",
+    "shots/terrain/r1/valley_12.png", "shots/terrain/r1/valley_22.png", "shots/terrain/r1/coast_12.png", "shots/terrain/r1/coast_22.png",
+    "shots/terrain/r1/aerial_12_720p.png",
+    "shots/terrain/r1/crops/valley_12_water_speckle.png", "shots/terrain/r1/crops/valley_12_tuft_asterisks.png",
+    "shots/terrain/r1/crops/skyline_12_spike_peak.png", "shots/terrain/r1/crops/aerial_17p5_shadow_steps.png"
+  ]
+}

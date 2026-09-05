@@ -1,0 +1,39 @@
+{
+  "module": "ui",
+  "round": 1,
+  "score": 7.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 11,
+  "apiContractOk": false,
+  "issues": [
+    { "rank": 1, "severity": "major", "title": "RCI demand box overflows into the status strip in every frame", "detail": ".sb-rci is 46px tall (34px content) but holds 4 rows x 12.5px + 3x3px gaps = 59px; the O row renders ~25px below the toolbar over the status strip. Use 4px bars with 8px labels and 1px gaps, or a 2x2 layout, or overflow:hidden as a stopgap.", "evidence": "shots/ui/r1/crops/aerial_12_rci.png" },
+    { "rank": 2, "severity": "major", "title": "Layout breaks at 1280x720: toolbar-left overlaps tools, sub-panel covers info panel", "detail": "Toolbar-left content ends at x=338 while the centred tools group starts at x=275 (63px overlap); the 780px sub-panel (x 250-1030) covers the 372px info panel (x 12-384), hiding its bars and Demolish button. Collapse the milestone chip and hide the XP bar below ~1500px, let the tools group shrink, and cap the sub-panel width or reposition the info panel when both are open.", "evidence": "shots/ui/r1/aerial_12_720p.png" },
+    { "rank": 3, "severity": "major", "title": "Asset cards are flat schematic rectangles, not thumbnails", "detail": "Alley is a grey box, Gravel Road a tan box; CS2 cards are perspective renders on dark cards with hover glow. Render cached canvas thumbnails from real geometry, or at least isometric SVG tiles with kerb, sidewalk, lane paint and shadow.", "evidence": "shots/ui/r1/crops/aerial_6p5_subpanel.png" },
+    { "rank": 4, "severity": "major", "title": "Locked service icons are desaturated grey mud", "detail": ".is-dim svg {opacity:.45; filter:saturate(.3)} turns 8 toolbar icons into grey blobs; CS2 keeps icons vivid and marks locked state with a lock badge and tooltip. Keep full colour at ~0.75 opacity with a 10px lock badge.", "evidence": "shots/ui/r1/crops/aerial_6p5_dock_mid.png" },
+    { "rank": 5, "severity": "major", "title": "Showcase backdrop is programmer art under every ui shot", "detail": "Flat-shaded icosahedron-blob trees that glow day-green at night, box facades with a coarse window shader, no street lamps at night, flat noon lighting. Use proper low-poly/billboard trees, darken tree colour with the night uniform, add lamp sprites; reuse props/buildings meshes once those modules land.", "evidence": "shots/ui/r1/street_22.png" },
+    { "rank": 6, "severity": "major", "title": "ARCHITECTURE section 15 ui scope missing", "detail": "No main menu, pause menu, save/load panels, milestone toast, minimap or photo mode (camera button only emits an action). Not counted as a hard failure for round 1 but must be planned for round 2.", "evidence": "src/modules/ui/hud.js" },
+    { "rank": 7, "severity": "minor", "title": "Sub-panel tabs read as plain text", "detail": "Intersections / Road services have no tab affordance beside the blue Roads pill; give inactive tabs a subtle background and an icon like CS2's icon tab row.", "evidence": "shots/ui/r1/crops/aerial_6p5_subpanel.png" },
+    { "rank": 8, "severity": "minor", "title": "Dev corner always on and shows 0 fps", "detail": "dev:true unconditionally; gate behind ?dev=1 or a hotkey and show a dash when no frames were counted.", "evidence": "shots/ui/r1/crops/aerial_6p5_dev.png" },
+    { "rank": 9, "severity": "minor", "title": "Happiness chip shows three faces with one lit", "detail": "CS2 shows a single face that changes expression; three faces waste 60px and read as a control.", "evidence": "shots/ui/r1/crops/aerial_6p5_dock_right.png" },
+    { "rank": 10, "severity": "minor", "title": "Info-panel secondary buttons lack affordance", "detail": "Policies and Demolish have no visible border or background at rest and read as labels; give them the same 1px border as Focus.", "evidence": "shots/ui/r1/crops/aerial_6p5_info.png" },
+    { "rank": 11, "severity": "minor", "title": "Toolbar-right cluster is thin", "detail": "Three round buttons in 569px; CS2 fills that side with map, statistics, camera, citizens, journal. Add the missing entries so the bar reads balanced.", "evidence": "shots/ui/r1/crops/aerial_6p5_dock_right.png" },
+    { "rank": 12, "severity": "minor", "title": "Status chip icons and trend arrows undersized", "detail": "18px chip icons against 13px text and 10px trend arrows; CS2 uses ~22px icons. Bump sizes and give the trend value its own muted chip.", "evidence": "shots/ui/r1/crops/aerial_6p5_dock_right.png" }
+  ],
+  "strengths": [
+    "Layout skeleton is genuinely CS2: bottom toolbar + status strip, milestone chip, colourful category icons, round buttons right, clock/date/season/city/pop/happiness/money chips, top-right notifications, left info panel, blue accent",
+    "Notifications: typed accent bar, icon disc, right-aligned timestamps that follow game time, escaped HTML, dt-driven auto-dismiss",
+    "Info panel: type pill, level stars, right-aligned tabular numbers, status bars, action row",
+    "Tool option box (Tool Mode / Elevation / Snapping) and key-hint pill match CS2 road-tool UX",
+    "Pure DOM with 0 in-game draw calls, every interaction emits ui:action, safe optional calls into tools, Esc/Space shortcuts, bundled CC0 font, zero errors, 6 ms init, no Math.random"
+  ],
+  "summary": "Credible CS2-style HUD skeleton with AA-level notifications and info panel, but the RCI box overflows into the status strip in every frame, the layout overlaps at 1280x720 (contract fail), asset cards are placeholders, locked icons are grey mud, and a programmer-art backdrop sits under every shot. 0 errors, 11 draws (budget 16), ui ready everywhere. Two gauntlet frames were splash screens caused by the effects builder's Vite reloads and were re-shot.",
+  "shots": [
+    "shots/ui/r1/aerial_6p5.png", "shots/ui/r1/aerial_12.png", "shots/ui/r1/aerial_17p5.png", "shots/ui/r1/aerial_22.png",
+    "shots/ui/r1/street_6p5.png", "shots/ui/r1/street_12.png", "shots/ui/r1/street_17p5.png", "shots/ui/r1/street_22.png",
+    "shots/ui/r1/skyline_6p5.png", "shots/ui/r1/skyline_12.png", "shots/ui/r1/skyline_17p5.png", "shots/ui/r1/skyline_22.png",
+    "shots/ui/r1/closeup_6p5.png", "shots/ui/r1/closeup_12.png", "shots/ui/r1/closeup_17p5.png", "shots/ui/r1/closeup_22.png",
+    "shots/ui/r1/ui_12.png", "shots/ui/r1/ui_22.png", "shots/ui/r1/aerial_12_720p.png",
+    "shots/ui/r1/apicheck_1920x1080.png", "shots/ui/r1/apicheck_1280x720.png"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=environment&time=22&camera=skyline&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "environment",
+  "time": 22,
+  "camera": "skyline",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+  "errors": [],
+  "warnings": [
+    "requestfailed: http://127.0.0.1:5173/src/core/save.js net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/node_modules/.vite/deps/three_examples_jsm_loaders_GLTFLoader__js.js?v=376742c9 net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/node_modules/.vite/deps/three.module-Cg0SxxSv.js?v=376742c9 net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/node_modules/.vite/deps/three_examples_jsm_loaders_HDRLoader__js.js?v=376742c9 net::ERR_ABORTED"
+  ],
+  "png": "shots/environment/dev_skyline_22.png"
+}

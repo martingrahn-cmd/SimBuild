@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=audio&time=22&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "audio",
+  "time": 22,
+  "camera": "closeup",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.screenshot: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n",
+  "errors": [],
+  "warnings": [],
+  "png": "shots/audio/rdev1/closeup_22.png"
+}

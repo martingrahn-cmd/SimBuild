@@ -1,0 +1,184 @@
+{
+  "module": "ui",
+  "round": "1",
+  "at": "2026-09-04T19:58:43.378Z",
+  "shots": [
+    {
+      "png": "shots/ui/r1/aerial_6p5.png",
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/ui/r1/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/closeup_6p5.png",
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/closeup_17p5.png",
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": true,
+      "fps": 10,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/ui/r1/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 11,
+      "triangles": 219044,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 11,
+  "maxTriangles": 219044,
+  "minFps": 10,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

@@ -10,17 +10,21 @@ import { U } from './shaders.js';
 import { transmittance, skyRadiance, SUN_TOA, SUN_TINT, MOON_SCALE, MOON_TINT } from './atmosphere.js';
 import { setupShowcase, updateShowcase } from './showcase.js';
 
+// fogDensity is the exp2 density of the ground-level haze (per metre). Clear air is ~1e-4: about 5 % veil
+// at 500 m and 40 % only at 5 km, so a noon aerial view stays crisp and haze reads on the horizon.
 const PRESETS = {
-  clear:  { cloudiness: 0.10, rain: 0, fogDensity: 0.00028, wind: 2.0 },
-  partly: { cloudiness: 0.40, rain: 0, fogDensity: 0.00034, wind: 3.2 },
-  cloudy: { cloudiness: 0.74, rain: 0, fogDensity: 0.00060, wind: 4.5 },
-  rain:   { cloudiness: 0.96, rain: 0.85, fogDensity: 0.00110, wind: 7.0 },
-  fog:    { cloudiness: 0.70, rain: 0, fogDensity: 0.0080, wind: 1.0 },
+  clear:  { cloudiness: 0.10, rain: 0, fogDensity: 0.00008, wind: 2.0 },
+  partly: { cloudiness: 0.40, rain: 0, fogDensity: 0.00011, wind: 3.2 },
+  cloudy: { cloudiness: 0.74, rain: 0, fogDensity: 0.00030, wind: 4.5 },
+  rain:   { cloudiness: 0.96, rain: 0.85, fogDensity: 0.00065, wind: 7.0 },
+  fog:    { cloudiness: 0.70, rain: 0, fogDensity: 0.0060, wind: 1.0 },
 };
 
 const CLOUD_HEIGHT = 1500;
 const CLOUD_SCALE = 9000;
 const LUT_ANGLE = Math.cos(THREE.MathUtils.degToRad(0.6));
+const SYNODIC = 29.53; // days per lunation
+const TWILIGHT = [0.024, 0.044, 0.10]; // higher-order scattering floor (same as the LUT)
 
 // module state (single instance)
 const S = {
@@ -32,7 +36,7 @@ const S = {
   sunT: [0, 0, 0], moonT: [0, 0, 0], cloudSunT: [0, 0, 0], cloudMoonT: [0, 0, 0],
   zenith: [0, 0, 0], horizon: [0, 0, 0], mid: [0, 0, 0], fogCol: new THREE.Color(), skyLight: new THREE.Color(),
   sunColor: new THREE.Color(1, 1, 1), lightColor: new THREE.Color(1, 1, 1), lightIntensity: 0, exposure: 1, night: 0,
-  sunIntensity: 0, moonIntensity: 0, preset: 'partly',
+  sunIntensity: 0, moonIntensity: 0, preset: 'partly', moonPhase: 0, drift: 0,
 };
 const _v = new THREE.Vector3(), _a = [0, 0, 0], _s1 = [0, 0, 0], _s2 = [0, 0, 0], _c = new THREE.Color();
 const _windDir = new THREE.Vector2();
@@ -58,15 +62,16 @@ const maxc = (a) => Math.max(a[0], a[1], a[2]);
 function computeSkySamples(w) {
   const sunI = [SUN_TOA * SUN_TINT[0], SUN_TOA * SUN_TINT[1], SUN_TOA * SUN_TINT[2]];
   const moonI = [SUN_TOA * MOON_SCALE * MOON_TINT[0], SUN_TOA * MOON_SCALE * MOON_TINT[1], SUN_TOA * MOON_SCALE * MOON_TINT[2]];
-  const nightFloor = (y) => [0.0030 * (0.75 + 0.25 * (1 - y)) + 0.020 * Math.exp(-y * 7), 0.0046 * (0.75 + 0.25 * (1 - y)) + 0.013 * Math.exp(-y * 7), 0.0105 * (0.75 + 0.25 * (1 - y)) + 0.007 * Math.exp(-y * 7)];
+  const nightFloor = (y) => [0.0060 * (0.75 + 0.25 * (1 - y)) + 0.024 * Math.exp(-y * 7), 0.0092 * (0.75 + 0.25 * (1 - y)) + 0.016 * Math.exp(-y * 7), 0.0210 * (0.75 + 0.25 * (1 - y)) + 0.009 * Math.exp(-y * 7)];
   const sample = (dir, out) => {
-    skyRadiance(dir, S.sunDir, sunI, 0.9, _s1);
-    skyRadiance(dir, S.moonDir, moonI, 0.9, _s2);
+    skyRadiance(dir, S.sunDir, sunI, 0.5, _s1);
+    skyRadiance(dir, S.moonDir, moonI, 0.5, _s2);
     const nf = nightFloor(dir.y);
-    for (let i = 0; i < 3; i++) out[i] = _s1[i] + _s2[i] + S.night * nf[i];
+    const tw = smooth(-0.09, 0.10, S.sunDir.y) * (1 - 0.6 * smooth(0.15, 0.5, S.sunDir.y)) * (0.35 + 0.65 * dir.y);
+    for (let i = 0; i < 3; i++) out[i] = _s1[i] + _s2[i] + S.night * nf[i] + tw * TWILIGHT[i];
     // overcast blend (same as the LUT)
     const lum = out[0] * 0.2126 + out[1] * 0.7152 + out[2] * 0.0722;
-    const k = w.cloudiness * w.cloudiness * 0.85;
+    const k = w.cloudiness * w.cloudiness * w.cloudiness * 0.9;
     const ov = lum * (0.85 + 0.55 * dir.y);
     out[0] = out[0] * (1 - k) + ov * 0.97 * k; out[1] = out[1] * (1 - k) + ov * 0.985 * k; out[2] = out[2] * (1 - k) + ov * k;
     return out;
@@ -99,7 +104,7 @@ export default {
     w.moonDir = new THREE.Vector3(0, -1, 0);
     w.lightDir = new THREE.Vector3(0, 1, 0);
     w.sunColor = new THREE.Color(1, 1, 1);
-    w.lightIntensity = 0; w.exposure = 1; w.night = 0; w.preset = 'partly';
+    w.lightIntensity = 0; w.exposure = 1; w.night = 0; w.preset = 'partly'; w.moonPhase = 0;
     const wanted = ctx.world.flags.weather;
     applyPreset(w, wanted && PRESETS[wanted] ? wanted : 'partly');
     w.preset = S.preset;
@@ -116,8 +121,8 @@ export default {
     S.sky = new Sky(ctx, S.noise);
     S.cloudMap = new CloudMap(ctx, 256, 6000);
     S.rain = new Rain(ctx, 9000);
-    ctx.scene.fog = new THREE.FogExp2(0xbfd0e6, 0.0003);
-    ctx.scene.environmentIntensity = 0.8;
+    ctx.scene.fog = new THREE.FogExp2(0xbfd0e6, 0.0001);
+    ctx.scene.environmentIntensity = 0.5;
     S.lutDirty = true; S.pmremDirty = true; S.pmremTimer = 99; S.lutTimer = 99;
     this.update(0, ctx);
   },
@@ -129,14 +134,19 @@ export default {
     S.time += dt;
     const hour = clock.hour;
 
-    // ---- celestial directions
+    // ---- celestial directions. The moon lags the sun by half a day plus a lunar-phase offset that
+    // advances with the calendar day (day 1 = full moon; new moon ~15 days later).
     sunDirectionAt(hour, clock, S.sunDir);
-    sunDirectionAt(hour + 12.35, clock, S.moonDir);
+    const phase = (((clock.day - 1) % SYNODIC) + SYNODIC) % SYNODIC / SYNODIC; // 0 = full
+    S.moonPhase = phase;
+    sunDirectionAt(hour + 12.35 + phase * 24, clock, S.moonDir);
     S.moonDir.y = S.moonDir.y * 0.92 + 0.05; S.moonDir.normalize();
     const sunUp = smooth(-0.015, 0.03, S.sunDir.y);
     const moonUp = smooth(-0.02, 0.05, S.moonDir.y);
     S.night = 1 - smooth(-0.13, 0.02, S.sunDir.y);
     const day = smooth(-0.10, 0.12, S.sunDir.y);
+    // illuminated fraction of the moon disc (for its light contribution)
+    const moonLit = 0.5 - 0.5 * S.moonDir.dot(S.sunDir);
 
     // ---- per-frame transmittance -> sun / moon colours & intensities
     _v.copy(S.sunDir); _v.y = Math.max(_v.y, 0.004); _v.normalize();
@@ -147,11 +157,12 @@ export default {
     transmittance(_v, CLOUD_HEIGHT, S.cloudMoonT);
     const coverFactor = smooth(0.45, 0.97, w.cloudiness);
     const cloudAtten = (1 - 0.9 * coverFactor) * Math.exp(-Math.max(w.fogDensity - 0.001, 0) * 350);
-    const sunMax = maxc(S.sunT) * SUN_TOA;
+    // (floor near the horizon: the physically dim 1-2 deg sun still has to model a scene, CS2-style)
+    const sunMax = Math.max(maxc(S.sunT) * SUN_TOA, 2.2 * smooth(-0.02, 0.02, S.sunDir.y));
     S.sunIntensity = sunMax * sunUp * cloudAtten;
     S.sunColor.setRGB(S.sunT[0] * SUN_TINT[0], S.sunT[1] * SUN_TINT[1], S.sunT[2] * SUN_TINT[2]);
     if (sunMax > 1e-4) S.sunColor.multiplyScalar(1 / maxc(S.sunT));
-    const moonMax = maxc(S.moonT) * SUN_TOA * MOON_SCALE;
+    const moonMax = maxc(S.moonT) * SUN_TOA * MOON_SCALE * (0.15 + 0.85 * moonLit);
     S.moonIntensity = moonMax * moonUp * cloudAtten;
     const useSun = S.sunIntensity >= S.moonIntensity;
     if (useSun) {
@@ -166,28 +177,45 @@ export default {
     if (S.lightDir.y < 0.06) { S.lightDir.y = 0.06; S.lightDir.normalize(); }
     S.lighting.setLight(S.lightDir, S.lightColor, S.lightIntensity);
 
-    // ---- exposure per time of day (AgX): noon 1.0, golden hour a touch brighter, deep night ~2.6
-    const golden = (1 - smooth(0.02, 0.3, S.sunDir.y)) * day;
-    S.exposure = THREE.MathUtils.lerp(3.0, 1.25, day) + golden * 0.25 + day * coverFactor * 0.18;
+    // ---- exposure per time of day (AgX). High sun 1.15 (crisp, saturated), sun below ~12 deg 2.0-4.0 so
+    // golden hour and sunset stay bright with cool readable shadows, deep night 2.8 (moonlight reads).
+    const highSun = smooth(0.18, 0.45, S.sunDir.y);
+    const lowSun = 1 - smooth(0.02, 0.30, S.sunDir.y);
+    // sunset scenes are ~50x dimmer than noon in absolute terms; CS2 (like a camera) exposes for them
+    const dayExp = THREE.MathUtils.lerp(2.0, 1.15, highSun) + lowSun * 1.7;
+    S.exposure = THREE.MathUtils.lerp(2.8, dayExp, day) + day * coverFactor * 0.22 + day * smooth(0.001, 0.004, w.fogDensity) * 0.15;
     ctx.renderer.toneMappingExposure = S.exposure;
+    // sky ambient (PMREM of the sun-masked LUT): ~0.5 at noon (lit:shadow ~3:1 on the ground), rising toward
+    // dusk when the sky is the main light, and at night (moonlit sky + airglow floor).
+    // (CS2 keeps golden-hour shadows readable: the sky term is boosted as the sun drops)
+    ctx.scene.environmentIntensity = THREE.MathUtils.lerp(1.6, 0.5 + 0.25 * (1 - highSun) + 0.5 * lowSun, day) + coverFactor * 0.3 * day;
+    // golden-hour punch: a grazing sun on flat ground is physically weak; CS2 keeps it contrasty
+    const goldenBoost = 1 + 0.45 * (1 - smooth(0.02, 0.30, S.sunDir.y)) * smooth(-0.02, 0.05, S.sunDir.y);
+    S.sunIntensity *= goldenBoost;
+    if (useSun) { S.lightIntensity = S.sunIntensity; S.lighting.setLight(S.lightDir, S.lightColor, S.lightIntensity); }
 
     // ---- weather dynamics
     w.wetness += (w.rain - w.wetness) * Math.min(1, dt * (w.rain > w.wetness ? 0.25 : 0.03));
     _windDir.set(w.wind.x, w.wind.z);
     if (_windDir.lengthSq() < 1e-6) _windDir.set(1, 0);
     _windDir.normalize();
-    S.windOff.addScaledVector(_windDir, -w.wind.speed * dt * 7.0);
-    S.cirrusOff.addScaledVector(_windDir, -w.wind.speed * dt * 11.0);
+    // cloud drift: real-time while the clock runs (frozen when paused, so screenshots are deterministic),
+    // seeded from the game hour so any two boots at the same time see the same sky
+    const running = !clock.paused && clock.speed > 0 ? 1 : 0;
+    S.drift += dt * running * Math.min(1, w.wind.speed * 0.14);
+    const dm = (hour + clock.day * 24) * 60 + S.drift * 7.0;
+    S.windOff.copy(_windDir).multiplyScalar(-dm * 3.2);
+    S.cirrusOff.copy(_windDir).multiplyScalar(-dm * 5.0);
 
     // ---- shared uniforms: clouds, cloud shadows, fog
     const th = 0.62 - w.cloudiness * 0.5;
     U.cloudA.value.set(S.windOff.x, S.windOff.y, 1 / CLOUD_SCALE, th);
-    if (S.cloudMapOff.distanceToSquared(S.windOff) > 4 || S.cloudMapTh !== th) {
+    if (S.cloudMapOff.distanceToSquared(S.windOff) > 400 || S.cloudMapTh !== th) {
       S.cloudMapOff.copy(S.windOff); S.cloudMapTh = th;
       S.cloudMap.render();
     }
     const ly = Math.max(S.lightDir.y, 0.2);
-    U.cloudB.value.set(-S.lightDir.x / ly, -S.lightDir.z / ly, CLOUD_HEIGHT, 0.85 * (1 - coverFactor) * smooth(0.0, 0.12, S.lightDir.y) * smooth(0.04, 0.3, w.cloudiness));
+    U.cloudB.value.set(-S.lightDir.x / ly, -S.lightDir.z / ly, CLOUD_HEIGHT, 0.6 * (1 - coverFactor) * smooth(0.0, 0.12, S.lightDir.y) * smooth(0.04, 0.3, w.cloudiness));
     const fogK = THREE.MathUtils.lerp(1 / 320, 1 / 90, smooth(0.0008, 0.004, w.fogDensity));
     U.fogA.value.set(fogK, 0, 0.3 * (1 - w.cloudiness * 0.7), 1);
     U.fogSun.value.copy(S.sunDir);
@@ -200,14 +228,15 @@ export default {
       S.lutDirty = false; S.weatherDirty = false; S.lutTimer = 0;
       S.lutSun.copy(S.sunDir);
       const sunI = [SUN_TOA * SUN_TINT[0], SUN_TOA * SUN_TINT[1], SUN_TOA * SUN_TINT[2]];
-      const moonI = [SUN_TOA * MOON_SCALE * MOON_TINT[0], SUN_TOA * MOON_SCALE * MOON_TINT[1], SUN_TOA * MOON_SCALE * MOON_TINT[2]];
+      const ms = MOON_SCALE * (0.15 + 0.85 * moonLit);
+      const moonI = [SUN_TOA * ms * MOON_TINT[0], SUN_TOA * ms * MOON_TINT[1], SUN_TOA * ms * MOON_TINT[2]];
       S.sky.renderLut(S.sunDir, S.moonDir, sunI, moonI, w.cloudiness, S.night);
       computeSkySamples(w);
       S.pmremDirty = true;
     }
     if (S.pmremDirty && S.pmremTimer > 2.5) {
       S.pmremDirty = false; S.pmremTimer = 0;
-      S.lighting.updateEnvironment(S.sky.lut.texture);
+      S.lighting.updateEnvironment(S.sky.lutAmb.texture);
     }
 
     // ---- fog
@@ -223,25 +252,28 @@ export default {
     su.uNight.value = S.night; su.uTime.value = S.time; su.uCloudiness.value = w.cloudiness;
     const cs = su.uCloudSun.value;
     cs.setRGB(S.cloudSunT[0] * SUN_TINT[0], S.cloudSunT[1] * SUN_TINT[1], S.cloudSunT[2] * SUN_TINT[2]).multiplyScalar(SUN_TOA / Math.PI * 0.92 * sunUp);
-    _c.setRGB(S.cloudMoonT[0] * MOON_TINT[0], S.cloudMoonT[1] * MOON_TINT[1], S.cloudMoonT[2] * MOON_TINT[2]).multiplyScalar(SUN_TOA * MOON_SCALE / Math.PI * 0.92 * moonUp);
+    _c.setRGB(S.cloudMoonT[0] * MOON_TINT[0], S.cloudMoonT[1] * MOON_TINT[1], S.cloudMoonT[2] * MOON_TINT[2]).multiplyScalar(SUN_TOA * MOON_SCALE * (0.15 + 0.85 * moonLit) / Math.PI * 0.92 * moonUp);
     cs.add(_c);
-    su.uCloudAmb.value.setRGB(S.zenith[0], S.zenith[1], S.zenith[2]).multiplyScalar(1.35).add(_c.setRGB(0.0015, 0.002, 0.004).multiplyScalar(S.night));
+    // ambient at the cloud layer: sky above (zenith-ish) plus a little ground bounce; night airglow floor
+    su.uCloudAmb.value.setRGB(S.zenith[0] * 0.6 + S.mid[0] * 0.4, S.zenith[1] * 0.6 + S.mid[1] * 0.4, S.zenith[2] * 0.6 + S.mid[2] * 0.4).multiplyScalar(1.2).add(_c.setRGB(0.0015, 0.002, 0.004).multiplyScalar(S.night));
     su.uCirrus.value = THREE.MathUtils.clamp(w.cloudiness * 1.6, 0, 0.85) * (1 - smooth(0.6, 0.95, w.cloudiness) * 0.8);
     su.uCirrusOff.value.copy(S.cirrusOff); su.uWindDir.value.copy(_windDir);
     su.uStarBright.value = 0.9 * (1 - w.cloudiness * 0.5);
+    su.uFogDensity.value = w.fogDensity;
     S.sky.update(cam.position);
 
     // ---- shadows (cascades follow the camera)
     S.lighting.update(ctx.camera.distance);
 
-    // ---- rain
-    S.rain.update(dt, cam, w, S.skyLight);
+    // ---- rain (streak colour from the real sky zenith radiance)
+    S.rain.update(dt, cam, w, S.zenith, S.exposure);
 
     // ---- publish
     w.sunDir.copy(S.sunDir);
     w.sunIntensity = S.sunIntensity;
     w.skyLight.copy(S.skyLight);
     w.moonDir.copy(S.moonDir);
+    w.moonPhase = S.moonPhase;
     w.lightDir.copy(S.lightDir);
     w.lightIntensity = S.lightIntensity;
     w.sunColor.copy(S.sunColor);
@@ -285,6 +317,8 @@ export default {
     getNight() { return S.night; },
     /** Hook a material for cascaded shadows + fog uniforms (done automatically for scene materials; explicit for ShaderMaterials). */
     setupMaterial(material) { S.lighting?.setupMaterial(material); },
+    /** Re-scan the scene for new materials now (also happens automatically on module:ready / *:changed). */
+    hookScene() { S.lighting?.sweep(); },
     /** Force a PMREM rebuild on the next frame. */
     refreshEnvironment() { S.lutDirty = true; S.weatherDirty = true; S.pmremTimer = 99; },
     presets: Object.keys(PRESETS),
@@ -293,7 +327,7 @@ export default {
   },
 
   showcase: {
-    description: 'Physically based sky, sun/moon/stars, clouds with sun-lit edges, CSM shadows on a PBR test scene',
+    description: 'Physically based sky, sun/moon/stars, volumetric clouds with sun-lit edges, CSM shadows on a PBR test scene',
     cameras: {
       sunset: { yaw: Math.PI / 2, pitch: 0.10, distance: 260, target: [0, 18, 0] },
       sky: { yaw: Math.PI, pitch: 0.12, distance: 120, target: [0, 90, -260] },

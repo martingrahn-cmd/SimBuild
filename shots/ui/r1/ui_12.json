@@ -1,0 +1,142 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=ui&time=12&camera=ui&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "ui",
+  "time": 12,
+  "camera": "ui",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 73793,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 1.4,
+  "drawCalls": 11,
+  "triangles": 219044,
+  "programs": 14,
+  "textures": 22,
+  "geometries": 17,
+  "heapMB": 30.7,
+  "moduleMs": {
+    "environment": 2.299999998882413,
+    "ui": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      188.9,
+      114,
+      171.1
+    ],
+    "target": [
+      -10,
+      14,
+      -30
+    ],
+    "distance": 300
+  },
+  "modules": {
+    "terrain": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 2.3,
+      "initMs": 333
+    },
+    "roads": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "zoning": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "buildings": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "props": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "traffic": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "effects": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "tools": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "ui": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 7
+    },
+    "audio": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "services": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "infoviews": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "transit": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/ui/r1/ui_12.png"
+}

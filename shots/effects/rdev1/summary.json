@@ -1,16 +1,16 @@
 {
   "module": "effects",
   "round": "dev1",
-  "at": "2026-09-04T16:00:58.918Z",
+  "at": "2026-09-04T23:35:00.817Z",
   "shots": [
     {
       "png": "shots/effects/rdev1/aerial_6p5.png",
       "camera": "aerial",
       "time": 6.5,
       "ok": true,
-      "fps": 12,
+      "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 816744,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -19,9 +19,9 @@
       "camera": "aerial",
       "time": 12,
       "ok": true,
-      "fps": 11.9,
+      "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 816744,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -32,7 +32,7 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 816744,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -43,7 +43,7 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 816744,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -51,8 +51,12 @@
       "png": "shots/effects/rdev1/street_6p5.png",
       "camera": "street",
       "time": 6.5,
-      "ok": false,
-      "errors": 0
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 816744,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
       "png": "shots/effects/rdev1/street_12.png",
@@ -61,7 +65,7 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 816744,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -69,15 +73,23 @@
       "png": "shots/effects/rdev1/street_17p5.png",
       "camera": "street",
       "time": 17.5,
-      "ok": false,
-      "errors": 0
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 816744,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
       "png": "shots/effects/rdev1/street_22.png",
       "camera": "street",
       "time": 22,
-      "ok": false,
-      "errors": 0
+      "ok": true,
+      "fps": 12,
+      "drawCalls": 41,
+      "triangles": 816744,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
       "png": "shots/effects/rdev1/skyline_6p5.png",
@@ -86,7 +98,7 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 814984,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -97,7 +109,7 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 814984,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -106,10 +118,10 @@
       "camera": "skyline",
       "time": 17.5,
       "ok": true,
-      "fps": 11.6,
+      "fps": 11.8,
       "drawCalls": 41,
-      "triangles": 121766,
-      "errors": 4,
+      "triangles": 816744,
+      "errors": 0,
       "moduleStatus": "ready"
     },
     {
@@ -119,8 +131,8 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
-      "errors": 3,
+      "triangles": 814984,
+      "errors": 0,
       "moduleStatus": "ready"
     },
     {
@@ -130,16 +142,20 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
-      "errors": 4,
+      "triangles": 814984,
+      "errors": 0,
       "moduleStatus": "ready"
     },
     {
       "png": "shots/effects/rdev1/closeup_12.png",
       "camera": "closeup",
       "time": 12,
-      "ok": false,
-      "errors": 3
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 41,
+      "triangles": 816744,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
       "png": "shots/effects/rdev1/closeup_17p5.png",
@@ -148,7 +164,7 @@
       "ok": true,
       "fps": 11.6,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 814984,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -157,29 +173,17 @@
       "camera": "closeup",
       "time": 22,
       "ok": true,
-      "fps": 11.6,
+      "fps": 12,
       "drawCalls": 41,
-      "triangles": 121766,
+      "triangles": 814984,
       "errors": 0,
       "moduleStatus": "ready"
     }
   ],
   "maxDrawCalls": 41,
-  "maxTriangles": 121766,
+  "maxTriangles": 816744,
   "minFps": 11.6,
-  "totalErrors": 14,
-  "uniqueErrors": [
-    "[vite] Internal Server Error\nFailed to resolve import \"./panel.js\" from \"src/modules/simulation/index.js\". Does the file exist?\n    at TransformPluginContext._formatLog (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31147:39)\n    at TransformPluginContext.error (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31144:14)\n    at normalizeUrl (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28083:18)\n    at async file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28153:30\n    at async Promise.all (index 3)\n    at async TransformPluginContext.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28119:4)\n    at async EnvironmentPluginContainer.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:30932:14)\n    at async loadAndTransform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:20671:26)\n    at async viteTransformMiddleware (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:25205:20)",
-    "[main] module simulation failed to import: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311\nTypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311",
-    "HTTP 500 http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311",
-    "[main] module simulation failed to import: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311",
-    "HTTP 500 http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537297217",
-    "[main] module simulation failed to import: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537297217",
-    "[vite] Internal Server Error\nFailed to resolve import \"./showcase.js\" from \"src/modules/simulation/index.js\". Does the file exist?\n    at TransformPluginContext._formatLog (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31147:39)\n    at TransformPluginContext.error (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31144:14)\n    at normalizeUrl (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28083:18)\n    at async file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28153:30\n    at async Promise.all (index 4)\n    at async TransformPluginContext.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28119:4)\n    at async EnvironmentPluginContainer.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:30932:14)\n    at async loadAndTransform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:20671:26)\n    at async viteTransformMiddleware (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:25205:20)",
-    "[main] module simulation failed to import: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537335696\nTypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537335696",
-    "HTTP 500 http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537335696",
-    "[main] module simulation failed to import: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537335696",
-    "HTTP 500 http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537415294",
-    "[main] module simulation failed to import: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537415294"
-  ]
+  "totalErrors": 0,
+  "uniqueErrors": [],
+  "note": "same matrix as tools/gauntlet.mjs, shot with --timeout 300; frames that captured a Vite reload overlay were re-shot"
 }

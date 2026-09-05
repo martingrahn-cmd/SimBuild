@@ -1,4 +1,4 @@
-// Chunked, LOD'd, frustum-culled terrain mesh in 3 draw calls: one instanced patch geometry per LOD level.
+// Chunked, LOD'd, frustum-culled terrain mesh in 3 draw calls (+3 shadow-cascade draws): one instanced patch geometry per LOD level.
 // Each visible 128 m chunk is an instance (aChunk = [originX, originZ, size, lod]); the vertex shader fetches
 // heights from the R32F height texture, so LODs never crack (skirts hide T-junction gaps) and brush edits are
 // a texture upload, not a geometry rebuild.
@@ -82,7 +82,7 @@ export class TerrainMesh {
       mesh.name = `terrain-lod${l}`;
       mesh.customDepthMaterial = depthMaterial;
       mesh.frustumCulled = false;        // we cull per chunk ourselves
-      mesh.castShadow = false;           // shadows come from the coarse proxies below
+      mesh.castShadow = true;            // the visible LOD is the caster: no coarse-proxy stair-steps
       mesh.receiveShadow = true;
       mesh.layers.enable(layer);
       mesh.raycast = () => {};           // heights live in a texture; use world.terrain.raycast
@@ -94,9 +94,9 @@ export class TerrainMesh {
       this.meshes.push(mesh);
       this.attrs.push(attr);
     }
-    // shadow / reflection proxies: LOD1 patches near, LOD2 beyond. They cast shadows for every visible chunk
-    // (~4x fewer triangles per cascade) and render in the reflection with the cheap material; in the main pass
-    // their instance count is forced to 0 (onBeforeRender), so they cost nothing there.
+    // reflection proxies: LOD1 patches near, LOD2 beyond, rendered only into the water reflection with the
+    // cheap material; in the main pass their instance count is forced to 0 (onBeforeRender), so they cost
+    // nothing there and never cast shadows.
     this.proxies = [];
     this.proxyAttrs = [];
     for (let l = 1; l < LOD_CELLS.length; l++) {
@@ -113,7 +113,7 @@ export class TerrainMesh {
       mesh.name = `terrain-proxy-lod${l}`;
       mesh.customDepthMaterial = depthMaterial;
       mesh.frustumCulled = false;
-      mesh.castShadow = true;
+      mesh.castShadow = false;
       mesh.receiveShadow = true;
       mesh.layers.enable(layer);
       mesh.raycast = () => {};

@@ -139,8 +139,31 @@ const res = await page.evaluate(async () => {
   const ints = api.intersections();
   out.intersections = { count: ints.length, first: ints[0] && { id: ints[0].id, arms: ints[0].arms.length } };
   out.checks.intersections = ints.length > 5 && ints.every((i) => i.arms.length >= 3);
+  // dead-ends and node degrees (showcase topology sanity)
+  out.deadEnds = [...R.nodes.values()].filter((n) => n.edges.size === 1).map((n) => ({ id: n.id, x: +n.x.toFixed(1), z: +n.z.toFixed(1), kind: api.nodeInfo(n.id)?.kind }));
+  out.nodesNear200_160 = [...R.nodes.values()].filter((n) => Math.hypot(n.x - 200, n.z - 160) < 30).map((n) => ({ id: n.id, x: n.x, z: n.z, deg: n.edges.size, kind: api.nodeInfo(n.id)?.kind }));
+  out.nodeKinds = (() => { const k = {}; for (const n of R.nodes.values()) { const kk = api.nodeInfo(n.id)?.kind || '?'; k[kk] = (k[kk] || 0) + 1; } return k; })();
+  // terrain around the one-way loop's north arm (dark pit seen in loop_12.png near x=-215,z=-195)
+  out.pitProbe = (() => {
+    const res = []; let mn = 1e9, mx = -1e9, mnAt = null;
+    for (let x = -260; x <= -160; x += 4) for (let z = -230; z <= -150; z += 4) { const h = T.getHeight(x, z); if (h < mn) { mn = h; mnAt = [x, z]; } if (h > mx) mx = h; }
+    const ne = R.nearestEdge(mnAt[0], mnAt[1], 60);
+    return { minH: +mn.toFixed(2), maxH: +mx.toFixed(2), minAt: mnAt, roadYNear: ne ? +ne.point.y.toFixed(2) : null, distToRoad: ne ? +ne.dist.toFixed(1) : null, slopeAtMin: +T.getSlope(mnAt[0], mnAt[1]).toFixed(3) };
+  })();
   out.coverage = R.coverage ? { res: R.coverage.res, version: R.coverage.version, isRoadAtNode: R.isRoad(40, 40), isRoadFar: R.isRoad(900, 900) } : null;
   out.stats = api.stats();
+  // ---- draw-call attribution per camera: total vs with the roads group hidden (includes shadow passes)
+  out.drawCalls = {};
+  for (const cam of ['aerial', 'street', 'skyline', 'closeup', 'intersection', 'highway', 'bridge']) {
+    try { s.setCamera(cam); } catch (e) { continue; }
+    await waitFrames(2);
+    const total = s.engine.stats.drawCalls;
+    group.visible = false; await waitFrames(2);
+    const without = s.engine.stats.drawCalls;
+    group.visible = true; await waitFrames(1);
+    let roadMeshes = 0; group.traverse((o) => { if (o.isMesh) roadMeshes++; });
+    out.drawCalls[cam] = { total, withoutRoads: without, roadsOwn: total - without, roadMeshes };
+  }
   out.moduleStatusEnd = s.registry.status().roads;
   out.errors = s.errors.slice();
   return out;

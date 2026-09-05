@@ -5,7 +5,7 @@
 // 2. runs it again with the same seed and asserts byte-identical state (determinism),
 // 3. serialises at the half-way point, continues, and asserts the resumed run matches (save/load).
 import { RNG } from '../../core/rng.js';
-import { Economy, TICKS_PER_DAY, ZONE_TYPES } from './economy.js';
+import { Economy, TICKS_PER_DAY, ZONE_TYPES, MILESTONES } from './economy.js';
 import { VirtualCity } from './virtualcity.js';
 import { profile } from './activity.js';
 
@@ -47,6 +47,13 @@ for (let d = 1; d <= days; d++) {
 const ms = performance.now() - t0;
 console.log(`\n${days} days = ${days * TICKS_PER_DAY} ticks in ${ms.toFixed(0)} ms (${(ms / (days * TICKS_PER_DAY) * 1000).toFixed(2)} µs/tick)`);
 console.log(`history: ${A.econ.history.length} daily samples, fine ring ${A.eco.fine.count}/${A.eco.fine.len}`);
+const mst = A.econ.milestone;
+console.log(`milestone: ${mst.level + 1}/${MILESTONES.length} ${mst.name} -> ${mst.next} (${(mst.progress * 100).toFixed(0)} %), unlocked: ${mst.unlocked.join(', ')}`);
+const gsum = (a) => { let s = 0, m = 0; for (let i = 0; i < a.length; i++) { s += a[i]; if (a[i] > m) m = a[i]; } return `mean ${(s / a.length).toFixed(4)} max ${m.toFixed(3)}`; };
+const G = A.eco.grids;
+console.log(`grids v${G.version}: ground ${gsum(G.ground)} | air ${gsum(G.air)} | noise ${gsum(G.noise)} | landValue ${gsum(G.landValue)}; pollution exposure ${A.econ.pollutionExposure.toFixed(3)}`);
+{ const L = makeSim(seed); stepSim(L, TICKS_PER_DAY * 5); const m0 = L.econ.money; const loan = L.eco.takeLoan(50000, 20); stepSim(L, TICKS_PER_DAY * 21);
+  console.log(`loan: ${loan ? `ok id ${loan.id}, ${Math.round(loan.dailyPayment)}/day for 20 days, capacity ${L.econ.loanCapacity}; money ${fmt(m0)} -> ${fmt(L.econ.money)}, loans left ${L.econ.loans.length}` : 'refused'}`); }
 
 // 2. determinism
 const B = makeSim(seed);

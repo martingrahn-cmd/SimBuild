@@ -1,0 +1,520 @@
+{
+  "r1080": {
+    "moduleStatus": {
+      "terrain": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "environment": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0.5,
+        "initMs": 297
+      },
+      "roads": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "zoning": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "buildings": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "props": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "traffic": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "effects": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "simulation": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "tools": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "ui": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 6
+      },
+      "audio": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "services": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "infoviews": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "transit": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "democity": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      }
+    },
+    "uiStatus": "ready",
+    "dom": {
+      "root": true,
+      "toolbar": true,
+      "status": true,
+      "hud": true,
+      "infoPanel": true,
+      "notifications": 3,
+      "subpanel": true,
+      "toolButtons": 14,
+      "cards": 5,
+      "rci": true,
+      "devCorner": true
+    },
+    "actions": [
+      "category",
+      "category",
+      "selectAsset",
+      "overlays",
+      "help",
+      "focus",
+      "dismissNotification",
+      "toolOption"
+    ],
+    "clock": {
+      "before": {
+        "speed": 0,
+        "paused": false
+      },
+      "s4": {
+        "speed": 4,
+        "paused": false
+      },
+      "s2": {
+        "speed": 2,
+        "paused": false
+      },
+      "s1": {
+        "speed": 1,
+        "paused": false
+      },
+      "pause": {
+        "speed": 1,
+        "paused": true
+      },
+      "resume": {
+        "speed": 1,
+        "paused": false
+      },
+      "speedActions": [
+        [
+          "setSpeed",
+          4
+        ],
+        [
+          "setSpeed",
+          2
+        ],
+        [
+          "setSpeed",
+          1
+        ],
+        [
+          "pause"
+        ],
+        [
+          "resume"
+        ]
+      ]
+    },
+    "overflow": {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "count": 0,
+      "items": []
+    },
+    "docScroll": {
+      "sw": 1920,
+      "sh": 1080
+    },
+    "rects": {
+      "toolbar": [
+        0,
+        978,
+        1920,
+        62
+      ],
+      "status": [
+        0,
+        1040,
+        1920,
+        40
+      ],
+      "subpanel": [
+        570,
+        798,
+        780,
+        170
+      ],
+      "info": [
+        12,
+        515,
+        372,
+        451
+      ],
+      "notes": [
+        1566,
+        60,
+        340,
+        221
+      ],
+      "hint": [
+        779,
+        760,
+        361,
+        28
+      ],
+      "dev": [
+        12,
+        12,
+        313,
+        48
+      ],
+      "tools": [
+        595,
+        987,
+        730,
+        46
+      ],
+      "left": [
+        12,
+        987,
+        569,
+        46
+      ],
+      "right": [
+        1339,
+        990,
+        569,
+        40
+      ]
+    },
+    "fonts": {
+      "aileron": true,
+      "status": "loaded",
+      "family": "Aileron, Inter, \"Segoe UI\", system-ui, -apple-system, Roboto"
+    },
+    "toolbarFit": {
+      "leftContentRight": 338,
+      "toolsLeft": 595,
+      "toolsRight": 1325,
+      "rightContentLeft": 1768
+    },
+    "simErrors": [],
+    "drawCalls": 11,
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "r720": {
+    "moduleStatus": {
+      "terrain": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "environment": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0.4,
+        "initMs": 157
+      },
+      "roads": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "zoning": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "buildings": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "props": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "traffic": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "effects": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "simulation": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "tools": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "ui": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0.2,
+        "initMs": 7
+      },
+      "audio": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "services": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "infoviews": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "transit": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      },
+      "democity": {
+        "status": "registered",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 0
+      }
+    },
+    "uiStatus": "ready",
+    "dom": {
+      "root": true,
+      "toolbar": true,
+      "status": true,
+      "hud": true,
+      "infoPanel": true,
+      "notifications": 3,
+      "subpanel": true,
+      "toolButtons": 14,
+      "cards": 5,
+      "rci": true,
+      "devCorner": true
+    },
+    "actions": [
+      "category",
+      "category",
+      "selectAsset",
+      "overlays",
+      "help",
+      "focus",
+      "dismissNotification",
+      "toolOption"
+    ],
+    "clock": {
+      "before": {
+        "speed": 0,
+        "paused": false
+      },
+      "s4": {
+        "speed": 4,
+        "paused": false
+      },
+      "s2": {
+        "speed": 2,
+        "paused": false
+      },
+      "s1": {
+        "speed": 1,
+        "paused": false
+      },
+      "pause": {
+        "speed": 1,
+        "paused": true
+      },
+      "resume": {
+        "speed": 1,
+        "paused": false
+      },
+      "speedActions": [
+        [
+          "setSpeed",
+          4
+        ],
+        [
+          "setSpeed",
+          2
+        ],
+        [
+          "setSpeed",
+          1
+        ],
+        [
+          "pause"
+        ],
+        [
+          "resume"
+        ]
+      ]
+    },
+    "overflow": {
+      "viewport": [
+        1280,
+        720
+      ],
+      "count": 0,
+      "items": []
+    },
+    "docScroll": {
+      "sw": 1280,
+      "sh": 720
+    },
+    "rects": {
+      "toolbar": [
+        0,
+        618,
+        1280,
+        62
+      ],
+      "status": [
+        0,
+        680,
+        1280,
+        40
+      ],
+      "subpanel": [
+        250,
+        438,
+        780,
+        170
+      ],
+      "info": [
+        12,
+        155,
+        372,
+        451
+      ],
+      "notes": [
+        926,
+        60,
+        340,
+        221
+      ],
+      "hint": [
+        459,
+        400,
+        361,
+        28
+      ],
+      "dev": [
+        12,
+        12,
+        294,
+        48
+      ],
+      "tools": [
+        275,
+        627,
+        730,
+        46
+      ],
+      "left": [
+        12,
+        627,
+        249,
+        46
+      ],
+      "right": [
+        1019,
+        630,
+        249,
+        40
+      ]
+    },
+    "fonts": {
+      "aileron": true,
+      "status": "loaded",
+      "family": "Aileron, Inter, \"Segoe UI\", system-ui, -apple-system, Roboto"
+    },
+    "toolbarFit": {
+      "leftContentRight": 338,
+      "toolsLeft": 275,
+      "toolsRight": 1005,
+      "rightContentLeft": 1128
+    },
+    "simErrors": [],
+    "drawCalls": 11,
+    "consoleErrors": [],
+    "pageErrors": []
+  }
+}

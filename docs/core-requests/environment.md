@@ -19,3 +19,15 @@ None of these block the module; they are notes for the integrator.
 
 5. Nice-to-have: `world.weather` now also carries `moonDir`, `lightDir` (sun or moon, whichever lights the scene), `lightIntensity`, `sunColor`,
    `exposure`, `night` (0–1), `wetness`, `preset`. Consider adding them to the §3 schema so other builders know they exist.
+
+## Round 2 notes
+
+6. `world.weather` now also publishes `moonPhase` (0 = full, 0.5 = new; advances with `clock.day` over a 29.53-day lunation) and
+   `skyLight` is the real hemisphere-averaged sky radiance (linear rgb; ~0.1/0.17/0.31 at noon, ~0.005-0.02 at night) — the round-1
+   value was garbage because of a scratch-buffer aliasing bug, now fixed.
+7. Cloud drift is seeded from the game hour/day and only advances while the clock runs, so screenshots at the same `?time=` are
+   byte-stable across boots (wall-clock drift used to change the cloud field between shots).
+8. Nice-to-have: `CityCamera.minPitch` (0.08) means no preset can look upward; a debug flag (or `?pitch=`) that allows negative
+   pitch would let critics inspect the cloud layer. The showcase works around it with a probe script (`shots/environment/dev/lookup.mjs`).
+9. Registry clamps `dt` to 0.1 s; at SwiftShader frame rates (2-12 s/frame) any real-time throttle (`lutTimer > 0.5 s`) needs ~5-25
+   frames. Boot-time renders are forced, so screenshots are unaffected; `__sim.setTime()` probes should wait ~12 frames.

@@ -1,0 +1,25 @@
+{
+  "module": "audio",
+  "round": 1,
+  "summary": "Built the audio module as pure-JS procedural synthesis + gated WebAudio. src/modules/audio/synth.js renders 23 sounds (5 seamless stereo ambient loops: wind, leaves, traffic hum with doppler passes, crickets, rain; 6 world one-shots: robin, finch, crow, owl, car pass, thunder; 12 UI sounds: click, hover, open, close, confirm, error, build, road, zone, bulldoze, cash, milestone) into Float32Array buffers at 24 kHz from ctx.rng forks, ~0.9-1.1 s at init (one entry per macrotask). mixer.js builds the WebAudio graph (master -> compressor, ambient/world/ui buses, looping layers with lowpass zoom-muffling, positional StereoPanner one-shots with an 18-voice limit) ONLY from api.enable() after a gesture; ctx.headless never creates an AudioContext (verified: 0 errors headless; real path verified in a non-headless Playwright run: context running at 44.1 kHz, play() true, audio:play/ui:action wired). index.js mixes by hour (sun elevation, dawn/dusk chorus), camera distance (near/far, cutoffs) and weather.rain/wind/temperature, runs a Poisson scheduler for birds/owl/thunder/car passes, listens to audio:play {sound,x,z,volume}, ui:action, selection/buildings/roads/zones/services/sim:milestone/module:error; api: setMasterVolume, getMasterVolume, mute, unmute, toggleMute, isMuted, play(name,{x,z,volume,rate}), enable, isEnabled, state, sampleRate, setBusVolume, getBusVolume, sounds, getBuffer, getMix, setAmbienceHint, serialize/deserialize (settings persisted in localStorage). Showcase: CS2-style glass DOM panel in #ui (enable button + live status pill, master slider + mute, live ambient-mix meters with time/zoom/wind/rain/traffic chips, scenario chips, scheduler event log, every sound with play button and canvas waveform from the Float32 buffers) over a soundscape-park backdrop (PBR lawn with stochastic tiling, dirt patches, mown stripes, forest-floor darkening; T-junction street with wheel-track wear, gutter grime, double-yellow centre, crosswalk, slab sidewalks, kerbs; ~2000 instanced oaks/pines with opaque cores, autumn tints, wind sway and a far LOD; rolling hills beyond 400 m with a forested belt; street/park lamps with night halos and ground pools; benches; bandstand at the closeup target). Dev screenshots (shots/audio/dev_*.png): 0 console errors, 42 draws, 922,824 triangles (before the last far-belt/tessellation trims); a full gauntlet (shots/audio/rdev1) was started but had produced no frames when the orchestrator forced the report (machine shared with another builder's screenshot run).",
+  "drawCalls": 42,
+  "triangles": 922824,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/audio/dev_aerial_12.png",
+    "shots/audio/dev_street_12.png",
+    "shots/audio/dev_closeup_22.png",
+    "shots/audio/dev_skyline_17.5.png",
+    "shots/audio/dev_aerial_6.5.png",
+    "shots/audio/dev_closeup_12.png"
+  ],
+  "remainingWeaknesses": [
+    "Gauntlet (16-shot matrix) not completed before the report was forced; the last four scene tweaks (opaque tree cores, dirt-mask reshaping, far-belt/tessellation trims, panel footer fit) were verified only by the non-headless probe (0 errors) not by a fresh frame",
+    "Tree crowns are leaf-cutout clusters on icosahedra: fine at aerial/closeup, still 'game tree' rather than photoreal at street level",
+    "Noon frames inherit the environment's over-strong haze (integrator issue 1); the lawn is greener now but still low-contrast at noon",
+    "Triangles (~0.9 M with 3 shadow cascades) are high for a backdrop; the in-game audio module itself draws nothing",
+    "No parked cars/pedestrians in the backdrop; the road is empty",
+    "Bird/cricket synthesis is convincing but simple (no reverb/early reflections); no real-GPU fps measured (fpsGpu null)"
+  ],
+  "selfScore": 7.0
+}

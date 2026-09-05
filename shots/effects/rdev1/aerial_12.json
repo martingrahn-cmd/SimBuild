@@ -10,18 +10,18 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 65553,
-  "fps": 11.9,
+  "elapsedMs": 269422,
+  "fps": 11.6,
   "measuredFrames": 2,
-  "frameMs": 3321.9,
+  "frameMs": 12293.4,
   "drawCalls": 41,
-  "triangles": 121766,
+  "triangles": 816744,
   "programs": 34,
   "textures": 41,
   "geometries": 23,
-  "heapMB": 29.8,
+  "heapMB": 36.5,
   "moduleMs": {
-    "environment": 2.099999997764826,
+    "environment": 0.5,
     "effects": 0
   },
   "hour": 12,
@@ -48,8 +48,8 @@
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 2.1,
-      "initMs": 207
+      "ms": 0.5,
+      "initMs": 415
     },
     "roads": {
       "status": "registered",
@@ -85,7 +85,7 @@
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 4
+      "initMs": 6
     },
     "simulation": {
       "status": "registered",
@@ -111,6 +111,24 @@
       "ms": 0,
       "initMs": 0
     },
+    "services": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "infoviews": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "transit": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
     "democity": {
       "status": "registered",
       "errors": 0,
@@ -119,8 +137,6 @@
     }
   },
   "errors": [],
-  "warnings": [
-    "RGBELoader has been deprecated. Please use HDRLoader instead."
-  ],
+  "warnings": [],
   "png": "shots/effects/rdev1/aerial_12.png"
 }

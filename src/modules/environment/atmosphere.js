@@ -5,8 +5,8 @@ import * as THREE from 'three';
 
 export const SUN_TOA = 5.6;                 // top-of-atmosphere sun irradiance (light units)
 export const SUN_TINT = [1.0, 0.985, 0.955]; // slightly warm solar spectrum
-export const MOON_SCALE = 0.03;             // stylised (physically ~2.5e-6)
-export const MOON_TINT = [0.62, 0.74, 1.0];
+export const MOON_SCALE = 0.10;             // stylised (physically ~2.5e-6)
+export const MOON_TINT = [0.55, 0.70, 1.0];
 
 export const ATMOSPHERE_GLSL = /* glsl */`
 #define ATM_PI 3.141592653589793
@@ -52,8 +52,9 @@ float atmPhaseM(float mu, float g) {
   float g2 = g * g;
   return 3.0 / (8.0 * ATM_PI) * ((1.0 - g2) * (1.0 + mu * mu)) / ((2.0 + g2) * pow(1.0 + g2 - 2.0 * g * mu, 1.5));
 }
-// single scattering of light (direction L, irradiance LI) along the view ray; msBoost fakes multiple scattering
-vec3 atmScatter(vec3 ro, vec3 rd, float tMax, vec3 L, vec3 LI, float msBoost) {
+// single scattering of light (direction L, irradiance LI) along the view ray; msBoost fakes multiple
+// scattering; g is the Mie anisotropy (0.76 for the visible sky, 0 for the sun-masked ambient LUT)
+vec3 atmScatterG(vec3 ro, vec3 rd, float tMax, vec3 L, vec3 LI, float msBoost, float g) {
   vec3 odV = vec3(0.0);
   vec3 sumR = vec3(0.0), sumM = vec3(0.0);
   float t0 = 0.0;
@@ -73,14 +74,18 @@ vec3 atmScatter(vec3 ro, vec3 rd, float tMax, vec3 L, vec3 LI, float msBoost) {
     t0 = t1;
   }
   float mu = dot(rd, L);
-  return LI * (sumR * atmBetaR * 1.25 * (atmPhaseR(mu) + msBoost / (4.0 * ATM_PI)) + sumM * atmBetaM * atmPhaseM(mu, 0.76));
+  return LI * (sumR * atmBetaR * 1.25 * (atmPhaseR(mu) + msBoost / (4.0 * ATM_PI)) + sumM * atmBetaM * atmPhaseM(mu, g));
+}
+vec3 atmScatter(vec3 ro, vec3 rd, float tMax, vec3 L, vec3 LI, float msBoost) {
+  return atmScatterG(ro, rd, tMax, L, LI, msBoost, 0.76);
 }
 `;
 
 // ---------------------------------------------------------------- JS port (coarse) ----------
 const Re = 6360000, Ra = 6440000, HR = 8000, HM = 1200;
 const betaR = [5.8e-6, 13.5e-6, 33.1e-6], betaM = 21e-6, betaO = [0.65e-6, 1.881e-6, 0.085e-6];
-const _q = new THREE.Vector3();
+const _q = new THREE.Vector3();   // scratch for skyRadiance's view-ray sample point
+const _qL = new THREE.Vector3();  // scratch for opticalDepth (separate: skyRadiance passes _q as `p`)
 
 function sphere(ro, rd, R) {
   const b = ro.dot(rd); const c = ro.dot(ro) - R * R; let d = b * b - c;
@@ -91,7 +96,8 @@ function dens(h, out) {
   out[0] = Math.exp(-h / HR); out[1] = Math.exp(-h / HM); out[2] = Math.max(0, 1 - Math.abs(h - 25000) / 15000);
   return out;
 }
-const _d = [0, 0, 0];
+const _d = [0, 0, 0];   // view-sample density (skyRadiance)
+const _dL = [0, 0, 0];  // light-ray density (opticalDepth)
 function opticalDepth(p, dir, steps, out) {
   const e = sphere(p, dir, Re);
   out[0] = out[1] = out[2] = 0;
@@ -100,9 +106,9 @@ function opticalDepth(p, dir, steps, out) {
   let t0 = 0;
   for (let i = 1; i <= steps; i++) {
     const u = i / steps; const t1 = tA * u * u; const ds = t1 - t0;
-    _q.copy(p).addScaledVector(dir, 0.5 * (t0 + t1));
-    dens(_q.length() - Re, _d);
-    out[0] += _d[0] * ds; out[1] += _d[1] * ds; out[2] += _d[2] * ds; t0 = t1;
+    _qL.copy(p).addScaledVector(dir, 0.5 * (t0 + t1));
+    dens(_qL.length() - Re, _dL);
+    out[0] += _dL[0] * ds; out[1] += _dL[1] * ds; out[2] += _dL[2] * ds; t0 = t1;
   }
   return out;
 }

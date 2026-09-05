@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { RENDER_ORDER, LAYERS } from '../../core/constants.js';
+import { makeNoise2D } from '../../core/rng.js';
 
 const THETA = 0.95;                       // grid rotation (avenues run along the `street` camera's view)
 const SIN = Math.sin(THETA), COS = Math.cos(THETA);
@@ -17,6 +18,7 @@ export const showcaseUniforms = {
   wet: { value: 0 },
   night: { value: 0 },
   axis: { value: new THREE.Vector2(SIN, COS) },
+  winLevel: 0.11,          // scene-linear emissive per lit window before exposure (dev-tunable)
 };
 const M = { lampHead: null, pools: null };
 
@@ -131,9 +133,9 @@ function facadeMaterial(assets, concrete) {
           float onP = mix(vFlags.z, 0.85 * shopOn, isGround);
           float on = step(1.0 - onP, shHash(cell * 1.31 + seed * 3.7 + vFaceId * 17.1));
           float tintH = shHash(cell * 0.77 + seed * 5.1 + 3.0);
-          vec3 tint = tintH < 0.55 ? vec3(1.0, 0.66, 0.36) : (tintH < 0.80 ? vec3(0.72, 0.84, 1.0) : vec3(0.95, 0.96, 0.78));
-          if (glass > 0.5) tint = mix(tint, vec3(0.86, 0.93, 1.0), 0.6);
-          if (isGround > 0.5) tint = mix(vec3(1.0, 0.86, 0.62), vec3(0.85, 0.95, 1.0), step(0.7, shHash(vec2(seed, vFaceId + 5.0))));
+          vec3 tint = tintH < 0.60 ? vec3(1.0, 0.58, 0.24) : (tintH < 0.80 ? vec3(0.62, 0.78, 1.0) : vec3(1.0, 0.90, 0.55));
+          if (glass > 0.5) tint = mix(tint, vec3(0.80, 0.90, 1.0), 0.45);
+          if (isGround > 0.5) tint = mix(vec3(1.0, 0.80, 0.50), vec3(0.80, 0.92, 1.0), step(0.7, shHash(vec2(seed, vFaceId + 5.0))));
           float bright = 0.5 + 0.8 * shHash(cell + seed + 9.0);
           totalEmissiveRadiance += isWin * on * uWinNight * tint * bright * mix(1.0, 0.45, blinds) * (0.6 + 0.4 * reveal);
         } else if (vTop > 0.5) {
@@ -229,7 +231,7 @@ function slabMaterial(assets, set) {
 }
 
 function groundMaterial(assets, set) {
-  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, metalness: 0 });
+  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, metalness: 0, vertexColors: true });
   assets.applyPbr(m, cheapSet({ ...set, normalMap: null }), { aoIntensity: 0.8 });
   m.onBeforeCompile = (shader) => {
     shader.uniforms.uWet = showcaseUniforms.wet;
@@ -309,8 +311,10 @@ export async function setupShowcase(ctx) {
   ]);
 
   // ------------------------------------------------------------------ ground
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(7000, 7000, 1, 1), groundMaterial(assets, grass));
-  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.04;
+  const groundFn = makeGroundHeight(rng.fork('ground'));
+  const groundH = groundFn.heightAt;
+  const ground = new THREE.Mesh(makeGroundGeometry(groundFn), groundMaterial(assets, grass));
+  ground.position.y = -0.04;
   ground.receiveShadow = true; ground.renderOrder = 6; ground.name = 'fx-ground'; // drawn after the occluders (front-to-back)
   ground.layers.enable(LAYERS.TERRAIN);
   group.add(ground);
@@ -321,7 +325,13 @@ export async function setupShowcase(ctx) {
   const stU = (j) => 22 + j * ST_STEP;
   const uMin = stU(-K) - 20, uMax = stU(K) + 20;
   const roadGeos = [];
-  for (let k = -K; k <= K; k++) roadGeos.push(makeRoadStrip(uMin, uMax, aveV(k), AVE_W, 0, [ST_STEP, stU(0), ST_W], true));
+  for (let k = -K; k <= K; k++) {
+    const out = k === 0;   // the central avenue leaves town in both directions
+    roadGeos.push(makeRoadStrip(out ? -2600 : uMin, out ? 2600 : uMax, aveV(k), AVE_W, 0, [ST_STEP, stU(0), ST_W], true));
+  }
+  // the central cross street continues north/south as a two-lane road
+  roadGeos.push(makeRoadStrip(aveV(K) + AVE_W / 2, 2600, stU(0), ST_W, 1, [1e6, 0, 0], false));
+  roadGeos.push(makeRoadStrip(-2600, aveV(-K) - AVE_W / 2, stU(0), ST_W, 1, [1e6, 0, 0], false));
   for (let j = -K; j <= K; j++) for (let k = -K; k < K; k++) {
     roadGeos.push(makeRoadStrip(aveV(k) + AVE_W / 2, aveV(k + 1) - AVE_W / 2, stU(j), ST_W, 1, [1e6, 0, 0], false));
   }
@@ -470,6 +480,28 @@ export async function setupShowcase(ctx) {
     for (let v = aveV(k) + AVE_W / 2 + 12; v < aveV(k + 1) - AVE_W / 2 - 8; v += 30) lamps.push({ u, v, heading: 2 });
   }
 
+  // ------------------------------------------------------------------ forest belt around the town
+  // clumpy woodland from the edge of the grid outward (same density field that darkens the ground, so
+  // canopy and forest floor agree): a dense band of big trees within ~350 m of town, scattered clumps beyond
+  {
+    const fr = rng.fork('forest');
+    const place = (u0, u1, v0, v1, tries, cap, k, smin, smax) => {
+      let n = 0;
+      for (let i = 0; i < tries && n < cap; i++) {
+        const u = fr.range(u0, u1), v = fr.range(v0, v1);
+        const [x, z] = uv2xz(u, v);
+        const f = groundFn.forestAt(x, z);
+        if (f < 0.05 || fr.float() > f * k) continue;
+        trees.push({ u, v, s: fr.range(smin, smax) * (0.8 + 0.3 * f), forest: true });
+        n++;
+      }
+      return n;
+    };
+    const nNear = place(uMin - 380, uMax + 380, aveV(-K) - 400, aveV(K) + 400, 120000, 20000, 1.0, 1.3, 2.3);
+    const nFar = place(-2200, 2200, -2200, 2200, 60000, 8000, 0.35, 1.5, 2.6);
+    ctx.log.info(`forest: ${nNear} near + ${nFar} far trees`);
+  }
+
   // ------------------------------------------------------------------ slabs mesh
   const slabs = new THREE.Mesh(mergeGeometries(slabGeos, false), slabMaterial(assets, concreteFloor));
   slabs.receiveShadow = true; slabs.castShadow = false; slabs.renderOrder = 3; slabs.name = 'fx-slabs';
@@ -540,7 +572,7 @@ export async function setupShowcase(ctx) {
       void main() {
         float d = length(vP - 0.5) * 2.0;
         float a = pow(max(0.0, 1.0 - d), 2.2);
-        gl_FragColor = vec4(vec3(1.0, 0.72, 0.42) * a * uNight * 0.075, 1.0);
+        gl_FragColor = vec4(vec3(1.0, 0.70, 0.40) * a * uNight * 0.085, 1.0);
       }`,
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
   });
@@ -576,15 +608,69 @@ export async function setupShowcase(ctx) {
   const treeCols = [0x6f8f3a, 0x7a9a40, 0x8aa244, 0xa8a03c, 0xc98a34, 0xd0703a, 0x5f8236];
   trees.forEach((t, i) => {
     const [x, z] = uv2xz(t.u, t.v);
-    q.setFromAxisAngle(up, rng.range(0, Math.PI * 2)); s.set(t.s, t.s * rng.range(0.9, 1.15), t.s); p.set(x, 0.15, z);
+    q.setFromAxisAngle(up, rng.range(0, Math.PI * 2)); s.set(t.s, t.s * rng.range(0.9, 1.15), t.s); p.set(x, (t.forest ? groundH(x, z) - 0.3 : 0.15), z);
     tMesh.setMatrixAt(i, m4.compose(p, q, s));
     col.setHex(rng.weighted(treeCols.map((c, k) => [c, k < 3 ? 3 : 1]))).multiplyScalar(rng.range(0.85, 1.1));
+    if (t.forest) col.multiplyScalar(rng.range(0.72, 0.95));
     tMesh.setColorAt(i, col);
   });
   tMesh.castShadow = true; tMesh.receiveShadow = true; tMesh.frustumCulled = false; tMesh.name = 'fx-trees'; tMesh.renderOrder = 2;
   group.add(tMesh);
 
   ctx.log.info(`showcase staged: ${nB} building boxes, ${clutter.length} roof units, ${lamps.length} lamps, ${trees.length} trees, ${roadGeos.length} road segments, ${slabGeos.length} slabs`);
+}
+
+/** Height function for the showcase ground: flat plateau under the street grid, rolling wooded hills
+ *  rising toward the horizon, with a cut corridor for the two roads that leave town. */
+function makeGroundHeight(rng) {
+  const { fbm } = makeNoise2D(rng.int(1, 1e9));
+  const U0 = -520, U1 = 560, V0 = -520, V1 = 500, MARGIN = 160, RAMP = 900;
+  const TU0 = -428, TU1 = 472, TV0 = -442, TV1 = 422;   // street grid bounds + 30 m
+  /** woodland density 0..1 at a world position: clumpy, densest just outside town, clear of the two roads out */
+  const forestAt = (x, z) => {
+    const u = x * SIN + z * COS, v = x * COS - z * SIN;
+    if (u > TU0 && u < TU1 && v > TV0 && v < TV1) return 0;
+    const du = Math.max(TU0 - u, u - TU1, 0), dv = Math.max(TV0 - v, v - TV1, 0);
+    const d = Math.hypot(du, dv);
+    const clump = 0.5 + 0.5 * fbm(u * 0.0035 + 3.1, v * 0.0035 + 7.7, 3);
+    const near = 1 - Math.min(1, d / 1700);
+    const road = Math.min(THREE.MathUtils.smoothstep(Math.abs(v + 10), AVE_W / 2 + 10, AVE_W / 2 + 30), THREE.MathUtils.smoothstep(Math.abs(u - 22), ST_W / 2 + 8, ST_W / 2 + 26));
+    return THREE.MathUtils.smoothstep(clump, 0.28, 0.75) * (0.35 + 0.65 * near) * road * THREE.MathUtils.smoothstep(d, 0, 40);
+  };
+  const heightAt = (x, z) => {
+    const u = x * SIN + z * COS, v = x * COS - z * SIN;
+    const du = Math.max(U0 - u, u - U1, 0), dv = Math.max(V0 - v, v - V1, 0);
+    const d = Math.hypot(du, dv);
+    const t = THREE.MathUtils.smoothstep(d, MARGIN, MARGIN + RAMP);
+    if (t <= 0) return 0;
+    const far = THREE.MathUtils.smoothstep(d, 900, 2600);
+    const n1 = fbm(x * 0.00055 + 11.3, z * 0.00055 + 4.2, 4) * 0.5 + 0.5;
+    const n2 = fbm(x * 0.0022 + 1.7, z * 0.0022 + 9.1, 3);
+    let h = t * (n1 * n1 * 150 + 8) + far * (n1 * 220 + 40) + t * n2 * 12;
+    // road corridors out of town (avenue k=0 at v=-10, cross street j=0 at u=22)
+    const corr = Math.min(THREE.MathUtils.smoothstep(Math.abs(v + 10), 30, 260), THREE.MathUtils.smoothstep(Math.abs(u - 22), 22, 200));
+    return h * corr;
+  };
+  return { heightAt, forestAt };
+}
+
+/** 7 km ground mesh sampled from the height function. */
+function makeGroundGeometry({ heightAt, forestAt }) {
+  const SIZE = 7000, SEG = 220;
+  const g = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
+  g.rotateX(-Math.PI / 2);
+  const pos = g.attributes.position;
+  const col = new Float32Array(pos.count * 3);
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), z = pos.getZ(i);
+    pos.setY(i, heightAt(x, z));
+    // forest floor: canopy shade darkens and cools the ground under dense woodland
+    const f = forestAt(x, z);
+    col[i * 3] = 1 - 0.62 * f; col[i * 3 + 1] = 1 - 0.50 * f; col[i * 3 + 2] = 1 - 0.55 * f;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  return g;
 }
 
 /** Three vertical cards crossed at 60 degrees; normals point up so all cards shade like a canopy top. */
@@ -638,8 +724,8 @@ function makeLeafTexture(rng, assets) {
 export function updateShowcase(dt, ctx, night) {
   const w = ctx.world.weather;
   const n = THREE.MathUtils.clamp(w.night ?? night ?? 0, 0, 1);
-  showcaseUniforms.winNight.value = n * 0.30;
+  showcaseUniforms.winNight.value = n * showcaseUniforms.winLevel;
   showcaseUniforms.night.value = n;
   showcaseUniforms.wet.value = w.wetness || 0;
-  if (M.lampHead) M.lampHead.emissiveIntensity = n * 1.7;
+  if (M.lampHead) M.lampHead.emissiveIntensity = n * 3.2;
 }

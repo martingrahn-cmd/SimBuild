@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-04T18:40:15.861Z",
+  "updatedAt": "2026-09-05T04:39:02.067Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -13,16 +13,49 @@
   "modules": {
     "terrain": {
       "wave": 1,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] Grass tufts render into the planar reflection as confetti on water: Tuft InstancedMesh is on the TERRAIN layer the reflection camera includes, and its distance fade uses cameraPosition (mirrored camera is under the water, so nothing fades). Yellow/orange speckle covers every river and the ",
+        "[blocker] Aerial frames washed-out and relief-free: aerial_12 luminance std 8.8, p5-p95 118-146: no readable relief or shadow at 500 m. Fog already ~30% at 500-700 m, albedo pulled to luminance (mix(lum,c,0.45), min(c,0.62)), flat plains never self-shadow, cavity AO too weak. Coordinate a haze curve",
+        "[major] Street-level ground is programmer art (sprite tufts on a smeared ground): Three identical 3-quad tuft variants on a 3 m jittered grid, uniform scale, no shadows/AO, hard 140 m radius with pale blobs at the fade edge; fine ground layer barely visible. Needs dense blade geometry near the camer",
+        "[major] Night tufts are self-lit against a dark ground: instanceColor x bright blade atlas with an upward normal vs ground at L~23 makes the sprites glow. Derive tuft albedo from the ground tint at that point, use the ground normal, let the night exposure drive them.",
+        "[major] Spire peak, smooth-cone islands/hills, abrupt rock-to-grass skirt, speckle-aliased rock: Main ridge ends in one aliased witch-hat spire; island and outlying hills are featureless cones; rock meets grass in a hard line; distant rock shows dark speckle noise. Clamp/soften ridged pow peaks, add",
+        "[major] Uniform pinkish sand ribbon around every water body: Constant width, hard edge, pink tint; at night the wet/foam line is a white outline. Vary beach width by slope and noise, tint grey-tan, mix shingle/mud/reed edges, soften the wet line.",
+        "[major] Blocky, stair-stepped terrain shadows: Shadows are cast by the 8 m / 16 m LOD proxies (plus uLodDrop) rather than the 4 m heightfield, so valley-wall shadows step and blob. Cast from LOD0 (or a 4 m proxy) in cascade 0 and soften with PCF.",
+        "[minor] Brush-stroke swirl repetition of the coarse grass layer at aerial scale: The warped-UV coarse layer produces a recognisable curved-stroke motif across the whole plain. Lower warp amplitude, add a third rotated sample or stochastic tiling, break with macro variation.",
+        "[minor] Water reflections weak and incomplete: No visible ridge reflection at noon, no moon glint at 22, reflection lacks clouds/sun disc because the environment sky dome only follows the main camera (already filed in docs/core-requests/terrain.md). Raise reflection strength/Fresnel floor at grazing",
+        "[minor] Valley preset has no valley: River is a -7.5 m channel with a 22 m shore lerp cut into a near-flat floodplain; the showcase preset oversells it. Acceptable for buildability; frame the preset from lower on the valley wall or add gentle terraces.",
+        "[minor] Tooling/core (not scored): boot overlay leak and 30 s screenshot timeout: #boot 0.6 s opacity fade leaked into the first coast_22 capture under SwiftShader starvation although __sim.ready was true; tools/screenshot.mjs hard-codes a 30 s page.screenshot timeout so 10/16 gauntlet shots died un"
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6,
+          "pass": false,
+          "errors": 0,
+          "draws": 16,
+          "report": "docs/critic/terrain_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "Zero console errors and status ready in every shot; 11-16 draw calls vs budget 20; max 255,248 triangles vs budget 900,000.",
+        "API contract complete and correct: getHeight/getNormal/getSlope/isWater/raycast verified in-page; heights Float32Array 513x513; modify raises 12 m, bumps version, emits terrain:changed and visibly updates the mesh; fully deterministic (no Math.random).",
+        "Instanced R32F-height chunk/LOD/skirt/proxy architecture is right and cheap; edits are a texture upload.",
+        "Heightfield generator delivers eroded ridges, a meandering river, estuary, island and coast, and exposes them via world.terrain.features for roads/democity.",
+        "Golden-hour skylines (6.5 and 17.5) are genuinely good: long soft shadows, straw-dry grass tint, sea glint - keep the palette.",
+        "Water fundamentals work: planar reflection (island reflects), shore transparency, depth tint, foam band, wet-shoreline darkening and underwater tint."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 16,
+      "apiContractOk": true
     },
     "environment": {
       "wave": 1,
@@ -56,10 +89,10 @@
         }
       ],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 2
       },
-      "builtRound": 1,
+      "builtRound": 2,
       "pass": false,
       "strengths": [
         "Physically based single-scattering sky LUT (Rayleigh/Mie/ozone) feeding PMREM: sky colour, sun aureole and 17:30 horizon haze are right; IBL on the sphere ladder matches the sky",
@@ -75,16 +108,51 @@
     },
     "roads": {
       "wave": 1,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] Terrain protrudes through the carriageway (road sunk up to 0.44 m): Probe: 28/1254 samples on non-bridge edges sit >5 cm below the heightfield, worst -0.44 m at (+-40,-79) and -0.40 m on the north bridge approach (z~-320). A grass rectangle sits on the avenue next to the crossroads in clos",
+        "[blocker] Terrain grass instances render through asphalt and sidewalks in every street-level frame: world.roads.coverage/isRoad is published but terrain does not consume it yet. Until it does, roads.showcase.setup must call ctx.modules.terrain.setGrassTufts(false) (API exists), and long-term terrain",
+        "[blocker] Bridge deck ends float in the air; embankments end as sheer black cliffs: Far end of the street bridge hovers above the beach with an air gap and no abutment (bridge_12); the highway at the coast ends in a dark void under the deck start with a black-walled cut (coastwest_12). Fix: emit abu",
+        "[major] Noon frames washed out and flat; sidewalks near white, no AO under kerbs: Every 12:00 frame has p1 luminance >= 97 and std <= 24 (street_12: p1 104, sat 0.20). Concrete material multiplies albedo by 1.75; asphalt reads mid-grey; no contact shadow at kerbs. Fix: concrete colour <= 1.0 with da",
+        "[major] White speckle/sparkle across asphalt at mid distance and grazing angles: Specular aliasing on highway_12 and merge_12 from the normal map plus roughness reductions (wearLight, noise term) without mip-aware roughness. Fix: clamp roughness >= 0.6, fade normalScale and the polished-lane term wi",
+        "[major] Flatten brushes cut a sheer rectangular wall through the knoll beside the loop's north arm: Dark rectangular cut visible in loop_12 near (-215,-190) and as a dark spot in the aerials. Fix: grade the cut (max depth per metre of lateral distance, ~1:1.5) or emit a retaining-wall mesh where the",
+        "[major] One-way loop is not a roundabout: Square/octagonal ring with four T-junctions carrying zebra crossings, stop lines and turn arrows on the ring itself. Fix: detect one-way cycles, sample finer, suppress crosswalks/stop lines/arrows on ring arms, add yield lines on entries and a central island",
+        "[major] Corner sidewalk fillet overlaps the crosswalk; sidewalk slabs read as floating plates: The corner strip covers part of the zebra bars, and where terrain falls away the sidewalk shows as a flat grey plate with a thin skirt. Fix: start crosswalks inside the fillet tangent point; extend the ski",
+        "[minor] Pier caps protrude beyond the deck edge; bridge reflections break into dark speckle on the water: Near-end pier cap pokes out beside the deck in bridge_12; dark speckles around the bridge in every aerial. Fix: cap width <= deck outer width; lighten deck underside/pier colours.",
+        "[minor] Asphalt texture tiling visible as a repeating crack grid: 4.2 m repeat shows in intersection polygons and top-down views (armtop_12, street_17p5). Fix: blend two UV scales with noise-driven rotation per tile.",
+        "[minor] Turn arrows are thin hooked shapes: CS2 arrows are bold with proper heads. Fix: 0.3 m shaft, 1.2 m head, build bent arrows from a polyline with round joins.",
+        "[minor] Highway lacks shoulder/edge detail and gore markings at the merge; barrier reads as a line: Add chevron gore area at the ramp nose, a hard-shoulder edge line inset, and a lighter barrier top colour.",
+        "[minor] rebuild() is not idempotent; removeEdge leaves orphan nodes: Same network rebuilt after its own terrain flattening yields 45922 -> 45524 tris. Determinism (ARCHITECTURE 11) wants identical results for identical actions.",
+        "[minor] Scene draw calls exceed 80 at skyline although roads' own share is <= 49: 85-86 total at 1080p skyline (terrain+environment+roads). Roads is 25 meshes (8 tiles x 4 materials) plus concrete shadow casters per cascade; folding paint decals into the asphalt material would save 8 draw calls."
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6,
+          "pass": false,
+          "errors": 0,
+          "draws": 86,
+          "report": "docs/critic/roads_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "world.roads API complete and correct: arc-length sampling, quadratic bezier edges, lane 0 on the right, frontage on both sides, nearestEdge, cascade removal, version + roads:changed discipline; zero console errors in 29 captures and two probes",
+        "Intersection analysis with fillet/mitre/flat corners, joints, dead-end caps and a real kerb + sidewalk + gravel-skirt profile; per-type widths for alley/street/avenue/highway/ramp",
+        "Shader lane-marking system (dashed/solid/double, yellow highway inner lines, solid near stop lines, wheel-track wear, paint wear) plus zebra, stop-line and arrow decals",
+        "Dual carriageway with median Jersey barrier and a ramp merge with acceleration-lane taper; bridges with deck, parapets and piers with caps standing in the water",
+        "Terrain-conforming smoothed profiles, coverage mask and lampPositions/intersections for other modules, per-tile merged meshes, CC0 assets, deterministic (no Math.random)"
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 86,
+      "apiContractOk": true
     },
     "simulation": {
       "wave": 1,
@@ -94,11 +162,58 @@
       "openIssues": [],
       "history": [],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 1
-      }
+      },
+      "builtRound": 1
     },
     "ui": {
+      "wave": 1,
+      "round": 1,
+      "score": 7,
+      "status": "needs-work",
+      "openIssues": [
+        "[major] RCI demand box overflows into the status strip in every frame: .sb-rci is 46px tall (34px content) but holds 4 rows x 12.5px + 3x3px gaps = 59px; the O row renders ~25px below the toolbar over the status strip. Use 4px bars with 8px labels and 1px gaps, or a 2x2 layout, or overflow:hidden as",
+        "[major] Layout breaks at 1280x720: toolbar-left overlaps tools, sub-panel covers info panel: Toolbar-left content ends at x=338 while the centred tools group starts at x=275 (63px overlap); the 780px sub-panel (x 250-1030) covers the 372px info panel (x 12-384), hiding its bars and Demolish button. ",
+        "[major] Asset cards are flat schematic rectangles, not thumbnails: Alley is a grey box, Gravel Road a tan box; CS2 cards are perspective renders on dark cards with hover glow. Render cached canvas thumbnails from real geometry, or at least isometric SVG tiles with kerb, sidewalk, lane paint and shad",
+        "[major] Locked service icons are desaturated grey mud: .is-dim svg {opacity:.45; filter:saturate(.3)} turns 8 toolbar icons into grey blobs; CS2 keeps icons vivid and marks locked state with a lock badge and tooltip. Keep full colour at ~0.75 opacity with a 10px lock badge.",
+        "[major] Showcase backdrop is programmer art under every ui shot: Flat-shaded icosahedron-blob trees that glow day-green at night, box facades with a coarse window shader, no street lamps at night, flat noon lighting. Use proper low-poly/billboard trees, darken tree colour with the night uniform, add",
+        "[major] ARCHITECTURE section 15 ui scope missing: No main menu, pause menu, save/load panels, milestone toast, minimap or photo mode (camera button only emits an action). Not counted as a hard failure for round 1 but must be planned for round 2.",
+        "[minor] Sub-panel tabs read as plain text: Intersections / Road services have no tab affordance beside the blue Roads pill; give inactive tabs a subtle background and an icon like CS2's icon tab row.",
+        "[minor] Dev corner always on and shows 0 fps: dev:true unconditionally; gate behind ?dev=1 or a hotkey and show a dash when no frames were counted.",
+        "[minor] Happiness chip shows three faces with one lit: CS2 shows a single face that changes expression; three faces waste 60px and read as a control.",
+        "[minor] Info-panel secondary buttons lack affordance: Policies and Demolish have no visible border or background at rest and read as labels; give them the same 1px border as Focus.",
+        "[minor] Toolbar-right cluster is thin: Three round buttons in 569px; CS2 fills that side with map, statistics, camera, citizens, journal. Add the missing entries so the bar reads balanced.",
+        "[minor] Status chip icons and trend arrows undersized: 18px chip icons against 13px text and 10px trend arrows; CS2 uses ~22px icons. Bump sizes and give the trend value its own muted chip."
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 7,
+          "pass": false,
+          "errors": 0,
+          "draws": 11,
+          "report": "docs/critic/ui_r1.md"
+        }
+      ],
+      "next": {
+        "phase": "build",
+        "round": 2
+      },
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "Layout skeleton is genuinely CS2: bottom toolbar + status strip, milestone chip, colourful category icons, round buttons right, clock/date/season/city/pop/happiness/money chips, top-right notifications, left info panel, blue accent",
+        "Notifications: typed accent bar, icon disc, right-aligned timestamps that follow game time, escaped HTML, dt-driven auto-dismiss",
+        "Info panel: type pill, level stars, right-aligned tabular numbers, status bars, action row",
+        "Tool option box (Tool Mode / Elevation / Snapping) and key-hint pill match CS2 road-tool UX",
+        "Pure DOM with 0 in-game draw calls, every interaction emits ui:action, safe optional calls into tools, Esc/Space shortcuts, bundled CC0 font, zero errors, 6 ms init, no Math.random"
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 11,
+      "apiContractOk": false
+    },
+    "audio": {
       "wave": 1,
       "round": 0,
       "score": null,
@@ -111,18 +226,6 @@
       },
       "builtRound": 1
     },
-    "audio": {
-      "wave": 1,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
-      "next": {
-        "phase": "build",
-        "round": 1
-      }
-    },
     "effects": {
       "wave": 1,
       "round": 0,
@@ -131,9 +234,10 @@
       "openIssues": [],
       "history": [],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 1
-      }
+      },
+      "builtRound": 1
     },
     "zoning": {
       "wave": 2,
@@ -253,10 +357,7 @@
   "summary": {
     "passed": [],
     "needsWork": [
-      "terrain:unscored:r0",
-      "roads:unscored:r0",
       "simulation:unscored:r0",
-      "ui:unscored:r0",
       "audio:unscored:r0",
       "effects:unscored:r0",
       "zoning:unscored:r0",
@@ -268,8 +369,11 @@
       "services:unscored:r0",
       "infoviews:unscored:r0",
       "transit:unscored:r0",
-      "environment:6:r1"
+      "terrain:6:r1",
+      "environment:6:r1",
+      "roads:6:r1",
+      "ui:7:r1"
     ],
-    "weakest": "terrain"
+    "weakest": "simulation"
   }
 }

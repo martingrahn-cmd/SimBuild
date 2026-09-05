@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=audio&time=17.5&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "audio",
+  "time": 17.5,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.waitForFunction: Timeout 90000ms exceeded.",
+  "errors": [],
+  "warnings": [],
+  "png": "shots/audio/rdev1/aerial_17p5.png"
+}

@@ -1,0 +1,128 @@
+{
+ "bezier": {
+  "mid": {
+   "x": -665,
+   "z": -595
+  },
+  "chordMid": {
+   "x": -630,
+   "z": -630
+  },
+  "offChord": 49.5,
+  "length": 227.2,
+  "chordLen": 198
+ },
+ "bezierOk": false,
+ "sunkCount": 28,
+ "sunkWorst": [
+  {
+   "edge": 30,
+   "type": "street",
+   "t": 0.45,
+   "x": -40,
+   "z": -79,
+   "dy": -0.44
+  },
+  {
+   "edge": 38,
+   "type": "street",
+   "t": 0.45,
+   "x": 40,
+   "z": -79,
+   "dy": -0.43
+  },
+  {
+   "edge": 112,
+   "type": "street",
+   "t": 0.2,
+   "x": 34,
+   "z": -318,
+   "dy": -0.4
+  },
+  {
+   "edge": 30,
+   "type": "street",
+   "t": 0.4,
+   "x": -40,
+   "z": -82,
+   "dy": -0.36
+  },
+  {
+   "edge": 38,
+   "type": "street",
+   "t": 0.4,
+   "x": 40,
+   "z": -82,
+   "dy": -0.36
+  },
+  {
+   "edge": 112,
+   "type": "street",
+   "t": 0.25,
+   "x": 31,
+   "z": -323,
+   "dy": -0.32
+  },
+  {
+   "edge": 30,
+   "type": "street",
+   "t": 0.5,
+   "x": -40,
+   "z": -75,
+   "dy": -0.31
+  },
+  {
+   "edge": 38,
+   "type": "street",
+   "t": 0.5,
+   "x": 40,
+   "z": -75,
+   "dy": -0.31
+  },
+  {
+   "edge": 85,
+   "type": "street",
+   "t": 0.85,
+   "x": 279,
+   "z": 230,
+   "dy": -0.27
+  },
+  {
+   "edge": 85,
+   "type": "street",
+   "t": 0.9,
+   "x": 286,
+   "z": 230,
+   "dy": -0.22
+  },
+  {
+   "edge": 54,
+   "type": "street",
+   "t": 0.4,
+   "x": 200,
+   "z": -82,
+   "dy": -0.18
+  },
+  {
+   "edge": 24,
+   "type": "street",
+   "t": 0.45,
+   "x": -120,
+   "z": 67,
+   "dy": -0.16
+  }
+ ],
+ "steepCellsNearRoads": 0,
+ "steepByEdge": {},
+ "steepSamples": [],
+ "loopNorthArmSteep": 0,
+ "loopNorthArmSample": [],
+ "status": {
+  "status": "ready",
+  "errors": 0,
+  "ms": 0,
+  "initMs": 83
+ },
+ "errors": [],
+ "consoleErrors": []
+}

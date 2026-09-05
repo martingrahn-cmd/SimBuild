@@ -11,7 +11,7 @@ import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { FXAAPass } from 'three/examples/jsm/postprocessing/FXAAPass.js';
 import { QUALITY } from '../../core/constants.js';
 import { AmbientPass, GradePass } from './passes.js';
-import { setupShowcase, updateShowcase } from './showcase.js';
+import { setupShowcase, updateShowcase, showcaseUniforms } from './showcase.js';
 
 const PRESETS = {
   // grading strengths are multipliers on the time-of-day curves below
@@ -23,7 +23,7 @@ const PRESETS = {
 
 const S = {
   ctx: null, chain: null, enabled: true, preset: 'default', staged: false, failed: false, post: true,
-  night: 0, golden: 0,
+  night: 0, golden: 0, override: null,
 };
 const smooth = (e0, e1, x) => { const t = THREE.MathUtils.clamp((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
 const lerp = THREE.MathUtils.lerp;
@@ -114,49 +114,65 @@ function uninstall(ctx) {
 function tune(ctx) {
   const ch = S.chain; if (!ch) return;
   const w = ctx.world.weather;
-  const P = PRESETS[S.preset] || PRESETS.default;
+  const P = S.override ? { ...(PRESETS[S.preset] || PRESETS.default), ...S.override } : (PRESETS[S.preset] || PRESETS.default);
   const night = THREE.MathUtils.clamp(w.night ?? 0, 0, 1);
   const sunY = w.sunDir ? w.sunDir.y : 1;
   const day = 1 - night;
   const golden = (1 - smooth(0.03, 0.32, sunY)) * day;
   const exposure = Math.max(0.05, w.exposure ?? ctx.renderer.toneMappingExposure ?? 1);
   const rain = THREE.MathUtils.clamp(w.wetness ?? 0, 0, 1);
+  const overcast = THREE.MathUtils.clamp(w.cloudiness ?? 0.3, 0, 1);
   S.night = night; S.golden = golden;
 
-  // --- ambient occlusion: city-scale radius, gentle
+  // --- ambient occlusion: city-scale radius that grows with the view distance (contact darkening under
+  // buildings and kerbs at street level, block-scale occlusion between towers from the air)
   const dist = ctx.camera.distance;
-  const radius = THREE.MathUtils.clamp(2.2 + dist * 0.004, 2.2, 6.0);
+  const radius = THREE.MathUtils.clamp(2.4 + dist * 0.016, 2.4, 14.0);
   ch.ambient.aoEnabled = P.ao > 0.001;
   const dofOn = ch.hasDof && P.dof && dist < 120;
   const dofK = smooth(120, 45, dist);
   ch.ambient.setParams({
-    radius, intensity: 1.25 * P.ao, bias: 0.08, power: lerp(1.1, 1.3, night),
+    radius, intensity: 1.7 * P.ao, bias: 0.06, power: lerp(1.15, 1.35, night),
     dofEnabled: dofOn && dofK > 0.02, focus: dist * 0.75, range: Math.max(20, dist * 0.45), maxCoc: (3.5 * dofK) * (ch.height / 1080),
   });
 
-  // --- bloom: threshold expressed in exposed units so the same look holds day and night
-  const thr = lerp(2.4, 1.35, night) / exposure;
+  // --- bloom: threshold expressed in exposed units so the same look holds day and night; only the sun,
+  // specular glints and emissives (windows, lamp heads) cross it. Night is glowier, rain adds halation.
+  const thr = lerp(2.6, 2.2, night) / exposure;   // night: lamp heads (~9) bloom, lit windows (<= 0.5) do not
   ch.bloom.threshold = thr;
-  ch.bloom.strength = lerp(0.18, 0.30, night) * P.bloom * (1 + rain * 0.25);
-  ch.bloom.radius = lerp(0.5, 0.7, night);
+  ch.bloom.strength = lerp(0.16, 0.42, night) * P.bloom * (1 + rain * 0.35);
+  ch.bloom.radius = lerp(0.45, 0.72, night);
   ch.bloom.enabled = P.bloom > 0.001;
 
-  // --- grade (display-referred): warm, slightly desaturated daylight; cool lifted shadows at night
+  // --- grade (display-referred). CS2: warm, slightly muted daylight with cool-blue readable shadows and
+  // crisp contrast; golden hour keeps blue shadows against the warm sun; night is blue-lifted with warm emissives.
   const g = ch.grade.u;
   const k = P.grade;
   const lift = g.uLift.value, gamma = g.uGamma.value, gain = g.uGain.value;
-  // day: neutral with a whisper of warmth in the highlights; golden hour: warmer; night: blue-lifted blacks
-  lift.set(0.0, lerp(0.0, 0.002, night) * k, lerp(0.0, 0.008, night) * k);
-  gamma.set(1 + lerp(0.0, -0.06, night) * k, 1 + lerp(0.0, -0.06, night) * k, 1 + lerp(0.0, -0.03, night) * k);
-  const overcast = THREE.MathUtils.clamp(w.cloudiness ?? 0.3, 0, 1);
+  lift.set(lerp(0.0, 0.006, night) * k, lerp(0.0, 0.010, night) * k, lerp(0.0, 0.022, night) * k);
+  gamma.set(1 + lerp(0.0, -0.05, night) * k, 1 + lerp(0.0, -0.05, night) * k, 1 + lerp(0.0, -0.02, night) * k);
+  // golden hour: the sky module's low sun is already very warm and under-exposed; lift it, keep it neutral
   gain.set(
-    1 + (lerp(0.02, -0.12, night) + golden * 0.04 - overcast * 0.01) * k,
-    1 + (lerp(0.0, -0.10, night) + golden * 0.01) * k,
-    1 + (lerp(-0.015, -0.04, night) - golden * 0.05 + overcast * 0.015) * k);
-  const sat = 1 + (lerp(0.12, -0.08, night) + golden * 0.06 - rain * 0.12) * k;
-  const contrast = (1 + lerp(0.08, 0.03, night) * k) * P.contrast;
-  const temp = (lerp(0.10, -0.20, night) + golden * 0.35 - overcast * 0.08) * k;
-  g.uGrade.value.set(sat, contrast, temp, P.vignette * lerp(1, 1.3, night));
+    1 + (lerp(0.015, -0.10, night) + golden * 0.10 - overcast * 0.01) * k,
+    1 + (lerp(0.0, -0.09, night) + golden * 0.11) * k,
+    1 + (lerp(-0.01, -0.03, night) + golden * 0.14 + overcast * 0.015) * k);
+  const sat = 1 + (lerp(0.14, 0.10, night) + golden * 0.04 - rain * 0.12 - overcast * 0.04) * k;
+  const vib = (lerp(0.22, 0.24, night) + golden * 0.06) * k;
+  const contrast = (1 + (lerp(0.16, 0.05, night) - overcast * 0.03 - rain * 0.02) * k) * P.contrast;
+  const temp = (lerp(0.06, -0.12, night) - golden * 0.10 - overcast * 0.06 - rain * 0.05) * k;
+  const black = (lerp(0.045, 0.0, night) * (1 - golden) + overcast * 0.006) * k;   // pulls haze off the blacks by day
+  g.uGrade.value.set(sat, contrast, temp, P.vignette * lerp(1, 1.35, night));
+  g.uCurve.value.set(0.42, vib, 0.0, black);
+  // split toning: shadows cool (stronger at golden hour), highlights faintly warm; night keeps the sodium glow
+  g.uShadowTint.value.set(
+    (lerp(-0.010, -0.004, night) - golden * 0.020) * k,
+    (lerp(0.000, 0.002, night) + golden * 0.006) * k,
+    (lerp(0.022, 0.012, night) + golden * 0.050) * k);
+  // night highlights are the lit windows and lamps: push them toward sodium/tungsten while the facades stay cool
+  g.uHighTint.value.set(
+    (lerp(0.018, 0.075, night) + golden * 0.02) * k,
+    (lerp(0.008, 0.030, night) + golden * 0.006) * k,
+    (lerp(-0.010, -0.040, night) - golden * 0.02) * k);
   g.uSharpen.value.set(P.sharpen, 1 / 255);
 }
 
@@ -201,6 +217,10 @@ export default {
       S.preset = name; return S.preset;
     },
     getPreset() { return S.preset; },
+    /** dev/profiling: showcase uniforms (window light level etc.) */
+    _showcase() { return showcaseUniforms; },
+    /** dev/profiling: override individual preset fields ({ao:0} etc.); null clears */
+    _override(o) { S.override = o || null; },
     /** dev/profiling: the live chain (passes can be toggled via .composer.passes[i].enabled) */
     _chain() { return S.chain; },
     presets: Object.keys(PRESETS),

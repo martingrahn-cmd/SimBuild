@@ -1,0 +1,35 @@
+{
+  "module": "effects",
+  "round": 1,
+  "summary": "Post chain: HDR RenderPass -> depth-only AO (half-res, texel-snapped depth sampling; fixed a bug where half-res UVs hit depth texel boundaries and produced striped, wrong normals and near-zero AO) fused with near-field DOF for < 120 m cameras -> UnrealBloom with exposure-aware threshold (only sun, glints, lamp heads and the brightest emissives bloom; stronger/wider at night and in rain) -> OutputPass (AgX stays in the renderer) -> SMAA (FXAA at medium, off at low) -> display grade (CAS sharpen, lift/gamma/gain, black point + filmic S contrast, split toning with cool shadows/warm highlights, saturation + vibrance, temperature, vignette, dither) driven per frame from world.weather (night, sunDir, exposure, cloudiness, wetness) and camera distance. Presets default/cinematic/clean/flat, api setEnabled/setPreset/getPreset/state + dev hooks. Every pass is wrapped: init or render failure drops back to direct rendering. Showcase: instanced PBR downtown grid with procedural facades and per-window warm/cool night lights, asphalt with wear/markings, kerbed slabs, instanced lamps with emissive heads and light pools, plus a 7 km heightfield with a plateau, wooded hills, road corridors out of town, a 28k-tree clumpy forest belt whose density also darkens the forest floor.",
+  "drawCalls": 41,
+  "triangles": 816744,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/effects/rdev1/aerial_6p5.png",
+    "shots/effects/rdev1/aerial_22.png",
+    "shots/effects/rdev1/street_6p5.png",
+    "shots/effects/rdev1/street_22.png",
+    "shots/effects/rdev1/skyline_6p5.png",
+    "shots/effects/rdev1/skyline_22.png",
+    "shots/effects/rdev1/closeup_6p5.png",
+    "shots/effects/rdev1/closeup_12.png",
+    "shots/effects/rdev1/closeup_22.png",
+    "shots/effects/dev_aerial_12.png",
+    "shots/effects/dev_street_12.png",
+    "shots/effects/dev_closeup_22.png",
+    "shots/effects/dev_skyline_17.5.png",
+    "shots/effects/dev_aerial_6.5.png"
+  ],
+  "remainingWeaknesses": [
+    "Noon frames are still low-contrast and hazy: environment ambient (PMREM 0.8 at exposure 1.25) and fog dominate; the grade (black point 0.045, contrast 1.16, vibrance) brings shadows from p5=65 to ~50, CS2 is ~30 - needs the environment round-2 fix, then the day grade should be re-tuned down",
+    "Golden hour (06:30/17:30) reads brown-sepia and under-exposed because the sky module ambient is Mie-orange; split toning cools the shadows and gain lifts it but 17:30 skyline is still a monochrome haze",
+    "Night lit windows read pale tan/white rather than glowing sodium: AgX at exposure 3 desaturates emissives; warm highlight split toning helps but a per-emissive tone curve or lower night exposure from environment is needed",
+    "Depth-only AO is subtle at aerial distance (10-14 m radius, half res) and has no normal buffer, so it misses flat-on-flat creases; no temporal filtering",
+    "No rain streak / wet-lens pass yet (rain only adds bloom halation and desaturation)",
+    "Showcase is still recognisably boxes: crossed-card trees are cartoonish, the road corridor cut through the hills has sharp artificial walls, facades are procedural window grids without balconies/roof detail",
+    "Triangles 817k are close to the declared 900k budget because of the forest belt; the post chain itself is ~24 draws of the 41",
+    "Gauntlet had to be run through a wrapper (same matrix, --timeout 300) because tools/gauntlet.mjs uses a 90 s timeout that fails under load 8-11, and 5 frames captured the Vite reload overlay from other builders saving and were re-shot; core requests filed"
+  ],
+  "selfScore": 6.5
+}

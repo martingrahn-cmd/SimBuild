@@ -3,11 +3,12 @@
 import { FINE_KEYS } from './economy.js';
 import { commute, traffic } from './activity.js';
 
-const FONT_DIR = new URL('../ui/fonts/', import.meta.url).href;   // Aileron (CC0), bundled by the ui module
+// Aileron (CC0), bundled by the ui module; one new URL() per file so Vite resolves each asset
+const FONT = { 400: new URL('../ui/fonts/aileron-latin-400-normal.woff2', import.meta.url).href, 600: new URL('../ui/fonts/aileron-latin-600-normal.woff2', import.meta.url).href, 700: new URL('../ui/fonts/aileron-latin-700-normal.woff2', import.meta.url).href };
 const CSS = /* css */`
-@font-face { font-family: 'Aileron'; font-weight: 400; font-display: block; src: url(${FONT_DIR}aileron-latin-400-normal.woff2) format('woff2'); }
-@font-face { font-family: 'Aileron'; font-weight: 600; font-display: block; src: url(${FONT_DIR}aileron-latin-600-normal.woff2) format('woff2'); }
-@font-face { font-family: 'Aileron'; font-weight: 700; font-display: block; src: url(${FONT_DIR}aileron-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Aileron'; font-weight: 400; font-display: block; src: url(${FONT[400]}) format('woff2'); }
+@font-face { font-family: 'Aileron'; font-weight: 600; font-display: block; src: url(${FONT[600]}) format('woff2'); }
+@font-face { font-family: 'Aileron'; font-weight: 700; font-display: block; src: url(${FONT[700]}) format('woff2'); }
 .sim-panel {
   --bg: rgba(14, 19, 28, 0.84); --line: rgba(255,255,255,0.08); --line2: rgba(255,255,255,0.16);
   --text: #eaf0f7; --text2: #b3bfcf; --muted: #7d8a9c; --accent: #3a95f5;
@@ -32,7 +33,7 @@ const CSS = /* css */`
 .sim-kpi .sim-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px; }
 .sim-kpi .sim-l i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 .sim-kpi .sim-v { font-size: 21px; font-weight: 700; margin-top: 3px; letter-spacing: -0.01em; }
-.sim-kpi .sim-d { font-size: 11px; color: var(--text2); margin-top: 2px; white-space: nowrap; }
+.sim-kpi .sim-d { font-size: 11px; color: var(--text2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sim-kpi .up { color: var(--green); } .sim-kpi .down { color: var(--red); } .sim-kpi .flat { color: var(--muted); }
 .sim-sec { padding: 9px 14px 10px; border-bottom: 1px solid var(--line); }
 .sim-sec .sim-st { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; margin-bottom: 7px; }
@@ -52,6 +53,13 @@ const CSS = /* css */`
 .sim-budget .sim-bb { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
 .sim-budget .sim-bb > i { display: block; height: 100%; width: 0; border-radius: 3px; }
 .sim-budget .inc > i { background: var(--green); } .sim-budget .exp > i { background: var(--red); }
+.sim-ms { display: flex; align-items: center; gap: 10px; }
+.sim-ms .sim-badge { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffe38a, #d99a12 70%); color: #2a1d00; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px rgba(255,255,255,0.08), 0 2px 6px rgba(0,0,0,0.4); flex: none; }
+.sim-ms .sim-mst { flex: 1; min-width: 0; }
+.sim-ms .sim-msn { font-size: 12.5px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sim-ms .sim-msx { font-size: 10.5px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sim-ms .sim-msb { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.08); margin-top: 5px; overflow: hidden; }
+.sim-ms .sim-msb > i { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, #d99a12, #ffe38a); transition: width 300ms ease; }
 .sim-foot { padding: 7px 14px; font-size: 10.5px; color: var(--muted); display: flex; justify-content: space-between; letter-spacing: 0.02em; }
 `;
 
@@ -77,6 +85,7 @@ export class Panel {
         <div class="sim-kpi"><div class="sim-l"><i style="background:var(--green)"></i>Jobs</div><div class="sim-v sim-num" data-k="jobs">0</div><div class="sim-d sim-num" data-k="jobsd"></div></div>
         <div class="sim-kpi"><div class="sim-l"><i style="background:var(--blue)"></i>Happiness</div><div class="sim-v sim-num" data-k="happy">50%</div><div class="sim-d sim-num" data-k="happyd"></div></div>
       </div>
+      <div class="sim-sec"><div class="sim-ms"><div class="sim-badge sim-num" data-k="mslvl">1</div><div class="sim-mst"><div class="sim-msn" data-k="msname">Hamlet</div><div class="sim-msx sim-num" data-k="msnext"></div><div class="sim-msb"><i data-k="msbar"></i></div></div></div></div>
       <div class="sim-sec"><div class="sim-st"><span>Zone demand</span><b data-k="dem"></b></div>
         <div class="sim-rci">
           <div class="sim-rl">R</div><div class="sim-rb r"><i data-k="bR"></i></div><div class="sim-rp sim-num" data-k="pR">0%</div>
@@ -86,7 +95,7 @@ export class Panel {
         </div></div>
       <div class="sim-sec"><div class="sim-st"><span>Population · 3 days</span><b class="sim-num" data-k="spop"></b></div><canvas class="sim-canvas" data-k="cpop"></canvas></div>
       <div class="sim-sec"><div class="sim-st"><span>Treasury · 3 days</span><b class="sim-num" data-k="smoney"></b></div><canvas class="sim-canvas" data-k="cmoney"></canvas></div>
-      <div class="sim-sec"><div class="sim-st"><span>Daily budget</span><b class="sim-num" data-k="net"></b></div>
+      <div class="sim-sec"><div class="sim-st"><span data-k="budt">Daily budget</span><b class="sim-num" data-k="net"></b></div>
         <div class="sim-budget"><span>Income</span><div class="sim-bb inc"><i data-k="bInc"></i></div><span class="sim-num" data-k="inc"></span>
         <span>Expenses</span><div class="sim-bb exp"><i data-k="bExp"></i></div><span class="sim-num" data-k="exp"></span></div></div>
       <div class="sim-sec"><div class="sim-st"><span>Activity · 24 h</span><b class="sim-num" data-k="act"></b></div><canvas class="sim-canvas sim-act" data-k="cact"></canvas></div>
@@ -132,7 +141,13 @@ export class Panel {
     k.popd.innerHTML = `<span class="${dPop > 0.5 ? 'up' : dPop < -0.5 ? 'down' : 'flat'}">${dPop > 0.5 ? '▲' : dPop < -0.5 ? '▼' : '•'} ${fmtSigned(dPop)}/day</span> · ${fmtInt(e.households)} households`;
     k.money.textContent = fmtMoney(e.money);
     k.money.style.color = e.money < 0 ? 'var(--red)' : '';
-    k.moneyd.innerHTML = `<span class="${e.net >= 0 ? 'up' : 'down'}">${e.net >= 0 ? '▲' : '▼'} ${fmtSigned(e.net)}/day</span> · tax ${Math.round(e.taxRate * 100)}%`;
+    k.moneyd.innerHTML = `<span class="${e.net >= 0 ? 'up' : 'down'}">${e.net >= 0 ? '▲' : '▼'} ${fmtSigned(e.net)}/day</span>${e.loans.length ? ` · ${e.loans.length} loan${e.loans.length > 1 ? 's' : ''}` : ''}`;
+    const ms = e.milestone;
+    k.mslvl.textContent = String(ms.level + 1);
+    k.msname.textContent = ms.name;
+    k.msnext.textContent = ms.next ? `Next: ${ms.next} · ${fmtInt(e.population)} / ${fmtInt(ms.nextPop)} citizens` : 'Final milestone reached';
+    k.msbar.style.width = `${Math.round(ms.progress * 100)}%`;
+    k.budt.textContent = `Daily budget · tax ${Math.round(e.taxRate * 100)}%`;
     k.jobs.textContent = fmtInt(e.jobs);
     k.jobsd.textContent = `${fmtInt(e.employed)} employed · ${(e.unemployment * 100).toFixed(1)}% unemployed`;
     const hp = Math.round(e.happiness * 100);

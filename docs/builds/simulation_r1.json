@@ -1,0 +1,41 @@
+{
+  "module": "simulation",
+  "round": 1,
+  "summary": "Deterministic city economy in src/modules/simulation/{index,economy,grids,virtualcity,activity,ring,panel,showcase}.js + selftest.mjs. Fixed 4 Hz game-time steps accumulated from time:tick x clock speed (2400 ticks/day, never wall-clock), max 2000 ticks/frame with drop warning. Owns world.economy in place: population (float + rounded, households), labour market (jobs, employed, unemployment, openings, outside-connection jobs), housing vacancy, attractiveness, RCI demand (forward-looking need with lookahead + growth threshold so bars hover 25-45% instead of 0/100 pulses), money with taxes / building+road upkeep / services / admin / outside-connection trade income / loans (takeLoan, repayLoan, milestone-based capacity, daily amortisation), happiness (jobs, tax, debt, crowding, pollution exposure, service coverage), land value, 13 CS2-style milestones with rewards + unlocks (sim:milestone), growth requests routed to modules.buildings.api.requestSpawn(lot, density) from world.zones.freeLots() when available (else a deterministic virtual city with district positions), level-up requests (requestLevelUp), per-building occupancy mirrored onto world.buildings.items on buildings:changed cadence, per-building service levels (education/health/crime/fireRisk/parks/power/water from world.services.coverage when a services module is active; no growth without utilities), 256^2 ground/air pollution, noise and land-value grids at world.economy.grids (stateless hourly rebuild from buildings, roads, water, parks; also api.landValueAt/pollutionAt/noiseAt), fine history ring (720 samples / 3 days, 11 keys) + daily history, events sim:tick / sim:demand / sim:growth / sim:levelup / sim:milestone / sim:loan, api.activity(hour) + api.profile() curves (commute, traffic, pedestrians, awake, per-zone lights, street lights), serialize()/deserialize() (exact round-trip incl. RNG state, loans, milestones, grids re-derived). node src/modules/simulation/selftest.mjs proves: same seed => byte-identical state over 60-90 days, different seed differs, save/load resume identical, ~16 us/tick. Showcase: CS2-style dark-glass DOM panel in #ui (Aileron font, population/treasury/jobs/happiness KPIs with trends, milestone badge + progress, RCI bars, 3-day population + treasury canvas sparklines, daily budget, 24 h activity curve) driven at x20 with a 60-day pre-roll; 3D civic data plaza: PBR lawn with stochastic tiling, macro tint and dirt patches, 2 m running-bond paving plaza with kerb, gravel paths, clipped hedges, 160 oaks + 60 pines (instanced, alpha-cut foliage, autumn tint variation, shadow casting), 90 instanced tinted-glass bars (30-day population/jobs/treasury) on basalt plinths with readable label strips, 4 RCI demand pillars; bars/pillars/labels glow at night. Final gauntlet shots/simulation/rdev2: 16/16 OK, 0 console errors, 0 warnings, 32 draw calls max (declared 36), 278,418 triangles max (declared 400k), module ready in every shot. Core requests (non-blocking) in docs/core-requests/simulation.md.",
+  "drawCalls": 32,
+  "triangles": 278418,
+  "errors": 0,
+  "fps": 11.6,
+  "fpsGpu": null,
+  "screenshotsViewed": [
+    "shots/simulation/rdev2/aerial_12.png",
+    "shots/simulation/rdev2/street_12.png",
+    "shots/simulation/rdev2/skyline_12.png",
+    "shots/simulation/rdev2/closeup_6p5.png",
+    "shots/simulation/rdev2/closeup_22.png",
+    "shots/simulation/rdev2/street_22.png",
+    "shots/simulation/rdev1/aerial_6p5.png",
+    "shots/simulation/rdev1/aerial_17p5.png",
+    "shots/simulation/rdev1/aerial_22.png",
+    "shots/simulation/rdev1/street_6p5.png",
+    "shots/simulation/rdev1/street_12.png",
+    "shots/simulation/rdev1/skyline_12.png",
+    "shots/simulation/rdev1/skyline_22.png",
+    "shots/simulation/rdev1/closeup_12.png",
+    "shots/simulation/dev_aerial_12.png",
+    "shots/simulation/dev_closeup_12.png",
+    "shots/simulation/dev_street_22.png"
+  ],
+  "remainingWeaknesses": [
+    "Showcase is an abstract data plaza, not a city: no lamps, benches, people or vehicles, so it cannot read as CS2 at street level; hedges are jittered boxes with a coarse leaf cut-out (hard-cut ends visible in street frames).",
+    "Trees are alpha-cut icosahedron canopies + cone pines: credible at >= 100 m, coarse if the camera ever gets within ~30 m; no wind sway or LOD/impostors.",
+    "At night the treasury bar row still reads as one luminous wall at grazing street angles (1.6 m gaps); emissive is uniform per bar rather than per-window-like.",
+    "Noon skyline/aerial frames are hazy and the far lawn goes pale khaki: mostly the environment fog (integrator note 1), partly my remaining 45% distance fade; faint photo tiling still visible from aerial despite the stochastic blend.",
+    "Economy balance: unemployment sits at 0% because job capacity always slightly exceeds labour; milestone rewards make the treasury sparkline a straight climb; C/I/O demand pulses (4-25%) rather than holding a steady 30-50%.",
+    "Service-coverage effects, per-building crime/fire/education and grid road noise are only exercised with stubs (buildings/services/roads are stubs in this wave); the grids are meaningful only once buildings carry x/z.",
+    "Save/load is byte-exact in isolation; with a services module the first post-load hourly refresh may differ from the original run until coverage is restored (registry order deserialises services after simulation).",
+    "fps is SwiftShader-relative (11.6) and one gauntlet row hit the 30 s frame-starvation timeout (fps=0, image fine); fpsGpu is unmeasured."
+  ],
+  "selfScore": 7.4,
+  "source": "builder-r1"
+}

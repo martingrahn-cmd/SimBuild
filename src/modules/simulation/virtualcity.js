@@ -1,6 +1,7 @@
 // Synthetic building stock for the simulation when no buildings/zoning module exists (showcase, tests).
 // It answers the economy's growth requests exactly the way a real buildings module would: a request
-// becomes a building record with a deterministic footprint, and road length grows with the city.
+// becomes a building record with a deterministic footprint and a position in a zone district (so the
+// pollution / noise / land-value grids have real content), and road length grows with the city.
 // Nothing here is rendered; it only feeds Economy.setBuilding / setRoadKm.
 import { ZONE_TYPES } from './economy.js';
 
@@ -9,6 +10,13 @@ const FOOTPRINT = {
   commercial:  { low: [[16, 18, 1], [20, 22, 2], [14, 24, 1]], high: [[28, 30, 6], [24, 26, 9], [30, 34, 4]] },
   industrial:  { low: [[30, 40, 1], [36, 48, 1], [24, 32, 2]], high: [[48, 60, 2], [40, 56, 3], [60, 70, 1]] },
   office:      { low: [[18, 20, 3], [22, 24, 4], [16, 26, 3]], high: [[30, 30, 14], [26, 34, 18], [34, 34, 10]] },
+};
+// districts: angle range (radians, 0 = +x east) and radius range (m) around the city centre
+const DISTRICT = {
+  residential: { a0: 1.6, a1: 5.9, r0: 120, r1: 640 },   // west & south suburbs
+  commercial:  { a0: 0, a1: 6.283, r0: 40, r1: 260 },    // centre ring
+  office:      { a0: 0, a1: 6.283, r0: 20, r1: 160 },    // downtown
+  industrial:  { a0: -0.7, a1: 0.7, r0: 300, r1: 720 },  // east, downwind
 };
 
 export class VirtualCity {
@@ -30,8 +38,12 @@ export class VirtualCity {
   }
   spawn(type, density) {
     const fp = this.rng.pick(FOOTPRINT[type][density]);
+    const d = DISTRICT[type];
+    const a = d.a0 + (d.a1 - d.a0) * this.rng.float();
+    const r = d.r0 + (d.r1 - d.r0) * Math.sqrt(this.rng.float());
+    const x = Math.round(Math.cos(a) * r), z = Math.round(Math.sin(a) * r);
     const id = `v${this.nextId++}`;
-    this.eco.setBuilding({ id, type, density, level: 1, footprint: { w: fp[0], d: fp[1] }, floors: fp[2] }, true);
+    this.eco.setBuilding({ id, type, density, level: 1, footprint: { w: fp[0], d: fp[1] }, floors: fp[2], x, z }, true);
     this.ids.push(id);
     // roads grow with the city: mostly streets, an avenue every so often, a highway once it is a town
     const n = this.ids.length;
@@ -44,7 +56,7 @@ export class VirtualCity {
     const rec = this.eco.buildings.get(id);
     if (!rec || !rec.virtual || rec.level >= 5) return false;
     const fp = this.rng.pick(FOOTPRINT[rec.type][rec.density]);
-    this.eco.setBuilding({ id, type: rec.type, density: rec.density, level: rec.level + 1, footprint: { w: fp[0], d: fp[1] }, floors: fp[2] + rec.level }, true);
+    this.eco.setBuilding({ id, type: rec.type, density: rec.density, level: rec.level + 1, footprint: { w: fp[0], d: fp[1] }, floors: fp[2] + rec.level, x: rec.x, z: rec.z }, true);
     this.eco.econ.levelUps++;
     return true;
   }

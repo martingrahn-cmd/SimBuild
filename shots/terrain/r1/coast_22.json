@@ -10,19 +10,19 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 63588,
+  "elapsedMs": 72284,
   "fps": 13.1,
-  "measuredFrames": 3,
-  "frameMs": 1.7,
+  "measuredFrames": 2,
+  "frameMs": 4,
   "drawCalls": 12,
   "triangles": 126252,
   "programs": 15,
   "textures": 27,
   "geometries": 20,
-  "heapMB": 42.3,
+  "heapMB": 36.9,
   "moduleMs": {
     "terrain": 0.09999999962747097,
-    "environment": 0.6000000000931323
+    "environment": 0.30000000074505806
   },
   "hour": 22,
   "cameraState": {
@@ -43,13 +43,13 @@
       "status": "ready",
       "errors": 0,
       "ms": 0.1,
-      "initMs": 1577
+      "initMs": 2801
     },
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.6,
-      "initMs": 130
+      "ms": 0.3,
+      "initMs": 578
     },
     "roads": {
       "status": "registered",
@@ -137,8 +137,6 @@
     }
   },
   "errors": [],
-  "warnings": [
-    "RGBELoader has been deprecated. Please use HDRLoader instead."
-  ],
+  "warnings": [],
   "png": "shots/terrain/r1/coast_22.png"
 }

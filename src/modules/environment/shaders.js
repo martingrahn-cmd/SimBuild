@@ -28,7 +28,7 @@ float envCloudDensity(vec2 wp) {
   vec4 n2 = texture2D(uEnvNoise, uv * 3.1 + vec2(0.29, 0.73));
   const vec4 w = vec4(0.5333, 0.2667, 0.1333, 0.0667);
   float shape = dot(n1, w) * 0.72 + dot(n2, w) * 0.28;
-  float th = uEnvCloudA.w + (macro - 0.5) * 0.42;
+  float th = uEnvCloudA.w + (macro - 0.5) * 0.30;
   float d = smoothstep(th, th + 0.26, shape - (n2.a - 0.5) * 0.12);
   return d;
 }

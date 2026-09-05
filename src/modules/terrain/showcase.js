@@ -7,7 +7,7 @@ export function makeShowcase(S) {
     description: 'Eroded heightfield: rolling buildable plains around the origin, a meandering river valley to the north, an estuary and beach coast to the west with an island, ridged mountains east/north/south; PBR splat, planar-reflective water with shore foam.',
     cameras: {
       // sensible defaults (seed 1337); refined in setup() from the actual river/coast
-      valley: { position: [420, 60, -40], target: [60, 0, -190] },
+      valley: { position: [400, 30, -80], target: [20, 4, -200] },
       coast: { position: [-230, 95, 40], target: [-720, 0, -250] },
     },
     async setup(ctx) {
@@ -15,12 +15,12 @@ export function makeShowcase(S) {
       if (!d || !g) return;
       const cell = d.cell, half = d.half;
       const zr = (x) => g.river.zAt[Math.max(0, Math.min(d.res - 1, Math.round((x + half) / cell)))];
-      // valley: from a hillside east of the origin looking west along the river
+      // valley: from low on the southern valley wall, looking west along the river so both walls frame it
       {
-        const tx = 40, tz = zr(40);
-        const px = 470, pz = zr(470) + 150;
-        const py = Math.max(d.getHeight(px, pz) + 26, 50);
-        ctx.camera.registerPreset('valley', { position: [px, py, pz], target: [tx, d.getHeight(tx, tz), tz] });
+        const tx = 20, tz = zr(20);
+        const px = 400, pz = zr(400) + 135;
+        const py = Math.max(d.getHeight(px, pz) + 14, 22);
+        ctx.camera.registerPreset('valley', { position: [px, py, pz], target: [tx, d.getHeight(tx, tz) + 4, tz] });
       }
       // coast: over the estuary toward the sea and the island, from the south-east
       {

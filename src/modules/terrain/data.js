@@ -231,8 +231,8 @@ export class TerrainData {
         const l = Math.sqrt(nx * nx + ny * ny + nz * nz); nx /= l; ny /= l; nz /= l;
         const cavS = this._blurS[i] - h[i];   // >0 concave
         const cavL = this._blurL[i] - h[i];
-        let ao = 1 - Math.min(0.5, Math.max(0, cavS) * 0.22) - Math.min(0.3, Math.max(0, cavL) * 0.03);
-        ao = Math.min(1, ao + Math.max(0, -cavS) * 0.03);   // ridges slightly brighter
+        let ao = 1 - Math.min(0.5, Math.max(0, cavS) * 0.3) - Math.min(0.4, Math.max(0, cavL) * 0.05);
+        ao = Math.min(1, ao + Math.max(0, -cavS) * 0.04 + Math.max(0, -cavL) * 0.01);   // ridges / convex ground slightly brighter
         const o = i * 4;
         out[o] = Math.round((nx * 0.5 + 0.5) * 255);
         out[o + 1] = Math.round((nz * 0.5 + 0.5) * 255);

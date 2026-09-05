@@ -1,0 +1,174 @@
+{
+  "module": "roads",
+  "round": "1",
+  "at": "2026-09-04T19:00:14.391Z",
+  "shots": [
+    {
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "camera": "aerial",
+      "time": 12,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/roads/r1/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 50,
+      "triangles": 272496,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 47,
+      "triangles": 272280,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 43,
+      "triangles": 292682,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 41,
+      "triangles": 285104,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 47,
+      "triangles": 292970,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 42,
+      "triangles": 287654,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 86,
+      "triangles": 444832,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 86,
+      "triangles": 444832,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 85,
+      "triangles": 444760,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 55,
+      "triangles": 327006,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/closeup_6p5.png",
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/roads/r1/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 42,
+      "triangles": 286954,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/closeup_17p5.png",
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": true,
+      "fps": 0,
+      "drawCalls": 46,
+      "triangles": 292198,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/roads/r1/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 13.1,
+      "drawCalls": 44,
+      "triangles": 289576,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 86,
+  "maxTriangles": 444832,
+  "minFps": 0,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

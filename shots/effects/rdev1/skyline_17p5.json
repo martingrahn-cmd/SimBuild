@@ -10,19 +10,19 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 49788,
-  "fps": 11.6,
+  "elapsedMs": 374941,
+  "fps": 11.8,
   "measuredFrames": 2,
-  "frameMs": 2303.7,
+  "frameMs": 17429.8,
   "drawCalls": 41,
-  "triangles": 121766,
+  "triangles": 816744,
   "programs": 34,
   "textures": 41,
   "geometries": 23,
-  "heapMB": 30.3,
+  "heapMB": 37.8,
   "moduleMs": {
-    "environment": 0.5,
-    "effects": 0
+    "environment": 0.599999999627471,
+    "effects": 0.10000000149011612
   },
   "hour": 17.5,
   "cameraState": {
@@ -48,8 +48,8 @@
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.5,
-      "initMs": 150
+      "ms": 0.6,
+      "initMs": 356
     },
     "roads": {
       "status": "registered",
@@ -84,8 +84,14 @@
     "effects": {
       "status": "ready",
       "errors": 0,
+      "ms": 0.1,
+      "initMs": 5
+    },
+    "simulation": {
+      "status": "registered",
+      "errors": 0,
       "ms": 0,
-      "initMs": 4
+      "initMs": 0
     },
     "tools": {
       "status": "registered",
@@ -105,6 +111,24 @@
       "ms": 0,
       "initMs": 0
     },
+    "services": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "infoviews": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "transit": {
+      "status": "registered",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
     "democity": {
       "status": "registered",
       "errors": 0,
@@ -112,15 +136,7 @@
       "initMs": 0
     }
   },
-  "errors": [
-    "[vite] Internal Server Error\nFailed to resolve import \"./panel.js\" from \"src/modules/simulation/index.js\". Does the file exist?\n    at TransformPluginContext._formatLog (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31147:39)\n    at TransformPluginContext.error (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:31144:14)\n    at normalizeUrl (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28083:18)\n    at async file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28153:30\n    at async Promise.all (index 3)\n    at async TransformPluginContext.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:28119:4)\n    at async EnvironmentPluginContainer.transform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:30932:14)\n    at async loadAndTransform (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:20671:26)\n    at async viteTransformMiddleware (file:///home/user/SimBuild/node_modules/vite/dist/node/chunks/node.js:25205:20)",
-    "[main] module simulation failed to import: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311\nTypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311",
-    "HTTP 500 http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311",
-    "[main] module simulation failed to import: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311"
-  ],
-  "warnings": [
-    "RGBELoader has been deprecated. Please use HDRLoader instead.",
-    "requestfailed: http://127.0.0.1:5173/src/modules/simulation/index.js?t=1788537251311 net::ERR_ABORTED"
-  ],
+  "errors": [],
+  "warnings": [],
   "png": "shots/effects/rdev1/skyline_17p5.png"
 }

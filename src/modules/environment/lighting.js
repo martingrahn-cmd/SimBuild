@@ -1,5 +1,5 @@
 // Cascaded shadow maps (sun/moon), automatic material hook-up (CSM defines + shared env uniforms),
-// PMREM environment lighting from the sky LUT.
+// PMREM environment lighting from the sky's ambient LUT.
 import * as THREE from 'three';
 import { CSM } from 'three/examples/jsm/csm/CSM.js';
 import { QUALITY } from '../../core/constants.js';
@@ -32,6 +32,17 @@ export class Lighting {
     this.envRT = null;
     this.pmrem = new THREE.PMREMGenerator(ctx.renderer);
     this.pmrem.compileEquirectangularShader();
+
+    // Material hook-up is event driven (no per-frame scene traversal): sweep when a module comes up,
+    // whenever any world section changes (new meshes), and when the top-level object count changes.
+    this._sweepPending = true;
+    this._shape = -1;
+    this._settleFrames = 0;
+    const ev = ctx.events;
+    const owner = 'environment';
+    ev.on('module:ready', () => { this._sweepPending = true; }, owner);
+    ev.on('app:ready', () => { this._sweepPending = true; this._settleFrames = 30; }, owner);
+    ev.on('*', (_p, name) => { if (name.endsWith(':changed')) this._sweepPending = true; }, owner);
   }
 
   /** Per-frame: point the cascades along dir (direction light travels), set colour/intensity. */
@@ -49,9 +60,13 @@ export class Lighting {
       this.csm.updateFrustums();
     }
     this.csm.update();
-    // sweep the scene for materials that still need hooking up, every frame (a traverse is cheap and
-    // guarantees a material is hooked before its first compile; otherwise the fog chunk's samplers are unbound)
-    this.sweep();
+    // cheap shape check: direct children of the scene and of each module group (O(#modules), no traversal)
+    const scene = this.ctx.scene;
+    let shape = scene.children.length;
+    for (let i = 0; i < scene.children.length; i++) shape += scene.children[i].children.length * 131;
+    if (shape !== this._shape) { this._shape = shape; this._sweepPending = true; }
+    if (this._settleFrames > 0) { this._settleFrames--; this._sweepPending = true; }
+    if (this._sweepPending) { this._sweepPending = false; this.sweep(); }
   }
 
   sweep() {
@@ -104,7 +119,7 @@ export class Lighting {
     material.needsUpdate = true;
   }
 
-  /** Rebuild the PMREM environment from the sky LUT texture. */
+  /** Rebuild the PMREM environment from an equirect radiance texture. */
   updateEnvironment(equirectTexture) {
     if (!this.pmrem) return;
     const rt = this.pmrem.fromEquirectangular(equirectTexture);
