@@ -296,7 +296,7 @@ export class NightRig {
       pos[i * 3] = lx; pos[i * 3 + 1] = ly - 0.1; pos[i * 3 + 2] = lz;
       l._lx = lx; l._ly = ly; l._lz = lz;
       const gy = l.y - 0.10;   // just above the asphalt (sidewalk top sits 0.13 m higher)
-      setMatrix(arr, i * 16, lx, gy, lz, l.heading, 19.0);
+      setMatrix(arr, i * 16, lx, gy, lz, l.heading, 23.0);
     }
     this.pool.instanceMatrix.needsUpdate = true;
     this.halo.geometry.dispose();
@@ -325,7 +325,7 @@ export class NightRig {
     this.halo.visible = on;
     this.pool.visible = on;
     this.haloMat.uniforms.uOpacity.value = night * 0.85;
-    this.poolMat.opacity = night * 0.55;
+    this.poolMat.opacity = night * 0.62;
     if (!this.points.length) return;
     this._acc += dt;
     if (this._acc < 0.35) return;

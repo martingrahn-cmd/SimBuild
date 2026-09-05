@@ -1,0 +1,79 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=tools&time=12&camera=tools&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "tools",
+  "time": 12,
+  "camera": "tools",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 288610,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 13295,
+  "drawCalls": 55,
+  "triangles": 570997,
+  "programs": 33,
+  "textures": 40,
+  "geometries": 47,
+  "heapMB": 55,
+  "moduleMs": {
+    "environment": 0.4000000059604645,
+    "tools": 0,
+    "terrain": 0.19999999552965164,
+    "roads": 0,
+    "zoning": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      200.8,
+      140.6,
+      196.3
+    ],
+    "target": [
+      56,
+      2,
+      50
+    ],
+    "distance": 240
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.4,
+      "initMs": 244
+    },
+    "tools": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 3
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 4992
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 90
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/tools/dev_tools_12.png"
+}

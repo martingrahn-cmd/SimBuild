@@ -1,0 +1,156 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=all&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "all",
+  "time": 12,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 308048,
+  "fps": 10,
+  "measuredFrames": 2,
+  "frameMs": 10861.5,
+  "drawCalls": 32,
+  "triangles": 163894,
+  "programs": 41,
+  "textures": 55,
+  "geometries": 61,
+  "heapMB": 76.7,
+  "moduleMs": {
+    "terrain": 0,
+    "environment": 0.7999999970197678,
+    "roads": 0,
+    "zoning": 0,
+    "buildings": 0.10000000149011612,
+    "props": 0,
+    "traffic": 0,
+    "effects": 0.10000000149011612,
+    "simulation": 0,
+    "tools": 0,
+    "ui": 0.20000000298023224,
+    "audio": 0.09999999403953552,
+    "services": 0,
+    "infoviews": 0,
+    "transit": 0,
+    "democity": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      193.8,
+      404.8,
+      283.2
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 520
+  },
+  "modules": {
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6827
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.8,
+      "initMs": 1131
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 143
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 148
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 938
+    },
+    "traffic": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 234
+    },
+    "effects": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 9
+    },
+    "simulation": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 3
+    },
+    "tools": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4
+    },
+    "ui": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 9
+    },
+    "audio": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 1439
+    },
+    "services": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1
+    },
+    "infoviews": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1
+    },
+    "transit": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1
+    },
+    "democity": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/check/postrestart_all12.png"
+}

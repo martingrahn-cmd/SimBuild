@@ -1,0 +1,35 @@
+{
+  "module": "traffic",
+  "round": 1,
+  "summary": "Full traffic system on world.roads lanes. A baked lane graph (per-edge, per-lane polylines sampled from world.roads.laneCenter, zero-allocation lookup) drives A* routing over the road graph, IDM car-following, turn-based lane assignment with smooth lane-change blending, traffic-signal phases at avenue/highway crossings (api.lightState(nodeId)), first-come junction reservation plus a keep-clear rule at unsignalised 3+ arm nodes, right-hand traffic and spill-back queueing. 8 procedural vehicle classes (sedan, hatchback, suv, taxi, pickup, van, truck, bus) are lofted from a monotone-cubic longitudinal profile into superellipse cross sections, so bodies have real windshield/roof curvature, a glass greenhouse with pillars and a beltline, dark wheel arches, headlight/taillight lenses and roof details (taxi sign, bus HVAC + destination blind, truck deflector). Each class is ONE InstancedMesh: material id per vertex picks paint/glass/tyre/rim/lens/trim, per-instance attributes carry the paint colour, the wheel spin angle (wheels rotate in the vertex shader) and the head/brake light intensities. Vehicles pitch with the road grade. At night an additive rig adds head/tail/brake glows plus ground light cones that hold a minimum apparent size so they still read from the aerial camera. Pedestrians walk the sidewalk polylines with a shader-driven walk cycle (legs/arms swing about hip/shoulder pivots, body bob) and pick the nearest sidewalk side at each node. Highway/avenue dead ends become outside connections that spawn and despawn external commuters and trucks. Counts scale with world.economy.population and the simulation activity(hour) curve (with an internal fallback). api: spawnVehicle/despawn/flowGrid (256^2 congestion)/lightState/signals/outsideConnections/kinds/stats/setTargets/preroll/setShadowCasting/serialize/deserialize; world.traffic.vehicles, .pedestrians and .stats are published live. Showcase stages the roads showcase network and pre-rolls 45 s of simulation so screenshots catch queues already formed; presets junction and highway_night added. IMPORTANT: real CSM shadow casting is currently OFF for vehicles and pedestrians because the engine's cascade shadows drop every occluder under ~3 m (measured, see docs/core-requests/traffic.md); soft contact-shadow decals ground them instead and api.setShadowCasting(true) restores real casting once the core bias is fixed.",
+  "drawCalls": 148,
+  "triangles": 1332024,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/traffic/rdev1/aerial_6p5.png",
+    "shots/traffic/rdev1/aerial_12.png",
+    "shots/traffic/rdev1/aerial_22.png",
+    "shots/traffic/rdev1/street_12.png",
+    "shots/traffic/rdev1/street_22.png",
+    "shots/traffic/rdev1/skyline_22.png",
+    "shots/traffic/rdev1/closeup_17p5.png",
+    "shots/traffic/rdev1/closeup_22.png",
+    "shots/traffic/dev_junction_12.png",
+    "shots/traffic/dev_junction_22.png",
+    "shots/traffic/dev_highway_night_22.png",
+    "shots/traffic/dev_closeup_12.png"
+  ],
+  "remainingWeaknesses": [
+    "No real cast shadows. The engine's CSM drops occluders under ~3 m (measured by lifting the vehicle group 0/1/2/4/8 m: shadows only appear from 4 m up), so vehicles never darken the road. Contact-shadow decals ground them from above but are almost invisible from the low street/skyline cameras, which is the single biggest realism gap vs CS2. Core request filed.",
+    "Vehicle bodies are smooth but under-detailed: no door shut lines, mirrors, separate bumpers/grille, number plates or wheel-arch lips; the glass is a flat dark band with no interior or seat silhouettes. At closeup they read like stylised 1950s cars rather than modern CS2 traffic.",
+    "No parked cars along kerbs, no bicycles, motorbikes, emergency or service vehicles; CS2 streets are visually much busier at the roadside than mine are.",
+    "Pedestrians do not use crosswalks or wait at signals; at a junction they jump from the end of one sidewalk to the start of the next, which pops if you watch one closely at street level.",
+    "Signalised junctions have no visible traffic-light heads — api.lightState(nodeId) is published for props to consume, but nothing in the traffic showcase draws them, so from a still frame a queue at a red light looks unexplained.",
+    "Headlight glows are faint from the aerial camera at 22:00; the minimum-apparent-size clamp (2.4x) is tuned for the street/closeup cameras and could go to ~4x for far views.",
+    "Traffic density at noon still reads a little sparse in the residential grid compared with CS2 (about 135 vehicles over ~4 km of network); the mix is also car-heavy with no visible car-following variety like tailgating or overtaking on the highway.",
+    "No wet-road response: world.weather.rain/wetness is ignored, so no spray, no reflected head/tail lights on wet asphalt.",
+    "Lane changes only happen at edge entry (blended over up to 30 m); vehicles never overtake mid-block, so a slow truck holds up a whole lane on the highway.",
+    "fps is 10-11.6 under SwiftShader software GL only; real-GPU fps is unmeasured (fpsGpu null)."
+  ],
+  "selfScore": 6.5
+}

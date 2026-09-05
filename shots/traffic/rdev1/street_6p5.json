@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=traffic&time=6.5&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "traffic",
+  "time": 6.5,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 291005,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 13475.5,
+  "drawCalls": 87,
+  "triangles": 1061839,
+  "programs": 39,
+  "textures": 40,
+  "geometries": 61,
+  "heapMB": 55.7,
+  "moduleMs": {
+    "environment": 1.1999999955296516,
+    "traffic": 0.8000000044703484,
+    "roads": 0,
+    "terrain": 0.10000000149011612
+  },
+  "hour": 6.5,
+  "cameraState": {
+    "position": [
+      86.2,
+      26.1,
+      76.7
+    ],
+    "target": [
+      40,
+      0,
+      40
+    ],
+    "distance": 60
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 1.2,
+      "initMs": 452
+    },
+    "traffic": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.8,
+      "initMs": 72
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 96
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5461
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/traffic/rdev1/street_6p5.png"
+}

@@ -129,6 +129,7 @@ if ( aWheel.w > 0.5 ) {
 const LIGHT_VERT = /* glsl */`
 attribute vec2 aUv;
 attribute float aLamp;
+attribute vec3 aCentre;
 attribute vec2 aLights;
 varying vec2 vLUv;
 varying float vLamp;
@@ -149,7 +150,16 @@ export function createLightMaterial() {
   m.name = 'traffic:lights';
   m.onBeforeCompile = (sh) => {
     sh.vertexShader = LIGHT_VERT + sh.vertexShader.replace('#include <begin_vertex>', `
-#include <begin_vertex>
+vec3 transformed = vec3( position );
+if ( aLamp > 0.5 ) {
+  // hold a minimum apparent size so headlights still read from an aerial camera
+  vec4 wc = vec4( aCentre, 1.0 );
+  #ifdef USE_INSTANCING
+    wc = instanceMatrix * wc;
+  #endif
+  float dist = distance( cameraPosition, ( modelMatrix * wc ).xyz );
+  transformed = aCentre + ( transformed - aCentre ) * clamp( dist / 115.0, 1.0, 2.4 );
+}
 vLUv = aUv; vLamp = aLamp; vLInt = aLights;
 `);
     sh.fragmentShader = LIGHT_FRAG + sh.fragmentShader.replace('#include <color_fragment>', `
@@ -158,15 +168,15 @@ float a; vec3 c;
 if ( vLamp < 0.5 ) {
   float across = 1.0 - abs( q.x * 2.0 - 1.0 );
   float near = smoothstep( 0.0, 0.10, q.y );
-  a = pow( max( across, 0.0 ), 2.1 ) * pow( max( 1.0 - q.y, 0.0 ), 2.4 ) * near * 0.115 * vLInt.x * vLInt.x;
+  a = pow( max( across, 0.0 ), 2.1 ) * pow( max( 1.0 - q.y, 0.0 ), 2.4 ) * near * 0.175 * vLInt.x * vLInt.x;
   c = vec3( 1.0, 0.93, 0.76 );
 } else if ( vLamp < 1.5 ) {
   float r = length( q - 0.5 ) * 2.0;
-  a = pow( max( 0.0, 1.0 - r ), 2.8 ) * vLInt.x * 0.42;
+  a = pow( max( 0.0, 1.0 - r ), 3.0 ) * vLInt.x * 0.26;
   c = vec3( 1.0, 0.96, 0.87 );
 } else {
   float r = length( q - 0.5 ) * 2.0;
-  a = pow( max( 0.0, 1.0 - r ), 3.0 ) * ( vLInt.x * 0.26 + vLInt.y * 0.85 );
+  a = pow( max( 0.0, 1.0 - r ), 3.2 ) * ( vLInt.x * 0.22 + vLInt.y * 0.75 );
   c = vec3( 1.0, 0.12, 0.05 );
 }
 diffuseColor = vec4( c * a, 1.0 );

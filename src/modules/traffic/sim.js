@@ -13,6 +13,7 @@ const A_CAR = 1.5, A_BIG = 0.85;
 const B_COMF = 2.4, S0 = 2.2, T_HEAD = 1.25;
 const GRID = 256;
 const NO_STOP = 1e9;
+let SHADOW_CASTING = false;
 
 // class mix: [kind, weight, big?]
 const MIX = [
@@ -70,7 +71,11 @@ export class Traffic {
       mesh.name = `traffic:${kind}`;
       mesh.count = 0;
       mesh.frustumCulled = false;
-      mesh.castShadow = true;
+      // CSM here drops occluders under ~3 m (see docs/core-requests/traffic.md): vehicle shadows never
+      // reach the ground, so paying 3 cascades x 9 meshes for car-on-car self shadowing is not worth
+      // ~0.8 M triangles. The soft contact decal grounds them instead;
+      // api.setShadowCasting(true) turns real casting back on once the core bias is fixed.
+      mesh.castShadow = SHADOW_CASTING;
       mesh.receiveShadow = true;
       mesh.layers.enable(LAYERS.VEHICLES);
       mesh.renderOrder = RENDER_ORDER.VEHICLES;
@@ -124,7 +129,7 @@ export class Traffic {
     pmesh.name = 'traffic:pedestrians';
     pmesh.count = 0;
     pmesh.frustumCulled = false;
-    pmesh.castShadow = true;
+    pmesh.castShadow = SHADOW_CASTING;
     pmesh.receiveShadow = true;
     pmesh.layers.enable(LAYERS.VEHICLES);
     pmesh.renderOrder = RENDER_ORDER.PROPS;
@@ -179,7 +184,8 @@ export class Traffic {
   randomDestNode(fromNode) {
     const nodes = this.g.nodes;
     const from = nodes.get(fromNode);
-    const keys = [...nodes.keys()];
+    if (this._keys === undefined || this._keysVer !== this.g.version) { this._keys = [...nodes.keys()]; this._keysVer = this.g.version; }
+    const keys = this._keys;
     if (!keys.length) return -1;
     let best = -1, bestD = -1;
     for (let i = 0; i < 8; i++) {
@@ -362,7 +368,8 @@ export class Traffic {
     }
     for (let i = 0; i < buckets.length; i++) if (buckets[i].length > 1) buckets[i].sort(this._sortFn);
 
-    const dead = [];
+    const dead = this._dead || (this._dead = []);
+    dead.length = 0;
     for (let bi = 0; bi < buckets.length; bi++) {
       const arr = buckets[bi];
       for (let k = 0; k < arr.length; k++) {
@@ -453,11 +460,11 @@ export class Traffic {
           const nrec = g.edges.get(step.edgeId);
           if (!nrec) { dead.push(v.id); continue; }
           const over = v.s - rec.len;
-          const prevIdxFromRight = v.lane - g.laneRange(rec, v.dir)[0];
+          const prevIdxFromRight = v.lane - g.laneFirst(rec, v.dir);
           v.ri++;
           v.rec = nrec; v.edgeId = nrec.id; v.dir = step.dir;
           v.s = Math.min(over, nrec.len - 0.4);
-          const [nl0, nln] = g.laneRange(nrec, v.dir);
+          const nl0 = g.laneFirst(nrec, v.dir), nln = g.laneCount(nrec, v.dir);
           if (nln <= 0) { dead.push(v.id); continue; }
           const target = this.pickLane(nrec, v.dir, v, v.route[v.ri + 1]);
           const entry = nl0 + Math.min(nln - 1, prevIdxFromRight);
@@ -474,7 +481,7 @@ export class Traffic {
   /** Lane on `rec` in `dir` appropriate for the turn recorded in `next`. index 0 of the range = rightmost. */
   pickLane(rec, dir, v, next) {
     const g = this.g;
-    const [l0, ln] = g.laneRange(rec, dir);
+    const l0 = g.laneFirst(rec, dir), ln = g.laneCount(rec, dir);
     if (ln <= 1) return l0;
     const big = this.classes[v.ci].big;
     if (next) {
@@ -695,3 +702,13 @@ export class Traffic {
 }
 
 export { MIX, GRID };
+
+/** Turn real shadow casting on/off for every vehicle + pedestrian mesh (see core-requests/traffic.md). */
+export function setShadowCasting(on, traffic) {
+  SHADOW_CASTING = !!on;
+  if (traffic) {
+    for (const c of traffic.classes) c.mesh.castShadow = SHADOW_CASTING;
+    if (traffic.pedMesh) traffic.pedMesh.mesh.castShadow = SHADOW_CASTING;
+  }
+  return SHADOW_CASTING;
+}

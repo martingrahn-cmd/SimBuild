@@ -209,10 +209,19 @@ export class LaneGraph {
     return out;
   }
 
-  /** Lanes usable in a direction: [firstIndex, count]; index0 is the rightmost lane. */
+  /** Lanes usable in a direction: [firstIndex, count]; index0 is the rightmost lane. Allocates — cold paths only. */
   laneRange(rec, dir) {
-    if (rec.oneWay) return dir > 0 ? [0, rec.lanes] : [0, 0];
-    return dir > 0 ? [0, rec.per] : [rec.per, rec.lanes - rec.per];
+    return [this.laneFirst(rec, dir), this.laneCount(rec, dir)];
+  }
+  /** Index of the rightmost usable lane for a direction (allocation-free). */
+  laneFirst(rec, dir) {
+    if (rec.oneWay) return 0;
+    return dir > 0 ? 0 : rec.per;
+  }
+  /** Number of usable lanes for a direction (allocation-free). */
+  laneCount(rec, dir) {
+    if (rec.oneWay) return dir > 0 ? rec.lanes : 0;
+    return dir > 0 ? rec.per : rec.lanes - rec.per;
   }
 
   nodeAhead(rec, dir) { return dir > 0 ? rec.b : rec.a; }

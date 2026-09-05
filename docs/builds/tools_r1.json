@@ -1,0 +1,32 @@
+{
+  "module": "tools",
+  "round": 1,
+  "summary": "Full tool set built from scratch on top of roads/zoning/terrain. Road drawing in straight / curved (3-click bezier) / freehand / grid modes with node + edge (T-junction split) + 15-degree angle snapping, a terrain-conforming ghost ribbon (cross-subdivided so hills never poke through, metric rim + dashed centreline + direction arrows) that turns red with the real reason when the segment is rejected (too short, too steep, terrain too uneven, ends in water, outside the map, not enough funds), and CS2-style dark chips floating at the ghost showing length / angle to the existing road / grade / price. Zoning brush (radius, type, density, paint / marquee / erase) lighting the actual zonable 8 m cells inside a dashed circle. Service placement driven by world.services.kinds with a footprint volume ghost, road-frontage tie line, coverage circle and per-kind cost. Terrain sculpt (raise/lower/flatten/smooth, wheel-free [ ] brush sizing, cost per cubic metre). Bulldoze with single + marquee modes and a red target highlight. Click-to-select raycast (building > service > vehicle > prop > road) writing world.selection, emitting selection:changed with the world record, and drawing a blue selection ribbon on roads or a bracket cage on objects. Undo/redo stack (64 deep, Ctrl+Z / Ctrl+Y / U) with real inverse operations for roads, zoning strokes, terrain strokes, services and demolitions; costs charged to world.economy.money and refunded on undo. Keyboard shortcuts (1-6 tools, R cycles road mode / rotates placements, [ ] brush size, Esc cancel, Shift free angle, Alt no magnet) and per-tool cursors. Listens to ui:action {selectTool, toolOption, undo, redo}; exposes api.select/setOption/undo/redo/pick/selectObject/setHover for the UI and cropRects for critics. All gizmos come from three preallocated dynamic meshes plus two conformed radial discs: 6 draw calls, zero per-frame allocation. 16/16 gauntlet shots, zero console errors, zero warnings.",
+  "drawCalls": 56,
+  "triangles": 706675,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/tools/rdev1/aerial_12.png",
+    "shots/tools/rdev1/aerial_22.png",
+    "shots/tools/rdev1/street_6p5.png",
+    "shots/tools/rdev1/street_22.png",
+    "shots/tools/rdev1/skyline_12.png",
+    "shots/tools/rdev1/closeup_22.png",
+    "shots/tools/dev_tools_12.png",
+    "shots/tools/dev_tools_17.5.png",
+    "shots/tools/dev_closeup_17.5.png"
+  ],
+  "remainingWeaknesses": [
+    "Prop placement is preview-only: the props module publishes no place()/remove() API, so the prop tool draws the ghost and price and then reports that placement is unavailable (see docs/core-requests/tools.md).",
+    "Service placement depends on the services module, which is still a stub: world.services.place() returns null, so the tool shows the full ghost + coverage + frontage check and then reports 'Service placement unavailable'. Footprint / cost / coverage / frontage per kind currently live in tools/costs.js and duplicate what services should own.",
+    "T-junction snapping splits straight edges only (implemented via removeEdge + two addEdges because world.roads has no splitEdge); snapping into a curved edge falls back to a plain crossing with no junction node.",
+    "Terrain-sculpt undo restores heights by writing world.terrain.heights directly and calling modify({strength:0}) for the refresh, the same trick roads/build.js uses; it needs a real terrain.writeHeights contract.",
+    "The elevation option is priced (x2.6 above 1 m) but the ghost is still drawn on the ground - no raised carriageway, pillar or bridge preview, and no parallel-road mode, both of which CS2 shows.",
+    "Ghost direction arrows smear at very grazing angles (street camera) because they are shaded in ribbon-space rather than screen-space.",
+    "Chips have no leader lines and are only nudged apart vertically, so a dense cluster can still sit slightly off its anchor; they are culled entirely beyond 640 m.",
+    "Undo of a demolished building is best-effort: it re-spawns from the lot record if the buildings module kept one, otherwise the building is gone.",
+    "The zoning brush 'fill block' mode falls back to circular painting - it does not flood-fill a whole frontage yet.",
+    "fps is SwiftShader-only (11.6 in a scene with roads + terrain); no real-GPU measurement exists yet."
+  ],
+  "selfScore": 7.5
+}

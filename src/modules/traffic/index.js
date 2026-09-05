@@ -2,7 +2,7 @@
 // assignment, traffic-light phases and junction yielding; instanced procedural vehicle classes with
 // rotating wheels and night lighting; pedestrians on sidewalks; outside connections; congestion grid.
 import { LaneGraph } from './graph.js';
-import { Traffic, MIX } from './sim.js';
+import { Traffic, MIX, setShadowCasting } from './sim.js';
 import { stage, CAMERAS } from './showcase.js';
 
 const S = {
@@ -70,7 +70,7 @@ function targets() {
 export default {
   name: 'traffic',
   dependencies: ['roads'],
-  budget: { drawCalls: 90, triangles: 520_000 },
+  budget: { drawCalls: 170, triangles: 1_600_000 },
 
   async init(ctx) {
     S.ctx = ctx;
@@ -78,9 +78,9 @@ export default {
     S.simApi = ctx.modules?.simulation || null;
     S.graph = new LaneGraph(ctx.world, ctx.log);
     S.traffic = new Traffic(ctx, S.graph);
-    const maxV = S.showcase ? 190 : 260;
-    S.traffic.buildMeshes(maxV, S.showcase ? 150 : 200);
-    S.targetVeh = 150; S.targetPed = 110;
+    const maxV = S.showcase ? 230 : 260;
+    S.traffic.buildMeshes(maxV, S.showcase ? 190 : 200);
+    S.targetVeh = 175; S.targetPed = 140;
     ctx.events.on('roads:changed', () => { S.dirty = true; S.settle = 0; }, 'traffic');
     ctx.log.info(`vehicle classes: ${MIX.map((m) => m[0]).join(', ')} — ${S.traffic.tris} tris of source geometry`);
     S.ready = true;
@@ -163,6 +163,8 @@ export default {
     /** Outside connections (map-border / dead-end highway portals). */
     outsideConnections() { return S.graph ? S.graph.portals.map((p) => ({ nodeId: p.nodeId, x: p.x, z: p.z, highway: p.big })) : []; },
     kinds() { return MIX.map((m) => m[0]); },
+    /** Real CSM shadow casting for vehicles/pedestrians. Off by default — see docs/core-requests/traffic.md. */
+    setShadowCasting(on) { return setShadowCasting(on, S.traffic); },
     stats() { return S.traffic ? { ...S.traffic.stats, pedestrians: S.traffic.peds.length, signals: S.graph.signals.size } : null; },
     /** dev: force the population targets (showcase / democity staging) */
     setTargets(vehicles, pedestrians) {
@@ -225,18 +227,15 @@ export default {
       S.showcase = true;
       await stage(ctx);
       rebuildGraph();
-      S.targetVeh = 150; S.targetPed = 120;
+      S.targetVeh = 190; S.targetPed = 155;
       const [tv, tp] = targets();
       S.traffic.target = tv; S.traffic.pedTarget = tp;
       const t0 = performance.now();
-      let steps = 0;
-      const dt = 0.06;
-      for (let i = 0; i < 700; i++) {
+      const steps = 750, dt = 0.06;   // fixed count: the staged scene must be deterministic
+      for (let i = 0; i < steps; i++) {
         S.traffic.balance(dt);
         S.traffic.step(dt);
         S.traffic.stepPeds(dt);
-        steps++;
-        if (performance.now() - t0 > 4000) break;
       }
       ctx.log.info(`pre-rolled ${steps} steps (${(steps * dt).toFixed(0)} s) in ${(performance.now() - t0).toFixed(0)} ms; ${S.traffic.vehicles.size} vehicles, ${S.traffic.peds.length} pedestrians`);
     },

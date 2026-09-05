@@ -1,0 +1,130 @@
+{
+  "module": "zoning",
+  "round": 1,
+  "score": 6.5,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 6,
+  "apiContractOk": true,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "Zone fill is an opaque colour sheet, not a CS2 translucent tint",
+      "detail": "uFill = 0.63 alpha of an unlit constant colour, further darkened by the grid term, leaves the terrain reading at under a quarter of its own value. At street and closeup zoom the block is flat blue plastic with no ground texture — the 'flat untextured surfaces' hard fail. CS2 (cs2_1.jpg) tints a fully readable world. Fix: drop base fill to ~0.30-0.38 and composite as a tint of the LIT ground (multiply/screen) instead of blending toward a constant; let the grid and region outline carry the read, not the fill.",
+      "evidence": "shots/zoning/r1/street_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "Overlay floats 0.16-0.26 m above the ground and spills onto roads and crosswalks",
+      "detail": "Measured in-engine: every overlay vertex sits exactly 0.16 m (cells) / 0.26 m (lot ribbons) above terrain.getHeight. At 26-60 m camera height the parallax is plainly visible — the sheet edge overhangs the kerb with a lit rim, and at junctions the fill and lot ribbons lie on top of the asphalt, covering crosswalk bars. Fix: cut the lift to <= 0.03 m and rely on polygonOffset; clip cell quads and the +3 m corner extension against roads.isRoad/the corridor polygon so no overlay fragment lands on paved surface.",
+      "evidence": "shots/zoning/r1/closeup_12.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "Overlay ignores time of day — unlit at night and golden hour",
+      "detail": "Sampling identical pixels at 12:00 vs 22:00 in the zones preset: bare terrain falls to 0.64x its noon luminance, the zone patch only to 0.91x (and that 9% is just ground showing through). At night and at 6.5 the overlay is the brightest, coldest thing in the frame and reads as a UI bug. Fix: modulate output by world.weather.sunIntensity / skyLight, or composite as a tint over the already-lit ground so it inherits exposure.",
+      "evidence": "shots/zoning/r1/zones_22.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "8 m cell grid vanishes at aerial zoom and has inverted polarity",
+      "detail": "Grid lines are 0.038 UV (~0.3 m) wide and DARKER than the fill (col *= mix(1.0, 0.52, grid)). At the aerial preset an 8 m cell is ~14 px, so the line is under half a pixel and smears into a flat wash; CS2's zone grid is light and holds at every zoom. Fix: screen-space line width (widen with distance, clamp to >= 1.2 px), invert to a light line, and trade fill alpha down as grid contrast comes up.",
+      "evidence": "shots/zoning/r1/aerial_12.png"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "25% of lots are unbuildable slivers and 12 road frontages get no lots at all",
+      "detail": "Over the showcase's 140 lots: widths 8/11/16/19/24/27/35/43 m, median 19 m; 35 of 140 (25%) are under 14 m and 24 are a single 8 m cell wide (14x 8x24 m, 10x 8x16 m). Meanwhile 12 of 64 road edges — eleven 80 m streets plus one 80 m avenue — get zero lots, so whole frontages can never grow a building. Fix: enforce a 2-cell (16 m) minimum frontage by merging leftover slots into a neighbour, and give every frontage with >= 2 free slots one lot before another road claims the block interior.",
+      "evidence": "shots/zoning/r1/zonesclose_12.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "'Corner fit' +3 m extension fires on 55% of lots, pushing outlines onto the pavement",
+      "detail": "_splitRun adds extA = 3 when cursor === 0 and extB = 3 when b === n, i.e. to the first and last lot of EVERY frontage side; with typically two lots per side that is nearly every lot — 77 of 140 (55%) come out at a cell multiple +3 m (11/19/27/35/43). The extension is geometric only (cells do not follow), so the lot rectangle, its border strip and its frontage bar hang over the sidewalk and junction asphalt. Fix: extend only where the frontage genuinely terminates at a junction node, clamped to the intersection corner radius.",
+      "evidence": "shots/zoning/r1/closeup_22.png"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "title": "Region boundaries are ragged: amoeba holes, staircased junction corners, 1-cell nubs",
+      "detail": "Cells rejected for relief / slope / road coverage are silently omitted, so blocks have bites out of their middles (bare eroded ground showing through), staircase edges against every rounded junction, and isolated single-cell green tabs at block corners. Reads as data corruption rather than terrain response. Fix: morphologically close single-cell holes before meshing, and render in-band-but-blocked cells in a distinct 'cannot build here' style the way CS2 does instead of dropping them.",
+      "evidence": "shots/zoning/r1/zoneswide_12.png"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "title": "Palette washes out; low vs high density does not read",
+      "detail": "Blending at 0.63 over lit grass turns residential-high 0x0d8f3c into pale mint and office-high 0x6a1cb8 into lilac; at aerial zoom residential low/high and office low/high are nearly the same swatch, and the 45 deg hatch meant to separate them is sub-pixel. CS2's overlay is markedly more saturated. Fix: raise chroma on the high-density variants, separate each pair in value as well as hue, and carry density with a marker that survives minification (per-cell corner notch, doubled region border).",
+      "evidence": "shots/zoning/r1/skyline_12.png"
+    },
+    {
+      "rank": 9,
+      "severity": "minor",
+      "title": "High-density 45 deg hatch reads as broad repeating smears at close range",
+      "detail": "The 3 m-period band seen at 26-60 m camera height becomes wide diagonal creases across the sheet rather than a fine hatch, and its repetition is obvious. Fix: drive the hatch period from screen-space derivatives with a clamp, or replace it with a per-cell motif.",
+      "evidence": "shots/zoning/r1/street_12.png"
+    },
+    {
+      "rank": 10,
+      "severity": "minor",
+      "title": "Empty zonable band reads as a dirty khaki stain over grass",
+      "detail": "fill: 0.10 of near-white desaturates the ground to khaki at street level and forms disconnected pale squares around the city fringe at aerial zoom. Fix: draw the band as grid lines only, no area fill, slightly additive, so it reads as a survey grid rather than a wash.",
+      "evidence": "shots/zoning/r1/zoneswide_12.png"
+    },
+    {
+      "rank": 11,
+      "severity": "minor",
+      "title": "Per-frame allocations in update (syncFog)",
+      "detail": "ZoneOverlay.syncFog runs every frame and builds two arrays each time ([...this.meshes.values()].map(...).concat([...])). ARCHITECTURE section 9 forbids per-frame allocations in update. Fix: build the material list once in the constructor.",
+      "evidence": "src/modules/zoning/overlay.js:381"
+    },
+    {
+      "rank": 12,
+      "severity": "minor",
+      "title": "Per-cell tint jitter depends on paint order rather than position",
+      "detail": "_cellGeometry pulls aRnd from ctx.rng.fork('overlay') in Map-iteration order, so a cell's brightness depends on when it was painted relative to its neighbours; the same final zoning reached by a different stroke sequence renders differently. Harmless visually but it breaks the 'same world state -> same picture' property the rest of the module holds to. Fix: hash2(ix, iz, world.seed).",
+      "evidence": "src/modules/zoning/overlay.js:299"
+    },
+    {
+      "rank": 13,
+      "severity": "minor",
+      "title": "Dead code: unused edges Set in _brush",
+      "detail": "ZoneGrid._brush builds and fills an `edges` Set that is never read afterwards. Remove it or use it to scope the lot regeneration.",
+      "evidence": "src/modules/zoning/grid.js:188"
+    }
+  ],
+  "strengths": [
+    "Data model is deterministic and durable: 140 lots regenerate byte-identically across repeated refresh() calls, serialize()/deserialize() round-trips to the identical cell set, and all 140 lot ids and their buildingId survive a rebuild.",
+    "Lots are anchored to real world.roads.frontage: 0/140 lots off their edge, lateral offsets 13.6-29.6 m against the true roads.sample centreline, and 140/140 headings correct to the ARCHITECTURE section 2 convention.",
+    "Validity rules genuinely hold: of 1,214 zoned cells, 0 over water, 0 above 24 deg slope, 0 on asphalt; painting far from a road or with a bogus type is refused and returns 0.",
+    "Very cheap: 6 draw calls and 21,872 triangles against a self-declared 10 / 120,000 budget, with the whole overlay rebuilding in ~10 ms for 1,214 cells.",
+    "Zero console errors, module status 'ready' and a valid frame in all 16 captures, at 1920x1080 and 1280x720.",
+    "Solid engineering hygiene: batched bulk() with one lot regeneration and one event, a 60 ms settle that coalesces bursts, tool-driven fade, fog wired into the custom shaders, and three sensible showcase camera presets.",
+    "The wide/aerial composition is close to the mark: at zoneswide and aerial the plan is legible, four types plus the empty zonable band separate cleanly, and the mesh conforms to terrain and distance fog."
+  ],
+  "summary": "Strong data layer, weak picture. world.zones is correct and deterministic — lots sit on real road frontage with correct headings, water/slope/asphalt rejection works, ids and buildingIds survive rebuilds, serialize round-trips, and the whole overlay costs 6 draw calls and 21.9k triangles against a 10 / 120,000 budget with zero console errors and 'ready' status in all 16 captures (scene-wide draw peak was 73). But against CS2 the overlay is not a translucent tint, it is a flat near-opaque unlit colour sheet: at street and closeup zoom the ground disappears under it, it visibly floats 0.16-0.26 m above the terrain with its edge overhanging the kerb and its lot ribbons lying on the asphalt and crosswalks, and it ignores time of day entirely (terrain drops to 0.64x noon luminance at 22:00, the zone patch only to 0.91x). The 8 m cell grid — the defining feature of the CS2 overlay — is dark instead of light and sub-pixel at aerial zoom, so blocks read as flat wash. Lot generation is the other soft spot: 25% of lots are sub-14 m slivers, 24 are a single 8 m cell wide, 12 of 64 frontages get no lots at all, and a corner-fit rule that was meant for junctions fires on 55% of lots and pushes their outlines onto the pavement. Fix the fill/lift/lighting trio and the lot minimums and this is an 8+; as it stands it is a 6.5.",
+  "shots": [
+    "shots/zoning/r1/aerial_12.png",
+    "shots/zoning/r1/aerial_22.png",
+    "shots/zoning/r1/street_12.png",
+    "shots/zoning/r1/street_22.png",
+    "shots/zoning/r1/street_6p5.png",
+    "shots/zoning/r1/skyline_12.png",
+    "shots/zoning/r1/skyline_17p5.png",
+    "shots/zoning/r1/skyline_22.png",
+    "shots/zoning/r1/closeup_12.png",
+    "shots/zoning/r1/closeup_22.png",
+    "shots/zoning/r1/zones_12.png",
+    "shots/zoning/r1/zones_22.png",
+    "shots/zoning/r1/zonesclose_12.png",
+    "shots/zoning/r1/zonesclose_22.png",
+    "shots/zoning/r1/zoneswide_12.png",
+    "shots/zoning/r1/zones_12_720p.png"
+  ]
+}

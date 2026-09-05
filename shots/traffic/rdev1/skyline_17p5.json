@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=traffic&time=17.5&camera=skyline&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "traffic",
+  "time": 17.5,
+  "camera": "skyline",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 112332,
+  "fps": 10,
+  "measuredFrames": 4,
+  "frameMs": 4474.4,
+  "drawCalls": 86,
+  "triangles": 919307,
+  "programs": 39,
+  "textures": 40,
+  "geometries": 61,
+  "heapMB": 55.6,
+  "moduleMs": {
+    "environment": 0.10000000149011612,
+    "traffic": 0.8000000044703484,
+    "roads": 0,
+    "terrain": 0
+  },
+  "hour": 17.5,
+  "cameraState": {
+    "position": [
+      718.4,
+      183.4,
+      -522.9
+    ],
+    "target": [
+      0,
+      40,
+      0
+    ],
+    "distance": 900
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 677
+    },
+    "traffic": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.8,
+      "initMs": 41
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 69
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5023
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/traffic/rdev1/skyline_17p5.png"
+}

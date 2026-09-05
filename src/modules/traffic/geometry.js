@@ -490,8 +490,9 @@ export function buildVehicleGeometry(kind) {
 
 // ---------------------------------------------------------------- headlight / tail glow rig
 export function buildLightRig(kind, lamps, spec) {
-  const pos = [], uv = [], lamp = [];
-  const push = (p, u, l) => { pos.push(p[0], p[1], p[2]); uv.push(u[0], u[1]); lamp.push(l); };
+  const pos = [], uv = [], lamp = [], centre = [];
+  let cc = [0, 0, 0];
+  const push = (p, u, l) => { pos.push(p[0], p[1], p[2]); uv.push(u[0], u[1]); lamp.push(l); centre.push(cc[0], cc[1], cc[2]); };
   const quad = (a, b, c, d, l) => {
     push(a, [0, 0], l); push(b, [1, 0], l); push(c, [1, 1], l);
     push(a, [0, 0], l); push(c, [1, 1], l); push(d, [0, 1], l);
@@ -506,8 +507,10 @@ export function buildLightRig(kind, lamps, spec) {
   }
   // cross-quad glows on the lamps themselves
   const glow = (cx, cy, cz, r, l) => {
+    cc = [cx, cy, cz];
     quad([cx - r, cy - r, cz], [cx + r, cy - r, cz], [cx + r, cy + r, cz], [cx - r, cy + r, cz], l);
     quad([cx - r, cy, cz - r], [cx + r, cy, cz - r], [cx + r, cy, cz + r], [cx - r, cy, cz + r], l);
+    cc = [0, 0, 0];
   };
   const gr = Math.max(0.34, spec.HW * 0.42);
   glow(lamps.hx, lamps.hy, lamps.hz - 0.03, gr, LAMP.HEAD);
@@ -518,6 +521,7 @@ export function buildLightRig(kind, lamps, spec) {
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('aUv', new THREE.Float32BufferAttribute(uv, 2));
   g.setAttribute('aLamp', new THREE.Float32BufferAttribute(lamp, 1));
+  g.setAttribute('aCentre', new THREE.Float32BufferAttribute(centre, 3));
   g.computeBoundingSphere();
   return g;
 }

@@ -416,9 +416,9 @@ export function makeLightPool(size = 128) {
   const h = size / 2;
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
     const d = Math.hypot(x - h + 0.5, y - h + 0.5) / h;
-    const a = d < 1 ? Math.pow(1 - d, 2.2) * (0.55 + 0.45 * Math.pow(1 - d, 3)) : 0;
+    const a = d < 1 ? Math.pow(1 - d, 2.9) * (0.42 + 0.58 * Math.pow(1 - d, 2.2)) : 0;
     const i = (y * size + x) * 4;
-    img.data[i] = 255; img.data[i + 1] = 232; img.data[i + 2] = 190;
+    img.data[i] = 255; img.data[i + 1] = 216; img.data[i + 2] = 158;
     img.data[i + 3] = a * 255;
   }
   g.putImageData(img, 0, 0);

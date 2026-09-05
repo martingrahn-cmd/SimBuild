@@ -1,0 +1,58 @@
+{
+  "module": "props",
+  "round": 1,
+  "summary": "Full props kit, all procedural (no vendored assets). Trees: oak / pine / birch grown from a recursive tube skeleton with alpha-cut leaf-card canopies whose shading normals are spherical, 2 real LODs plus a crossed-card impostor, per-instance tint (incl. ~10% autumn), and a shared vertex-shader wind sway chained ahead of the environment's CSM hook. A cell-bucketed LOD/frustum scheduler streams 16.8k trees into 15 InstancedMeshes at 4 Hz (near <92 m detailed + shadow casting, mid to 950 m, impostor beyond). Forest scatter is a slope/height/road-distance/fbm density map (chamfer distance transform off world.roads.coverage) that keeps a clear margin around the built-up area and avoids zoning lots when they exist. Street kit: 8 m swept-arm lamps (emissive luminaire, additive halo Points, warm ground light pools, plus 4 fixed real PointLights that follow the nearest lamps within 80 m so the light count never changes and no shader recompiles), mast-arm traffic signals at every real intersection from roads.api.intersections() with a 26 s two-phase cycle and per-lens instance colours, benches, bins, hydrants, sign posts with a procedural sign-face atlas (stop / speed / street name / bus), bus shelters with glass and a lit fascia, picket fences, planters, bushes, hedges and flowers. Placement uses roads.api.lampPositions per edge, a 1-D occupancy test so furniture never lands on a lamp base, frontage sampling for the pavement kit, and a roadDistance-keyed jittered grid for block-interior planting. Every opaque furniture piece shares ONE MeshStandardMaterial: uv0 indexes an 8-texel roughness/metalness/emissive LUT, uv1 drives a tiled scuff normal and albedo comes from baked vertex colours with hand-painted AO, so the whole kit is one program and one draw call per kind. world.props.items holds 18,938 entries (119 lamps, 78 signals, 684 fence sections, 16.8k trees, ...), version bumps and props:changed fires on every rebuild; rebuild is debounced off roads:changed. Showcase stages a grid town with a signalised avenue crossroads plus presets lamps_night and forest (the latter aimed at the densest generated stand at runtime).",
+  "drawCalls": 178,
+  "triangles": 2728047,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/props/rdev1/aerial_12.png",
+    "shots/props/rdev1/aerial_22.png",
+    "shots/props/rdev1/street_12.png",
+    "shots/props/rdev1/street_17p5.png",
+    "shots/props/rdev1/street_22.png",
+    "shots/props/rdev1/skyline_12.png",
+    "shots/props/rdev1/skyline_22.png",
+    "shots/props/rdev1/closeup_12.png",
+    "shots/props/rdev1/closeup_22.png",
+    "shots/props/rdev1/lamps_night_22.png",
+    "shots/props/rdev1/forest_12.png",
+    "shots/props/dev_crossing_12.png",
+    "shots/props/dev_bench_12.png",
+    "shots/props/dev_crossing_175.png",
+    "shots/props/dev_final_aerial_12.png"
+  ],
+  "remainingWeaknesses": [
+    "Mid-LOD (L1) leaf cards still read as flat elongated fans at grazing angles in the forest preset; they need either more/smaller cards or a real 3-quad cross per cluster.",
+    "Extreme close range (camera within ~15 m of a tree) shows individual leaf shapes and card silhouettes; there is no third, higher-detail LOD and no leaf normal map.",
+    "L1 trees do not cast shadows (dropped to stay inside the triangle budget), so tree shadows stop at ~92 m; the transition is visible on aerial at noon if you look for it.",
+    "Impostors beyond 950 m are crossed cards with a baked-lighting atlas, so they double-shade slightly and their trunks read as thin sticks against bright ground.",
+    "Ground light pools are flat additive decals: they clip against kerbs on a slope and show a hard trapezoid edge where the sidewalk mesh cuts them.",
+    "Traffic-signal lenses are additive point sprites; below ~10 px they wash out, so at aerial/skyline the signals read as dark boxes with no colour.",
+    "Furniture albedo comes from vertex colours only (no albedo texture), so bench slats, bins and hydrants are flat-coloured at very close range - only the shared scuff normal map breaks them up.",
+    "Block interiors are planted as parkland because zoning/buildings are absent from this showcase; with real lots the garden rules need re-tuning (they are already implemented for world.zones.lots).",
+    "No pedestrians, parked cars, wires, manholes, bollards or bike racks; the pavement kit is 9 kinds, CS2 has dozens.",
+    "Wind sway is not applied to the shadow depth material, so shadows lag the foliage by up to ~0.2 m (invisible in stills, may shimmer in motion)."
+  ],
+  "selfScore": 7.0,
+  "notes": {
+    "budget": { "drawCalls": 400, "triangles": 1900000 },
+    "measured": {
+      "maxDrawCalls": 178,
+      "maxTriangles": 2728047,
+      "minFps": 10,
+      "gpu": "swiftshader (software) - fps is relative only",
+      "treeFieldDraws": 15,
+      "treeFieldTriangles": 351476,
+      "buildMs": 203
+    },
+    "counts": {
+      "items": 18938, "forestTrees": 16000, "gardenAndStreetTrees": 793,
+      "streetlamp": 119, "trafficlight": 78, "bench": 35, "bin": 33, "hydrant": 31,
+      "sign": 35, "bus_stop": 19, "fence": 684, "planter": 31, "bush": 453, "flowers": 226, "hedge": 401
+    },
+    "gauntlet": "shots/props/rdev1/summary.json (18 shots: 16 standard + lamps_night + forest); 0 console errors, 0 warnings attributable to props. The 9 recorded warnings are net::ERR_ABORTED on aborted Vite requests caused by another agent hot-reloading the shared dev server mid-capture; several shots had to be retried for the same reason.",
+    "coreRequests": "none",
+    "assets": "no manifest entries added - every texture is generated procedurally on a canvas at init (leaf atlas 1024x512, bark atlas 768x512 + normal, impostor atlas 1024x512, sign atlas 512, glow/pool sprites, 8x1 material LUTs, scuff normal)."
+  }
+}

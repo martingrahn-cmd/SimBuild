@@ -45,8 +45,10 @@ function registerProps(world, data, trees) {
   let id = 1;
   for (const kind of Object.keys(data.kinds)) {
     if (kind.startsWith('plate_') || kind === 'glass') continue;
-    for (const p of data.kinds[kind]) items.set(id, { id, kind, x: p.x, y: p.y, z: p.z, heading: p.heading || 0, scale: p.scale || 1, edgeId: p.edgeId });
-    id += data.kinds[kind].length;
+    for (const p of data.kinds[kind]) {
+      items.set(id, { id, kind, x: p.x, y: p.y, z: p.z, heading: p.heading || 0, scale: p.scale || 1, edgeId: p.edgeId });
+      id++;
+    }
   }
   for (const t of trees) {
     items.set(id, { id, kind: `tree_${t.species}`, x: t.x, y: t.y, z: t.z, heading: t.rot, scale: t.scale });

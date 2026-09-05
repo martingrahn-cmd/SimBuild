@@ -1,25 +1,18 @@
 {
   "module": "props",
   "round": "dev1",
-  "at": "2026-09-05T16:32:43.276Z",
+  "at": "2026-09-05T19:24:47.659Z",
   "shots": [
-    {
-      "png": "shots/props/rdev1/aerial_6p5.png",
-      "camera": "aerial",
-      "time": 6.5,
-      "ok": true,
-      "fps": 11.6,
-      "drawCalls": 115,
-      "triangles": 1567363,
-      "errors": 0,
-      "moduleStatus": "ready"
-    },
     {
       "png": "shots/props/rdev1/aerial_12.png",
       "camera": "aerial",
       "time": 12,
-      "ok": false,
-      "errors": 0
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 160,
+      "triangles": 2175798,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
       "png": "shots/props/rdev1/aerial_17p5.png",
@@ -44,49 +37,79 @@
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/street_6p5.png",
-      "camera": "street",
+      "png": "shots/props/rdev1/aerial_6p5.png",
+      "camera": "aerial",
       "time": 6.5,
       "ok": true,
       "fps": 11.6,
-      "drawCalls": 127,
-      "triangles": 2101509,
+      "drawCalls": 115,
+      "triangles": 1567363,
       "errors": 0,
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/street_12.png",
-      "camera": "street",
+      "png": "shots/props/rdev1/closeup_12.png",
+      "camera": "closeup",
       "time": 12,
-      "ok": false,
-      "errors": 0
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 127,
+      "triangles": 1984081,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/street_17p5.png",
-      "camera": "street",
+      "png": "shots/props/rdev1/closeup_17p5.png",
+      "camera": "closeup",
       "time": 17.5,
       "ok": true,
       "fps": 11.6,
       "drawCalls": 127,
-      "triangles": 2101509,
+      "triangles": 1984081,
       "errors": 0,
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/street_22.png",
-      "camera": "street",
+      "png": "shots/props/rdev1/closeup_22.png",
+      "camera": "closeup",
       "time": 22,
-      "ok": false,
-      "errors": 0
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 130,
+      "triangles": 1984557,
+      "errors": 0,
+      "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/skyline_6p5.png",
-      "camera": "skyline",
+      "png": "shots/props/rdev1/closeup_6p5.png",
+      "camera": "closeup",
       "time": 6.5,
       "ok": true,
       "fps": 11.6,
-      "drawCalls": 102,
-      "triangles": 1795049,
+      "drawCalls": 127,
+      "triangles": 1984081,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/props/rdev1/forest_12.png",
+      "camera": "forest",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 125,
+      "triangles": 2728047,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/props/rdev1/lamps_night_22.png",
+      "camera": "lamps_night",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 129,
+      "triangles": 1910417,
       "errors": 0,
       "moduleStatus": "ready"
     },
@@ -124,53 +147,65 @@
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/closeup_6p5.png",
-      "camera": "closeup",
+      "png": "shots/props/rdev1/skyline_6p5.png",
+      "camera": "skyline",
       "time": 6.5,
       "ok": true,
       "fps": 11.6,
-      "drawCalls": 127,
-      "triangles": 1984081,
+      "drawCalls": 102,
+      "triangles": 1795049,
       "errors": 0,
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/closeup_12.png",
-      "camera": "closeup",
+      "png": "shots/props/rdev1/street_12.png",
+      "camera": "street",
       "time": 12,
       "ok": true,
       "fps": 11.6,
       "drawCalls": 127,
-      "triangles": 1984081,
+      "triangles": 2101509,
       "errors": 0,
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/closeup_17p5.png",
-      "camera": "closeup",
+      "png": "shots/props/rdev1/street_17p5.png",
+      "camera": "street",
       "time": 17.5,
       "ok": true,
       "fps": 11.6,
       "drawCalls": 127,
-      "triangles": 1984081,
+      "triangles": 2101509,
       "errors": 0,
       "moduleStatus": "ready"
     },
     {
-      "png": "shots/props/rdev1/closeup_22.png",
-      "camera": "closeup",
+      "png": "shots/props/rdev1/street_22.png",
+      "camera": "street",
       "time": 22,
       "ok": true,
       "fps": 11.6,
       "drawCalls": 130,
-      "triangles": 1984557,
+      "triangles": 2101985,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/props/rdev1/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 178,
+      "triangles": 2685214,
       "errors": 0,
       "moduleStatus": "ready"
     }
   ],
-  "maxDrawCalls": 147,
-  "maxTriangles": 2419248,
+  "maxDrawCalls": 178,
+  "maxTriangles": 2728047,
   "minFps": 10,
   "totalErrors": 0,
+  "totalWarnings": 9,
   "uniqueErrors": []
 }

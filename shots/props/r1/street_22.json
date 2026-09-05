@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=22&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 22,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 634078,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 27212.7,
+  "drawCalls": 130,
+  "triangles": 2101985,
+  "programs": 56,
+  "textures": 50,
+  "geometries": 68,
+  "heapMB": 60.9,
+  "moduleMs": {
+    "environment": 0.6999999955296516,
+    "props": 8.200000002980232,
+    "terrain": 0.20000000298023224,
+    "roads": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      86.2,
+      26.1,
+      76.7
+    ],
+    "target": [
+      40,
+      0,
+      40
+    ],
+    "distance": 60
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.7,
+      "initMs": 188
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 8.2,
+      "initMs": 774
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 6274
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 214
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/props/r1/street_22.png"
+}
