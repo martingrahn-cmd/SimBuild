@@ -515,6 +515,31 @@
       "finding": "the blind calibrated reviewer discriminates (5.2-point gap). The ADVERSARIAL reviewer used in the spec workflow returned 8.0 and buildableWithoutGuessing=false for 16 of 16 specs - true defect lists, non-discriminating scores. Finder and scorer are now separate roles; every scoring batch carries the unlabelled control and is void if the control scores above 5."
     },
     "defectsPreserved": "docs/prompts/_review/*.json \u2014 169 finder defects across 16 specs, being repaired in a reduction pass",
-    "toolingGapClosed": "pinned-crop measurement (--crops / window.__sim.cropRects) did not exist, so several specs' acceptance items failed by construction; added to core and both role prompts"
+    "toolingGapClosed": "pinned-crop measurement (--crops / window.__sim.cropRects) did not exist, so several specs' acceptance items failed by construction; added to core and both role prompts",
+    "repairPass": {
+      "date": "2026-09-05",
+      "defectsFixed": 159,
+      "unmeasurableItemsRemoved": 59,
+      "finderGapsRejectedAsWrong": 66,
+      "note": "repairers recomputed every figure from the real code; where the finder's own arithmetic was wrong they rejected it (terrain: the finder's proposed slope range fails its own p90/p10 test at the lower corner, corrected to [7.0%,7.8%])",
+      "instructionNotFollowed": "this was specified as a REDUCTION pass ('fix or delete, never add') but every spec grew: 9456 -> 10860 lines total. The added lines are the inline derivations property 12 now requires, so they are defensible, but the length discipline did not hold and should be an explicit acceptance item next time."
+    },
+    "blindScoring": {
+      "batch1": {
+        "control": 3.5,
+        "valid": true,
+        "scores": {
+          "terrain": 9.5,
+          "democity": 9.3,
+          "environment": 9.2,
+          "traffic": 9.2,
+          "buildings": 9.0
+        },
+        "mean": 9.24,
+        "passing": "5/5"
+      },
+      "batch2": "11 remaining specs in flight (roads, ui, effects, simulation, audio, zoning, props, tools, services, infoviews, transit)",
+      "residual": "even passing specs still carry 3-9 unmeasurable items and 1-4 arithmetic nits each; 8.5 is 'AAA with nits' and these have nits. Tracked, not hidden."
+    }
   }
 }
