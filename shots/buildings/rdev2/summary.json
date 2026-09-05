@@ -1,0 +1,184 @@
+{
+  "module": "buildings",
+  "round": "dev2",
+  "at": "2026-09-05T14:17:26.694Z",
+  "shots": [
+    {
+      "png": "shots/buildings/rdev2/aerial_6p5.png",
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 224,
+      "triangles": 1853518,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 170,
+      "triangles": 1499922,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 179,
+      "triangles": 1539276,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 173,
+      "triangles": 1502956,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 143,
+      "triangles": 2015700,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 120,
+      "triangles": 1895124,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 135,
+      "triangles": 1969286,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 126,
+      "triangles": 1936264,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 246,
+      "triangles": 1980154,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 180,
+      "triangles": 1587304,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 191,
+      "triangles": 1645138,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 233,
+      "triangles": 1868350,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/closeup_6p5.png",
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/buildings/rdev2/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 128,
+      "triangles": 2000482,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/closeup_17p5.png",
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 133,
+      "triangles": 2039024,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/buildings/rdev2/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 164,
+      "triangles": 2333124,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 246,
+  "maxTriangles": 2333124,
+  "minFps": 11.6,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

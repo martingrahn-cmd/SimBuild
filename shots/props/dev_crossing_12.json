@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=crossing&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 12,
+  "camera": "crossing",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 276912,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 10758.7,
+  "drawCalls": 127,
+  "triangles": 1938327,
+  "programs": 50,
+  "textures": 49,
+  "geometries": 66,
+  "heapMB": 61,
+  "moduleMs": {
+    "environment": 0.20000000298023224,
+    "props": 0.09999999776482582,
+    "terrain": 0,
+    "roads": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      96,
+      34.4,
+      98
+    ],
+    "target": [
+      40,
+      3,
+      40
+    ],
+    "distance": 82.8
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 867
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 518
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5451
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 85
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/props/dev_crossing_12.png"
+}

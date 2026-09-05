@@ -12,6 +12,7 @@ export class MeshBuilder {
     this.v = 0;
     this.ox = 0; this.oy = 0; this.oz = 0; this.c = 1; this.s = 0;
     this._col = [1, 1, 1];
+    this._lit = 1;
   }
   get triangles() { return this.idx.length / 3; }
   get empty() { return this.v === 0; }
@@ -24,6 +25,8 @@ export class MeshBuilder {
   worldX(lx, lz) { return this.ox + this.c * lx + this.s * lz; }
   worldZ(lx, lz) { return this.oz + this.s * lx - this.c * lz; }
   color(r, g, b) { this._col[0] = r; this._col[1] = g; this._col[2] = b; return this; }
+  /** how readily this building's windows light up at night (1 = average) */
+  litBias(v) { this._lit = v; return this; }
   colorHex(hex, jitter = 0, rng = null) {
     const col = _c.set(hex);
     if (jitter && rng) {
@@ -38,7 +41,7 @@ export class MeshBuilder {
     this.nor.push(this.c * nx + this.s * nz, ny, this.s * nx - this.c * nz);
     this.uv.push(u, vv);
     this.col.push(this._col[0], this._col[1], this._col[2]);
-    this.win.push(wx, wy);
+    this.win.push(wx, wy, this._lit);
     this.v++;
   }
 
@@ -160,7 +163,7 @@ export class MeshBuilder {
     g.setAttribute('normal', new THREE.Float32BufferAttribute(this.nor, 3));
     g.setAttribute('uv', new THREE.Float32BufferAttribute(this.uv, 2));
     g.setAttribute('color', new THREE.Float32BufferAttribute(this.col, 3));
-    g.setAttribute('win', new THREE.Float32BufferAttribute(this.win, 2));
+    g.setAttribute('win', new THREE.Float32BufferAttribute(this.win, 3));
     g.setIndex(this.v > 65535 ? new THREE.Uint32BufferAttribute(this.idx, 1) : new THREE.Uint16BufferAttribute(this.idx, 1));
     g.computeBoundingSphere();
     g.computeBoundingBox();

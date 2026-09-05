@@ -90,9 +90,9 @@ export const FACADES = {
     win: { x: 0.1, w: 0.8, y: 0.16, h: 0.56 }, frame: '#4a5057', frameW: 0.026, reveal: 0.04,
     glass: ['#48606f', '#1c2630'], mullV: 2, mullH: 0, sill: true, sillColor: '#bcb4a5', dirt: 0.5,
   },
-  comm_shop_red: { wall: 'stucco', wallColor: '#c9b9a4', kind: 'shop', frame: '#3b4249', awning: '#8e3a34', signColor: '#33404c', signInk: '#e9dfc7', glass: ['#3b4a57', '#1b232b'] },
-  comm_shop_green: { wall: 'brick', wallColor: '#8f5c47', kind: 'shop', frame: '#3b4249', awning: '#2f5c46', signColor: '#2b3a33', signInk: '#e6dcc4', glass: ['#3b4a57', '#1b232b'] },
-  comm_shop_blue: { wall: 'concrete', wallColor: '#bdb8ad', kind: 'shop', frame: '#31383e', awning: '#2b4a72', signColor: '#243447', signInk: '#dfe8f2', glass: ['#3b4a57', '#1b232b'] },
+  comm_shop_red: { wall: 'stucco', wallColor: '#c9b9a4', kind: 'shop', frame: '#3b4249', awning: '#7d443c', signColor: '#33404c', signInk: '#e9dfc7', glass: ['#3b4a57', '#1b232b'] },
+  comm_shop_green: { wall: 'brick', wallColor: '#8f5c47', kind: 'shop', frame: '#3b4249', awning: '#38594a', signColor: '#2b3a33', signInk: '#e6dcc4', glass: ['#3b4a57', '#1b232b'] },
+  comm_shop_blue: { wall: 'concrete', wallColor: '#bdb8ad', kind: 'shop', frame: '#31383e', awning: '#3a5570', signColor: '#243447', signInk: '#dfe8f2', glass: ['#3b4a57', '#1b232b'] },
   ind_metal: {
     wall: 'metal', wallColor: '#9aa3a6', kind: 'punched',
     win: { x: 0.08, w: 0.84, y: 0.26, h: 0.26 }, frame: '#6e7679', frameW: 0.02, reveal: 0.025,

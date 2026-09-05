@@ -1,0 +1,41 @@
+{
+  "module": "buildings",
+  "round": 1,
+  "summary": "Procedural buildings on lots, built from a single generated PBR atlas (2048\u00b2 albedo/normal/ORM + 1024\u00b2 window mask) drawn with the canvas 2D API: 17 facade families (siding/brick/stucco/panel/stone/curtain-wall/shopfront/industrial metal) painted with window reveals, frames, mullions, sills, AO under sills and dirt streaks, plus roofs, ground surfaces, doors and clutter metals. Each facade tile is 3 bays wide; its sub-rects are the near-LOD bay variants and the whole tile is the far-LOD row, so nothing is painted twice. Seven archetypes are planned deterministically from (zone type \u00d7 density \u00d7 level 1-5) and emitted as geometry: suburban houses (gable/hip roofs with eaves, fascia, soffit, dormers, chimneys, solar, garages, porches, wings), townhouse terraces, mid-rise apartments with concrete/glass balconies and setbacks, glass and stone office towers with podiums, setbacks, crowns and masts, commercial terraces of 1-3 units of different heights with shopfronts, awnings and sign bands, and industrial sheds with shed roofs, roller-door loading docks, dock canopies, office annexes, silos and stacks. Every flat roof gets HVAC units, vents, stair penthouses, water tanks and antennae; every lot gets terrain-conforming lawn/paving/asphalt, driveways, paths, hedges and fences. Buildings are bucketed into 128 m chunks and merged into one indexed geometry per chunk per LOD, so a chunk is one draw call with automatic frustum culling; LOD1 swaps per-bay quads for 3-bay row quads and drops balconies, doors and fine trim. Night lighting is a shader injection on the shared MeshStandardMaterial: a per-vertex window-cell coordinate is hashed per fragment for deterministic per-window on/off with warm-sodium/cool-LED tints and an interior falloff, scaled by a per-building lit bias (homes stay lit, offices go dark) and by the simulation activity profile when simulation is present. world.buildings.spawn/demolish/levelUp/at are installed in place, buildings:changed is batched per frame, and api adds requestSpawn/setLevel/demolish/at/flush/spawnFreeLots/stats/serialize/deserialize. The showcase stages its own street grid through world.roads and fills ~40 blocks with a high-rise core, a mid-rise ring, suburbs and an industrial park covering every zone type \u00d7 density \u00d7 level, with downtown/night_downtown/suburb/industry/block/catalog presets.",
+  "drawCalls": 246,
+  "triangles": 2333124,
+  "errors": 0,
+  "screenshotsViewed": [
+    "shots/buildings/final_downtown_12.png",
+    "shots/buildings/rdev2/aerial_6p5.png",
+    "shots/buildings/rdev2/aerial_12.png",
+    "shots/buildings/rdev2/street_12.png",
+    "shots/buildings/rdev2/street_22.png",
+    "shots/buildings/rdev2/skyline_22.png",
+    "shots/buildings/rdev2/closeup_6p5.png",
+    "shots/buildings/rdev2/closeup_12.png",
+    "shots/buildings/rdev2/closeup_22.png",
+    "shots/buildings/rdev1/street_12.png",
+    "shots/buildings/rdev1/street_22.png",
+    "shots/buildings/rdev1/street_6p5.png",
+    "shots/buildings/rdev1/skyline_22.png",
+    "shots/buildings/rdev1/closeup_12.png",
+    "shots/buildings/dev_suburb_12.png",
+    "shots/buildings/dev_downtown_12.png",
+    "shots/buildings/dev_nightdt_22.png",
+    "shots/buildings/dev_skyline_175.png",
+    "shots/buildings/dev_aerial_22.png"
+  ],
+  "remainingWeaknesses": [
+    "Triangle count peaks at 2.33 M in the buildings-only showcase (closeup 22:00). That is inside the 3 M global budget today but leaves little room once props and traffic land; the LOD1 threshold (300 m) will have to tighten, or LOD1 needs to drop roof clutter again.",
+    "Massing is still box-dominated: towers and apartments are rectangular prisms with setbacks. No chamfered corners, curved facades, atria, podium arcades or genuinely irregular plans, so downtown reads a little uniform next to CS2's signature buildings.",
+    "The strip between the kerb and the lot edge is bare terrain grass (lots inset 8.9 m from the block line, roads occupy 8 m). Intersection corner radii leave larger grass wedges that no lot covers. It needs either paved forecourts that extend to the kerb or props/trees to fill it.",
+    "Facade repetition is visible at street level: a face cycles three baked bay variants, so a long wall shows a 3-bay rhythm. Ground-floor entrances exist but are sparse; there is no signage, no numbering, no per-building character beyond colour and material.",
+    "Night lit windows are per-bay rectangles with an interior gradient \u2014 good at distance, but up close a lit curtain-wall bay is a large flat block of light. No visible interiors, no parallax, no lamp/ceiling shapes.",
+    "Suburban gardens have lawn, driveways, paths and hedges but no trees, bins, fences beyond a plain rail, garden furniture or parked cars \u2014 props owns those and they are the biggest missing ingredient in the suburb shots.",
+    "Levels 1-5 vary height, footprint, detail and roof, but there is no visible construction/upgrade transition and no wear gradient (level 1 buildings are clean, just smaller).",
+    "The lot ground plane can clip through steeply sloped terrain at lot edges since it conforms on a 5-9 m grid; on the staged terrain this is not visible but a hillside neighbourhood would show it.",
+    "Two of the sixteen gauntlet frames initially failed with a Vite dev-server full reload mid-capture (not a module fault); they were re-shot clean. Anyone re-running the matrix should expect that flake."
+  ],
+  "selfScore": 7.0
+}

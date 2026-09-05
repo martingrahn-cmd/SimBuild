@@ -1,0 +1,33 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=buildings&time=6.5&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "buildings",
+  "time": 6.5,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+  "errors": [],
+  "warnings": [
+    "requestfailed: http://127.0.0.1:5173/node_modules/.vite/deps/three.module-Cg0SxxSv.js?v=376742c9 net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/rock_face/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/rock_face/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/gravel_floor_02/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/aerial_beach_01/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/aerial_beach_01/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/brown_mud_leaves_01/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/leafy_grass/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/leafy_grass/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/gravel_floor_02/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/brown_mud_leaves_01/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/rock_face/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/gravel_floor_02/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/aerial_beach_01/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/brown_mud_leaves_01/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/leafy_grass/arm.jpg net::ERR_ABORTED"
+  ],
+  "png": "shots/buildings/rdev1/aerial_6p5.png"
+}

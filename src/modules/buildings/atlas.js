@@ -56,6 +56,14 @@ class Tile {
   n(x, y, w, h, nx, ny) { const g = this.N; g.fillStyle = nrm(nx, ny); g.fillRect(x, y, w, h); }
   o(x, y, w, h, rough, metal) { const g = this.O; g.fillStyle = orm(rough, metal); g.fillRect(x, y, w, h); }
   e(x, y, w, h, v = 1) { const g = this.E; g.fillStyle = `rgb(${(v * 255) | 0},${(v * 255) | 0},${(v * 255) | 0})`; g.fillRect(x, y, w, h); }
+  /** window mask with an interior falloff: bright near the ceiling, dimmer at the cill */
+  eRoom(x, y, w, h, top = 1, bottom = 0.34) {
+    const g = this.E, gr = g.createLinearGradient(0, y, 0, y + h);
+    const c = (v) => `rgb(${(v * 255) | 0},${(v * 255) | 0},${(v * 255) | 0})`;
+    gr.addColorStop(0, c(top * 0.82)); gr.addColorStop(0.16, c(top));
+    gr.addColorStop(0.62, c(top * 0.72)); gr.addColorStop(1, c(bottom));
+    g.fillStyle = gr; g.fillRect(x, y, w, h);
+  }
   /** vertical gradient fill on the albedo */
   gradA(x, y, w, h, stops) {
     const g = this.A, gr = g.createLinearGradient(0, y, 0, y + h);
@@ -345,7 +353,7 @@ export function drawBay(t, def, x0, w0, y0, h0, variant) {
   A.restore();
   t.o(wx, wy, ww, wh, def.glassRough ?? 0.09, def.glassMetal ?? 0.72);
   t.n(wx, wy, ww, wh, 0, 0);
-  t.e(wx, wy, ww, wh, 1);
+  t.eRoom(wx, wy, ww, wh, 1, 0.3);
 
   // interiors: blinds / a lit ceiling strip in some bays (baked daytime variety)
   if (variant === 1 && def.blind !== false) {
@@ -432,7 +440,7 @@ export function drawCurtainBay(t, def, x0, w0, y0, h0, variant) {
   A.beginPath(); A.moveTo(x0, gy + gh * (0.4 + variant * 0.25)); A.lineTo(x0 + w0 * kk, gy); A.lineTo(x0 + w0, gy); A.lineTo(x0, gy + gh);
   A.closePath(); A.fill(); A.restore();
   t.o(x0, gy, w0, gh, def.glassRough ?? 0.06, def.glassMetal ?? 0.85);
-  t.e(x0, gy, w0, gh, 1);
+  t.eRoom(x0, gy, w0, gh, 1, 0.26);
   if (variant === 1) {
     A.save(); A.globalAlpha = 0.55; A.fillStyle = '#b9b3a4'; A.fillRect(x0 + mw, gy, w0 - mw * 2, gh * t.rnd(0.2, 0.45)); A.restore();
   }
@@ -479,7 +487,7 @@ export function drawShopfront(t, def, x0, w0, y0, h0, variant) {
   // awning
   if (def.awning) {
     const ay = y0 + fasciaH, ah = h0 * 0.16;
-    const c1 = def.awning, c2 = shade(def.awning, 1.5);
+    const c1 = shade(def.awning, 0.92), c2 = shade(def.awning, 1.32);
     const stripes = 7;
     for (let i = 0; i < stripes; i++) t.a(x0 + (i / stripes) * w0, ay, w0 / stripes, ah, i % 2 ? c1 : c2);
     t.ao(x0, ay, w0, ah, 0.35, 'up');
@@ -505,7 +513,7 @@ export function drawShopfront(t, def, x0, w0, y0, h0, variant) {
   }
   A.restore();
   t.o(x0 + w0 * 0.03, gy, w0 * 0.94, gh, 0.08, 0.6);
-  t.e(x0 + w0 * 0.03, gy, w0 * 0.94, gh, 1);
+  t.eRoom(x0 + w0 * 0.03, gy, w0 * 0.94, gh, 0.72, 0.4);
   // mullions + door
   const bar = (x, y, w, h) => { t.a(x, y, w, h, def.frame); t.o(x, y, w, h, 0.4, 0.3); t.e(x, y, w, h, 0); };
   bar(x0, gy, w0 * 0.03, gh + bulk); bar(x0 + w0 * 0.97, gy, w0 * 0.03, gh + bulk);

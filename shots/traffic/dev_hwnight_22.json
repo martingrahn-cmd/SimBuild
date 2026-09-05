@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=traffic&time=22&camera=highway_night&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "traffic",
+  "time": 22,
+  "camera": "highway_night",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 251902,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 10358.2,
+  "drawCalls": 42,
+  "triangles": 1184005,
+  "programs": 27,
+  "textures": 40,
+  "geometries": 52,
+  "heapMB": 54.7,
+  "moduleMs": {
+    "environment": 0.30000000074505806,
+    "traffic": 0.5999999977648258,
+    "roads": 0,
+    "terrain": 0.10000000149011612
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      452,
+      31.1,
+      302
+    ],
+    "target": [
+      352,
+      11,
+      232
+    ],
+    "distance": 123.1
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 485
+    },
+    "traffic": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.6,
+      "initMs": 53
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 95
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5362
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/traffic/dev_hwnight_22.png"
+}

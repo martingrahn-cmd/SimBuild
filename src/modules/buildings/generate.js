@@ -12,6 +12,12 @@ const OFFICE_GLASS = ['office_glass_blue', 'office_glass_sky', 'office_glass_gre
 const SHOPS = ['comm_shop_red', 'comm_shop_green', 'comm_shop_blue'];
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+/** multiply an sRGB hex by k (used for per-unit wall tints) */
+function tintHex(hex, k) {
+  const n = parseInt(hex.slice(1), 16);
+  const c = (v) => Math.max(0, Math.min(255, Math.round(v * k)));
+  return '#' + ((c((n >> 16) & 255) << 16) | (c((n >> 8) & 255) << 8) | c(n & 255)).toString(16).padStart(6, '0');
+}
 /** forward shift inside the lot so the front facade sits `yard` metres from the street boundary */
 function setbackShift(ld, d, yard) {
   const room = Math.max(0, ld / 2 - d / 2 - 0.4);
@@ -214,7 +220,16 @@ function planShop(lw, ld, L, rng, high) {
   p.parking = !high && rng.bool(0.8);
   p.frontSet = clamp(ld - p.d - 2, 1.5, 14);
   p.canopy = !high;
-  p.height = p.groundH + (p.floors - 1) * p.floorH + p.parapetH;
+  p.units = p.w > 27 ? 3 : p.w > 16 ? 2 : 1;
+  p.unitFloor = Array.from({ length: p.units }, () => rng.int(-1, 1));
+  p.unitShop = Array.from({ length: p.units }, () => rng.pick(SHOPS));
+  p.unitFacade = Array.from({ length: p.units }, () => rng.weighted([['comm_upper', 5], ['apt_brick', 1.6], ['town_render', 1.2], ['apt_panel', 1.4], ['office_stone', 1]]));
+  p.unitTint = Array.from({ length: p.units }, () => rng.range(0.84, 1.06));
+  p.unitDepth = Array.from({ length: p.units }, () => rng.range(0.82, 1.0));
+  p.unitParapet = Array.from({ length: p.units }, () => rng.range(0.7, 1.6));
+  p.tallest = 0;
+  for (let i = 1; i < p.units; i++) if (p.unitFloor[i] > p.unitFloor[p.tallest]) p.tallest = i;
+  p.height = p.groundH + (p.floors + Math.max(...p.unitFloor) - 1) * p.floorH + p.parapetH;
   p.zOff = setbackShift(ld, p.d, p.high ? 3 : 5.5);
   p.r = Array.from({ length: 10 }, () => rng.float());
   p.clutterR = Array.from({ length: 40 }, () => rng.float());
@@ -685,22 +700,47 @@ function emitTower(mb, A, p, lod) {
 
 function emitShop(mb, A, p, lod) {
   const near = lod === 0;
-  const yTop = p.groundH + (p.floors - 1) * p.floorH;
-  mb.colorHex(p.wall);
-  walls(mb, A, {
-    w: p.w, d: p.d, y0: 0, floors: p.floors, floorH: p.floorH, groundH: p.groundH, bayW: p.bayW,
-    facade: p.facade, groundTile: p.shop, groundBayW: 5.6, wsx: p.wsx, wsy: p.wsy, lod,
-  });
-  flatRoof(mb, A, p, { w: p.w, d: p.d, y: yTop, parapetH: p.parapetH, roofTile: p.roofTile, clutter: p.clutter, lod, antenna: p.antenna, stairBox: p.stairBox });
-  if (!near) return;
-  if (p.signBox) {
-    mb.colorHex('#e9e4d6');
-    mb.box(0, yTop + p.parapetH, 0, Math.min(p.w * 0.45, 8), 1.5, 0.5, { side: A.rect('trim_white'), top: A.rect('trim_grey') }, 3);
+  const units = p.units || 1;
+  const uw = p.w / units;
+  for (let u = 0; u < units; u++) {
+    const floors = clamp(p.floors + (p.unitFloor ? p.unitFloor[u] : 0), 1, 12);
+    const dU = p.d * (p.unitDepth ? p.unitDepth[u] : 1);
+    const parapetH = p.unitParapet ? p.unitParapet[u] : p.parapetH;
+    const yTop = p.groundH + (floors - 1) * p.floorH;
+    const cx = -p.w / 2 + uw * (u + 0.5);
+    const cz = p.d / 2 - dU / 2;             // units share the street frontage, vary at the back
+    const save = [mb.ox, mb.oz];
+    mb.ox += mb.c * cx + mb.s * cz; mb.oz += mb.s * cx - mb.c * cz;
+    mb.colorHex(tintHex(p.wall, p.unitTint ? p.unitTint[u] : 1));
+    walls(mb, A, {
+      w: uw - (units > 1 ? 0.12 : 0), d: dU, y0: 0, floors, floorH: p.floorH, groundH: p.groundH,
+      bayW: p.bayW, facade: (p.unitFacade ? p.unitFacade[u] : p.facade),
+      groundTile: (p.unitShop ? p.unitShop[u] : p.shop), groundBayW: 5.4,
+      wsx: p.wsx + u * 173, wsy: p.wsy + u * 31, lod,
+    });
     mb.colorHex('#ffffff');
+    flatRoof(mb, A, p, {
+      w: uw, d: dU, y: yTop, parapetH, roofTile: p.roofTile,
+      clutter: Math.max(1, (p.clutter || 3) - 1), lod, antenna: p.antenna && u === p.tallest,
+      stairBox: p.stairBox && u === p.tallest,
+    });
+    if (near && u === p.tallest) {
+      if (p.signBox) {
+        mb.colorHex('#e9e4d6');
+        mb.box(0, yTop + parapetH, 0, Math.min(uw * 0.7, 7), 1.5, 0.5, { side: A.rect('trim_white'), top: A.rect('trim_grey') }, 3);
+        mb.colorHex('#ffffff');
+      }
+      // a cornice band over the shopfront reads as a real high street
+      mb.colorHex(tintHex(p.wall, 1.08));
+      mb.box(0, p.groundH - 0.35, 0, uw + 0.3, 0.42, dU + 0.3, { side: A.rect('trim_grey'), top: null }, 3);
+      mb.colorHex('#ffffff');
+    }
+    mb.ox = save[0]; mb.oz = save[1];
   }
+  if (!near) return;
   if (p.canopy) {
     mb.colorHex('#c9ccce');
-    mb.box(0, p.groundH - 0.55, p.d / 2 + 1.1, p.w * 0.9, 0.22, 2.2, { side: A.rect('metal_light'), top: A.rect('metal_light') }, 3);
+    mb.box(0, p.groundH - 0.55, p.d / 2 + 1.1, p.w * 0.92, 0.22, 2.2, { side: A.rect('metal_light'), top: A.rect('metal_light') }, 3);
     mb.colorHex('#ffffff');
   }
 }

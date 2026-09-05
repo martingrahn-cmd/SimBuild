@@ -91,6 +91,12 @@ try {
     await page.waitForTimeout(600);
   }
   await page.screenshot({ path: out, type: 'png', timeout: Math.max(timeout, 180000) });
+  if (args.crops) {
+    // Named landmark rects for pinned measurements (see src/core/debug.js cropRects).
+    const crops = await page.evaluate(() => (window.__sim?.cropRects ? window.__sim.cropRects() : {})).catch(() => ({}));
+    fs.writeFileSync(out.replace(/\.png$/, '.crops.json'), JSON.stringify({ png: out, width: W, height: H, camera, time, rects: crops }, null, 2));
+    result.crops = Object.keys(crops).length;
+  }
   const errors = [...new Set([...(perf.errors || []), ...consoleErrors, ...pageErrors])];
   const simErrors = await page.evaluate(() => window.__sim.errors.slice());
   const simWarnings = await page.evaluate(() => window.__sim.warnings.slice());

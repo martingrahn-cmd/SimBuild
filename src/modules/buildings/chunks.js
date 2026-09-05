@@ -7,7 +7,9 @@ import { MeshBuilder } from './geom.js';
 import { emitBuilding, emitGround, skirt } from './generate.js';
 import { applyMeshDefaults } from './material.js';
 
-const LOD_SWITCH = 300; // metres: nearer than this a chunk draws its detailed geometry
+const LOD_SWITCH = 300;
+// how much of each zone type stays lit after dark
+const LIT_BIAS = { residential: 1.35, commercial: 1.0, office: 0.62, industrial: 0.4 }; // metres: nearer than this a chunk draws its detailed geometry
 
 export class ChunkManager {
   constructor(ctx, atlas, material, group) {
@@ -59,6 +61,7 @@ export class ChunkManager {
         if (!b.plan) continue;
         mb.frame(b.x, b.y, b.z, b.heading);
         mb.color(1, 1, 1);
+        mb.litBias(LIT_BIAS[b.type] ?? 1);
         const h = (lx, lz) => T.getHeight(mb.worldX(lx, lz), mb.worldZ(lx, lz)) - b.y;
         try {
           skirt(mb, A, b.plan.w || b.footprint.w, b.plan.d || b.footprint.d, b.drop);

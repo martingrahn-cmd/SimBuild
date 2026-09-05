@@ -250,6 +250,9 @@ export class ZoneGrid {
   }
 
   // ---------------------------------------------------------------- lots
+  /** Stable identity of a lot across rebuilds: its road side and its first (front-left) cell. */
+  _lotKey(l) { return l.edgeId + ':' + l.side + ':' + (l.cells[0] || `${Math.round(l.x)}_${Math.round(l.z)}`); }
+
   /**
    * Rebuild every lot. Roads are processed by importance (avenue before street before alley, longer
    * before shorter) and each lot claims its cells, so opposite frontages share a block and the
@@ -257,7 +260,11 @@ export class ZoneGrid {
    * instead of the mitred quadrants a pure nearest-road split would give.
    */
   regenLots() {
-    const removed = [...this.lots.keys()];
+    // A rebuild must not orphan buildings: a lot that comes back on the same road side with the same
+    // front cell keeps its id and its buildingId.
+    const prev = new Map();
+    for (const l of this.lots.values()) prev.set(this._lotKey(l), l);
+    const removed = [], added = [];
     this.lots.clear();
     this.byEdge.clear();
     this.claimed.clear();
@@ -268,17 +275,20 @@ export class ZoneGrid {
     // row of lots) instead of two roads taking the whole interior.
     const jitter = (e) => hash2(e.id, 7, this.world.seed);
     edges.sort((a, b) => rank(a) - rank(b) || (b.length - a.length) * 0.02 + (jitter(a) - jitter(b)) || a.id - b.id);
-    const added = [];
     for (const e of edges) {
       for (const lot of this.genEdge(e)) {
+        const sig = this._lotKey(lot);
+        const old = prev.get(sig);
+        if (old) { lot.id = old.id; lot.buildingId = old.buildingId; prev.delete(sig); }
+        else added.push(lot.id);
         this.lots.set(lot.id, lot);
         let set = this.byEdge.get(e.id);
         if (!set) this.byEdge.set(e.id, set = new Set());
         set.add(lot.id);
         for (const k of lot.cells) this.claimed.set(k, lot.id);
-        added.push(lot.id);
       }
     }
+    for (const l of prev.values()) removed.push(l.id);
     return { added, removed };
   }
 
@@ -352,8 +362,8 @@ export class ZoneGrid {
       // corner fit: a lot that ends where the frontage itself ends grows toward the junction so the
       // block corner is covered instead of leaving a notch
       let extA = 0, extB = 0;
-      if (cursor === 0) extA = 5;
-      if (b === n) extB = 5;
+      if (cursor === 0) extA = 3;
+      if (b === n) extB = 3;
       const width = (b - cursor) * this.cell + extA + extB;
       const dcMid = (first.dc + last.dc) * 0.5 + (extB - extA) * 0.5;
       const o = this._o;

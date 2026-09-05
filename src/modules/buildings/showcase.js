@@ -72,7 +72,7 @@ export function stage(ctx) {
   // ---------------------------------------------------------------- lots
   const lots = [];
   let lotId = 1;
-  const INSET = 9.6;
+  const INSET = 8.9;
   for (let i = 0; i < XS.length - 1; i++) {
     for (let j = 0; j < ZS.length - 1; j++) {
       const x0 = XS[i], x1 = XS[i + 1], z0 = ZS[j], z1 = ZS[j + 1];
@@ -80,15 +80,17 @@ export function stage(ctx) {
       const [type, dens] = zoneFor(cx, cz, rng);
       const spec = SPEC[`${type}/${dens}`];
       const bl = baseLevel(cx, cz);
-      const bx0 = x0 + INSET, bx1 = x1 - INSET, bz0 = z0 + INSET, bz1 = z1 - INSET;
+      const AVE = 14.0;   // avenue half-width + verge
+      const bx0 = x0 + (i === 3 ? AVE : INSET), bx1 = x1 - (i + 1 === 3 ? AVE : INSET);
+      const bz0 = z0 + (j === 2 ? AVE : INSET), bz1 = z1 - (j + 1 === 2 ? AVE : INSET);
       const iw = bx1 - bx0, id = bz1 - bz0;
       if (iw < 14 || id < 14) continue;
-      const depth = Math.min(spec.d, id / 2 - 0.5, iw / 2 - 0.5);
+      const depth = Math.min(spec.d * 1.2, id / 2 - 7, iw / 2 - 7, 40);
       const rows = [
         { along: 'x', a0: bx0, a1: bx1, c: bz0 + depth / 2, heading: 0 },
         { along: 'x', a0: bx0, a1: bx1, c: bz1 - depth / 2, heading: Math.PI },
       ];
-      if (id - depth * 2 > 18) {
+      if (id - depth * 2 > 12) {
         rows.push({ along: 'z', a0: bz0 + depth, a1: bz1 - depth, c: bx0 + depth / 2, heading: -Math.PI / 2 });
         rows.push({ along: 'z', a0: bz0 + depth, a1: bz1 - depth, c: bx1 - depth / 2, heading: Math.PI / 2 });
       }

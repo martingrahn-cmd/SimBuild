@@ -28,11 +28,11 @@ export function createBuildingMaterial(tex, uniforms) {
     shader.uniforms.uLit = uniforms.uLit;
     shader.uniforms.uEmis = uniforms.uEmis;
     shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nattribute vec2 win;\nvarying vec2 vWinCell;')
+      .replace('#include <common>', '#include <common>\nattribute vec3 win;\nvarying vec3 vWinCell;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvWinCell = win;');
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>
-varying vec2 vWinCell;
+varying vec3 vWinCell;
 uniform float uNight;
 uniform float uLit;
 uniform float uEmis;
@@ -40,15 +40,15 @@ float bHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.54531
       .replace('#include <emissivemap_fragment>', `
 #ifdef USE_EMISSIVEMAP
 	float winMask = texture2D( emissiveMap, vEmissiveMapUv ).r;
-	vec2 cell = floor( vWinCell );
+	vec2 cell = floor( vWinCell.xy );
 	float h1 = bHash( cell );
 	float h2 = bHash( cell + 37.13 );
 	float h3 = bHash( cell + 91.71 );
-	float on = step( 1.0 - uLit * (0.45 + 1.1 * h3), h1 );
-	vec3 warm = vec3( 1.0, 0.68, 0.34 );
-	vec3 cool = vec3( 0.74, 0.85, 1.0 );
-	vec3 tint = mix( warm, cool, smoothstep( 0.68, 0.82, h2 ) );
-	totalEmissiveRadiance = winMask * on * uNight * uEmis * tint * (0.45 + 0.75 * h2 * h2);
+	float on = step( 1.0 - clamp( uLit * vWinCell.z, 0.0, 0.95 ) * (0.5 + 1.0 * h3), h1 );
+	vec3 warm = vec3( 1.0, 0.62, 0.26 );
+	vec3 cool = vec3( 0.72, 0.83, 1.0 );
+	vec3 tint = mix( warm, cool, smoothstep( 0.74, 0.88, h2 ) );
+	totalEmissiveRadiance = winMask * on * uNight * uEmis * tint * (0.3 + 0.85 * h2 * h2);
 	// a touch of interior glow behind unlit glass so night facades are not pure black
 	totalEmissiveRadiance += winMask * uNight * uEmis * 0.03 * vec3( 0.5, 0.55, 0.72 );
 #endif
@@ -62,7 +62,7 @@ export function createUniforms() {
   return {
     uNight: { value: 0 },
     uLit: { value: 0.5 },
-    uEmis: { value: 1.25 },
+    uEmis: { value: 1.05 },
   };
 }
 

@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=22&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 22,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+  "errors": [],
+  "warnings": [],
+  "png": "shots/props/rdev1/street_22.png"
+}

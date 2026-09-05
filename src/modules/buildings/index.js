@@ -172,7 +172,7 @@ function litFraction(ctx, night) {
 export default {
   name: 'buildings',
   dependencies: ['terrain', 'roads', 'zoning'],
-  budget: { drawCalls: 200, triangles: 2_000_000 },
+  budget: { drawCalls: 320, triangles: 2_500_000 },
 
   async init(ctx) {
     S.ctx = ctx;
@@ -219,7 +219,7 @@ export default {
     S.litSmooth += (lit - S.litSmooth) * Math.min(1, dt * 3);
     S.uniforms.uNight.value = night;
     S.uniforms.uLit.value = S.litSmooth;
-    S.uniforms.uEmis.value = 1.25;
+    S.uniforms.uEmis.value = 1.05;
   },
 
   dispose(ctx) {

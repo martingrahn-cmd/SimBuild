@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=zoning&time=17.5&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "zoning",
+  "time": 17.5,
+  "camera": "closeup",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: TypeError: Cannot read properties of undefined (reading 'errors')\n    at eval (eval at evaluate (:311:30), <anonymous>:1:20)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+  "errors": [],
+  "warnings": [],
+  "png": "shots/zoning/rdev1/closeup_17p5.png"
+}

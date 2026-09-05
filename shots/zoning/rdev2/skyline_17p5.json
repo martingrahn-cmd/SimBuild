@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=zoning&time=17.5&camera=skyline&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "zoning",
+  "time": 17.5,
+  "camera": "skyline",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 159305,
+  "fps": 11.6,
+  "measuredFrames": 3,
+  "frameMs": 6911.7,
+  "drawCalls": 49,
+  "triangles": 610233,
+  "programs": 27,
+  "textures": 40,
+  "geometries": 41,
+  "heapMB": 53.2,
+  "moduleMs": {
+    "environment": 0.2000000011175871,
+    "zoning": 0.09999999962747097,
+    "terrain": 0,
+    "roads": 0
+  },
+  "hour": 17.5,
+  "cameraState": {
+    "position": [
+      718.4,
+      183.4,
+      -522.9
+    ],
+    "target": [
+      0,
+      40,
+      0
+    ],
+    "distance": 900
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 471
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 1
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5434
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 73
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/zoning/rdev2/skyline_17p5.png"
+}

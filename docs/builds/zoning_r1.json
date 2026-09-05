@@ -1,0 +1,34 @@
+{
+  "module": "zoning",
+  "round": 1,
+  "summary": "world.zones implemented end to end: 8 m world-aligned cell grid, a buildable band derived from world.roads.frontage (depth 1-4 cells, nearest road wins, cells rejected on water, >24 deg slope / >6.5 m relief per cell and road coverage), paint/erase brushes with a batched bulk() path, version bump + zones:changed with real added/removed lot deltas, and lot generation along every frontage (16-32 m wide, 16-32 m deep, corner-fitted, claim-based so a block subdivides as a pinwheel instead of mitred quadrants; lot ids and buildingId survive a rebuild). Overlay is a CS2-style decal: one merged terrain-conforming mesh per zone type (saturated translucent fill, dark 8 m grid, 45 deg hatch on high density, animated bright region outline), one mesh for the empty zonable band and one for lot outlines with a frontage bar - 6 draw calls, 21.9k triangles, polygonOffset + depthWrite off, unlit with fog and AgX tonemapping so it reads the same day and night. Visible when a zoning tool is active (tool:changed, with a fade) or always in the showcase. Showcase stages a 7x5 street grid with an avenue, a diagonal, a curved street and two alleys, then paints all four types in both densities on both sides of every road, leaving two blocks unzoned so the empty band shows; camera presets zones / zonesclose / zoneswide.",
+  "drawCalls": 6,
+  "triangles": 21872,
+  "errors": 0,
+  "screenshotsViewed": [
+    "/home/user/SimBuild/shots/zoning/rdev2/aerial_17p5.png",
+    "/home/user/SimBuild/shots/zoning/rdev2/aerial_22.png",
+    "/home/user/SimBuild/shots/zoning/rdev2/street_12.png",
+    "/home/user/SimBuild/shots/zoning/rdev2/street_22.png",
+    "/home/user/SimBuild/shots/zoning/rdev2/skyline_22.png",
+    "/home/user/SimBuild/shots/zoning/rdev2/closeup_17p5.png",
+    "/home/user/SimBuild/shots/zoning/rdev1/aerial_12.png",
+    "/home/user/SimBuild/shots/zoning/rdev1/aerial_22.png",
+    "/home/user/SimBuild/shots/zoning/rdev1/street_12.png",
+    "/home/user/SimBuild/shots/zoning/rdev1/skyline_6p5.png",
+    "/home/user/SimBuild/shots/zoning/rdev1/closeup_6p5.png",
+    "/home/user/SimBuild/shots/zoning/dev_zones_12.png",
+    "/home/user/SimBuild/shots/zoning/dev_zonesclose_12.png"
+  ],
+  "remainingWeaknesses": [
+    "The fill still reads a little flat/plasticky at street and closeup range: it is a single translucent colour over the ground with a grid, where CS2 also varies the overlay per cell state (hover, blocked, newly painted).",
+    "Lot subdivision is irregular in places. The claim order is deterministic but jittered per edge, so some frontages get a full row of 3 lots and the perpendicular street only gets one 16 m 'flag' lot in the middle of the block; a couple of short frontages get none at all.",
+    "'Corner lots merged' is implemented as a 3 m extension of the first/last lot toward the junction, not as a true L-shaped lot with frontage on both roads.",
+    "The high/low density distinction relies on hue plus a faint 45 deg hatch; at aerial distance the hatch is nearly invisible, so density reads mostly from colour.",
+    "No brush/hover preview cell highlight (that belongs to the tools module, but zoning exposes no highlight hook for it yet).",
+    "8 m cells are world-aligned per the contract, so along curved or diagonal streets the band edge staircases instead of following the road like CS2's per-road cell grid.",
+    "The animated outline pulse is slow and subtle; it is invisible in stills and only reads in motion.",
+    "The overlay does not dim at night, which is correct for a UI decal but makes the night aerial shots read brighter than the terrain."
+  ],
+  "selfScore": 7.0
+}

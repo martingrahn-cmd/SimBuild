@@ -251,6 +251,16 @@ Ready protocol (`src/core/debug.js`): `window.__sim = { ready:false, stats(), er
   `{ url, showcase, time, camera, seed, fps, frameMs, drawCalls, triangles, textures, programs, errors:[...], warnings:[...], modules:{...}, gpu:'swiftshader', elapsedMs }`.
 - fps under SwiftShader is software-rendered and NOT the 50 fps target; the budget is checked via `drawCalls` and `triangles`, and via fps **relative** to the baseline (`shots/baseline_empty.json`). A real-GPU run is the final authority; document it in STATUS as `fpsGpu: null` until measured.
 
+**Pinned measurements.** `--crops` makes the tool write `<out>.crops.json` next to the PNG:
+`{png, width, height, camera, time, rects: {"<module>.<name>": [x, y, w, h]}}` in pixels of the full-resolution
+capture. The rects come from `window.__sim.cropRects()`, which asks every ready module for
+`api.cropRects({project, width, height, camera})`; `window.__sim.project(x, y, z)` turns a world point into pixels.
+This lets a critic measure inside a named landmark (a calibration patch, a facade, a lane) instead of hand-guessed
+coordinates that silently break when a camera preset moves. A module spec that requires a pinned measurement must
+declare the landmark in its `cropRects`; **this tool is the authoritative producer of `crops.json`** — if a spec
+describes some other mechanism, the spec is out of date. Statistics on a pinned crop are taken on the
+full-resolution PNG, never on a downscaled copy: at 480 px wide a 1 m calibration patch is about two pixels.
+
 `node tools/gauntlet.mjs --module roads` runs the standard matrix: cameras `aerial, street, skyline, closeup` × times `06.5, 12, 17.5, 22` (16 shots) plus the module's own presets, then prints a summary table; critics read the PNGs with the image reader.
 
 **No agent may claim anything it hasn't screenshotted and looked at.**

@@ -75,6 +75,15 @@ This box has **no GPU**: WebGL is SwiftShader, a 1080p frame takes 3–10 s and 
 the logs is *relative only*. Judge cost by `drawCalls` and `triangles`, which are exact. Use `--timeout 240`, batch
 your shots, and never re-shoot something you already have.
 
+## Pinned landmarks
+
+If your spec grades a measurement inside a specific region (a calibration patch, a facade, a lane, a light pool),
+expose `api.cropRects({ project, width, height, camera })` returning `{ name: [x, y, w, h] }` in pixels — use the
+supplied `project(x, y, z)` to turn world coordinates into pixels so the rect follows the camera. Then
+`node tools/screenshot.mjs … --crops` writes `<out>.crops.json` beside the PNG and the critic measures inside your
+named rect instead of guessing coordinates. Take pinned statistics on the full-resolution PNG: at 480 px wide a 1 m
+patch is two pixels and any statistic on it is noise.
+
 ## Measure, do not squint
 
 When you assess an image, back the judgement with numbers the critic can reproduce: luminance percentiles

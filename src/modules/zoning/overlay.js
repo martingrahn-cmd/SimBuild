@@ -82,7 +82,7 @@ void main() {
   // saturated near-opaque fill with darker grid lines, like the CS2 zone overlay
   vec3 col = base;
   col *= mix(1.0, 0.52, grid);
-  col *= mix(1.0, 0.66, hatch);
+  col *= mix(1.0, 0.82, hatch);
   // cells that are not part of a lot (block cores, back gardens) sit back a little
   col *= mix(0.80, 1.0, vLot);
   float a = (uFill - (1.0 - vLot) * 0.10) + grid * uGrid * 0.5 + hatch * 0.06;
@@ -129,7 +129,7 @@ void main() {
   // kind 0 = lot border, 1 = frontage bar (brighter, gently breathing)
   float pulse = 0.80 + 0.20 * sin(((vWPos.x + vWPos.z) * 0.02 - uTime * 0.22) * 6.2831853);
   vec3 col = mix(vCol, vCol * 1.25 + 0.18, vKind);
-  float a = mix(0.46, 0.62 * pulse, vKind) * uOpacity;
+  float a = mix(0.40, 0.55 * pulse, vKind) * uOpacity;
   gl_FragColor = vec4(col, a);
   #include <fog_fragment>
   #include <tonemapping_fragment>
@@ -355,14 +355,14 @@ export class ZoneOverlay {
       const bx = l.x + l.nx * hd, bz = l.z + l.nz * hd;
       const fl = [fx - l.ax * hw, fz - l.az * hw], fr = [fx + l.ax * hw, fz + l.az * hw];
       const bl = [bx - l.ax * hw, bz - l.az * hw], br = [bx + l.ax * hw, bz + l.az * hw];
-      const th = 0.6;
+      const th = 0.5;
       strip(fl[0], fl[1], fr[0], fr[1], l.nx, l.nz, th, c, 0);            // front
       strip(bl[0], bl[1], br[0], br[1], -l.nx, -l.nz, th, c, 0);          // back
       strip(fl[0], fl[1], bl[0], bl[1], l.ax, l.az, th, c, 0);            // left
       strip(fr[0], fr[1], br[0], br[1], -l.ax, -l.az, th, c, 0);          // right
       // frontage bar: a brighter thicker band hugging the street edge of the lot
       const inset = 0.55;
-      strip(fl[0] + l.nx * inset, fl[1] + l.nz * inset, fr[0] + l.nx * inset, fr[1] + l.nz * inset, l.nx, l.nz, 0.9, c, 1);
+      strip(fl[0] + l.nx * inset, fl[1] + l.nz * inset, fr[0] + l.nx * inset, fr[1] + l.nz * inset, l.nx, l.nz, 0.55, c, 1);
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));

@@ -28,6 +28,14 @@ Plus every preset the module declares in `showcase.cameras` (night presets at 22
 
 `fps` here is SwiftShader software rendering — relative only, never a pass/fail criterion. Draw calls and triangles are exact.
 
+## Pinned landmarks
+
+Where a module spec grades a measurement inside a named region, shoot with `--crops`:
+`node tools/screenshot.mjs … --crops` writes `<out>.crops.json` beside the PNG, with pixel rects the module itself
+pinned to world landmarks. Measure inside those rects, on the **full-resolution** PNG. If a spec requires a pinned
+measurement and `crops.json` is empty or missing, that is a builder defect (the module did not implement
+`api.cropRects`) — report it as such; it is never a reason to fail the acceptance items themselves unmeasured.
+
 ## Evidence, not impressions
 
 Support each finding with something reproducible: luminance percentiles (p1/p50/p99), the shadow-to-lit ratio,
