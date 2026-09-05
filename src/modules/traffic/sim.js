@@ -52,7 +52,7 @@ export class Traffic {
   buildMeshes(maxVehicles, maxPeds) {
     const vehMat = createVehicleMaterial();
     const lightMat = createLightMaterial();
-    const contactMat = createContactMaterial(1);
+    const contactMat = createContactMaterial(0.85);
     this.vehMat = vehMat; this.lightMat = lightMat; this.contactMat = contactMat;
     const totalW = MIX.reduce((a, m) => a + m[1], 0);
     for (let ci = 0; ci < MIX.length; ci++) {
@@ -133,7 +133,7 @@ export class Traffic {
     const pShadowGeo = buildPedShadow();
     const pLights = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 2), 2);
     pShadowGeo.setAttribute('aLights', pLights);
-    const pcontact = createContactMaterial(0.75);
+    const pcontact = createContactMaterial(0.80);
     this.pedContactMat = pcontact;
     const pshadow = new THREE.InstancedMesh(pShadowGeo, pcontact, pcap);
     pshadow.name = 'traffic:pedestrians:contact';
@@ -307,7 +307,8 @@ export class Traffic {
     for (let i = 0; i < this.peds.length; i++) {
       const p = this.peds[i];
       p.s += p.v * dt;
-      if (p.s >= p.rec.len - 1) {
+      const endTrim = (p.dir > 0 ? p.rec.trimB : p.rec.trimA) + 2.5;
+      if (p.s >= p.rec.len - endTrim) {
         const nodeId = p.dir > 0 ? p.rec.b : p.rec.a;
         const nd = g.nodes.get(nodeId);
         let next = null;
@@ -317,16 +318,17 @@ export class Traffic {
           for (const mv of nd.outs) { const r = g.edges.get(mv.edgeId); if (r && r.swR && r.id !== p.rec.id && !cands.includes(r)) cands.push(r); }
           if (cands.length) next = cands[this.rng.int(0, cands.length - 1)];
         }
-        if (!next) { p.dir = -p.dir; p.s = 1; continue; }
+        if (!next) { p.dir = -p.dir; p.s = (p.dir > 0 ? p.rec.trimA : p.rec.trimB) + 2.5; continue; }
         const ndir = next.a === nodeId ? 1 : -1;
+        const startTrim = (ndir > 0 ? next.trimA : next.trimB) + 2.5;
         // pick the side whose start point is closest to where we are now
         let bestSide = 1, bestD = Infinity;
         for (const side of [1, -1]) {
-          if (!g.walkAt(next, side, ndir, 1.5, out)) continue;
+          if (!g.walkAt(next, side, ndir, startTrim, out)) continue;
           const d = Math.hypot(out.x - p.x, out.z - p.z);
           if (d < bestD) { bestD = d; bestSide = side; }
         }
-        p.rec = next; p.dir = ndir; p.side = bestSide; p.s = 1.5;
+        p.rec = next; p.dir = ndir; p.side = bestSide; p.s = startTrim;
       }
       g.walkAt(p.rec, p.side, p.dir, p.s, out);
       p.x = out.x - out.tz * p.jitter;
@@ -558,8 +560,8 @@ export class Traffic {
           if (mm > cap) { ox *= cap / mm; oz *= cap / mm; }
           mat.userData.uSun.value.set(ox, 0, oz);
         };
-        set(this.contactMat, 0.75, 1.2);
-        set(this.pedContactMat, 0.45, 0.5);
+        set(this.contactMat, 1.15, 2.2);
+        set(this.pedContactMat, 0.80, 1.0);
       }
     }
 

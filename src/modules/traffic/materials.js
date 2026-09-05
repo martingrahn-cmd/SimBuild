@@ -202,15 +202,21 @@ varying vec2 cUv;
 varying vec2 cShift;
 varying vec2 cCore;
 varying float cNight;
-` + sh.vertexShader.replace('#include <begin_vertex>', `
+` + sh.vertexShader
+      .replace('#include <begin_vertex>', `
 #include <begin_vertex>
-cUv = aUv; cNight = aLights.x; cCore = aCore;
+cUv = aUv; cNight = aLights.x; cCore = aCore; cShift = vec2( 0.0 );
+`)
+      // slide the whole decal away from the sun, in world space, after the instance transform
+      .replace('#include <project_vertex>', `
+vec4 mvPosition = vec4( transformed, 1.0 );
 #ifdef USE_INSTANCING
-  vec3 sunLocal = transpose( mat3( instanceMatrix ) ) * uSun;
-#else
-  vec3 sunLocal = uSun;
+  mvPosition = instanceMatrix * mvPosition;
 #endif
-cShift = clamp( vec2( sunLocal.x / aHalf.x, sunLocal.z / aHalf.y ), vec2( -0.75 ), vec2( 0.75 ) );
+mvPosition.x += uSun.x;
+mvPosition.z += uSun.z;
+mvPosition = modelViewMatrix * mvPosition;
+gl_Position = projectionMatrix * mvPosition;
 `);
     sh.fragmentShader = `
 varying vec2 cUv;
@@ -218,9 +224,9 @@ varying vec2 cShift;
 varying vec2 cCore;
 varying float cNight;
 ` + sh.fragmentShader.replace('#include <color_fragment>', `
-vec2 cq = ( cUv * 2.0 - 1.0 ) - cShift;
+vec2 cq = cUv * 2.0 - 1.0;
 float cr = length( cq );
-float ca = pow( max( 0.0, 1.0 - cr ), 1.05 ) * ${strength.toFixed(3)} * ( 0.30 + 0.58 * ( 1.0 - cNight ) );
+float ca = smoothstep( 1.0, 0.25, cr ) * ${strength.toFixed(3)} * ( 0.26 + 0.62 * ( 1.0 - cNight ) );
 diffuseColor = vec4( vec3( 0.012, 0.015, 0.024 ), clamp( ca, 0.0, 1.0 ) );
 `);
   };

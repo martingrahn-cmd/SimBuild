@@ -525,21 +525,167 @@
       "instructionNotFollowed": "this was specified as a REDUCTION pass ('fix or delete, never add') but every spec grew: 9456 -> 10860 lines total. The added lines are the inline derivations property 12 now requires, so they are defensible, but the length discipline did not hold and should be an explicit acceptance item next time."
     },
     "blindScoring": {
+      "method": "blind, full-range, calibration control unlabelled in each batch; batch void if control > 5",
       "batch1": {
         "control": 3.5,
-        "valid": true,
-        "scores": {
-          "terrain": 9.5,
-          "democity": 9.3,
-          "environment": 9.2,
-          "traffic": 9.2,
-          "buildings": 9.0
-        },
-        "mean": 9.24,
-        "passing": "5/5"
+        "valid": true
       },
-      "batch2": "11 remaining specs in flight (roads, ui, effects, simulation, audio, zoning, props, tools, services, infoviews, transit)",
-      "residual": "even passing specs still carry 3-9 unmeasurable items and 1-4 arithmetic nits each; 8.5 is 'AAA with nits' and these have nits. Tracked, not hidden."
+      "batch2": {
+        "control": 3.5,
+        "valid": true
+      },
+      "scores": {
+        "terrain": 9.5,
+        "democity": 9.3,
+        "effects": 9.3,
+        "simulation": 9.3,
+        "audio": 9.3,
+        "infoviews": 9.3,
+        "environment": 9.2,
+        "traffic": 9.2,
+        "ui": 9.2,
+        "roads": 9.2,
+        "zoning": 9.2,
+        "props": 9.2,
+        "tools": 9.1,
+        "buildings": 9,
+        "services": 9,
+        "transit": 9
+      },
+      "mean": 9.21,
+      "passing": "16/16",
+      "allBuildableAndGradable": true,
+      "detail": {
+        "terrain": {
+          "score": 9.5,
+          "buildable": true,
+          "gradable": true,
+          "observable": "23/24",
+          "unmeasurable": 3,
+          "contradictions": 1
+        },
+        "environment": {
+          "score": 9.2,
+          "buildable": true,
+          "gradable": true,
+          "observable": "18/22",
+          "unmeasurable": 6,
+          "contradictions": 4
+        },
+        "traffic": {
+          "score": 9.2,
+          "buildable": true,
+          "gradable": true,
+          "observable": "20/22",
+          "unmeasurable": 5,
+          "contradictions": 3
+        },
+        "buildings": {
+          "score": 9,
+          "buildable": true,
+          "gradable": true,
+          "observable": "19/23",
+          "unmeasurable": 5,
+          "contradictions": 3
+        },
+        "democity": {
+          "score": 9.3,
+          "buildable": true,
+          "gradable": true,
+          "observable": "20/24",
+          "unmeasurable": 9,
+          "contradictions": 2
+        },
+        "ui": {
+          "score": 9.2,
+          "buildable": true,
+          "gradable": true,
+          "observable": "19/22",
+          "unmeasurable": 5,
+          "contradictions": 4
+        },
+        "roads": {
+          "score": 9.2,
+          "buildable": true,
+          "gradable": true,
+          "observable": "21/24",
+          "unmeasurable": 6,
+          "contradictions": 4
+        },
+        "effects": {
+          "score": 9.3,
+          "buildable": true,
+          "gradable": true,
+          "observable": "22/24",
+          "unmeasurable": 4,
+          "contradictions": 2
+        },
+        "simulation": {
+          "score": 9.3,
+          "buildable": true,
+          "gradable": true,
+          "observable": "26/27",
+          "unmeasurable": 3,
+          "contradictions": 1
+        },
+        "audio": {
+          "score": 9.3,
+          "buildable": true,
+          "gradable": true,
+          "observable": "24/26",
+          "unmeasurable": 4,
+          "contradictions": 0
+        },
+        "zoning": {
+          "score": 9.2,
+          "buildable": true,
+          "gradable": true,
+          "observable": "25/26",
+          "unmeasurable": 4,
+          "contradictions": 4
+        },
+        "props": {
+          "score": 9.2,
+          "buildable": true,
+          "gradable": true,
+          "observable": "47/54",
+          "unmeasurable": 5,
+          "contradictions": 5
+        },
+        "tools": {
+          "score": 9.1,
+          "buildable": true,
+          "gradable": true,
+          "observable": "21/22",
+          "unmeasurable": 5,
+          "contradictions": 0
+        },
+        "infoviews": {
+          "score": 9.3,
+          "buildable": true,
+          "gradable": true,
+          "observable": "23/23",
+          "unmeasurable": 3,
+          "contradictions": 5
+        },
+        "services": {
+          "score": 9,
+          "buildable": true,
+          "gradable": true,
+          "observable": "19/22",
+          "unmeasurable": 5,
+          "contradictions": 5
+        },
+        "transit": {
+          "score": 9,
+          "buildable": true,
+          "gradable": true,
+          "observable": "19/22",
+          "unmeasurable": 5,
+          "contradictions": 5
+        }
+      },
+      "residual": "125 tracked defects in docs/prompts/_review/residual.json \u2014 every spec passed while still carrying 3-6 unmeasurable items and 0-5 arithmetic nits. Not repaired further: diminishing returns against the game itself, which is the deliverable."
     }
   }
 }

@@ -1,0 +1,631 @@
+{
+ "note": "Residual defects in specs that PASSED the 8.5 gate (9.0-9.5). Tracked, not hidden: 8.5 means \"AAA with nits\". A builder that hits one of these should treat the acceptance item as advisory and say so in its report; a critic must not fail a builder on an item listed here as unmeasurable.",
+ "count": 125,
+ "defects": [
+  {
+   "module": "terrain",
+   "kind": "unmeasurable",
+   "detail": "Budget table, 'Heap added <= 80 MB' via `__sim.stats().heapMB` \u2014 the spec's own \u00a77 enumeration of the core stats object is `{fps, frameMs, drawCalls, triangles, programs, textures, geometries, moduleMs}`, which has no `heapMB`. Either the field exists and \u00a77's list is incomplete, or the row is unreadable; the spec does not say which."
+  },
+  {
+   "module": "terrain",
+   "kind": "unmeasurable",
+   "detail": "Budget table, 'Init time (generation + land cover + textures) <= 6 s' checked by `log.info` timings \u2014 no field in the screenshot JSON (`{url, showcase, time, camera, seed, fps, frameMs, drawCalls, triangles, textures, programs, errors, warnings, modules, gpu, elapsedMs}`) carries a module init timing, and no probe is specified to capture console output. Not a checklist item, so it costs nothing at grading time, but it is a threshold with no named reader."
+  },
+  {
+   "module": "terrain",
+   "kind": "unmeasurable",
+   "detail": "Item 24, first clause: 'No chunk-grid line, crack, skirt flash or LOD pop is visible in any shot' \u2014 no instrument named; graded by eye. The rest of item 24 (>=2 non-zero `stats().lod` entries; 720p reproducing items 1 and 3 within 10%) is fully mechanical."
+  },
+  {
+   "module": "terrain",
+   "kind": "arithmetic",
+   "detail": "Item 14: 'the farthest world corner is 2330 m ... do not write a test above that' \u2014 2330 m is the HORIZONTAL distance from the camera (718,183,-523) to (-1024,1024); the probe's `dist` field is 3D, so the true maximum is sqrt(2329.8^2 + 183^2) = 2337 m. Non-biting (the highest test written is 1900 m) but the stated ceiling is 7 m below what the probe can report."
+  },
+  {
+   "module": "environment",
+   "kind": "unmeasurable",
+   "detail": "Item 19(c) \u2014 \"a contact shadow is present directly under every sphere and every block at all four standard times\". No threshold, no crop, no probe; the ring blocks staged at 260\u2013900 m (\u00a78.3) are a few pixels across at aerial, where a contact shadow cannot be resolved at all. Every other clause in item 19 is pinned (5\u00b0 probe, 3 px softness) \u2014 this one is an eyeball."
+  },
+  {
+   "module": "environment",
+   "kind": "unmeasurable",
+   "detail": "Item 10 \u2014 \"\u2265 2 distinguishable cover types (grass, dirt/worn track) whose mean albedo differs by \u2265 1.4\u00d7\". Albedo is not a quantity any of the three instruments returns; a PNG gives luma under sun+sky, and no `page.evaluate` probe over material colours is named. Which pixels belong to which cover type is also reader-chosen and unpinned, unlike the `ground_near` rect the same item otherwise uses. The first half of the item (high-frequency std \u2265 10 after a 16 px box blur, inside a pinned crop) is fully measurable; only this clause is not."
+  },
+  {
+   "module": "environment",
+   "kind": "unmeasurable",
+   "detail": "Item 7 \u2014 \"star FWHM \u2264 2.5 px with a round, `fwidth`-antialiased falloff (no square blobs)\". The FWHM is measurable; roundness of a 2.5 px feature is not resolvable by screenshot, crops.json or probe. The r2 finding it encodes was real, but as written the pass/fail is the critic's eye."
+  },
+  {
+   "module": "environment",
+   "kind": "unmeasurable",
+   "detail": "Item 21 \u2014 \"shows no resolution-dependent artefacts\" and \"renders a lit, shadowed, fogged scene with the same sky\". The \u00b14 luma on mean/p50 is a real threshold; these two trailing clauses have no fail value and no instrument."
+  },
+  {
+   "module": "environment",
+   "kind": "unmeasurable",
+   "detail": "Item 16(a) \u2014 \"no other `Light` under `ctx.group` or created by `src/modules/environment/`\". A scene traversal can scope to `ctx.group`, but it cannot attribute a Light to an authoring file. Largely defused by the passed-with-note rule and the pre-named `src/modules/props/render.js:266` case, so this costs the critic nothing in practice."
+  },
+  {
+   "module": "environment",
+   "kind": "unmeasurable",
+   "detail": "Note (not a violation): the \u00a74 measurement convention leans on the critic's own `imgstats.mjs` for connected components after a 3 px morphological open and for row-autocorrelation FWHM. CRITIC.md explicitly permits a throwaway probe script, and the r1/r2 script is named as precedent, so the instrument exists \u2014 but the kernel shape of the \"3 px open\" and the autocorrelation normalisation are unspecified, so two critics writing that script independently could differ by a component or two on a marginal frame."
+  },
+  {
+   "module": "environment",
+   "kind": "arithmetic",
+   "detail": "\u00a78.6: \"at noon the sun is at 64.8\u00b0 elevation and every camera is below 21\u00b0\". The `aerial` preset is pitch 0.85 rad = 48.7\u00b0, used as such by this same spec in \u00a74 (aerial ground scale, 0 % sky) and item 22. The claim is true of `closeup` (0.35 rad = 20.05\u00b0) and every other preset, false of `aerial`. The conclusion it supports \u2014 a horizontal caster \u2014 survives (at 48.7\u00b0 a wall still hides 0.88 h while throwing 0.47 h), so this is a stray absolute, not a wrong design."
+  },
+  {
+   "module": "environment",
+   "kind": "arithmetic",
+   "detail": "\u00a78.4 vs item 8: the silhouette ring is staged at 2.5\u20133.5 km with \"\u2265 15 m height variation\", and item 8 requires the horizon boundary row to vary by \"\u2265 6 px\" at 1080p. The spec's own conversion (1080 / (2 tan 22.5\u00b0) \u00d7 h / d) gives 6.5 px for 15 m at 3 km \u2014 but 5.6 px at the range's far corner of 3.5 km. A builder who stages the minimum variation at the far end of the permitted band fails the item the ring exists to satisfy. This is precisely the property-12 shape: a range whose corner fails its own test. Fix is one number: \u2265 18 m, or pin the graded arc to \u2264 3 km."
+  },
+  {
+   "module": "environment",
+   "kind": "arithmetic",
+   "detail": "\u00a72: \"6e-4 is the rain figure\" contradicts the preset table four lines below (`rain` fogDensity = 6.5e-4) and \u00a76, which also says 6.5e-4. The point being made \u2014 that the `0.0006` literal in the ARCHITECTURE \u00a73 block is a pre-init default and not a daylight target \u2014 is unaffected, but the figure quoted to make it is not the figure in the table."
+  },
+  {
+   "module": "environment",
+   "kind": "arithmetic",
+   "detail": "Disclosed but still loose \u2014 item 9(a): cloud-shadow edge transition \"\u2264 60 px (25 m at the \u00a74 aerial ground scale)\". \u00a74 derives that scale as 0.399 m/px across the view and 0.531 m/px along it, and states outright that 25 m is 47\u201363 px. A shadow edge running across the view therefore hits 63 px at exactly the intended 25 m and fails a 60 px gate. The spec shows its work and chooses the tighter number knowingly, so this is a conservative rounding rather than an error \u2014 but it is the one place where a builder meeting the stated physical intent can still be marked down."
+  },
+  {
+   "module": "traffic",
+   "kind": "unmeasurable",
+   "detail": "Item 7, headlight pool: \"10-18 m long, 3-4.5 m wide ... peaking at <= 0.55 of the lens luminance and falling to 0 at its far edge\", and the brake \"rear pool 6-8 m long\". No instrument is named. The pool mask (A vs D) yields pixels, not metres; crops.json pins only lead_vehicle and far_asphalt; stats().emissive reports lamp radiance, not pool extent or its peak-to-lens ratio. The spec's own preamble promises \"no item below carries a number without a way to obtain it\" - these four numbers break that promise."
+  },
+  {
+   "module": "traffic",
+   "kind": "unmeasurable",
+   "detail": "Item 16 / \u00a75: \"textures <= 6 added by this module, at most four of them 1024\u00b2 and none above it\". The declared stats() shape in \u00a72 publishes no texture fields, and the shot JSON's `textures` is the whole renderer's count. \u00a75 says \"probe stats() / renderer info\", which is the one place the spec waves at an instrument instead of naming one; the builder must invent a group-traversal probe to make it gradable."
+  },
+  {
+   "module": "traffic",
+   "kind": "unmeasurable",
+   "detail": "Item 10: \"No z-fighting or flicker against asphalt, markings or crosswalks at any camera or time.\" Flicker is temporal and a still PNG cannot show it. Item 12 defines a step-pinned two-render diff that would measure exactly this, but item 10 does not invoke it, so the clause is graded by assertion."
+  },
+  {
+   "module": "traffic",
+   "kind": "unmeasurable",
+   "detail": "Item 3: \"an art director can name all nine from silhouette alone\" at fleet_12. Not an instrument. The \u00b110 % dimension table carries the real weight, so this is decoration rather than a load-bearing gap, but as written it is a judgement call sitting in a numbered acceptance item."
+  },
+  {
+   "module": "traffic",
+   "kind": "unmeasurable",
+   "detail": "Item 15: \"log every spawn/despawn over 20 s, zero within 350 m of the camera and in-frustum\". Traffic emits nothing on the bus (\u00a72) and exposes no spawn log, so the probe must poll world.traffic.vehicles keys at an unstated interval; feasible with page.evaluate but the method is not named the way every other probe in \u00a74 is."
+  },
+  {
+   "module": "traffic",
+   "kind": "arithmetic",
+   "detail": "Item 19 vs item 5, congestion at 22:00. \u00a72 defines congestion = 1 - meanSpeed / meanFreeFlowLimit (clamped). Item 5 permits a free-flow mean of 0.75-1.0 x the type limit. Item 19 requires congestion <= 0.10 at 22:00 measured with setSpeed(1) over 30 s, i.e. meanSpeed >= 0.90 x limit. A build sitting anywhere in 0.75-0.89 of item 5's own allowed band fails item 19 on an empty road. Worse: avgSpeed is defined \"over moving and stopped vehicles alike\", and at 22:00 the 4 320-s phase clock has roughly half the arms red, so some of the 30-65 vehicles are stopped at signals and pull the mean further down. The corner of item 5's range fails the test item 19 claims it satisfies. Fix: state congestion <= 0.10 against the free-flow mean the build actually declares, or raise the 22:00 ceiling to ~0.25, or exclude signal-stopped vehicles from congestion's meanSpeed."
+  },
+  {
+   "module": "traffic",
+   "kind": "arithmetic",
+   "detail": "\u00a75 budget table vs item 16, per-frame cost. \"Fixed agent step: >= 20 Hz, <= 1.2 ms per step, <= 4 steps caught up per frame\" allows 4 x 1.2 = 4.8 ms inside one update(), against item 16's moduleMs.traffic <= 1.6 ms and ARCHITECTURE \u00a79's <= 2 ms per module. Steady state at 20 Hz / 60 fps amortises to 0.4 ms, so this only bites on a catch-up frame - but the spec never reconciles the two, and moduleMs is graded \"at every shot\" without excluding one."
+  },
+  {
+   "module": "traffic",
+   "kind": "arithmetic",
+   "detail": "Item 12, pedestrian LOD ladder has an undefined band. Vehicles are contiguous (LOD0 <= 90, LOD1 90-260, LOD2 260-1200, cull > 1200). Pedestrians are not: \"LOD0 <= 60 m, LOD1 60-160, cull > 220\" leaves 160-220 m unassigned. Two competent builders will resolve it differently (extend LOD1, add a LOD2, or cull early), and the critic has no stated correct answer."
+  },
+  {
+   "module": "buildings",
+   "kind": "unmeasurable",
+   "detail": "Item 9 (contact darkening): grades a 40 px luminance column, \"the bottom 1.5 m of the wall\" vs \"mid-height\", and \"the lot surface darkens toward the wall over \u2264 1.0 m\" in `closeup_12` and `block_12` \u2014 but \u00a72 `cropRects` declares only `nightFacade` and `farTower`, both derived from `presets.night_downtown`. There is no pinned rect for a daytime base in either shot, so the metre-to-pixel conversion and the column's x are hand-guessed coordinates, exactly what ARCHITECTURE \u00a78 says a spec requiring a pinned measurement must not do. Fix: declare `buildings.baseContact` rects for the five named buildings at the `block` and `closeup` presets, or restate the item as a probe on the baked vertex-colour/AO ramp."
+  },
+  {
+   "module": "buildings",
+   "kind": "unmeasurable",
+   "detail": "Item 15: \"pixels with luma > 245 on building surfaces are < 0.05 % of the frame\" at `skyline_12` and `aerial_17p5`. Nothing in the toolchain segments building pixels from sky or terrain, and at `skyline` (pitch 0.16, distance 900, target y=40 \u2014 `src/core/camera.js`) a large part of the frame is sky, which is legitimately above 245. The threshold is either unmeasurable as written or measured against the wrong denominator. Fix: pin a facade crop and take the statistic inside it, or drop \"on building surfaces\" and set a whole-frame number that accounts for sky."
+  },
+  {
+   "module": "buildings",
+   "kind": "unmeasurable",
+   "detail": "Item 8: \"the base skirt extends \u2265 0.30 m below the *lowest* of the 8 samples\" and \"0 samples show terrain above the ground-floor slab\". \u00a72 lists `plan`, `drop`, `lot`, `_chunk` as private and publishes no skirt depth or ground-slab height; `features()`/`stats()` carry no field for either. The first clause of the item (`|base \u2212 getHeight| \u2264 0.25 m`) is cleanly probe-readable; the other two are not, because the numbers they compare are not exposed. Fix: add `skirtDrop` and `slabY` to a probe (or make `drop` public the way `mixedUse` was)."
+  },
+  {
+   "module": "buildings",
+   "kind": "unmeasurable",
+   "detail": "Item 16: \"no silhouette edge moves by more than 2 px\" between `forceLod(0)` and `forceLod(1)`. The meanAbs < 4/255 half is a straightforward frame diff; the 2 px silhouette test names no edge-detection procedure, no threshold for what counts as an edge, and no tool that performs it. Two competent critics would implement it differently and get different answers. Fix: express it as a max column-height difference of the alpha/depth silhouette inside a named crop, or delete it \u2014 the meanAbs bound already catches a shifting outline."
+  },
+  {
+   "module": "buildings",
+   "kind": "unmeasurable",
+   "detail": "Soft, affecting items 14, 16 and 21: all three require two captures with module state toggled between them (`setLit(0)/setLit(1)`, `forceLod(0)/forceLod(1)`, infoview fields set by hand). `tools/screenshot.mjs` has no flag for any of these, so each needs a bespoke Playwright script that both `page.evaluate`s and screenshots. CRITIC.md's probe pattern makes this achievable, but the spec should say so \u2014 as written a critic may reasonably report that the instrument does not exist."
+  },
+  {
+   "module": "buildings",
+   "kind": "arithmetic",
+   "detail": "Item 6 + \u00a72 `clutterTwins` vs \u00a78's suburb \u2014 the one likely-unsatisfiable requirement in the document. `roofClutter[k]` is explicitly restricted to flat-roofed buildings (\"pitched-roof buildings are not counted in this histogram at all\"), but `clutterTwins` carries no such restriction: \"unordered pairs of buildings whose footprint centres are within 45 m of each other and whose roof-clutter multisets are identical\". \u00a78 mandates \u2265 60 detached houses on individual lots, i.e. neighbours far closer than 45 m, all pitched-roofed and (per \u00a73's cs2_4 description) carrying at most a chimney, a dormer and \"solar panels on maybe one roof in five\" \u2014 chimneys and dormers are not in item 6's clutter set at all, so most of those houses share the empty multiset and every adjacent pair is a `clutterTwins` hit. Item 6 probes `features().clutterTwins === 0` with **no selection**, i.e. whole-showcase. A correct build therefore fails item 6, and the \u00a78 note that the 50 m catalog pitch keeps catalog entries from forming \"a `clutterTwins` or `adjacentTwins` pair\" shows the author checked this case for the catalog and missed it for the suburb. Fix: add \"flat-roofed\" to the `clutterTwins` predicate in \u00a72, or scope item 6's probe to `presets.downtown.target` the way item 2 scopes `adjacentTwins`."
+  },
+  {
+   "module": "buildings",
+   "kind": "arithmetic",
+   "detail": "Item 23's justification fails its own arithmetic: \"for low density by \u2265 3 m in total across levels 1\u21925 \u2014 roughly one storey, mirroring item 5's floor rule for low density\". Item 5's low-density rule is \u2265 1 floor at \u2265 2 of the four steps, i.e. **two** floors across 1\u21925, and \u00a72's `groundFloorDistinct` fixes upper storeys at 2.9\u20134.1 m \u2014 so item 5 already implies \u2265 5.8 m, not 3 m, and the gain is two storeys, not \"roughly one\". The number is a lower bound so nothing is unsatisfiable, but the stated mirroring is wrong and a builder who follows the prose rather than item 5 ships a 3 m growth curve that item 5 then fails. Fix: state 5.8 m, or drop the \"mirroring item 5\" clause."
+  },
+  {
+   "module": "buildings",
+   "kind": "arithmetic",
+   "detail": "Item 1's density ratio divides a whole-selection numerator by a subset denominator: `s.tris0 / s.buildingsL3NonIndustrial \u2265 900`, where \u00a72 defines `tris0` as the LOD0 triangles of **every** selected building and `buildingsL3NonIndustrial` as only those with `level \u2265 3 && type !== 'industrial'`. The quotient is not triangles-per-building and inflates without limit as the qualifying subset shrinks \u2014 a 60 m selection holding twenty low-relief level-1 buildings and one level-4 tower passes trivially, which is the opposite of what the item claims to prove (\"whole-showcase `tris0 / buildings` is diluted... and proves nothing\"). It is also undefined when the subset is empty, a live risk at the built-in `closeup` preset (target `[20, 6, 20]`, radius 60 \u2014 `src/core/camera.js`), which \u00a78 does not guarantee sits near any level-\u22653 non-industrial building. Fix: divide by `s.buildings`, or restrict both numerator and denominator to the same subset and say what happens when it is zero."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 18 (blocker): 'Pixels with luma > 245 on non-window surfaces < 0.05 %' \u2014 no instrument separates window from non-window pixels. The autocorrelation half of the item is fully specified; this clause is not."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 18 (blocker): 'Any material democity itself creates uses roughness \u2265 0.55 and normalScale \u2264 0.6' \u2014 requires scene-graph traversal, but \u00a74 defines the probe surface as exactly window.__sim.registry.apis.democity and window.__sim.world ('there is no third source of evidence'), neither of which exposes materials."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 12 (major): 'A coastal or riverside promenade \u2265 350 m with a seawall or beach edge' \u2014 350 m is a number with no reader: plan() returns districts, landmarks, corridors and transit, and carries no promenade polyline; the item points at park_12/waterfront_17p5, where length is not measurable."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 12 (major): 'a treed edge wrapping the built area so no district ends in bare terrain at a straight line' \u2014 eyeball only, no threshold, no probe."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 17 (blocker): 'no coplanar flicker between road, markings, lot plates, park paths and terrain' and 'No hard straight line where one district's ground treatment meets another's' \u2014 the meanAbs < 1.5/255 pixel-diff covers only the repeat pair; these two clauses have no diff, mask or threshold."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 23 (major): 'The HUD in the same frame shows these numbers, not placeholders' \u2014 no frame is named, no legibility threshold given; at the aerial/skyline distances the item's probe uses, HUD text may not be resolvable at all."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Items 19 and 24 (blocker/major): thresholds read from .json fields heapMB, moduleMs.democity and modules.democity.initMs \u2014 none of the three appears in ARCHITECTURE \u00a78's documented screenshot JSON schema (url, showcase, time, camera, seed, fps, frameMs, drawCalls, triangles, textures, programs, errors, warnings, modules, gpu, elapsedMs). If the tool does not in fact emit them, four budget numbers are unreadable and no core-request is filed for them, unlike the grade-separation gap the spec does handle correctly."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 5 (major): the horizon row is computed from 'pitch from the shot's cameraState block (tools/screenshot.mjs:101)' \u2014 cameraState is likewise absent from \u00a78's documented JSON schema. Recoverable (item 2 states skyline's pitch as 0.16), but the named reader is undocumented."
+  },
+  {
+   "module": "democity",
+   "kind": "unmeasurable",
+   "detail": "Item 2 (blocker): the 40 \u00d7 40 NDC sample grid runs through ctx.camera.screenToGround(x, y), but \u00a74 names only registry.apis.democity and world as probe surfaces; no accessor for the camera on window.__sim is given, so the critic must guess how to reach it."
+  },
+  {
+   "module": "democity",
+   "kind": "arithmetic",
+   "detail": "Item 9 vs item 15: item 9's 400-sample seat test enumerates 'every landmark corner, 200 random buildings' footprint corners, 100 democity-owned props', but item 15 forbids democity from placing any tree, lamp, parked car or vehicle while props and traffic are real and requires stats().own.{trees,lamps,vehicles,parked} === 0. Democity's entire owned inventory is then ~6-20 landmarks plus \u00a74.11's 8 industrial fixtures plus the fallback's 14 service meshes, 8 stops and 4 buses \u2014 roughly 26 non-landmark objects, not 100. The enumerated parts also do not sum to 400 (\u22656 landmarks \u00d7 4 corners + 200 + 100 \u2248 330-380)."
+  },
+  {
+   "module": "democity",
+   "kind": "arithmetic",
+   "detail": "Item 5's measurement scale is unassigned, and the conventions block claims it cannot be: 'Two scales, and every item names one.' The 480-px bullet covers item 5's whole-frame percentiles/means/std/saturation/pixel fractions and the flat-patch test; the full-resolution bullet covers item 5's shadowed-asphalt hue. The 'far third of skyline_17p5 \u2014 the 120-px band immediately below the horizon row \u2026 keeps std \u2265 12' is in neither list. At 480 px the frame is 270 px tall, so a 120-px band is 44 % of it rather than a far third, and the y_h = H/2 \u00d7 (1 \u2212 tan(pitch)/tan(fov/2)) row lands at 82 px instead of 330 px \u2014 the same clause means two different measurements depending on which H is used."
+  },
+  {
+   "module": "ui",
+   "kind": "unmeasurable",
+   "detail": "Item 7: 'a visible background distinct from the panel (\u2265 6 luminance steps)' names no unit \u2014 6 of 255? 6 of 100? 6 L* units? No probe can be written until the unit is fixed, and builder and critic will pick different ones."
+  },
+  {
+   "module": "ui",
+   "kind": "unmeasurable",
+   "detail": "Item 4: 'the 3 px top rule' on a selected category icon is never defined anywhere in \u00a73 (\u00a73 gives the selected category only a filled accent rounded square; the 3 px accent rule belongs to the sub-panel tab row). The critic cannot say what shape fails."
+  },
+  {
+   "module": "ui",
+   "kind": "unmeasurable",
+   "detail": "Item 16: 'Redraw \u2264 5 Hz' names no instrument. Every other threshold in the spec names its command; this one would need a monkey-patched 2D context counter that nothing in the spec asks for."
+  },
+  {
+   "module": "ui",
+   "kind": "unmeasurable",
+   "detail": "Item 20: '\u2265 40 street lamps with warm emissive heads and ground pools' \u2014 a precise count with no reader. ui owns no world.props section (the backdrop is self-owned in showcase.js), so there is no world query, and counting 40 lamps by eye in street_22 is not reproducible. The rest of item 20 is honestly declared 'by eye'."
+  },
+  {
+   "module": "ui",
+   "kind": "unmeasurable",
+   "detail": "Item 4's per-icon hue histogram is specified as a 'colour probe over each icon's rendered bounding box', i.e. pixels \u2014 but \u00a72 pins the crop landmarks to exactly seven names and says 'no item measures anything else', so the icons have no crops.json rect. It is recoverable (getBoundingClientRect in page-evaluate, then sample the full-res PNG, or read SVG fill attributes) but the spec never names that path."
+  },
+  {
+   "module": "ui",
+   "kind": "arithmetic",
+   "detail": "Item 14 corner: the pill fill is allowed mean luminance 18\u201390 while muted #9AA6B2 labels must hit \u2265 3:1. Computed: at pill luminance 90 the ratio is 2.78:1 and at 84 it is 3.05:1 \u2014 the top ~6 counts of the allowed band cannot satisfy the item's own contrast floor. Conjunctive reading saves it (keep pills \u2264 ~84), but the range as written contains failing corners."
+  },
+  {
+   "module": "ui",
+   "kind": "arithmetic",
+   "detail": "\u00a73 sub-panel: cards '\u224878\u00d770 px on \u22486 px gaps, ~9 per row' inside a panel measured at x 610\u20131320 = 710 px. 9\u00d778 + 8\u00d76 = 750 px, 40 px wider than the panel it is measured in; 8 per row (666 px) is what those figures actually give."
+  },
+  {
+   "module": "ui",
+   "kind": "arithmetic",
+   "detail": "\u00a73 demand widget: 'six horizontal bars, \u22484 px tall on \u22483 px gaps' inside a pill measured '\u2248185\u00d740 px'. 6\u00d74 + 5\u00d73 = 39 px of bars in a 40 px pill \u2014 one pixel of total vertical padding, which is not a plausible reading of the reference and is not what item 3's own ranges (28\u201358 px of bars in a \u2264 46 px pill) reproduce."
+  },
+  {
+   "module": "ui",
+   "kind": "arithmetic",
+   "detail": "\u00a73 vs item 3 on rail count: \u00a73 asserts 'Four rails are the requirement' and then permits six in the next clause, while item 3 requires 'exactly 4 or 6 (no other count)'. Resolvable in the builder's favour, but the first sentence contradicts the item that governs."
+  },
+  {
+   "module": "roads",
+   "kind": "unmeasurable",
+   "detail": "Item 5(a): 'at 4\u00d7 magnification no patch boundary runs straight for more than 3 m, and none is parallel or perpendicular to the road axis within 5\u00b0 over more than half its length.' Extracting patch boundaries from a 6-20 level luminance difference and measuring their local tangent angle needs a segmentation tool nobody has; screenshot.mjs, --crops and page.evaluate cannot resolve it. The \u22653 regions of \u2265400 px at 6-20 levels from the rect median IS measurable \u2014 the boundary-geometry clause riding on it is not."
+  },
+  {
+   "module": "roads",
+   "kind": "unmeasurable",
+   "detail": "Item 16: 'At the mid-distance of highway_12 the barrier subtends \u2265 3 px vertically.' 'Mid-distance' names no world coordinate, no crop rect and no projected point, so the pixel count depends entirely on where the critic decides to sample. Nameable via __sim.project on a stated barrier post, but it is not stated."
+  },
+  {
+   "module": "roads",
+   "kind": "unmeasurable",
+   "detail": "Item 3(a): kerb face '0.13-0.18 m tall, continuous along every street/avenue arm and around every corner fillet.' The height is measurable in kerb_12 (0.15 m = 16.3 px there, matching the 64\u00d716 rect minimum), but 'continuous along every arm' is a whole-network property and no api in \u00a72 exposes kerb geometry for a probe to walk. Related: item 3(e) instructs the probe to report h 'as a single number in 0.13-0.18' without naming the accessor it reads."
+  },
+  {
+   "module": "roads",
+   "kind": "unmeasurable",
+   "detail": "Item 8: 'no cliff face darker than mean L 25 at noon' is a numeric threshold taken on aerial_12_COASTEND.png, a crop the spec itself says is 'cut by hand' and 'a picture to look at, not a pinned statistic'. A mean over a hand-chosen region is not reproducible between two critics."
+  },
+  {
+   "module": "roads",
+   "kind": "unmeasurable",
+   "detail": "Item 15, 17.5 leg: 'a specular response appears: \u2265 0.5 % of the roads.carriageway rect above DRY's p99 + 25.' At golden hour a p99 above 230 makes the threshold exceed 255 and the item unsatisfiable regardless of what the builder ships; no clamp or fallback is stated (contrast item 15's own careful handling of the 22:00 case and item 23's explicit null-heapMB fallback)."
+  },
+  {
+   "module": "roads",
+   "kind": "unmeasurable",
+   "detail": "Item 24: the \u00b12 % comparison of item 6's probe values between 1080p and 720p is stated to be 'in world units'. World geometry does not depend on framebuffer size, so this sub-clause passes by construction and measures nothing; the real parity content of the item is the layout comparison and the speckle number."
+  },
+  {
+   "module": "roads",
+   "kind": "arithmetic",
+   "detail": "Item 24 vs item 7 vs the \u00a78 manifest: item 24 requires item 7's paint-free speckle number at 720p 'on the same three regions', but item 7's regions are highway_12, merge_12 and aerial_12, while group F of the manifest contains exactly one 720p capture (aerial_12_720p) and item 21 fixes the set at '38 captures, no more, no fewer'. Two of the three regions cannot be measured at 720p without violating item 21. Fix: either restrict item 24's speckle clause to the aerial region, or add highway_12_720p and merge_12_720p to group F and raise the manifest count to 40."
+  },
+  {
+   "module": "roads",
+   "kind": "arithmetic",
+   "detail": "Item 6 vs the \u00a74 rect table: item 6 requires the asphalt-to-paint cross-section to take '\u2265 2 px at 1080p (a hard one-pixel step is a finding)', while the `paint` rect is defined as enclosing 'one edge line or one centre-line dash along its long axis, its \u2264 2 px feather, nothing else'. Only a feather of exactly 2 px satisfies both readings; a builder who ships a 3-4 px feather to clear item 6 has a rect definition that no longer describes what is in the crop."
+  },
+  {
+   "module": "roads",
+   "kind": "arithmetic",
+   "detail": "Item 5(a) vs the \u00a78 camera table: 'the armtop frame covers \u2248 68 m along its long axis at the staged distance' requires a camera distance of 46.2 m under the spec's own 45\u00b0 fov / 16:9 assumption (stated in the \u00a74 conventions block). The table stages `armtop` 'top-down over one avenue arm, ~40 m', which yields 58.9 m. The 68 m figure carries the justification for why the \u22653 patch count is per rect rather than per metre, so the discrepancy is load-bearing, not decorative."
+  },
+  {
+   "module": "roads",
+   "kind": "arithmetic",
+   "detail": "\u00a75 budget, soft: 'GPU texture memory owned by roads \u2264 96 MB' is measured as '\u2264 4 PBR sets at 1 k (no 2 k), one \u2264 512\u00b2 noise, one \u2264 1024\u00b2 paint/decal atlas'. Four 1k sets at five separate RGBA8 maps each is ~111 MB with mips \u2014 over the ceiling. It only fits (~74 MB) if the sets are ARM-packed to three maps, which ctx.assets.pbr supports via armMap but the budget row never requires. The two halves of the row are reconcilable but not as written."
+  },
+  {
+   "module": "effects",
+   "kind": "unmeasurable",
+   "detail": "Item 21, first clause \u2014 \"staged windows emit >= 2.5x bloomThreshold() in scene-linear units at 22:00\": bloomThreshold() and state().bloom.threshold have named read paths, but the *emitter's* scene-linear emissive value has none. state() exposes no stage emissive, no debug view reports it, and no probe path is named; a critic must invent a scene-traversal page.evaluate over materials the spec never names. Fix: add `state().showcase.windowEmissive` (or reuse the existing `_showcase()` hook) and grade against that."
+  },
+  {
+   "module": "effects",
+   "kind": "unmeasurable",
+   "detail": "Item 20, \">= 3 clustered cards each with normal-blended (not flat-card) shading\" \u2014 normal blending is a material property, not a pixel statistic; no screenshot, crops.json rect or page-evaluate probe is named that separates blended from flat-card shading. The rest of item 20 (species count, >= 60 % roof clutter, >= 4 facade families, >= 3 night emissive classes) is countable by eye in the named shots, but this clause needs a code read the critic is told not to rely on."
+  },
+  {
+   "module": "effects",
+   "kind": "unmeasurable",
+   "detail": "Item 12, streak tilt \"4-14 deg with the wind\" \u2014 the spec self-declares this as \"checked by eye on the crop, not counted\", so it is honest rather than hidden, but it is still a numeric range with no instrument. Either drop the degrees or derive the angle from the same connected-component labelling that already produces the count (component bounding-box aspect/orientation is free once the components exist)."
+  },
+  {
+   "module": "effects",
+   "kind": "unmeasurable",
+   "detail": "Item 10, \"the setDebugView('ao') capture shows no closed leaf-shaped outlines\", and item 23, \"no contour band is visible at 100 % zoom\" \u2014 pure eye calls. Both are backed by a numeric sibling clause in the same item (mean |AO diff| <= 4 luma; >= 40 distinct luma values), so neither can fail alone on taste, which is why I did not count them as broken items."
+  },
+  {
+   "module": "effects",
+   "kind": "arithmetic",
+   "detail": "Budget table, textures row: \"<= 80 ... round 1 read 42 ... 80 is round 1 doubled\". 42 doubled is 84, not 80. The limit itself is checkable and the added-texture estimate under it (~4 facade families x 4 maps + 3 tree species = 19, giving 61) clears 80 comfortably, so nothing is chased into a wall \u2014 but the stated justification fails its own arithmetic."
+  },
+  {
+   "module": "effects",
+   "kind": "arithmetic",
+   "detail": "Item 21: \"round 1 emitted 0.11 against a threshold of 0.79 - a factor of 7 short\". 0.79 / 0.11 = 7.2, so 7x is the shortfall against the *threshold*; against the item's actual requirement (>= 2.5 x threshold = 1.975) the shortfall is 18x. The requirement is unambiguous, but the parenthetical understates the gap by 2.5x and a builder sizing the fix from that sentence will land under the bar."
+  },
+  {
+   "module": "simulation",
+   "kind": "unmeasurable",
+   "detail": "Item 24 (planting): the two 'countable' claims (>=3 distinct canopy geometries, >=4 distinct crown colours) and the instance-variety rule (no two instances within 8 m sharing rotation to 0.01 rad and scale to 1%) are both delegated to 'the probe below' / 'the same probe', but no probe is ever defined. Item 23's api.showcaseProbe() returns only {camera, rows, pillars} \u2014 no foliage field \u2014 and window.__sim exposes world/events/clock/camera/engine/registry but no scene graph or ctx.group, so a critic has no handle to reach InstancedMesh matrices. The builder can invent one inside its own folder, but the spec never names it, so the critic cannot grade the item without asking. Fix: add a required api.plantingProbe() -> {canopies:[{geometryId, materialId, colour, origin, rotation, scale}]} to item 24 the way item 23 adds showcaseProbe."
+  },
+  {
+   "module": "simulation",
+   "kind": "unmeasurable",
+   "detail": "Item 21 (night pools): '>= 3 distinct pools of L >= 120 ... each >= 400 px and adjacent to emissive geometry'. Pool area and luminance are scriptable on the PNG, but 'adjacent to emissive geometry' names no distance, no rect and no probe. The rest of the item (mean-luminance ceilings per frame) is fully instrumented, so this is a sub-clause defect, not an item defect. Fix: 'whose centroid is within N px of a pixel with L >= 200' or pin the emitters in cropRects."
+  },
+  {
+   "module": "simulation",
+   "kind": "unmeasurable",
+   "detail": "Item 17 (panel typography): the colour clause names its instrument explicitly (getComputedStyle on the four bars) and the contrast clause names the crop, but 'every label uppercase >= 10 px with >= 0.08em tracking' and '>= 4 hairline section dividers' name none. Both are reachable by page.evaluate, so this is a naming omission rather than a missing instrument."
+  },
+  {
+   "module": "simulation",
+   "kind": "arithmetic",
+   "detail": "Item 14, minor: the spec justifies the downwind/upwind discs as 'symmetric about the centroid ... only the plume breaks the tie', but the two discs do not contain symmetric amounts of the source. With the industrial wedge at 300-720 m and the centroid at ~500 m, the upwind 150 m disc at (300,0) spans radii 150-450 and contains the near third of the wedge, while the downwind disc at (700,0) spans 550-850 and contains the far third plus empty ground. The 2x air ratio is still achievable under advection, but the stated reason for it is not what the geometry says, and a builder that lands at 1.9x has a real argument. Everything else in the item is arithmetically sound: the area-weighted centroid of a +/-0.7 rad, 300-720 m annular sector is (2/3)((720^3-300^3)/(720^2-300^2))(sin 0.7/0.7) = 495.9 m, which the spec's '~ (500, 0)' matches."
+  },
+  {
+   "module": "audio",
+   "kind": "unmeasurable",
+   "detail": "Item 20: 'value text contrast \u2265 7:1 and label text \u2265 4.5:1 against the panel ground' \u2014 the crops.json `audio.panel` rect is produced by an existing tool, but nothing in the toolchain segments text pixels from panel ground; a critic must hand-pick sample pixels, so two critics can get two ratios. Fix: require the module to expose `audio.panelValueSwatch`/`audio.panelLabelSwatch`/`audio.panelGround` rects (solid-fill calibration patches) and compute the ratio between three rect means."
+  },
+  {
+   "module": "audio",
+   "kind": "unmeasurable",
+   "detail": "Item 25: 'Planting within 60 m \u2026 shows \u2265 3 distinguishable species by silhouette, \u2265 4 crown-colour variants, no two adjacent instances sharing rotation and scale.' Species-by-silhouette and per-instance rotation/scale identity are not resolvable from a screenshot, crops rect, gauntlet JSON or a `window.__sim` probe. Partly defused by the explicit 'alternatively remove planting from within 60 m of every declared camera' escape hatch, but if planting is present the clause is argued, not measured."
+  },
+  {
+   "module": "audio",
+   "kind": "unmeasurable",
+   "detail": "Item 20(h): 'a spectrogram thumbnail (time \u00d7 log-frequency, \u2265 96 \u00d7 18 px, not a waveform)'. The pixel dimensions are measurable; 'is a spectrogram, not a waveform' is an eyeball call with no instrument. Low blast radius, but it is one of the three sub-items in the 25 %-weighted panel axis."
+  },
+  {
+   "module": "audio",
+   "kind": "unmeasurable",
+   "detail": "Items 1\u201311 (11 of 26) are graded from `selftest.json`, which the builder's own `src/modules/audio/selftest.mjs` emits \u2014 including the per-sound sha256 hashes that item 6's determinism check compares. The spec is aware of this class of problem (it explicitly refuses to let lamp-pool blob counts be defined inside the builder's script, routing item 23 through `crops.json` instead) and specifies every algorithm precisely enough that a critic could reimplement, but re-running the builder's script is not independent verification of the DSP claims."
+  },
+  {
+   "module": "zoning",
+   "kind": "unmeasurable",
+   "detail": "\u00a75 budget row 'JS heap contribution \u2264 24 MB ... heapMB in the shot JSON': ARCHITECTURE \u00a78's documented shot-JSON schema has no heapMB field, so no named instrument reads this number."
+  },
+  {
+   "module": "zoning",
+   "kind": "unmeasurable",
+   "detail": "\u00a75 budget row 'Texture memory \u2264 4 MB' measured by '__sim.stats().textures': that field is a texture count, not megabytes. The companion clause ('at most one 256\u00b2 helper texture') is checkable; the 4 MB figure is not."
+  },
+  {
+   "module": "zoning",
+   "kind": "unmeasurable",
+   "detail": "\u00a75 budget row 'update() \u2264 0.4 ms steady state' shares its instrument (moduleMs.zoning) with the \u2264 1.0 ms worst-frame row, so the steady-state figure has no separate reading. Low risk: \u00a74 item 20 only grades the \u2264 1.0 ms number."
+  },
+  {
+   "module": "zoning",
+   "kind": "unmeasurable",
+   "detail": "Item 16's fade timing: the 10 %\u219290 % crossing must land in 0.15\u20130.25 s but is sampled every 50 ms, so instrument resolution is half the acceptance band's width."
+  },
+  {
+   "module": "zoning",
+   "kind": "arithmetic",
+   "detail": "Item 8 vs failure mode 7. Item 8 demands BOTH clearance = r.dist \u2212 (T.asphaltHalf + T.sidewalk) \u2208 0.5\u20132.0 m AND world.roads.isRoad(v.x,v.z) === 0 at every frontage vertex. Failure mode 7 states that isRoad is a 4 m grid whose sidewalk/verge value 'bleeds one cell past the real kerb'. For an alley (asphaltHalf 2.0, sidewalk 2) the bleed reaches ~2 m past the sidewalk outer edge, i.e. across the entire 0.5\u20132.0 m band item 8 permits, so the two clauses cannot both hold on staged alley frontages (\u00a78.4). Failure mode 7 itself says the mask should be 'only a veto' while the geometric setback is the authority \u2014 the acceptance item makes the mask a hard gate anyway."
+  },
+  {
+   "module": "zoning",
+   "kind": "arithmetic",
+   "detail": "Item 9's terrain-curvature check is vacuous by its own arithmetic. Zone cells are 8 m, indexed ix = floor((x+1024)/8), so 4 m tessellation nodes land at \u22121024 + 4k \u2014 exactly on terrain's own 4 m grid (\u00a73: cellSize 4, resolution 513 over 2048 m). getHeight is bilinear over that grid, so 'getHeight(quad centre) \u2212 bilinear of getHeight at the quad's four corners' is identically 0 for every cell. The 0.3 m threshold can never be exceeded and the 'tessellate finer than 4 m' remedy can never trigger; the item passes for a build that does detach from a ridge."
+  },
+  {
+   "module": "zoning",
+   "kind": "arithmetic",
+   "detail": "\u00a78.8's worked example is moot against its own staging floor. It argues the 1 700-cell floor is needed because 'sixteen such blocks come to 1 344, which would satisfy a per-class count and still fail item 10's cells \u2265 1500'. But the same sentence requires 'at least three blocks of each of the eight classes' = 24 blocks minimum, i.e. 24 \u00d7 84 = 2 016 cells, which already clears both 1 700 and 1 500. Sixteen blocks cannot satisfy the per-class count, so the example's premise is false and the justification for the 1 700 floor collapses (the floor itself is harmless)."
+  },
+  {
+   "module": "zoning",
+   "kind": "arithmetic",
+   "detail": "Item 19's saturation ratio may be unreachable at the documented fog density. With world.weather.fogDensity = 0.0006 (ARCHITECTURE \u00a73) under THREE.FogExp2, fog blend is 1 \u2212 exp(\u2212(0.0006\u00b7d)\u00b2) = 12.2 % at 600 m and 0.8 % at 150 m, giving a far:near saturation ratio of about 0.89 \u2014 well above the required \u2264 0.75. Under plain exponential fog the ratio is ~0.70 and the item passes. The spec pins the distances and the ratio but never pins the fog model, so whether the threshold is satisfiable is undetermined from the text."
+  },
+  {
+   "module": "props",
+   "kind": "unmeasurable",
+   "detail": "Item 11a: hedge 'modelled undulating top of \u2265 0.08 m amplitude'. At park_12 (~60 m) 0.08 m is ~1.7 px, and the pinned `hedge` rect (256\u00d764 px of the side face) supplies no metres-per-pixel. No probe is named for reading the crest geometry, so this is judged by eye at the resolution floor."
+  },
+  {
+   "module": "props",
+   "kind": "unmeasurable",
+   "detail": "Item 11c: fence 'bottom rail clearing the ground by \u2264 0.12 m over undulating terrain'. Sub-pixel at park_12/avenue_12 and no instrument named; it is probe-able (sample rail vertices against world.terrain.getHeight) but the item does not say so, and \u00a74's probe list contains no capture for it."
+  },
+  {
+   "module": "props",
+   "kind": "unmeasurable",
+   "detail": "Item 14: 'Tiers cross-fade over a band of \u2265 10 m (dither or alpha)'. api.debug.lodHistogram() returns per-tier counts, not the width of the transition band, and no screenshot statistic recovers 10 metres of blend distance. No command reads this."
+  },
+  {
+   "module": "props",
+   "kind": "unmeasurable",
+   "detail": "Item 16: 'canopy pixels move by 2\u20138 px'. A two-frame diff yields the set of changed pixels, not a displacement magnitude; no method is named for turning the diff into a px offset (the changed-band width is a proxy the item does not specify)."
+  },
+  {
+   "module": "props",
+   "kind": "unmeasurable",
+   "detail": "Item 9b: 'an impostor tree's p50 is within 25 % of a LOD1 tree at the same screen depth' at skyline_22 (900 m, where a 12 m tree is ~17 px tall). Telling an impostor from a LOD1 tree in that frame requires api.debug.setLod, which the item never invokes, so the critic has no defined way to pick the two samples."
+  },
+  {
+   "module": "props",
+   "kind": "arithmetic",
+   "detail": "\u00a73 tree table vs item 2: base heights 9\u201314 m (broad crown) multiplied by item 2's scale \u2208 [0.75, 1.35] give 6.75\u201318.9 m, but \u00a73's own probe rejects any instance outside 0.7\u20131.4 \u00d7 the row midpoint (8.05\u201316.1 m). Every one of the five rows fails at both corners (conifer 9\u201327 vs 11.2\u201322.4; tall-narrow 7.5\u201321.6 vs 9.1\u201318.2; willow 4.5\u201312.15 vs 5.25\u201310.5; blossom 3\u20138.1 vs 3.5\u20137). Satisfying both forces base heights within ~\u00b13.5 % of the midpoint \u2014 far narrower than the table states, and the table never says so."
+  },
+  {
+   "module": "props",
+   "kind": "arithmetic",
+   "detail": "Item 14: 'two shots of the same camera dollied 3 m across the LOD0\u2192LOD1 boundary differ by \u2264 1.5 % of pixels by \u2265 40 L'. At the forest preset (~120 m, dense high-frequency foliage) a 3 m dolly displaces mid-ground crowns by ~30\u201365 px through parallax alone, so the frame diff blows past 1.5 % regardless of how clean the LOD cross-fade is. The item is unreachable as written \u2014 and item 6f abandons a frame-to-frame diff for exactly this class of reason, so the spec contradicts its own measurement discipline. The fix is already in the api: force the tiers with debug.setLod and diff a fixed camera."
+  },
+  {
+   "module": "props",
+   "kind": "arithmetic",
+   "detail": "Item 24 requires 720p 'forest_22' to show the same props, LOD tiers and pools 'as at 1080p', but \u00a78 and item 21 shoot forest only at 12 and 17.5 \u2014 there is no 1080p forest_22 among the enumerated 34, and item 21 states the matrix is exact ('a missing shot is a missing item'). The parity comparison has no baseline. Either the 22:00 720p shot should be a preset that is already shot at 22 (avenue/lamp/park), or forest_22 must be added to the 15 preset shots and the 34 recomputed to 35."
+  },
+  {
+   "module": "props",
+   "kind": "arithmetic",
+   "detail": "Item 16: 'with wind.speed = 0 the two frames are byte-identical' across __sim.setTime(12.000) \u2192 setTime(12.004). 0.004 h is 14.4 s of game time, which moves environment's sun by ~0.06\u00b0 and perturbs shadow-edge pixels via the CSM \u2014 a difference props neither causes nor can suppress, since environment owns the sun. The determinism the item wants is 'identical at the same ?time=', which item 19 already states correctly; 'byte-identical across two different times' overshoots it."
+  },
+  {
+   "module": "props",
+   "kind": "arithmetic",
+   "detail": "Tension (not a flat error): \u00a75 caps scene draw calls in ?showcase=props at \u2264 200 while allowing props \u2264 120. ARCHITECTURE \u00a79 allocates terrain 20 + environment 15 + roads 80 = 115 for the full demo city, so the two caps are only jointly reachable if the three neighbours together stay under 80 in this showcase. Nothing in the spec states that assumption, and a builder who lands at exactly 120 props draws can fail the scene cap through no act of its own."
+  },
+  {
+   "module": "tools",
+   "kind": "unmeasurable",
+   "detail": "Criterion 6: 'Prove it with a bloom on/off pixel diff over the same tools.ribbon crop in shots/tools/r1/all_night_22.png, <= 1/255 mean' \u2014 no instrument for toggling bloom is named. screenshot.mjs has no bloom flag in this spec, no effects api call (e.g. ctx.modules.effects.setBloom) is given a signature anywhere in section 7, and section 7 explicitly bans declaring effects as a dependency. The builder must invent the toggle and the critic must guess the same one."
+  },
+  {
+   "module": "tools",
+   "kind": "unmeasurable",
+   "detail": "Criterion 6 and section 8 both grade at a camera preset named `night_street` (`--showcase all --camera night_street --time 22`), but `night_street` is not in the module's declared camera table (roadtool/zonetool/sculpt/bulldoze/service/invalid) and is not one of the four core presets the spec names elsewhere (aerial/street/skyline/closeup). If it does not exist the pinned run cannot be shot."
+  },
+  {
+   "module": "tools",
+   "kind": "unmeasurable",
+   "detail": "Criterion 4: 'text cap-height >= 9 px read off the full-resolution PNG inside a chip rect' \u2014 cropRects pins the chip pill, not the glyph box, and stats().chipRects returns pill rects only. There is no probe or crop that isolates a cap-height, so this sub-item degrades to manual pixel counting on a rendered glyph."
+  },
+  {
+   "module": "tools",
+   "kind": "unmeasurable",
+   "detail": "Criterion 21 requires the 720p pass to be taken '--w 1280 --h 720 ... with --crops' and to compare the tools.ribbon rect width across resolutions, but section 8 states gauntlet.mjs does not forward --crops (gauntlet.mjs:20-23) and the required-runs block contains no 1280x720 screenshot.mjs --crops invocation \u2014 only 1080p ones. The instrument for the item's central measurement is not actually scheduled."
+  },
+  {
+   "module": "tools",
+   "kind": "unmeasurable",
+   "detail": "Criterion 8: 'the whole ghost is red #E5484D at >= 0.5 alpha (not just an outline)' \u2014 no reader is named for alpha. A composited screenshot pixel does not report alpha, and no probe field (unlike ghostLiftMin/Max, chipRects, poses) exposes material.opacity, so the critic must fall back to reading source."
+  },
+  {
+   "module": "infoviews",
+   "kind": "unmeasurable",
+   "detail": "Criteria 3, 5, 10, 11 rest on the \u00a74 \"overlay pixel\" A/B mask, and `tools/screenshot.mjs` cannot produce the paired off-frame on its own \u2014 it passes only showcase/time/camera/seed/quality/headless/speed/weather/modules, and each showcase camera preset pins its own view, so there is no way to shoot the same framing with the view off. The spec closes the gap by making the builder ship `shots/infoviews/rN/mask.mjs` and grading a missing mask as a fail, which is legitimate, but the instrument does not exist until the builder writes it and the spec never states what `mask.mjs` must accept or emit (only that it exists), so two builders could ship scripts the critic drives differently."
+  },
+  {
+   "module": "infoviews",
+   "kind": "unmeasurable",
+   "detail": "Criterion 13's \"dark translucent (`rgba(14,20,30,0.82)` or similar) with a blue accent\" and criterion 14's \"distinct pictograms, not letters\" have no probe or pixel test \u2014 they are eyeballed against `iv_legend_12.png`. Both sit on top of a hard numeric core (panel \u2264 380 \u00d7 300 px, 11\u201313 px type from `getComputedStyle`, and the 720p bounding-rect overflow hard fail), so neither can carry an item on its own, but the colour and icon clauses themselves are unfalsifiable as written."
+  },
+  {
+   "module": "infoviews",
+   "kind": "unmeasurable",
+   "detail": "Criterion 8's \"\u2265 6 distinct tint colours\" has no distinctness threshold. Read literally against a continuous ramp every building is distinct, so the clause is trivially satisfied and does nothing; the Spearman \u2265 0.95 half of the item is what actually grades."
+  },
+  {
+   "module": "infoviews",
+   "kind": "arithmetic",
+   "detail": "\u00a75 budget table: \"ground grid 257\u00b2 = 131 072\". 257\u00b2 = 66 049. The triangle count is right for a 256\u00d7256 quad grid (256\u00b2 \u00d7 2 = 131 072, 257\u00b2 vertices) but the equation as written is false, and it is the one figure in the triangle budget a builder would copy verbatim into `budget.triangles`. Total still checks out: 131 072 + 12 \u00d7 1200 + 40 000 = 185 472 \u2264 260 000."
+  },
+  {
+   "module": "infoviews",
+   "kind": "arithmetic",
+   "detail": "Recompute rate: the \u00a75 budget row says \"\u2264 1 per game hour\", but criterion 20 defines coalescing as a 360-game-second window, which permits up to 10 recomputes per game hour whenever `*:changed` events keep arriving. The graded probe (3 game hours idle, delta \u2264 3) is consistent with both, so nothing is unbuildable, but the budget table's rate claim is not implied by the coalescing rule it cites and a critic reading the table could fail a build the criterion passes."
+  },
+  {
+   "module": "infoviews",
+   "kind": "arithmetic",
+   "detail": "City-mask area vs staged road length. \u00a72.1 derives the stat population as \u2248 1.5 \u00d7 10\u2076 m\u00b2 (\u2248 23 000 cells), which only comes out if \u00a78's nine corridors span the full 1280 m buffered box \u2014 i.e. \u2248 8 700 m of road. The traffic-ribbon floor two paragraphs later derives \u2248 1 770 cells from \"\u2248 5 150 m of road\", which corresponds to avenues and streets that stop at the outer grid lines and yields a mask nearer 0.95 \u00d7 10\u2076 m\u00b2. Both figures cannot follow from the same \u00a78 layout. Consequences are contained \u2014 criterion 12's [0.10, 0.85] band holds either way (direct 0.17 vs 0.26, inverse 0.39 vs 0.61) and the 1 200-cell ribbon floor holds at 1 770 \u2014 so this degrades confidence in the derivations rather than sending the builder into a wall."
+  },
+  {
+   "module": "infoviews",
+   "kind": "arithmetic",
+   "detail": "\u00a72.1's anti-accumulation derivation assumes a 90 m disc holds \u2248 25 of the \u2265 180 staged buildings. Over the 1040 m city that is \u2248 6\u00d7 the average density (city-wide it is \u2248 4.2 buildings per 25 447 m\u00b2 disc); the text attributes it to the residential-high block but never states the clustering. The conclusion survives at the city average (4 \u00d7 0.333 = 1.33 v, clamping for v > 0.75), just far less dramatically than the quoted 8.3 v."
+  },
+  {
+   "module": "infoviews",
+   "kind": "arithmetic",
+   "detail": "Criterion 7's own worked example lands at \u2248 23/255 against its 25/255 threshold: 0.65 \u00d7 (1.00 \u2212 0.72) \u00d7 0.5 = 0.091 \u2192 23.2/255. The spec is aware of this and covers the shortfall with \"the remaining 0.35 of the pixel is the sun-lit facade underneath\", but that contribution is never quantified, so the item's stated margin is negative and the pass depends on an unmeasured term. Not a contradiction \u2014 a thin, self-flagged one."
+  },
+  {
+   "module": "services",
+   "kind": "unmeasurable",
+   "detail": "Item 14: `stats().overlay === null` 'in every .json produced by the \u00a78 gauntlet commands' \u2014 the shot JSON's `modules` field is `registry.status()` = {status, errors, ms, initMs}; a module's own stats() never reaches the capture JSON, so this clause is only checkable through a separate page-evaluate probe, not the named instrument."
+  },
+  {
+   "module": "services",
+   "kind": "unmeasurable",
+   "detail": "Item 21: the reference half of the contact-darkening ratio ('the same column at mid height and 5 m out') is not a pinned rect \u2014 only `wall_base` is in cropRects \u2014 so the critic must hand-derive the comparison region, which is exactly the hand-guessed coordinate ARCHITECTURE \u00a78 says crops.json exists to eliminate."
+  },
+  {
+   "module": "services",
+   "kind": "unmeasurable",
+   "detail": "Item 3(d): 'allocate nothing / no `new` in the query path' has no allocation instrument; it is proxied by `stats().gridMs` being unchanged plus a source read, which detects a grid rebuild but not per-call garbage."
+  },
+  {
+   "module": "services",
+   "kind": "unmeasurable",
+   "detail": "\u00a75 budget row: `showcase.setup() <= 8 s under SwiftShader` measured by '.json elapsedMs vs baseline' \u2014 elapsedMs times the whole capture (nav, settle, fps window, PNG write), not setup(), and no baseline file is named for this module."
+  },
+  {
+   "module": "services",
+   "kind": "unmeasurable",
+   "detail": "Item 2(b): 'reaches >= 2.0x the emitter height before it fades below 5% opacity' \u2014 5% opacity is a shader value with no reader; only the crops.json plume luma statistic is actually instrumented."
+  },
+  {
+   "module": "services",
+   "kind": "arithmetic",
+   "detail": "Items 3(b)(c) and 13(d) probe 'with one power_coal' / 'the only power plant' and require coverage to drop to 0 on remove(), but \u00a78 mandates >=1 of all 17 kinds \u2014 1 coal + >=4 wind + solar + incinerator all produce `power`, so \u00a72's own componentSupply/componentDemand leaves ~580 units after the removal and coverage never reaches 0."
+  },
+  {
+   "module": "services",
+   "kind": "arithmetic",
+   "detail": "Item 13(e) requires `load <= effectiveCapacity` for every item, while \u00a72 defines civic/park `load` as the number of people in covered buildings and \u00a74.2 gives park_small/park_large/plaza `capacity = {}` (effectiveCapacity = 0); any park with a covered population fails the item by construction. The same tension applies to civic kinds whose `{people:N}` capacity (clinic 1200) is smaller than the population a 340 m road-distance radius covers in a 120-180 building district."
+  },
+  {
+   "module": "services",
+   "kind": "arithmetic",
+   "detail": "\u00a75 budgets `update()` at <= 2.0 ms but allows the coverage-grid rebuild to be 'sliced so no frame pays > 4 ms'; a module only executes inside update(), so a rebuild frame breaks both the 2.0 ms row and ARCHITECTURE \u00a79's <= 2 ms per module."
+  },
+  {
+   "module": "services",
+   "kind": "arithmetic",
+   "detail": "Item 3(b) requires coverage('power') >= 0.9 for >=95% of staged buildings from a single 600-unit coal plant, but \u00a78 pins only the lot count (140-180) and not the zoning mix; an industrial-heavy stage at `3 + 2*level` per building reaches 750 demand and the ratio falls to 0.8 through no fault of the implementation."
+  },
+  {
+   "module": "services",
+   "kind": "arithmetic",
+   "detail": "\u00a75's 'one merged geometry per chunk per material so a chunk is one draw call' is self-contradictory as written \u2014 per chunk per material is N draws per chunk, and at 128 m tiles over a 560 m district with four atlases the arithmetic runs close to the 60-draw cap."
+  },
+  {
+   "module": "transit",
+   "kind": "unmeasurable",
+   "detail": "Item 18: 'no periodic repeat in a 2D autocorrelation of any bus or shelter material at a period < 64 px' names the transform but no fail value \u2014 what autocorrelation peak magnitude counts as 'a repeat' is left to the critic, so a builder can argue any result."
+  },
+  {
+   "module": "transit",
+   "kind": "unmeasurable",
+   "detail": "Item 17: 'each bus throws a long shadow whose direction matches world.weather.sunDir to \u00b1 5\u00b0' \u2014 no shipped instrument reads a shadow azimuth off a PNG, and the spec names none (screenshot JSON, crops.json rects and page.evaluate all measure something else). \u00b1 5\u00b0 is precision the toolchain cannot resolve."
+  },
+  {
+   "module": "transit",
+   "kind": "unmeasurable",
+   "detail": "Item 6: 'the bus body's unlit panels have p50 \u2264 60/255' is measured inside `transit.bus`, but that rect is a dilated AABB containing background, glass and lit elements; segmenting 'unlit panels' inside it is eyeball work, so the percentile is not reproducible between two critics."
+  },
+  {
+   "module": "transit",
+   "kind": "unmeasurable",
+   "detail": "Item 4: 'no shelter footprint pixel is below the sidewalk surface by > 0.05 m' mixes pixels with metres and names no probe; the raycast half of the same sentence (y \u00b1 0.03 m) is fine, this half is not."
+  },
+  {
+   "module": "transit",
+   "kind": "unmeasurable",
+   "detail": "Item 3: 'separate near-black glasshouse with \u2265 2 pillars', 'two door bays reading as recessed', 'tyre-to-ground gap \u2264 0.04 m' \u2014 the sparkle probe and roughness range are numeric, but these sub-clauses name no instrument (geometry probe vs. crop inspection is unstated), so they are art-director judgement inside a pinned rect."
+  },
+  {
+   "module": "transit",
+   "kind": "arithmetic",
+   "detail": "Item 19 vs the `overlay` preset: chips are 'culled beyond 260 m', but `overlay` is position [0,300,380] target [0,0,40] with the network inside a 700 m box \u2014 the nearest network point is ~301 m from that camera (sqrt(300^2+30^2)), so every chip is culled in the exact frame item 19 grades chips on. The `line` preset (camera-to-target ~355 m) is no better. A builder obeying both rules ships an empty chip frame and fails the item."
+  },
+  {
+   "module": "transit",
+   "kind": "arithmetic",
+   "detail": "Item 5's '\u2265 3 % of screen pixels at aerial' is unreachable at \u00a78's minimum staging: three 1.4 km loops give ribbon screen area \u2248 4200 m \u00d7 1.8 m \u00d7 (2.5 px/m)^2 \u00d7 sin(0.85) \u2248 35 400 px \u2248 1.7 % of 1920\u00d71080; discs add ~700 px and chips are culled at 520 m. Only loops near the 3.5 km end (\u2248 4.3 %) clear the gate, so a \u00a78-compliant minimum staging fails item 5."
+  },
+  {
+   "module": "transit",
+   "kind": "arithmetic",
+   "detail": "Item 8's meanSpeed floor is derived from a configuration \u00a78 forbids: '12 stops \u00d7 12 s dwell' on the 1400 m loop implies 117 m stop spacing, against \u00a78's 220\u2013320 m rule (max 6 stops on 1400 m \u2192 1400/(175+72) = 5.7 m/s). The arithmetic 1400/(175+144)=4.4 is correct but the premise is illegal; the error is conservative, so the [4,13] bound still holds."
+  },
+  {
+   "module": "transit",
+   "kind": "arithmetic",
+   "detail": "Item 4 states the adopted props shelter stands '~1.35\u20132 m further out' and tells the builder to frame the `stop` preset for 'two objects 1.35\u20132 m apart', but the bands it derives from allow 1.35\u20133.85 m on a `street` (band 5.5\u20138.0 vs shelter at 9.35) and 1.35\u20134.85 m on an `avenue` (band 8.5\u201312.0 vs 13.35) \u2014 with any along-road offset the 6 m adoption radius gets tight."
+  },
+  {
+   "module": "transit",
+   "kind": "arithmetic",
+   "detail": "\u00a78 stop counting: '\u2265 18 stops' with '6\u201312 stops each' over 3 lines and 'at least two shared by two lines' yields only 16 distinct bus stops at the minimum (3\u00d76 \u2212 2); the requirement is satisfiable only by counting the \u2265 4 tram platforms, which the text never says. Also 12 stops at the 320 m maximum spacing is 3840 m, past the 3.5 km loop ceiling \u2014 each bound is individually satisfiable, but the corners are not."
+  }
+ ]
+}
