@@ -7,7 +7,10 @@
   "core": {
     "status": "ready",
     "notes": [
-      "verification loop verified on environment stub: 4 draws, shadows OK, 1080p"
+      "verification loop verified end to end; full game (?showcase=all) boots with all 16 modules ready, 0 console errors, 37 draws at the stub-city stage",
+      "wave-1 core requests applied 2026-09-05 (screenshot/gauntlet robustness, selective showcase imports, clock.sunAzimuth, PCFShadowMap, headless GPU sync, HDRLoader); decisions recorded in docs/core-requests/*.md",
+      "throughput note: 4 CPUs => the workflow runs only 2 agents concurrently, and SwiftShader needs 3-10 s per 1080p frame; critic matrix reduced to 8 shots + 2 golden-hour + presets, and each launch is capped at 2 rounds per module (roundsPerRun) so a usage window spreads across modules",
+      "session usage limits have interrupted 3 launches; state is resumable from docs/STATUS.json modules[].next (build|critic + round), fed from docs/builds/ and docs/critic/ records"
     ]
   },
   "modules": {
@@ -427,7 +430,49 @@
     "blindJudges": [],
     "openIssues": []
   },
-  "coreRequests": [],
+  "coreRequests": [
+    {
+      "module": "effects",
+      "applied": [
+        "screenshot capture timeout",
+        "gauntlet --timeout",
+        "selective showcase imports",
+        "headless GPU sync"
+      ],
+      "rejected": [
+        "server.hmr=false for headless"
+      ]
+    },
+    {
+      "module": "environment",
+      "applied": [
+        "clock.sunAzimuth east/west",
+        "HDRLoader",
+        "PCFShadowMap",
+        "screenshot ready re-check",
+        "world.weather fields documented"
+      ],
+      "rejected": [
+        "?pitch= to look up"
+      ]
+    },
+    {
+      "module": "roads",
+      "applied": [
+        "world.roads extra fields documented",
+        "screenshot retry"
+      ],
+      "deferred": [
+        "world.terrain.writeHeights/flattenStrip \u2014 terrain-module API, requested in ARCHITECTURE \u00a73"
+      ]
+    },
+    {
+      "module": "simulation",
+      "applied": [
+        "screenshot retry on navigation"
+      ]
+    }
+  ],
   "summary": {
     "passed": [],
     "needsWork": [
