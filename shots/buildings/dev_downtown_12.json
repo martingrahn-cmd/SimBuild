@@ -1,8 +1,8 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=buildings&time=22&camera=night_downtown&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5173/?showcase=buildings&time=12&camera=downtown&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "buildings",
-  "time": 22,
-  "camera": "night_downtown",
+  "time": 12,
+  "camera": "downtown",
   "seed": 1337,
   "width": 1920,
   "height": 1080,
@@ -10,61 +10,61 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 408332,
+  "elapsedMs": 392345,
   "fps": 11.6,
-  "measuredFrames": 1,
-  "frameMs": 18551.2,
-  "drawCalls": 167,
-  "triangles": 1753184,
+  "measuredFrames": 2,
+  "frameMs": 16974.1,
+  "drawCalls": 150,
+  "triangles": 1567934,
   "programs": 25,
   "textures": 44,
-  "geometries": 88,
-  "heapMB": 112,
+  "geometries": 86,
+  "heapMB": 112.2,
   "moduleMs": {
-    "environment": 0.7999999998137355,
-    "buildings": 0,
-    "terrain": 0.20000000018626451,
+    "environment": 0.40000000037252903,
+    "buildings": 0.09999999962747097,
+    "terrain": 0,
     "roads": 0,
     "zoning": 0
   },
-  "hour": 22,
+  "hour": 12,
   "cameraState": {
     "position": [
-      208.9,
-      61.7,
-      110.1
+      236.6,
+      133.8,
+      275.5
     ],
     "target": [
       30,
-      22,
-      30
+      30,
+      40
     ],
-    "distance": 200
+    "distance": 330
   },
   "modules": {
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.8,
-      "initMs": 327
+      "ms": 0.4,
+      "initMs": 672
     },
     "buildings": {
       "status": "ready",
       "errors": 0,
-      "ms": 0,
-      "initMs": 93
+      "ms": 0.1,
+      "initMs": 99
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.2,
-      "initMs": 5237
+      "ms": 0,
+      "initMs": 5468
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 98
+      "initMs": 112
     },
     "zoning": {
       "status": "ready",
@@ -75,5 +75,5 @@
   },
   "errors": [],
   "warnings": [],
-  "png": "shots/buildings/dev_nightdt_22.png"
+  "png": "shots/buildings/dev_downtown_12.png"
 }
