@@ -1,9 +1,14 @@
 # Module spec: `props`
 
 Multi-round spec (rounds 1–4). **The starting state of round `n` is whatever `docs/critic/props_r<n−1>.md`
-records, plus the working tree as it stands; round 1 starts from the stub.** Never assume the module is empty:
-read the previous critic file and `src/modules/props/` before planning, and treat anything already there that
-contradicts §2 or §4 as work to fix, not as prior art to preserve. Read with `BUILDER.md` / `CRITIC.md`
+records, plus the working tree as it stands; round 1 starts from the pre-spec build already in
+`src/modules/props/`** — eight files (≈ 110 KB) that contradict this spec: an `api` of
+`{rebuild, stats, lamps, signalState, count, serialize, deserialize}`, `count()` with no kind argument, an
+*exported* `signalState(nodeId)` (the exact function §2 says props must **read** from traffic), presets
+`lamps_night/forest/crossing/bench/canopy`, and `budget.triangles = 1_900_000` (`index.js:144`). §2, §5 and §8 are
+normative: bring the `api` to §2's shape, replace the exported `signalState` with `signals()`/`signalFor()`, drop
+the triangle budget to §5's 900 000, replace the presets with §8's eight. Never assume the module is empty: read the previous critic file and `src/modules/props/` before
+planning, and treat anything already there that contradicts §2 or §4 as work to fix, not as prior art to preserve. Read with `BUILDER.md` / `CRITIC.md`
 (invariants live there and are **not** repeated here) and `ARCHITECTURE.md` §3, §4, §5, §6, §9, §10, §12, §15.
 
 `$REF` = the CS2 reference frames `cs2_1.jpg` … `cs2_8.jpg`, resolved in this order: `$SIMBUILD_REF` if set, else
@@ -101,7 +106,8 @@ signals() -> [{nodeId, x, y, z, arms:int, phase:int, greenArms:[edgeId], cycle, 
 signalFor(edgeId, atA) -> {state:'red'|'amber'|'green', timeToChange, source:'traffic'|'props'} | null
      // pure read-through of ctx.modules.traffic.signalState(nodeId) whenever traffic is present (preamble)
 stops() -> [{id, x, y, z, heading, edgeId, side, t}]                             // transit reads this
-setDensity(v)                            // 0..1 global scatter density multiplier (quality/perf)
+setDensity(v)                            // 0..1 global scatter density multiplier (quality/perf); item 23 uses it
+cropRects({project, width, height, camera}) -> {name: [x, y, w, h]}   // §4's pinned landmarks; ARCHITECTURE §8
 serialize() -> {version, items:[{id,kind,x,z,heading,scale,species,edgeId,lotId}]} ; deserialize(data)
 debug: { setKindVisible(kind, bool), setLod(level|null), setSway(bool), setPools(bool), lodHistogram() }
 ```
@@ -172,8 +178,8 @@ silhouettes and §2's list names species for only four of them.)
 Probe-checkable: over the 200 nearest tree instances grouped by `species`, each group's median bounding height
 falls inside its row's range, and no instance is below 0.7 × or above 1.4 × its row's midpoint.
 
-**Where we are:** see the header — round 1 starts from the stub, later rounds start from
-`docs/critic/props_r<n−1>.md`. Neighbouring critics have already named the traps this build will
+**Where we are:** see the header — round 1 starts from the pre-spec build in `src/modules/props/`, later rounds
+start from `docs/critic/props_r<n−1>.md`. Neighbouring critics have already named the traps this build will
 walk into: `simulation_r1` "Trees are lollipops", "Hedges read as green static", "Nights are dusk: lawn, trees and
 hedges fully lit at 22:00"; `effects_r1` "AO is imperceptible and halos the tree cards", "Night is a milky blue
 dusk; only lamp heads ever glow"; `terrain_r1` "Grass tufts render into the planar reflection as confetti",
@@ -183,13 +189,42 @@ dusk; only lamp heads ever glow"; `terrain_r1` "Grass tufts render into the plan
 
 **Measurement conventions** (builder and critic both use these; deviating from them is a finding, not a defence):
 
-- `L = 0.2126R + 0.7152G + 0.0722B` on the 8-bit sRGB PNG. **Global/exposure items** (5, 6, 7) are measured on the
-  frame downsampled to 480 px wide, as `shots/environment/r2/imgstats.mjs` does. **Detail items** (1–4, 8–12) are
-  measured on **full-resolution crops**, saved next to the shot and named in the report.
-  `whitePct` = % pixels with `min(R,G,B) > 247`; `blackPct` = % with `max(R,G,B) < 8`. Saturation = HSV `S`.
+- `L = 0.2126R + 0.7152G + 0.0722B` on the 8-bit sRGB PNG. **Whole-frame statistics** — `whitePct`, `blackPct`,
+  and any `p50`/`std` taken over the whole PROPS REGION (items 5b, 5c, 7's frame-wide numbers, 9c, 17) — are
+  measured on the frame downsampled to 480 px wide, as `shots/environment/r2/imgstats.mjs` does. **Every statistic
+  taken inside a crop or a rect is taken on the full-resolution PNG, never on a downscaled copy** (ARCHITECTURE
+  §8): at 480 px a 1 m feature is about two pixels, and a trunk, a lens, a pool edge or a hedge top is simply not
+  there to measure. `whitePct` = % pixels with `min(R,G,B) > 247`; `blackPct` = % with `max(R,G,B) < 8`.
+  Saturation = HSV `S`.
+- **Pinned rects come from `--crops`, and from nothing else.** `node tools/screenshot.mjs … --crops` writes
+  `<out>.crops.json` beside the PNG (ARCHITECTURE §8): `{png, width, height, camera, time, rects:
+  {"<module>.<name>": [x, y, w, h]}}`, in pixels of the full-resolution capture, collected from every ready
+  module's `api.cropRects` by `window.__sim.cropRects()` (`src/core/debug.js:41`). **Props must implement
+  `api.cropRects`** (§2) and return exactly these names, each only when that landmark is in frame at that camera
+  and meets its minimum size:
+
+  | rect | must enclose | min size | read by |
+  |---|---|---|---|
+  | `canopy_broad` | one broadleaf crown, its lit side — foliage only, no sky, no trunk, no 12:00 shadow boundary | 128 × 128 px | 5a, 7 |
+  | `canopy_conifer` | one conifer crown, same exclusions | 128 × 128 px | 7 |
+  | `crown` | one crown whose upper half borders the SKY MASK, centred on that crown | 200 × 200 px | 1b, 1c, 9a |
+  | `trunk` | bark only, on the nearest trunk, no foliage and no background | 64 × 64 px | 1a, 1d |
+  | `pool` | one arterial lamp's ground pool plus ≥ 2 m of unlit surface beyond its edge | 128 × 128 px | 6b, 6c, 6d, 6f |
+  | `lamp_head` | one luminaire head and its halo, nothing else | 48 × 48 px | 6e |
+  | `hedge` | one hedge run's side face — hedge only, no ground, no sky | 256 × 64 px | 11a, 11b |
+
+  Where an item names one of these rects, that rect **is** the region and a hand-placed crop is a finding. Where an
+  item does not — item 2's twelve canopies, item 8's shadow region, item 18's woodland patch, item 24's 720p pair —
+  the crop is report-named: list its pixel rect in the report. A missing rect that should have been in frame, or a
+  `[debug] props.cropRects failed` warning in the shot JSON, is itself a finding.
+- **CROWN REGION** = the 4-connected component of non-SKY-MASK pixels containing the centre of the `crown` rect,
+  after a 3×3 median filter. Its convex hull is item 1c's denominator; report the region's pixel count. (A hull
+  over the whole box and a hull over the crown differ by more than item 1c's 6–22 % band is wide, so this rule is
+  not optional.)
 - **PROPS REGION** = the pixels props owns, as a **fixed pixel mask computed once per camera at `time=12`** by
-  shooting that camera twice with a probe toggling `ctx.group.visible` and diffing (`|ΔL| > 6`), then saved next
-  to the shot as `<camera>_mask.png`. **That same mask is reused unchanged for the 06.5, 17.5 and 22 items of the
+  shooting that camera twice with a probe toggling props' group off — `__sim.registry.get('props').group.visible =
+  false` (`src/core/registry.js:14,99`; there is no global `ctx`, see **Probe** below) — and diffing (`|ΔL| > 6`),
+  then saved next to the shot as `<camera>_mask.png`. **That same mask is reused unchanged for the 06.5, 17.5 and 22 items of the
   same camera** — never recomputed at night. (Recomputed at 22:00 the mask drops exactly the darkest props,
   because they move no pixel by 6 L, and item 5b then measures only the props that are already bright enough to
   pass it.)
@@ -197,37 +232,52 @@ dusk; only lamp heads ever glow"; `terrain_r1` "Grass tufts render into the plan
   "Silhouetted against sky" means the pixel's outward neighbour along the direction being tested is in the SKY
   MASK. Every item that reads a crown edge or counts sky-through-crown (1b, 1c, 9a) is evaluated **only** on a
   crown whose tested boundary borders the SKY MASK; a crown backed by terrain, water or a building is skipped and
-  another chosen — name the chosen crop's pixel rect in the report.
-- **CANOPY CROP** = a ≥ 128×128 px full-res rectangle lying entirely on one sunlit crown. **POOL CROP** = a
-  full-res crop of one lamp's ground light pool at 22:00.
+  another chosen — that choice is what `cropRects`' `crown` rect must return.
+- **CANOPY CROP** = a ≥ 128×128 px full-res rectangle lying entirely on one sunlit crown — report-named where an
+  item does not pin it to `canopy_broad` / `canopy_conifer`. Item 6's pool statistics are pinned to the `pool`
+  rect; there is no separately-defined "POOL CROP".
 - **Probe** = a throwaway Playwright script under `shots/props/r<n>/` against
-  `http://127.0.0.1:5173/?showcase=props&headless=1&time=12&seed=1337`, waiting for `window.__sim.ready`, reaching
-  the module through `window.__sim.world.props` and `window.__sim.registry` / `ctx.modules.props`.
+  `http://127.0.0.1:5173/?showcase=props&headless=1&time=12&seed=1337`, waiting for `window.__sim.ready`. The page
+  exposes **only** `window.__sim` (`src/core/debug.js`) — `world`, `events`, `clock`, `camera`, `engine`,
+  `registry`, `stats()`, `project()`, `cropRects()`, `setTime()`, `setCamera()`, `setSpeed()`. There is no global
+  `ctx`. The handles, all verified: `__sim.world.props` for the data; `const rec = __sim.registry.get('props')`
+  (`registry.js:99`) for `rec.api` (this is `ctx.modules.props`), `rec.group` (the mask toggle above) and
+  `rec.ctx`; and `rec.ctx.modules` **is** the single shared api object every module was handed (`registry.js:36`),
+  so assigning into it — `rec.ctx.modules.traffic = stub` — is visible to props on its next update. That is the
+  assignment item 10b means.
+- **Probe captures are outside item 21's 34.** They are written under `shots/props/r<n>/probe/` and there are
+  **14** of them: the props-off frame each PROPS REGION mask needs, one per masked camera (`avenue`, `lamp`,
+  `park`, `street`, `forest`, `skyline`, `aerial` — 7), item 14's dolly pair (2), item 16's `setTime` pair and its
+  `wind.speed = 0` pair (4), and item 10b's re-shot `signal_12` under the traffic stub (1). Item 15 re-uses the
+  `aerial` and `park` mask captures rather than shooting its own. At §8's 354 s median that is ≈ 1.4 h on top of
+  the matrix — budget for it.
 - Shot paths are the gauntlet's: `shots/props/r<n>/<camera>_<time>.png`, `.` → `p` (`avenue_12.png`, `lamp_22.png`).
 
 Ordered by how much each moves the score.
 
 1. **Trees are trees, not lollipops.** At `treecloseup_12` and `forest_12`, for the nearest crowns:
-   (a) a modelled trunk **≥ 35 px wide at 8 m** with **≥ 3 visible branch bifurcations** reaching into the crown
+   (a) a modelled trunk **≥ 35 px wide at 8 m** (measured across the `trunk` rect) with **≥ 3 visible branch
+   bifurcations** reaching into the crown
    — no cylinder-plus-sphere, no single card on a stick. (At 1080p and fov 45° — `src/core/camera.js:10` — the
    scale is 1080 / (2·tan 22.5°) ≈ 1304 px/rad, so 35 px at 8 m is a trunk Ø of 0.215 m; §3's table floors every
    class at 0.15 m ornamental / 0.25 m tall-narrow / 0.35 m broadleaf, so at `treecloseup` a compliant broadleaf
    measures 57–90 px and this is a floor with margin, not the target. The old 8 px floor passed a 0.05 m stick —
    a lollipop by another name.)
-   (b) the crown silhouette is **broken**: pick a crown whose upper half borders the SKY MASK; over a 200×200 px
-   full-res box centred on it, a horizontal scanline through the crown centre makes **≥ 40 transitions between
-   SKY MASK and non-SKY-MASK pixels** (a lollipop gives ≤ 4). Graded artefacts are opaque PNGs — this is a
+   (b) the crown silhouette is **broken**: over the `crown` rect, a horizontal scanline through the rect's centre
+   makes **≥ 40 transitions between SKY MASK and non-SKY-MASK pixels** (a lollipop gives ≤ 4). Graded artefacts are opaque PNGs — this is a
    luminance/chroma boundary test, never an alpha-channel test;
-   (c) sky visible **through** the crown: 6–22 % of the pixels inside that same crown's convex hull are in the
-   SKY MASK;
-   (d) bark reads as material — a 64×64 px trunk crop has `std ≥ 8` and is not a flat fill;
+   (c) sky visible **through** the crown: 6–22 % of the pixels inside the **convex hull of the CROWN REGION**
+   (§4 conventions — the segmentation rule is fixed there so the denominator is not invented) are in the SKY MASK;
+   report the region's pixel count alongside the percentage;
+   (d) bark reads as material — the `trunk` rect has `std ≥ 8` and is not a flat fill;
    (e) ground litter/darkening ring 1.0–2.5 m around every trunk, 8–25 L darker than open grass.
 2. **Species, silhouette and colour variety.** Probe `api.stats().species ≥ 5`. In `forest_12` and `canopy_12`:
    ≥ 5 species distinguishable **by silhouette alone** — the five silhouette classes of §3's size table, whose
-   height ranges are what makes them separable; ≥ 6 crown-colour variants across the CS2 autumn palette —
+   height ranges are what makes them separable; **≥ 4 crown-colour variants** across the CS2 autumn palette —
    sample **12 separate canopies** (one CANOPY CROP each, every rect listed in the report) and **of those 12, at
    least 4 must differ pairwise** by mean hue ≥ 12° **or** mean L ≥ 25. No clustering algorithm is involved:
-   name the 4 crops and show the 6 pairwise deltas.
+   name the 4 crops and show the C(4,2) = **6** pairwise deltas. (Headline and test are the same number on
+   purpose: an earlier draft demanded 6 in the prose and tested 4.)
    Probe over the 200 nearest tree instances: heading is uniform over `[0, 2π)` (no bucket of 12 wider than 15 %),
    scale ∈ [0.75, 1.35] **multiplying the base height of that instance's silhouette class in §3** with
    `std ≥ 0.08`, lean ≤ 6°, and **no two instances within 12 m of each other share
@@ -242,8 +292,11 @@ Ordered by how much each moves the score.
      `trafficlight` placed from a roads anchor — sits on the **sidewalk top**, which is
      `world.roads.laneCenter(edgeId, 0, t).y + 0.21` (= `ROAD_LIFT 0.08 + SW_H 0.16 − 0.03`,
      `src/modules/roads/build.js:12,18` — the same figure `traffic.md` uses for vehicle height, verified against
-     the source). For a lamp taken straight from `ctx.modules.roads.lampPositions(edgeId)`, `groundY` is that
-     entry's own `y`: roads has already added the identical 0.21 (`build.js:1225`);
+     the source). For a lamp taken straight from `ctx.modules.roads.lampPositions(edgeId)`, `groundY` is **that
+     entry's own `y`, whatever it is** — roads adds `SW_H − 0.03 + ROAD_LIFT` (= 0.21 m) on sidewalk sides but
+     `+ 0.95 m` when `side === 'median'` (`build.js:1222,1225`). Never re-derive it and never hardcode 0.21 for a
+     lamp: 0.95 − 0.21 = 0.74, so a hardcoded 0.21 sinks every highway median lamp 0.74 m into the barrier and
+     fails this item's ± 0.05 m on the very case the rule exists to protect;
    - **everything else** — every verge, lot, garden, park, plaza and forest prop, **including the street trees
      planted in the verge under item 13a** — uses `world.terrain.getHeight(x, z)`, whatever `isRoad` returns
      there. A street tree at sidewalk-top height is a fail, not a pass;
@@ -266,27 +319,38 @@ Ordered by how much each moves the score.
    of touching segments by construction) and the parts of one `bus_stop` assembly. Everything else is in it;
    (e) visually: 4× crops of `avenue_12`, `park_12`, `street_12` show no prop half-buried in the ground and none
    hovering with a visible gap under its base or its contact shadow detached from it. (`$REF/cs2_5.jpg`.)
-4. **Streetlamps are modelled objects on the roads' own anchors.** Probe, for every `street`/`avenue`/`highway`
-   edge: every entry of `api.lampsFor(edgeId)` matches an entry of `ctx.modules.roads.lampPositions(edgeId)`
-   within **0.05 m in x, y and z**; the two lists are the **same length** (no lamp invented off-anchor, none
-   dropped); and no lamp centre lies within **8 m** of an intersection centre from `roads.intersections()`.
+4. **Streetlamps are modelled objects on the roads' own anchors.**
+   (a) **Anchors.** Probe, for every `street`/`avenue`/`highway` edge: every entry of `api.lampsFor(edgeId)`
+   matches an entry of `ctx.modules.roads.lampPositions(edgeId)` within **0.05 m in x, y and z**, and the two
+   lists are the **same length** (no lamp invented off-anchor, none dropped);
+   (b) **Intersection clearance.** No lamp centre lies within **8 m** of an intersection centre from
+   `roads.intersections()`.
    **Spacing and stagger are roads' business and props is not graded on them.** For reference only, from
    `src/modules/roads/build.js:1203–1228`: base spacing 40 m where `median > 0`, 30 m where `lanes ≥ 4`, else
    28 m, then redistributed evenly as `count = max(1, floor(range / spacing))`, so realised spacing runs from
    under 28 m to nearly twice the base; sides alternate only on 2-lane types, an avenue
    (`lanes ≥ 4 && median === 0`) gets **paired** lamps opposite each other, and a highway gets median-only lamps
    at 40 m. An earlier draft of this item demanded 24–32 m staggered spacing — unsatisfiable on the avenue this
-   showcase's hero camera looks straight down. Props does not second-guess the generator. Geometry at
-   `lamp_12`:
-   arterial column **8.5–9.5 m** tall, tapering ~0.16 m at base to ~0.10 m at head, a base collar/foundation
-   0.35–0.50 m across, a mast arm of 1.2–2.0 m reach, and a luminaire head modelled as a body ~0.55 × 0.25 × 0.10 m
-   — not a glowing quad. A second, distinct **ornamental** lamp type 4.5–5.5 m with a lantern head appears in the
-   park/plaza. Poles cast shadows: at 06.5 and 17.5 each column throws a needle shadow ≥ 12 m long across the
-   carriageway in `avenue_6p5` / `avenue_17p5`. (`$REF/cs2_4.jpg`, `$REF/cs2_8.jpg`.)
+   showcase's hero camera looks straight down. Props does not second-guess the generator.
+   (c) **Column geometry** at `lamp_12`: arterial column **8.5–9.5 m** tall, tapering ~0.16 m at base to ~0.10 m
+   at head, a base collar/foundation 0.35–0.50 m across, a mast arm of 1.2–2.0 m reach, and a luminaire head
+   modelled as a body ~0.55 × 0.25 × 0.10 m — not a glowing quad;
+   (d) **Ornamental variant.** A second, distinct ornamental lamp type **4.5–5.5 m** with a lantern head appears
+   in the park/plaza;
+   (e) **Needle shadows.** Poles cast shadows: at 06.5 and 17.5 each column throws a needle shadow that reaches
+   **all the way across the carriageway**, traceable in the full-res PNG unbroken from the column base to the far
+   kerb line, in **`street_6p5` / `street_17p5`**. The standard `street` camera targets the staged (40, 0, 40)
+   crossroads on the avenue (§8), so the avenue's lamps are in frame; there is no `avenue_6p5` or `avenue_17p5` in
+   item 21's matrix and none is added. An avenue carriageway is 16 m wide
+   (`world.roads.types.avenue.asphaltHalf` = 8.0, §7), so this is the old "≥ 12 m" restated against a landmark in
+   the same frame — nothing at this camera converts pixels to metres. (`$REF/cs2_4.jpg`, `$REF/cs2_8.jpg`.)
 5. **Night is lamplight, not dimmed noon or self-lit foliage.** At 22:00 over the PROPS REGION in `avenue_22`,
    `lamp_22`, `park_22`, `street_22`:
-   (a) foliage `p50` at 22:00 ≤ **0.35 ×** foliage `p50` of the same crop at 12:00, and **no** foliage, hedge,
-   bench, bin or fence pixel exceeds `L = 150` unless it lies inside a lamp pool;
+   (a) foliage `p50` at 22:00 ≤ **0.35 ×** the `p50` of the **same** `canopy_broad` rect at 12:00, and **no pixel
+   of that rect or of the `hedge` rect exceeds `L = 150`** — pick rects that do not overlap a lamp pool, and say
+   so in the report. (The earlier "no foliage, hedge, bench, bin or fence pixel" needed a per-kind classification
+   no mask here defines, and a per-kind toggle mask is 5 kinds × 4 cameras ≈ 20 more frames ≈ 2 h. Bench, bin and
+   fence at night are already held by (b), (c) and (d).)
    (b) `blackPct ≤ 3 %` over the PROPS REGION **as fixed at 12:00** (§4 conventions — the mask is never
    recomputed at night, or the darkest props exclude themselves from their own test) — props must still be
    readable, not silhouettes;
@@ -294,31 +358,37 @@ Ordered by how much each moves the score.
    (d) props adds no emissive material with `emissiveIntensity > 2.0` other than luminaire heads, signal lenses and
    the halo/pool billboards.
 6. **The lamp actually lights the ground.** At `lamp_22` and `avenue_22`, per lamp:
-   (a) an elliptical pool on the pavement of **10–16 m** major axis for a 9 m column;
-   (b) `mean L(POOL CROP) ≥ 2.2 ×` `mean L` of the same surface 12 m from any lamp;
-   (c) the pool is **warm**: `mean(R) − mean(B) ≥ +6`, identical in sign for every lamp of that kind;
+   (a) **from the probe, not from pixels** — for every pool decal instance the **world-space** major axis
+   (instance scale × geometry extent, read off the instance matrix) is **10–16 m** for a 9 m column. The crop
+   cannot give this: the pool lies on a receding ground plane, so its on-screen major axis has no fixed
+   metres-per-pixel and two people measuring the same `lamp_22` crop disagree by metres. The `pool` rect is used
+   only for (b), (c), (d) and (f);
+   (b) `mean L` of the `pool` rect `≥ 2.2 ×` `mean L` of the same surface 12 m from any lamp;
+   (c) the pool is **warm**: over the `pool` rect, `mean(R) − mean(B) ≥ +6`, identical in sign for every lamp of
+   that kind;
    (d) the pool edge is soft — walking a 1 px-wide radial ring outward across the boundary, no step > 6 L between
    adjacent rings, and **no visible ellipse rim**;
-   (e) the luminaire head reads as a hard small source: head `p99 ≤ 250`, `whitePct ≤ 0.05 %` of the frame, halo
-   radius ≤ 3 × head width, and halo peak L < head peak L;
+   (e) the luminaire head reads as a hard small source: inside the `lamp_head` rect on the full-res PNG,
+   `p99 ≤ 250`, halo radius ≤ 3 × head width and halo peak L < head peak L; `whitePct ≤ 0.05 %` is whole-frame
+   (480 px, §4 conventions);
    (f) **no z-fighting where the pool meets the road** — graded from the probe and one crop, not from a
    frame-to-frame diff (with `speed=0` two captures at the same camera are the same frame, and
    `tools/screenshot.mjs` cannot produce a 1-frame delta): the pool material reports `depthWrite === false`,
    `blending === THREE.AdditiveBlending`, `polygonOffset === true` with `polygonOffsetFactor < 0`, and
-   `renderOrder === RENDER_ORDER.TRANSPARENT` (100); and in the POOL CROP of `lamp_22` the pool crosses the kerb
+   `renderOrder === RENDER_ORDER.TRANSPARENT` (100); and in the `pool` rect of `lamp_22` the pool crosses the kerb
    and lane-marking lines with no seam — no run of ≥ 20 consecutive pixels along that boundary differing from
    both of their perpendicular neighbours by ≥ 25 L. (`$REF/cs2_8.jpg`.)
 7. **Noon albedo and contrast — not washed out, not crushed.** At 12:00 in `forest_12`, `avenue_12`, `park_12`,
-   over the PROPS REGION: sunlit broadleaf-autumn CANOPY CROP `p50 ∈ [110, 185]`; sunlit conifer CANOPY CROP
-   `p50 ∈ [45, 95]`; the shaded side of any crown `≥ 18` and `≤ 0.55 ×` its own sunlit `p50`; canopy mean
-   saturation `∈ [0.28, 0.75]`; `whitePct ≤ 0.10 %`; `blackPct ≤ 1.5 %`; PROPS REGION `std ≥ 22`.
+   the `canopy_broad` rect has `p50 ∈ [110, 185]` and the `canopy_conifer` rect `p50 ∈ [45, 95]` (full-res, §4
+   conventions); the shaded side of any crown `≥ 18` and `≤ 0.55 ×` its own sunlit `p50`; `canopy_broad` mean
+   saturation `∈ [0.28, 0.75]`; and over the PROPS REGION: `whitePct ≤ 0.10 %`; `blackPct ≤ 1.5 %`; PROPS REGION `std ≥ 22`.
 8. **Tree shadows are dappled, not blobs.** In `treecloseup_12` and `avenue_12`, inside the ground shadow cast by
    one broadleaf crown, ≥ 15 % of pixels are brighter than the shadow region's median by ≥ 20 L (light leaking
    through the canopy). A solid ellipse fails. `castShadow = true` on LOD0 and LOD1 instanced meshes; foliage uses
    **`alphaTest` (0.40–0.50), never `transparent:true`**, so the shadow map cuts leaf shapes. (`$REF/cs2_4.jpg`.)
 9. **No card halos, no sprite glow, no sparkle.**
-   (a) along a canopy silhouette **bordering the SKY MASK** in `treecloseup_12` (§4 conventions; same crown as
-   item 1b if it qualifies), ≤ 1 % of boundary pixels are darker than **both** their inward and outward
+   (a) along the silhouette of the `crown` rect in `treecloseup_12` (§4 conventions — the same crown as item 1b),
+   ≤ 1 % of boundary pixels are darker than **both** their inward and outward
    neighbours by ≥ 40 L (dilated/premultiplied atlas; a black fringe is a fail);
    (b) far impostor billboards are **lit, not emissive**: at `skyline_22` an impostor tree's `p50` is within 25 % of
    a LOD1 tree at the same screen depth, and no impostor is brighter at 22:00 than at 12:00;
@@ -335,9 +405,11 @@ Ordered by how much each moves the score.
     (a) **Standalone** (`?showcase=props`, no traffic module): every entry reports `source === 'props'`, and the
     phase is a pure function of `world.time.day`/`hour` — setting the clock to the same hour twice gives the same
     `phase`, and advancing it by half a cycle flips the phase.
-    (b) **Handover** (the preamble's rule, graded): the probe assigns a stub
-    `ctx.modules.traffic = { signalState: () => ({ phase: 3, greenArms: [<one arm's edgeId>], since: 0,
-    cycle: 60 }) }` and steps one frame. Within **one frame** every entry reports `source === 'traffic'`,
+    (b) **Handover** (the preamble's rule, graded): the probe assigns a stub onto the **shared** api object —
+    `__sim.registry.get('props').ctx.modules.traffic = { signalState: () => ({ phase: 3,
+    greenArms: [<one arm's edgeId>], since: 0, cycle: 60 }) }` (§4 conventions; `registry.js:36` — that object is
+    the same `ctx.modules` props itself was handed, so stubbing a per-module copy would grade the wrong branch) —
+    and steps one frame. Within **one frame** every entry reports `source === 'traffic'`,
     `phase === 3`, `greenArms` matching, `armStates` derived from it, and the rendered lens colours in a re-shot
     `signal_12` change to match — props' own clock stops driving anything. Deleting the stub restores
     `source === 'props'` within one frame. Across both transitions: no console error, and `api.stats().draws`
@@ -391,8 +463,8 @@ Ordered by how much each moves the score.
     benches, bins, fences) move 0 px. Sway amplitude scales with `world.weather.wind.speed`; with
     `wind.speed = 0` the two frames are byte-identical. Phase derives from `world.time`, never from real time, so
     two independent loads at `?time=12&seed=1337` produce the same frame.
-17. **Golden hour reads.** At 06.5 and 17.5 (`avenue_6p5`, `forest_17p5`, `park_17p5`): long prop shadows across the
-    ground (item 4a), rim-lit crown edges on the sun side, `whitePct ≤ 0.15 %`, `blackPct ≤ 4 %`, and the frame is
+17. **Golden hour reads.** At 06.5 and 17.5 (`street_6p5`, `forest_17p5`, `park_17p5` — all three are in item 21's
+    matrix): long prop shadows across the ground (item 4(e)), rim-lit crown edges on the sun side, `whitePct ≤ 0.15 %`, `blackPct ≤ 4 %`, and the frame is
     not sepia-monochrome — hue spread of the 12 sampled canopies ≥ 25°. No lamp pool or halo is visible at 17.5
     (lamps switch on from `world.weather.night > 0.5`, verified by a probe reading the pool material opacity at
     17.5 = 0 and at 22 > 0).
@@ -409,7 +481,9 @@ Ordered by how much each moves the score.
     `world.time`, never accumulated across frames** — no `phase += dt` anywhere in `src/modules/props/`, because
     an accumulator makes every capture at the same `?time=` a different frame and every pixel diff in items 14
     and 16 meaningless.
-20. **Budget.** Every number in §5 met, measured as stated there.
+20. **Budget.** Every number in §5 met, measured as stated there. **Chunk size is graded against §5's 256 m, not
+    against ARCHITECTURE §9's or `BUILDER.md`'s 128 m**: §5 derives the deviation and requires it on record in
+    `docs/core-requests/props.md`. If that file is absent the finding is the missing request, not the chunk size.
 21. **The whole shot matrix exists — 34 shots, enumerated so the count is not a guess.** All of these under
     `shots/props/r<n>/`, each with `errors: []`, `modules.props === 'ready'` and no boot-overlay frame (those
     pass conditions are `CRITIC.md`'s; the enumeration is this spec's):
@@ -435,8 +509,13 @@ Ordered by how much each moves the score.
     item in `world.props.items`, a `props:changed` carrying the new id, and new triangles, for ≤ **250 ms** of
     props CPU; a probe that calls `world.roads.addEdge(...)` then `ctx.modules.roads.rebuild()` sees lamps and
     street trees on the new edge for ≤ **800 ms** of props CPU. That second number must be a **dirty-region**
-    rebuild, and the probe proves it rather than trusting it: the same edit on a scene with 4× the forest costs
-    ≤ 1.25 × as many CPU ms. `update()` allocates nothing per frame.
+    rebuild, and the probe proves it with the api that exists rather than trusting it: in one page, run the same
+    edit twice — once after `api.setDensity(0.25)` and once after `api.setDensity(1.0)` — and the 1.0 measurement
+    must cost **≤ 1.25 ×** the 0.25 one — the same 4× forest (1.0 / 0.25 = 4), reachable with the api that
+    exists. (`setDensity` is a 0..1 multiplier and can only thin, so the earlier "a scene with 4× the forest"
+    named a scene §2's api cannot build.) Report `api.stats().byKind.tree_oak + .byKind.tree_pine` at both
+    densities so the 4× is shown to have landed.
+    `update()` allocates nothing per frame.
 24. **720p parity.** `avenue_12` and `forest_22` at `--w 1280 --h 720` show the same props, the same LOD tiers and
     the same lamp pools as at 1080p, with no new aliasing crawl (item 9c applies at 720p too).
 
@@ -496,6 +575,11 @@ grades the two rules plus the **absolute** caps (≤ 200 scene draws in `?showca
 point lights, and for a reason visible in the arithmetic above: chunk count is what the cascade multiplier
 multiplies, and 128 m tiles put ~4× as many chunks in frame — the same geometry becomes ~380 draws. Props has few
 meshes and very many instances, so larger chunks are strictly better here; terrain and buildings keep 128 m.
+**Land the deviation where the critic reads it.** `CRITIC.md` ranks ARCHITECTURE above a module spec, so a
+conscientious critic can fail a builder who followed this paragraph. Until ARCHITECTURE §9 carries the exemption,
+the builder files `docs/core-requests/props.md` recording it — one paragraph: 256 m for props only, the draw-call
+arithmetic above, terrain and buildings unchanged. Item 20 grades chunk size against this section and the missing
+request file, not against §9.
 
 Anything appearing more than ~50 times (every tree, lamp, bench, bin, hydrant, sign, bollard, fence post, hedge
 segment, light pool) is an `InstancedMesh` or merged into its chunk — never a `Mesh` each. Impostor tiers are
@@ -595,7 +679,9 @@ world.roads.coverage = { res: 512, cell: 4, data: Uint8Array, version }
 **Heights off the road** (verified in `src/modules/roads/build.js`; no API returns these, so they are published
 here as constants): `laneCenter(edgeId, lane, t).y` is the *profile* height; the asphalt surface is
 `ROAD_LIFT = 0.08 m` above it and the **sidewalk top is `+ 0.21 m`** (`ROAD_LIFT + SW_H − 0.03`, `build.js:12,18`)
-— the same figure `traffic.md` uses for vehicle height. `isRoad(x,z) === 2` is **not** a sidewalk test: the
+— the same figure `traffic.md` uses for vehicle height. A **lamp's** `y` is never re-derived from it: take
+`lampPositions`' own `y`, which is `+0.95` on a median (`build.js:1222`) and `+0.21` otherwise (item 3a).
+`isRoad(x,z) === 2` is **not** a sidewalk test: the
 coverage mask marks the whole corridor out to `corridorHalf(type) + 0.4` (`build.js:503,532`), which includes the
 0.8 m flat verge outside the sidewalk back and the graded slope beyond it. Item 3a is scoped by prop kind for
 exactly this reason.
@@ -677,11 +763,14 @@ if the heightfield changes. `setup(ctx)` must produce:
 7. Never call `environment.setWeather`, never move the clock (the showcase router owns `?time=`), never add
    anything that is not a prop, and never add a light.
 
-**Declared `showcase.cameras`** — exactly these eight, no more. Measured on this box, one SwiftShader shot of
-this scene costs **300–592 s** (`shots/props/dev_*.json`, field `elapsedMs`; median ≈ 500 s), so item 21's
-34-shot matrix already runs to **~4 hours** per round per critic. That is the whole reason the preset list is
-capped at eight: a ninth preset adds ~25 minutes to every round. Do not add one — if a view is genuinely missing,
-replace one and say which in `docs/builds/`.
+**Declared `showcase.cameras`** — exactly these eight, no more. Measured on this box, one SwiftShader shot of this
+scene costs **254–660 s**: the nine `shots/props/dev_*.json` report `elapsedMs` of 253 761, 276 912, 299 511,
+332 798, **353 644**, 478 753, 507 020, 530 838 and 659 980 ms, so the median is **≈ 354 s**. Item 21's 34-shot
+matrix therefore runs to 34 × 354 s ≈ **3.3 h** per round per critic, and §4's 14 probe captures add
+14 × 354 s ≈ **1.4 h** — **≈ 4.7 h** in all. That is the whole reason the preset list is capped at eight: a ninth
+preset costs ≈ **6 min** for its 12:00 frame alone, and ≈ **18 min** if it is also shot at 22 and 17.5. Do not add
+one — if a view is genuinely missing, replace one and say which in `docs/builds/`. (An earlier draft said
+"300–592 s, median ≈ 500 s, ~25 minutes"; the nine files above contradict it.)
 
 Register each with `ctx.camera.registerPreset(name, {yaw, pitch, distance, target})` computed from real node
 positions.

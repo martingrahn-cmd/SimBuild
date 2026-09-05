@@ -47,11 +47,11 @@ world.buildings.demolish(id)
 world.services.place(kind,x,z,heading) -> id|null ; world.services.remove(id)
 ```
 
-Its own public API. `ctx.modules.tools` **is** this object — `registry.js:15/36` passes `ctx.modules = this.apis`,
-so there is no `.api` indirection (see §7).
+Its own public API (`ctx.modules.tools` **is** this object — there is no `.api` indirection; see §7).
 
-The shipped HUD already reaches for `select` / `setOption`: `src/modules/ui/hud.js:456` `_toolsSelect()`, and the two
-`setOption` call sites at `hud.js:518` (mode / toggle buttons) and `hud.js:531` (stepper). **But all three are
+The shipped HUD already reaches for `select` / `setOption`: `src/modules/ui/hud.js:458` (in `_toolsSelect()`, declared
+at `hud.js:456`), and the two `setOption` call sites at `hud.js:518` (mode / toggle buttons) and `hud.js:531`
+(stepper). **But all three are
 written `this.ctx.modules?.tools?.api?.select(...)` / `?.api?.setOption(...)`** — through an `.api` property that
 does not exist on an api object — so they optional-chain to `undefined` inside a `try` and the HUD does **not** in
 fact drive `tools` today. Consequences for this round, all of them binding:
@@ -60,7 +60,7 @@ fact drive `tools` today. Consequences for this round, all of them binding:
   the HUD will call the moment the bug is fixed, and the option ids below are already what it passes.
 - Do **not** work around it by publishing an `api` property on your own api object, and do not edit `src/modules/ui/`.
   File `docs/core-requests/tools.md` (per `BUILDER.md:27-31`) asking for the three `.api?.` indirections at
-  `hud.js:456/518/531` to be dropped, and note that until they are, the HUD cannot reach this module.
+  `hud.js:458/518/531` to be dropped, and note that until they are, the HUD cannot reach this module.
 - The HUD-driven half of criterion 16 is therefore not observable in `?showcase=tools` (where `ui` is not
   initialised at all — `src/core/showcase.js:22-30` only loads `environment` + the showcase module + its declared
   dependencies). It is graded in the required `--showcase all` run instead.
@@ -86,7 +86,15 @@ setSelection(kind, id) -> boolean ; clearSelection() -> void ; pickAt(x, z) -> {
 setPreviewVisible(v) -> void
 stats() -> {drawCalls, chips, ghostVerts, poses, ms,
             ghostLiftMin, ghostLiftMax,     // metres above world.terrain.getHeight, min/max over every live ribbon vertex
-            ribbonBox:{x, y, w, h}|null}    // ribbon AABB in device pixels at the current viewport (criteria 6/22 crop)
+            chipRects:[{x, y, w, h}]}       // one per visible chip pill, device pixels at the current viewport (criteria 4/21)
+cropRects({project, width, height, camera}) -> {ribbon:[x,y,w,h], ground:[x,y,w,h], wash:[x,y,w,h]}
+   // ARCHITECTURE §8: window.__sim.cropRects() collects this from every ready module and
+   // `node tools/screenshot.mjs … --crops` writes it to <shot>.crops.json as "tools.ribbon" / "tools.ground" /
+   // "tools.wash", in pixels of the full-resolution capture. ribbon = 64×64 box centred on the ghost ribbon;
+   // ground = the same 64×64 box one ribbon-width to the side of it; wash = 32×32 box centred on the
+   // affected-area wash centroid. Return {} for a landmark that is not on screen or has no live pose.
+_showcasePoses(on) -> int   // showcase/probe only, never reachable from select(): false tears down every pinned
+                            // pose and returns the count removed (criterion 15)
 serialize() -> {options, selection} ; deserialize(d) -> void   // §15; the undo stack is NOT serialized
 ```
 
@@ -152,43 +160,61 @@ Anchors for this module specifically:
 
 Ordered by how far each moves the score. `shots/tools/rN/<camera>_<time>.png` is the gauntlet naming
 (`.` → `p`, so 06.5 → `6p5`). "Probe" = a `page.evaluate` against `window.__sim` on
-`?showcase=tools&headless=1&time=<h>`.
+`?showcase=tools&headless=1&time=<h>`. "Crop" = a named rect in `<shot>.crops.json`, written by
+`node tools/screenshot.mjs … --crops` from this module's `api.cropRects` (§2); every pixel statistic below is taken
+inside a crop, on the full-resolution PNG.
 
 1. **The showcase district is built by the tools, not around them.** `showcase.setup` constructs every road, zone,
    terrain edit and demolition by calling `api.select/pointer/click/commit` only — a probe finds
    `world.roads.edges.size ≥ 18`, `world.roads.nodes.size ≥ 16`, `world.zones.cells.size ≥ 240` covering all four
-   `types` in both `densities`, and ≥ 3 terrain edits (`world.terrain.version ≥ 3`). Zero direct calls to
+   `types` in both `densities`, and ≥ 3 entries in `api.history().entries` whose `label` starts `terrain:`.
+   (Not `world.terrain.version`: `roads` bumps it on every conform pass — `src/modules/roads/build.js:661` calls
+   `T.modify` after writing heights — so a version count passes without a single tool sculpt.) Zero direct calls to
    `world.roads.addEdge` / `world.zones.paint` / `world.terrain.modify` outside the tool implementations
    (`grep -n "world\.\(roads\.addEdge\|zones\.paint\|terrain\.modify\)" src/modules/tools/showcase.js` returns nothing).
 2. **Ghost ribbon conforms to terrain, never z-fights, never floats.** Centreline resampled at ≤ 2 m; every ribbon
    vertex sits `0.10–0.20 m` above `world.terrain.getHeight` at its own x,z — probe: `api.stats().ghostLiftMin ≥ 0.10`
    and `.ghostLiftMax ≤ 0.20` with the `roadtool` pose live (both fields are in the §2 contract). Where the ghost
-   crosses an existing road in
-   `shots/tools/r1/closeup_12.png` there is no shimmer, no stripe of asphalt punching through, and no dark seam:
-   material is `transparent, depthWrite:false, polygonOffset:true, polygonOffsetFactor:-6, polygonOffsetUnits:-6`.
+   crosses an existing road in `shots/tools/r1/closeup_12.png`, the ghost is continuous and the asphalt does not
+   punch through it — graded on the material, which the critic reads in the source and which is
+   `transparent, depthWrite:false, polygonOffset:true, polygonOffsetFactor:-6, polygonOffsetUnits:-6`
+   — a larger negative offset than `roads` uses on its own surfaces and markings (`-1/-2` and `-3/-6`,
+   `src/modules/roads/materials.js:233/281`), which is what keeps the ghost in front of them.
 3. **All six posed tool states render simultaneously** in `aerial_12.png`: road-drag, zone brush, terrain brush,
-   bulldoze marquee, service footprint + coverage circle, and the invalid (red) road ghost. Each is identifiable by
-   its own colour and shape without reading the chips.
-4. **Chips are legible and correctly placed.** In `closeup_12.png` and `roadtool_12.png`: ≥ 5 chips visible; pill
-   height 24–28 px at 1920×1080 **and** at 1280×720 (`--w 1280 --h 720`); text cap-height ≥ 9 px; no two chips
-   overlap by more than 10 % of their area; every chip's anchor is on-screen (a probe on the `skyline` camera
-   confirms `api.stats().chips` counts only anchors with clip `w > 0` — nothing pinned to a screen corner or
-   mirrored from behind the camera); no chip is drawn in the bottom 150 px at 1080p (HUD reserve).
+   bulldoze marquee, service footprint + coverage circle, and the invalid (red) road ghost — a probe on that run
+   reports `api.stats().poses === 6` and all six are visible in the frame.
+4. **Chips are legible and correctly placed.** Graded off `api.stats().chipRects` (device pixels, §2) with the
+   `closeup` and `roadtool` cameras live, cross-checked against `closeup_12.png` / `roadtool_12.png` at full
+   resolution: `chipRects.length ≥ 5` and `=== stats().chips`; every rect's `h` is 24–28 px at 1920×1080 **and** at
+   1280×720 (`--w 1280 --h 720`); no two rects' intersection exceeds 10 % of the smaller rect's area; no rect's
+   bottom edge falls in the bottom 150 px at 1080p (HUD reserve); text cap-height ≥ 9 px read off the
+   full-resolution PNG inside a chip rect, never off a downscaled copy. Every chip's anchor is on-screen (a probe on
+   the `skyline` camera confirms `chips` counts only anchors with clip `w > 0` — nothing pinned to a screen corner
+   or mirrored from behind the camera).
 5. **Chip content is right.** For pose `roadtool` a probe reads `state().metrics` and the same numbers appear in the
    image: one `↔ <int> m` per pending segment (±1 m of the true 3D length), one `∠ <int> °` per interior corner,
    a `◺ <±0.1> %` grade chip on any segment whose |grade| ≥ 0.5 %, and exactly one `¢<int>` cost chip attached to
    the cursor node. `costOf` is a finite integer ≥ 0 with `simulation` present **and** absent.
-6. **Night reads without glowing.** At 22:00 (`roadtool_22.png`, `closeup_22.png`, `street_22.png`): the ghost
-   ribbon's p50 luminance is 190–242/255 and its p99 ≤ 248 — it must not clip; the ground it covers is ≥ 2.5× darker
-   than the ribbon; the halo outside the ribbon edge is ≤ 3 px wide.
-   **Ribbon pixels are isolated by a declared crop, never by hand:** the probe reads `api.stats().ribbonBox` and the
-   measurement is taken over the 64 × 64 px box centred on that rectangle's centre; the ground comparison is the
-   64 × 64 px box one ribbon-width to the side of it. Both boxes are printed as `{x,y,w,h}` in the build report and
-   in the shot's `.json` sidecar, so builder and critic measure the same pixels and there is nothing to argue about.
-   All overlay materials are `toneMapped:false` with linear colour ≤ 2.0 so they stay under the `effects` bloom
-   threshold (`const thr = lerp(2.6, 2.2, night)/exposure`, `src/modules/effects/index.js:141`) — verified in
-   `shots/tools/r1/all_night_22.png` (`--showcase all --camera night_street --time 22`) by a bloom on/off pixel diff
-   over the same ribbon crop, which must be ≤ 1/255 mean: no bloom skirt.
+6. **Night reads without glowing.** At 22:00 (`roadtool_22.png`, `closeup_22.png`, `street_22.png`, each shot taken
+   with `--crops`): the ghost ribbon's p50 luminance is 190–225/255 and its p99 ≤ 248 — it must not clip; the ground
+   is ≥ 2.5× darker than the ribbon; the ribbon→ground transition across the ribbon edge is ≤ 3 px wide.
+   **Ribbon pixels are isolated by a declared crop, never by hand:** the samples are the `tools.ribbon` and
+   `tools.ground` rects of the matching `<shot>.crops.json`, written by `screenshot.mjs --crops` from `api.cropRects`
+   (§2, ARCHITECTURE §8) — builder and critic read the same file. **All statistics are taken on the full-resolution
+   PNG, never on a downscaled copy.**
+   All overlay materials are `toneMapped:false` — the pixel is then the sRGB encoding of the material colour, no
+   exposure applied — with **linear output ≤ 0.70**, which is what keeps them under the bloom threshold
+   `thr = lerp(2.6, 2.2, night)/exposure` (`src/modules/effects/index.js:141`). The arithmetic, because the margin is
+   thin: at 22:00 `environment` sets `exposure = 2.8` (`src/modules/environment/index.js:186`, `lerp(2.8, dayExp,
+   day)` with `day = 0`) → `thr = 2.2/2.8 = 0.79`; the day's *lowest* threshold is just after sunrise, `night ≈ 0`
+   with exposure near 3.4 (`dayExp = 2.0 + lowSun·1.7`, `lowSun ≈ 1`) → `thr ≈ 2.6/3.4 = 0.76`. 0.70 clears every
+   hour; linear 2.0, safe at noon (`thr = 2.6/1.15 = 2.26`, `docs/critic/effects_r1.md:49`), is 2.5× **over** the
+   night line and is exactly how the glowing ghost happens. The same cap sets the p50 band: linear 0.55–0.70 encodes
+   to 196–218/255 through the sRGB output transform, inside the 190–225 above.
+   Prove it with a bloom on/off pixel diff over the same `tools.ribbon` crop in `shots/tools/r1/all_night_22.png`
+   (`--showcase all --camera night_street --time 22 --crops`), ≤ 1/255 mean: no bloom skirt. The p50/p99/ratio
+   figures are measured in `?showcase=tools`, where `effects` is not loaded and there is no tone-map or grade pass;
+   the bloom diff is measured in `--showcase all`. They are not the same pixels — do not compare them.
 7. **Snapping works and says so.** With the road tool active and the cursor within 12 m of an existing node, a probe
    sees `state().snap = {kind:'node', id, x, z}`, the committed edge reuses that node id (no duplicate node), and the
    image shows a cyan ring at 1.5× the node-disc radius plus a chip reading the snap kind. Same for `kind:'edge'`
@@ -205,12 +231,24 @@ Ordered by how far each moves the score. `shots/tools/rN/<camera>_<time>.png` is
    → every counter returns to baseline and every terrain sample is within `1e-3 m` (a road's cut/fill is reverted
    with the road); `redo()` 8 times → the post-action state returns exactly. `history()` reports ≥ 64 capacity;
    consecutive brush strokes of the same tool within 400 ms coalesce into one entry.
+   `world.terrain.modify` cannot restore recorded heights to 1e-3 m — it is a radial brush with a
+   `1 - r²(3-2r)` falloff — so for **undo only**, write the snapshotted rectangle straight back into
+   `world.terrain.heights` and then call
+   `world.terrain.modify({x:cx, z:cz, radius:r, strength:0, mode:'raise'})` over the same rectangle to bump
+   `version` and emit `terrain:changed`. This is the precedent `roads` already sets
+   (`src/modules/roads/build.js:645-661`), it is the reason §7 says "read to snapshot", and it is not an ownership
+   violation for this one path. It goes away when the `setHeights` core request in §7 lands.
 10. **Zone-brush preview matches the zoning overlay exactly.** The brush footprint fills the cells it would paint in
     the *same* colours as `src/modules/zoning/palette.js` (`residential low 0x5fd634 / high 0x0d8f3c`,
     `commercial 0x2fb6f5 / 0x1140c9`, `industrial 0xf7b515 / 0xd05310`, `office 0xc65ff5 / 0x6a1cb8`), on the same
-    8 m grid, at 0.40–0.50 alpha, with a white 0.3 m brush outline. In `zonetool_12.png` the preview cells and the
-    already-painted cells behind them are the same hue (sampled ΔE ≤ 8), and preview cells are only ever drawn where
-    `world.zones` would actually accept paint (nothing outside the zonable band).
+    8 m grid, at 0.40–0.50 alpha, with a white 0.3 m brush outline. Graded by probe, not by pixel comparison: the
+    preview material's colour uniform equals the palette value for the selected type/density **exactly**, its alpha
+    is 0.40–0.50, and every preview cell centre returns non-null from `world.zones.zonableAt(x,z)` (nothing outside
+    the zonable band). Do not compare preview pixels with painted pixels: `zoning` composites painted cells at
+    `uFill 0.63` plus an animated edge pulse and a fading `uOpacity`
+    (`src/modules/zoning/overlay.js:88/146`, `zoning/index.js:76-80`), so the two alphas differ by design and no
+    ΔE band between them would be honest. `zonetool_12.png` is the visual check that the footprint is on the 8 m
+    grid and reads as the same colour family as the painted cells behind it.
 11. **Bulldoze marks its victims, not the neighbourhood.** In `bulldoze_12.png` the marquee is a red-outlined ground
     rectangle and every object inside it carries a red translucent volume (`#E5484D` @0.35) sized to its footprint;
     objects one metre outside carry none. The chip reads `−N items` and `+¢<refund>`; `api.commit()` removes exactly
@@ -231,10 +269,11 @@ Ordered by how far each moves the score. `shots/tools/rN/<camera>_<time>.png` is
     terrain planar-reflection camera disables exactly that layer (`src/modules/terrain/water.js:192`) — and has
     `castShadow = false`, `receiveShadow = false`. Probe walks `ctx.group` and asserts it for every `Object3D` with
     geometry. In any shot containing water, no ghost, disc, chip or brush ring appears in the reflection.
-15. **The preview never survives its tool.** `api.select(null)`, `api.cancel()`, `Escape`, and a successful
-    `commit()` each leave `ctx.group.children` with zero visible preview objects within one frame
-    (`api.state().phase === 'idle'`, `stats().ghostVerts === 0`). No shot in the gauntlet shows a stale ghost from a
-    previous pose except the six deliberately pinned showcase poses.
+15. **The preview never survives its tool.** The probe first calls `api._showcasePoses(false)` (§2) to tear down the
+    six pinned poses — without that the showcase's own previews are live and `ghostVerts` is never 0, so the item
+    would fail a correct build. Then, for each of `api.select(null)`, `api.cancel()`, `Escape` and a successful
+    `commit()`: `ctx.group.children` has zero visible preview objects on the next frame, with
+    `api.state().phase === 'idle'` and `stats().ghostVerts === 0`.
 16. **Event hygiene.** In `?showcase=tools` a probe counts emissions: two identical `api.select('road',{type:'street'})`
     calls emit exactly **one** `tool:changed`; `setOption('elevation', 5)` emits one; 200 `pointer()` calls emit
     ≤ 20 `tool:preview` per second of game time; re-entrancy is banned — the probe installs a listener that calls
@@ -247,8 +286,12 @@ Ordered by how far each moves the score. `shots/tools/rN/<camera>_<time>.png` is
     at all — record that as the observed result and cite the core request; do not claim the item passed.
 17. **Terrain sculpt reads as a brush, not a stamp.** In `sculpt_12.png` the brush shows two concentric ground rings
     (outer = `options.size`, inner = 0.5×, white 0.25–0.35 m wide, 0.35–0.5 alpha) plus a vertical arrow chip giving
-    the signed height delta to 0.1 m, and the terrain it has already modified shows a smooth dome — no sheer wall,
-    no rectangular cut (the failure `roads_r1` issue 6 booked). Repeated `click()` at the same point produces a
+    the signed height delta to 0.1 m. The terrain it has already modified is a smooth dome, not a stamp (the failure
+    `roads_r1` issue 6 booked): a probe walks 16 rays out from the sculpt centre at 2 m steps to `options.size`,
+    sampling `world.terrain.getHeight`, and no adjacent pair on a ray differs by more than 1.5 m — skipping samples
+    within 20 m of a road (`world.roads.nearestEdge(x,z,20) !== null`), because a road's own cut/fill is not this
+    module's step to answer for. (A 14 m knoll over a 60 m brush radius has a max slope near `1.5·14/60 ≈ 0.35 m/m`, i.e.
+    ~0.7 m per 2 m step, so 1.5 m is a wall, not a dome.) Repeated `click()` at the same point produces a
     monotonically rising centre height and no NaN in `world.terrain.heights`.
 18. **Service placement validates against roads.** Pose `service`: the ghost footprint is a filled rectangle at the
     kind's true footprint size with a dashed coverage circle at its coverage radius (0.20–0.30 alpha, ≥ 64 segments,
@@ -272,15 +315,19 @@ Ordered by how far each moves the score. `shots/tools/rN/<camera>_<time>.png` is
 20. **Determinism.** Two runs at `seed=1337` give byte-identical probe output for `history().entries`,
     `world.roads.edges.size`, `world.zones.cells.size` and every `state().metrics` value. At `seed=99` the structure
     is unchanged (same counts) — the district's geometry is authored, not random.
-21. **1280×720 holds.** `--w 1280 --h 720` at `roadtool` and `closeup`, times 12 and 22: chips stay 24–28 px tall,
-    none is clipped by a viewport edge, none falls in the bottom 150 px, and the ghost/disc/ring line widths stay
-    within 0.7–1.4× of their 1080p pixel width.
-22. **Golden hour is not white-out.** `roadtool_6p5.png` and `street_6p5.png`: the ghost's saturation stays ≤ 0.10
-    (it is neutral white, not tinted amber by the sun) and the ribbon does not clip: ≤ 250/255 over ≥ 99 % of the
-    sampled pixels. **Sampled over the same declared crop as criterion 6** — the 64 × 64 px box centred on
-    `api.stats().ribbonBox`, printed as `{x,y,w,h}` in the build report and the shot sidecar; no hand-cropping by
-    either side. The blue affected-area wash keeps hue within 195–215° at every time of day (sampled over the 32 × 32
-    px box centred on the wash centroid, reported the same way) — it must not turn green at 06.5 or purple at 22.
+21. **1280×720 holds.** `--w 1280 --h 720` at `roadtool` and `closeup`, times 12 and 22, with `--crops`. Chips are
+    **screen-space sized**: every `stats().chipRects` height stays 24–28 px, no rect is clipped by a viewport edge
+    and none falls in the bottom 150 px — the same numbers as at 1080p. The ghost ribbon, guide dashes, node discs
+    and ground decals are **world-space** and are expected to shrink with viewport height: `720/1080 = 0.667`, so
+    record the `tools.ribbon` rect width at both resolutions and expect a ratio of **0.60–0.72×**. Do not hold
+    world-space geometry to a screen-space band; the §3 rule that the ribbon is the exact width of the selected road
+    type is what makes it world-space in the first place.
+22. **Golden hour is not white-out.** `roadtool_6p5.png` and `street_6p5.png` (taken with `--crops`): inside the
+    `tools.ribbon` rect the ghost's saturation stays ≤ 0.10 (it is neutral white, not tinted amber by the sun) and
+    the ribbon does not clip: ≤ 250/255 over ≥ 99 % of the sampled pixels. Inside the `tools.wash` rect the blue
+    affected-area wash keeps hue within 195–215° at every time of day — it must not turn green at 06.5 or purple at
+    22. Both rects come from `api.cropRects` via `<shot>.crops.json`, exactly as in criterion 6, and both statistics
+    are taken on the full-resolution PNG; no hand-cropping and no downscaled copy on either side.
 
 ## 5. Budget
 
@@ -322,10 +369,11 @@ Booked against neighbours in `docs/critic/` and waiting for this module:
 - **Glowing ghost at night — the threshold is narrow, so aim at it deliberately.** `effects_r1` issue 2 measured
   exactly where the line sits: lit windows at "winLevel 0.11 → ≈ 0.3 after exposure" sit *under* the bloom threshold
   and never glow, while lamp heads at ~9 cross it (`docs/critic/effects_r1.md:86`, and the api-contract row
-  "bloom on/off diff **0.00** (nothing crosses threshold 2.26)" at line 49). An unlit white overlay at linear 2.0
-  sits just under `thr = lerp(2.6, 2.2, night)/exposure` (`src/modules/effects/index.js:141`) — keep it there, and
-  **prove it** with a bloom on/off pixel diff over the ribbon crop in `--showcase all` (criterion 6). Symptom if you
-  overshoot: the ghost becomes the brightest object in a 22:00 frame with a soft skirt around it.
+  "bloom on/off diff **0.00** (nothing crosses threshold 2.26)" at line 49). That 2.26 is the **noon** threshold
+  (`2.6/1.15`); the night one is `2.2/2.8 = 0.79` and the day's lowest is ≈ 0.76 just after sunrise. Hence the
+  linear ≤ 0.70 ceiling in criterion 6 — linear 2.0, which is safe at noon, is 2.5× over the night line — and
+  **prove it** with a bloom on/off pixel diff over the `tools.ribbon` crop in `--showcase all` (criterion 6).
+  Symptom if you overshoot: the ghost becomes the brightest object in a 22:00 frame with a soft skirt around it.
 - **Preview at y = 0.** The ribbon or brush ring drawn on a flat plane while the terrain is at 12 m: the ghost slices
   through hills or hangs in the air (`roads_r1` blockers 1 and 3). Every overlay vertex queries
   `world.terrain.getHeight` at its own x,z; rings and circles are tessellated ≥ 64 segments for the same reason.
@@ -366,9 +414,7 @@ Do **not** declare `ui` (its HUD is graded separately and would import its open 
 **`ctx.modules.<name>` is the module's api object itself (`registry.js:15` `this.apis[def.name] = def.api`,
 `registry.js:36` `modules: this.apis`) — there is no `.api` indirection.** Call `ctx.modules.roads?.rebuild?.()`,
 never `ctx.modules.roads?.api?.rebuild?.()`: the second form optional-chains to `undefined` and does nothing, with no
-error and no log line. Every real module in the repo uses the flat form (`props/showcase` calls
-`ctx.modules.roads?.rebuild?.()`); the only code in the tree using `.api?.` is the `ui` HUD, and it is broken because
-of it (§2). This applies to every call in §2, §7 and §8 of this spec.
+error and no log line — which is the bug the `ui` HUD is sitting on (§2). This applies to every call in this spec.
 
 Verified signatures, copied from the code:
 
@@ -377,7 +423,13 @@ Verified signatures, copied from the code:
   `{x, z, radius=20, strength=1, mode:'raise'|'lower'|'flatten'|'smooth', target?}`, smooth falloff
   `1 - r²(3-2r)`, emits `terrain:changed {x,z,radius}` itself. Also `minHeight`, `maxHeight`, `version`, and
   `features.river/coast/island`. `world.terrain.heights` is the raw `Float32Array` — read it to snapshot an undo
-  rectangle; never write it.
+  rectangle. Writing it is banned **except on the undo path of criterion 9**, where `modify()`'s radial falloff
+  cannot restore recorded heights and `roads` already sets the precedent (`src/modules/roads/build.js:645-661`:
+  write `h[i]`, then `modify(..., strength:0)` to bump `version` and emit `terrain:changed`). There is no
+  `writeHeights`/`flattenStrip`/`setHeights` anywhere in `src/` today (verified); `ARCHITECTURE.md:102` lists it as
+  something terrain owes and `docs/core-requests/roads.md:16` already asks for it. Add
+  `setHeights(ix0, iz0, ix1, iz1, Float32Array) -> bool` to your own `docs/core-requests/tools.md` and drop the
+  direct write the day it lands.
 - **`world.roads`** (`src/modules/roads/network.js:288-296`): `addNode(x,z)` (merges into an existing node within
   1 m and returns its id), `addEdge(a,b,type,opts)` (`opts.lanes/oneWay/ctrl/elevation`; returns `-1` and warns on
   bad nodes), `removeEdge(id)` (orphan nodes are deleted with their last edge), `removeNode(id)`,
@@ -443,14 +495,14 @@ The staged district spans x,z ∈ [−260, 260] and is **built by driving the to
    centre block.
 5. `zone` paint: residential low + high west, commercial high centre, industrial low east, office high north —
    ≥ 240 cells, all four types, both densities.
-6. `ctx.modules.buildings?.spawnFreeLots?.(40)` then `ctx.modules.buildings?.flush?.()` — **flat, no `.api`**
-   (`buildings/index.js:233-243`); the `.api` form silently spawns nothing and takes criteria 1 and 11 down with it,
-   with no console error. `spawnFreeLots` returns the count: assert it is ≥ 30 and `log.error` if not, so a failed
-   spawn is visible in the run instead of showing up as an empty district in the shots. ≥ 30 buildings, so bulldoze
-   has real victims and the frame is a district, not a test bed.
+6. `ctx.modules.buildings?.spawnFreeLots?.(40)` then `ctx.modules.buildings?.flush?.()` — flat, no `.api` (§7).
+   `spawnFreeLots` returns the count: assert it is ≥ 30 and `log.error` if not, so a failed spawn is visible in the
+   run instead of showing up as an empty district in the shots. ≥ 30 buildings, so bulldoze has real victims and the
+   frame is a district, not a test bed.
 7. `terrain` raise a knoll at (150, −120) to ≥ 14 m peak, then `smooth` its skirt.
-8. Pin the six poses through a **showcase-only** multi-preview mode (`api` must not expose it to `select()`; one
-   preview at a time in the real game):
+8. Pin the six poses through `api._showcasePoses(true)` — the **showcase-only** multi-preview mode of §2, which
+   `select()` must never reach (one preview at a time in the real game) and which `_showcasePoses(false)` tears down
+   for criterion 15's probe:
 
 | Preset | Pose | Anchor | Camera |
 |---|---|---|---|
@@ -472,14 +524,31 @@ How it must read across the matrix (critics shoot noon and night by default, plu
   the blue wash stays blue; no clipping (criterion 22).
 - **12** — the reference condition. `closeup_12.png` is the frame compared directly to `$REF/cs2_1.jpg`.
 - **17.5** — the low-contrast trap that produced `environment_r2`'s "milky and blown" finding. The overlay must not
-  disappear into a hazy background: ribbon-to-ground luminance ratio ≥ 2.0.
+  disappear into a hazy background: ribbon-to-ground luminance ratio ≥ 2.0, over the same `tools.ribbon` /
+  `tools.ground` crops as criterion 6.
 - **22** — the district is dark; the overlay is the only bright thing and must stay calm (criterion 6). Node discs
   and chips must still read at the `street` and `night_street` cameras — the chips carry their own dark pill, so the
   text contrast target is ≥ 7:1 at every hour.
 
-Also required before the round is closed: `--showcase all --camera aerial --time 12`, `--showcase all --camera
-night_street --time 22`, and one `--w 1280 --h 720` pass at `roadtool` and `closeup`. Assumptions made here, stated
-rather than asked: costs are ¢ per 100 m for roads (street 240, one-way 220, avenue 520, highway 1180, alley 120,
+The runs required before the round is closed, exactly — `gauntlet.mjs` shoots only `aerial,street,skyline,closeup`
+unless told otherwise (`tools/gauntlet.mjs:11`), so the graded module presets have to be named, and it does **not**
+forward `--crops` (`gauntlet.mjs:20-23`), so every pinned measurement is a direct `screenshot.mjs` run:
+
+```
+node tools/gauntlet.mjs --module tools --round <r>
+node tools/gauntlet.mjs --module tools --round <r> --cameras roadtool,zonetool,sculpt,bulldoze,service,invalid --times 12,22
+node tools/gauntlet.mjs --module tools --round <r> --cameras roadtool --times 6.5
+node tools/gauntlet.mjs --module tools --round <r> --cameras roadtool,closeup --times 12,22 --w 1280 --h 720
+# pinned crops (criteria 4, 6, 21, 22) — one per graded shot, e.g.
+node tools/screenshot.mjs --showcase tools --camera roadtool --time 22 --crops --out shots/tools/r<r>/roadtool_22.png
+node tools/screenshot.mjs --showcase all --camera night_street --time 22 --crops --out shots/tools/r<r>/all_night_22.png
+node tools/screenshot.mjs --showcase all --camera aerial --time 12 --out shots/tools/r<r>/all_aerial_12.png
+```
+
+The 720p pass overwrites the 1080p PNGs of the same name, so give it a separate `--round` or rename before the
+1080p set is graded.
+
+Assumptions made here, stated rather than asked: costs are ¢ per 100 m for roads (street 240, one-way 220, avenue 520, highway 1180, alley 120,
 gravel 80, matching the `ui` cards), ¢8/¢20 per 8 m zone cell (low/high), ¢1.5 per m³ of terrain moved, flat card
 cost for services, 10 % refund on demolished roads and 25 % on props; grade limits 12 % (8 % highway); these live in
 one exported table in `src/modules/tools/` so the critic can read them.

@@ -1,8 +1,8 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5173/?showcase=props&time=22&camera=lamps_night&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "props",
-  "time": 12,
-  "camera": "street",
+  "time": 22,
+  "camera": "lamps_night",
   "seed": 1337,
   "width": 1920,
   "height": 1080,
@@ -10,63 +10,63 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 472930,
+  "elapsedMs": 323134,
   "fps": 11.6,
   "measuredFrames": 2,
-  "frameMs": 10668.7,
-  "drawCalls": 127,
-  "triangles": 2101509,
-  "programs": 50,
-  "textures": 49,
-  "geometries": 66,
+  "frameMs": 10854.4,
+  "drawCalls": 129,
+  "triangles": 1910417,
+  "programs": 56,
+  "textures": 50,
+  "geometries": 67,
   "heapMB": 60.2,
   "moduleMs": {
-    "environment": 0.30000000074505806,
-    "props": 3.5,
-    "terrain": 0.10000000149011612,
+    "environment": 2.300000000745058,
+    "props": 0.09999999776482582,
+    "terrain": 0,
     "roads": 0
   },
-  "hour": 12,
+  "hour": 22,
   "cameraState": {
     "position": [
-      86.2,
-      26.1,
-      76.7
+      -103.3,
+      37.6,
+      47
     ],
     "target": [
-      40,
-      0,
-      40
+      140,
+      4,
+      41
     ],
-    "distance": 60
+    "distance": 244.1
   },
   "modules": {
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.3,
-      "initMs": 498
+      "ms": 2.3,
+      "initMs": 612
     },
     "props": {
       "status": "ready",
       "errors": 0,
-      "ms": 3.5,
-      "initMs": 523
+      "ms": 0.1,
+      "initMs": 542
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.1,
-      "initMs": 5402
+      "ms": 0,
+      "initMs": 5495
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 109
+      "initMs": 92
     }
   },
   "errors": [],
   "warnings": [],
-  "png": "shots/props/rdev1/street_12.png"
+  "png": "shots/props/rdev1/lamps_night_22.png"
 }

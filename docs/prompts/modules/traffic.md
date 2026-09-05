@@ -4,11 +4,40 @@ Role files: `docs/prompts/BUILDER.md` (builders) / `docs/prompts/CRITIC.md` (cri
 determinism, instancing, no per-frame allocation, blast radius, the screenshot loop, the scoring anchors — lives
 there and is **not** repeated here. Read with `ARCHITECTURE.md` §3, §4, §5, §6, §9, §10, §12, §15.
 
-`$REF` = `/tmp/claude-0/-home-user-SimBuild/c06ed41b-9bdf-5ab7-ace6-40b62a5e4281/scratchpad/ref/` (`cs2_1.jpg` … `cs2_8.jpg`).
+`$REF` = the CS2 reference frames `cs2_1.jpg` … `cs2_8.jpg`, resolved in this order: `$SIMBUILD_REF` if set, else
+`~/.simbuild/ref/`, else `/tmp/claude-0/-home-user-SimBuild/<session-uuid>/scratchpad/ref/` (the legacy
+session-scoped path — it does **not** survive into a new session). The frames are never committed
+(ARCHITECTURE §10: CS2 screenshots are not stored in this repo) and are re-fetchable from the Steam store URLs
+recorded alongside `docs/reference/CS2-LOOK.md`. **If they cannot be resolved, §3's prose descriptions are the
+normative statement of each anchor and the round is graded against those** — a missing `$REF` is never a reason to
+stop, to ask, or to skip an item.
 
-Round 1 spec. `src/modules/traffic/index.js` is still the stub; there are no critic reports for this module yet.
-The failure modes in §6 are the ones the critics have already booked against `terrain`, `roads`, `environment`,
-`effects`, `simulation` and `ui`; they are waiting for this module too.
+Round 1 spec: there are no critic reports for this module yet. The failure modes in §6 are the ones the critics
+have already booked against `terrain`, `roads`, `environment`, `effects`, `simulation` and `ui`; they are waiting
+for this module too.
+
+**`src/modules/traffic/` is not empty and it is not the stub.** It holds six files — `geometry.js` 628 lines,
+`sim.js` 678, `graph.js` 303, `materials.js` 308, `index.js` 244, `showcase.js` 37 (≈ 2 200 lines) — pre-spec
+exploratory work that predates this document. `docs/STATUS.json` still records
+`traffic: {round: 0, status: "stub"}`; **the disk is authoritative and STATUS is stale.** Disposition: that build
+is a **starting point, not prior art to preserve**. §2, §4, §5 and §8 are normative — bring the module to them and
+treat anything already there that contradicts them as work to fix. The breaking changes are named so no builder
+has to guess which way to jump:
+
+| On disk today | §2 requires |
+|---|---|
+| `lightState(nodeId)` | `signalState(nodeId)` in §2's shape, plus `signals()` in §2's shape (today's `signals()` returns `{id,x,y,z,arms:int}`) |
+| `flowGrid() -> {size, cellSize, data, sample(x,z)}` | `{size:256, cellSize:8, congestion:Float32Array, version, index(x,z), sample(name,x,z)}` |
+| `spawnVehicle(kind, route)` returns `null`; route `[{edgeId,dir}]` | returns `-1`; route `[edgeId,…]` or `{edges:[…], loop}` |
+| `kinds()` (a function on the api) | `world.traffic.kinds` (a frozen array on the world section) |
+| `outsideConnections() -> [{nodeId,x,z,highway}]` | `[{nodeId, edgeId, x, z, type, heading}]` |
+| `setTargets(v,p)`, `preroll(s,step)` | `setDensity(v)` / `density()`, plus the entirely missing `vehicle`, `step`, `freeze`, `forceLod`, `debug`, `cropRects` and §2's `stats()` shape |
+| `dependencies: ['roads']`, `budget: {drawCalls: 90, triangles: 520_000}` (`index.js:72–73`) | `['terrain','roads','simulation']`, `{drawCalls: 60, triangles: 300_000}` |
+
+`index.js:98–99` — `const speed = w.time.paused ? … : Math.max(0.5, Math.min(3, w.time.speed)); const sdt = Math.min(0.1, dt) * speed;`
+— scales the agent step by the **clock** speed. The `Math.max(0.5, …)` floor stops it from being §6's fully dead
+fleet, but it still makes agent motion a function of `?speed=` and of pause, which item 13 forbids and §6 mode (a)
+describes. Step from the raw `dt` handed to `update()`; do not re-ship this line.
 
 **Standing assumptions, stated so nobody has to ask:**
 
@@ -22,45 +51,53 @@ The failure modes in §6 are the ones the critics have already booked against `t
   brake lights and their pools on the road are emissive geometry and projected decals, never `PointLight` /
   `SpotLight`. It also never touches `toneMapping`, `toneMappingExposure`, `scene.fog`, the shadow map, or
   `renderer.render`.
-- **`props` owns the signal phase clock; traffic reads it.** The sibling spec `docs/prompts/modules/props.md`
-  (lines 31–32, 74–75) froze `signalFor(edgeId, atA) -> {state:'red'|'amber'|'green', timeToChange}` and `signals()`
-  in this same wave, and props item 10 makes props render every mast, head and lens. Traffic therefore **never**
-  owns the phase where props is live: whenever `typeof ctx.modules.props?.signalFor === 'function'`, that call is
-  the only source of truth for a lens state and for a vehicle's stop/go decision, and traffic's own
-  `signalState()` / `signals()` are **read-through wrappers** over it (§2) so `infoviews`, `transit` and the critic
-  have one address. Traffic keeps an **internal fallback phase clock** used only when `ctx.modules.props?.signalFor`
-  is `undefined` — which is exactly `?showcase=traffic`, where `loadModuleDefs` imports only `environment` +
-  `traffic` + traffic's declared dependencies (`src/main.js:33, 41`) and props is never loaded at all.
+- **Traffic owns the signal phase clock; `props` renders the heads and mirrors it.** The sibling spec
+  `docs/prompts/modules/props.md` states the same handover from the other side: its "Signal phase clock" bullet
+  (props.md:47–58) says *"`traffic` owns the signal state machine (traffic.md §2); this spec does not contest
+  that"*, and its api block (props.md:104–109) defines `signalFor(edgeId, atA)` as a **pure read-through of
+  `ctx.modules.traffic.signalState(nodeId)` whenever traffic is present**, publishing `source:'traffic'` when it
+  is mirroring. Traffic therefore runs **one** phase state machine, in every showcase, and **never calls
+  `props.signalFor` for a lens state or a stop/go decision** — that would close the loop
+  `traffic.signalState → props.signalFor → traffic.signalState`, which is either infinite recursion or no clock
+  at all. `api.signalState()` / `api.signals()` (§2) are the single authoritative address for `infoviews`,
+  `transit`, `props` and the critic. Props' own clock runs only while `ctx.modules.traffic?.signalState` is
+  absent, which never happens in a showcase that loaded traffic.
   `props` is deliberately **not** added to `dependencies`: declaring it would pull the whole props scatter (trees,
   lamps, benches, signs) into every traffic frame and invalidate the framing in the bullet above. No cycle exists
-  in either direction — props declares `dependencies: ['terrain','roads']` (props.md:11) and never `traffic`.
-- Traffic's fallback signal masts (item 22) are built **only** when props is not live **and** no item in
-  `world.props.items` has `kind === 'trafficlight'`, re-evaluated on `props:changed` and on `app:ready`. In
-  `?showcase=all` props draws the masts and owns the phase, and traffic draws none. **The phase traffic reports for
-  an arm must equal the phase props reports for that arm** — item 6 probes exactly that agreement.
+  in either direction — props declares `dependencies: ['terrain','roads']` (props.md:27, :658) and never
+  `traffic`. Under `?showcase=traffic`, `loadModuleDefs` imports only `environment` + `traffic` + traffic's
+  declared dependencies (`src/main.js:33, 41`), so `ctx.modules.props` is `undefined` there.
+- Traffic's fallback signal **masts** (item 22) are built **only** when props is not live **and** no item in
+  `world.props.items` has `kind === 'trafficlight'`, re-evaluated on `props:changed` and on `app:ready`. The
+  split with props is about **geometry only**: in `?showcase=all` props draws the masts and traffic draws none,
+  and the phase is traffic's in both cases. **The phase props renders for an arm must equal the phase traffic
+  reports for it** — item 6 probes that props *follows* traffic (`signalFor(…).source === 'traffic'`), which is a
+  direction, not two mirrors agreeing.
 - Vehicle height comes from the **road**, never from the terrain. `world.roads.laneCenter(...).y` returns the
   *profile* height; the asphalt surface is `ROAD_LIFT = 0.08 m` above it and the sidewalk top is
   `ROAD_LIFT + SW_H − 0.03 = 0.21 m` above it (`src/modules/roads/build.js:12,18`). Using
   `world.terrain.getHeight` for a vehicle sinks it 8 cm into the asphalt and is an automatic fail on item 1.
 - **Two clocks, and every graded shot is taken with the game clock stopped.** `src/main.js:82` calls
   `clock.setSpeed(0)` whenever `--time` is passed without `--speed`, and `tools/gauntlet.mjs` never passes
-  `--speed`, so all sixteen gauntlet frames and every preset are captured at `speed = 0` with `world.time.hour`
+  `--speed`, so every frame in §8's capture list is taken at `speed = 0` with `world.time.hour`
   pinned by `?time=`. The module therefore runs two clocks and they are not interchangeable:
   - **Phase clock — signals, and anything a screenshot must reproduce.** A pure function of `world.time.day` /
-    `world.time.hour`; never accumulated `dt`, never wall-clock. This is props' resolution for this wave
-    (props.md:33–35) against `simulation_r1` issue 6, "screenshots are not repeatable", and traffic adopts it
-    unchanged so the two modules cannot disagree. One full cycle spans **1.2 game hours**, which is 30 real
-    seconds at `speed = 1` (`src/core/clock.js:5`, `dayLengthSeconds = 600`). At `speed = 0` the phase is
+    `world.time.hour`; never accumulated `dt`, never wall-clock. This is the resolution props adopted for this
+    wave too (props.md:59–62) against `simulation_r1` issue 6, "screenshots are not repeatable", so the two
+    modules cannot disagree. One full cycle spans **1.2 game hours = 4 320 game seconds**, which is 30 real
+    seconds at `speed = 1` (`src/core/clock.js:5`, `dayLengthSeconds = 600`: 600 real s per 24 game h ⇒ 1 real s
+    = 144 game s, and 4 320 / 144 = 30). At `speed = 0` the phase is
     consequently *fixed by `?time=`* and does not advance during a capture: the shot shows one phase, one arm
     flowing and the conflicting arm queued, and that is the intent, not a frozen machine.
   - **Agent motion.** Vehicle and pedestrian positions accumulate from the **raw `dt` handed to `update(dt)`**
-    (already clamped to 0.1 s by `main.js:120`, which passes real `dt` to `registry.update` irrespective of clock
-    speed), so **the fleet is alive in a `speed = 0` screenshot**: cars roll, queues build behind the red arm,
+    (already clamped to 0.1 s, and `main.js:127` passes that real `dt` to `registry.update` irrespective of clock
+    speed; the clamp is `main.js:122`), so **the fleet is alive in a `speed = 0` screenshot**: cars roll, queues build behind the red arm,
     pedestrians walk, spawns and despawns happen. `Date.now()` / `performance.now()` drive nothing. Per-agent
     animation phase (stride, wheel spin) is a function of **that agent's accumulated path distance**, not of time,
     so it scales with speed by construction and neighbours are out of phase without a random offset.
   - **What this costs, and how grading pays for it.** Two separate page loads are *not* pixel-identical: capture
-    happens ~2–3 s after `__sim.ready` (`tools/screenshot.mjs:63, 83, 93`) and the step count in that window
+    happens ~2–3 s after `__sim.ready` (`tools/screenshot.mjs:61–68` waits, then the `--measure` window, 1.5 s
+    from `tools/gauntlet.mjs:24`) and the step count in that window
     depends on machine load. **No acceptance item may require a pixel-identical frame from two loads.** Determinism
     is graded through `api.step(n)` from a pinned state (item 21); every pixel-diff test is taken **within one page
     load** with `api.freeze(true)` holding the fleet still (items 11, 12); and probes that need the phase to
@@ -100,8 +137,8 @@ Field contract, enforced by probe:
   **`edgeId === null` means "inside the junction box", and it is an exclusion, not an escape hatch:** items 1, 4, 5
   and 6 evaluate only agents with a non-null `edgeId` (`network.js:228–230` returns `null` from `laneCenter` for an
   unknown edge, so a lane comparison for a mid-junction vehicle is undefined and must not be scored), **and** the
-  fraction of the fleet with `edgeId === null` must be **≤ 12 %** at every sample, probed at all four gauntlet
-  hours. Pedestrians with `state === 'cross'` are the pedestrian equivalent and are excluded from item 9's band
+  fraction of the fleet with `edgeId === null` must be **≤ 12 %** at every sample, probed at all four graded
+  hours (6.5, 12, 17.5, 22). Pedestrians with `state === 'cross'` are the pedestrian equivalent and are excluded from item 9's band
   test the same way, under the same 12 % ceiling.
 - `lane` integer, a valid index into that edge's lane set (`0 … edge.lanes-1`).
 - `t` ∈ [0,1], the same parameter `world.roads.sample(edgeId, t)` takes, measured along `a → b`.
@@ -124,7 +161,7 @@ pedestrian's accumulated path distance (§ standing assumptions), never of the c
 
 Two additions this module publishes on the section (permitted extensions; nothing above may be missing):
 
-- `world.traffic.kinds` — frozen array of vehicle class keys, **≥ 9 entries** (the enumerated minimum set in §3
+- `world.traffic.kinds` — frozen array of vehicle class keys, **≥ 9 entries** (the enumerated minimum set in §4
   item 3 has nine members).
 - `world.traffic.stats` also carries `pedestrians` (int), `byKind` (`{kind: count}`), `queued` (int, vehicles
   stopped at a red or behind one), `spawned`/`despawned` (session totals). `count`, `avgSpeed` (m/s over moving and
@@ -143,8 +180,8 @@ spawnVehicle(kind, route) -> id|-1   // route: [edgeId,…] or {edges:[…], loo
 despawn(id) -> bool
 flowGrid() -> {size:256, cellSize:8, congestion:Float32Array, version, index(x,z), sample(name,x,z)}
 outsideConnections() -> [{nodeId, edgeId, x, z, type, heading}]
-signalState(nodeId) -> {phase:int, greenArms:[edgeId], since:number, cycle:number} | null   // read-through
-signals() -> [{nodeId, x, z, arms:int, phase:int, greenArms:[edgeId]}]                      // read-through
+signalState(nodeId) -> {phase:int, greenArms:[edgeId], since:number, cycle:number} | null   // authoritative
+signals() -> [{nodeId, x, z, arms:int, phase:int, greenArms:[edgeId]}]                      // authoritative
 vehicle(id) -> record|null
 setDensity(v)            // 0..1 multiplier on the target fleet size; null restores the activity curve
 density() -> number
@@ -152,29 +189,37 @@ stats() -> {vehicles, pedestrians, byKind, byKindTris, byLod:{0,1,2}, draws, tri
             targetPeds, stepMs, cullDistance, signals, emissive:{head, tail, brake, mast}}
 forceLod(n|null)         // pin every agent to LOD n; used to prove LOD parity
 step(n = 1) -> int       // advance exactly n fixed agent steps synchronously, return the new step count.
-                         // Deterministic, no wall clock; mirrors simulation's step(n) (simulation/index.js:187)
+                         // Deterministic, no wall clock; mirrors simulation's step(n) (simulation/index.js:187).
+                         // Advances agents even while freeze(true) is held: freeze only stops update() from
+                         // stepping them. Items 12 and 21 pin a state with freeze and then move it with step.
 freeze(v)                // true: update() stops stepping agents (probe plates, pixel diffs); false: resume
 debug: { setVisible(layer, bool), lodHistogram() }
    // layer: 'vehicles' | 'pedestrians' | 'pools' | 'lamps' | 'masts' | 'shadows'
    // 'shadows' toggles castShadow on every mesh this module owns; the rest toggle visibility of that layer.
    // These exist so the critic can build the masks in §4 and must work with zero console errors.
+cropRects({project, width, height, camera}) -> {name: [x, y, w, h]}
+   // The two pinned landmarks in §4's preamble, in pixels of the full-resolution capture, each returned only
+   // when it is in frame. Collected by window.__sim.cropRects() and written to <shot>.crops.json by
+   // `tools/screenshot.mjs --crops` (ARCHITECTURE §8). Items 7 and 11 measure inside these rects.
 serialize() -> {module:'traffic', version, density, vehicles:[{kind, edgeId, lane, t, speed}], peds:[…]}
 deserialize(data) -> bool
 ```
 
-`signalState(nodeId)` and `signals()` are **read-through wrappers, not a second state machine.** When
-`typeof ctx.modules.props?.signalFor === 'function'`, `greenArms` is exactly the set of arm `edgeId`s for which
-`ctx.modules.props.signalFor(edgeId, atA)` returns `state === 'green'`, and `phase` / `cycle` are props' values for
-that node; the two modules must never report different states for the same arm. Only when props is absent do they
-report traffic's internal fallback clock. `since` is game seconds since the current phase began, derived from
-`world.time` like the phase itself. `signalState()` returns `null` for a node that is not a signalised
-intersection.
+`signalState(nodeId)` and `signals()` are **the phase state machine itself, not a wrapper over anyone else's.**
+The phase is a pure function of `world.time.day` / `world.time.hour` (§ standing assumptions) on a fixed cycle of
+**1.2 game hours = 4 320 game seconds**; `cycle` is reported in game seconds (4 320) and `since` is game seconds
+since the current phase began, derived from `world.time` the same way. `signalState()` returns `null` for a node
+that is not a signalised intersection. Where props is live it **reads these every frame** and drives every lens
+from them (props.md:47–58, :104–109); traffic publishes identical values in `?showcase=traffic` and
+`?showcase=all` and never asks props what the phase is.
 
 `stats().byKindTris` is `{kind: LOD0 triangles of one instance of that kind}` — item 2 grades the per-class
 thresholds against it, because a fleet-wide mean (`tris / byLod[0]`) mixes cars, buses, pedestrians, masts, pools
 and beams and cannot check a per-class number. `stats().emissive` reports the linear emissive radiance actually set
 on each lamp class (`max channel of material.emissive × material.emissiveIntensity`), so item 7's ranges are
-readable from a probe instead of guessed from pixels.
+readable from a probe instead of guessed from pixels; `stats().emissive.mast` is `null` whenever this module draws
+no mast (item 22). `stats().tris` and `stats().draws` are what this module **actually submitted this frame, after
+LOD and culling** — not authored source geometry; `byKindTris` is the only authored figure on the object.
 
 `flowGrid()`'s shape mirrors `world.economy.grids` exactly (`src/modules/simulation/grids.js:20–28`): **named
 `Float32Array` fields plus `index(x, z)` and `sample(name, x, z)`**, which is what lets `infoviews` read either with
@@ -226,12 +271,12 @@ be legible; nothing may flicker, sparkle or form a pile at the world origin.
 
 ## 4. Acceptance criteria
 
-Ordered by how much each moves the score. Every item is checked in a named shot from
-`node tools/gauntlet.mjs --module traffic --round <n>` (`shots/traffic/r<n>/<camera>_<time>.png`, times written
-`6p5, 12, 17p5, 22`), in a declared-preset shot, in the shot's `.json`, or in a page-evaluate probe against
+Ordered by how much each moves the score. Every item is checked in a named shot from **§8's capture list**
+(`shots/traffic/r<n>/<camera>_<time>.png`, times written `6p5, 12, 17p5, 22`) — every shot named below is on that
+list — in the shot's `.json` or `.crops.json`, or in a page-evaluate probe against
 `window.__sim.registry.apis.traffic` and `window.__sim.world.traffic` at `?showcase=traffic&headless=1`.
 
-**Three conventions used throughout, so that no item below carries a number without a way to obtain it:**
+**Four conventions used throughout, so that no item below carries a number without a way to obtain it:**
 
 - **The plates and the three masks.** Anything phrased "on vehicle surfaces" or "the shadow" is measured against a
   mask built inside **one page load**, at one camera and time, with `api.freeze(true)` held for all four renders:
@@ -247,11 +292,27 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
   material class (body paint, glass, tyre, trim, head lamp, tail lamp, brake lamp, mast lens). Emissive radiance is
   `max channel of material.emissive × material.emissiveIntensity`, which `stats().emissive` publishes directly for
   the lamp classes.
-- **Which clock a probe runs on.** Unless an item says otherwise, probes run at the gauntlet's `speed = 0`, where
+- **Where a pinned pixel statistic is taken.** Any measurement inside a named region is taken from that
+  region's rect in `<shot>.crops.json`, which
+  `node tools/screenshot.mjs … --crops` writes beside the PNG from `window.__sim.cropRects()`, which in turn
+  collects `api.cropRects({project, width, height, camera})` from every ready module
+  (`window.__sim.project(x, y, z)` maps world to pixels; ARCHITECTURE §8 — **this is the only producer of
+  `crops.json`**). **This module must implement `api.cropRects`** (§2) and return exactly these two names, each
+  only when that landmark is in frame at that camera:
+  - `traffic.lead_vehicle` — the screen-space bounding box of the in-frustum vehicle whose centre is nearest the
+    camera, inflated by 20 % on every side (item 7).
+  - `traffic.far_asphalt` — a 128 × 128 px box centred on a carriageway point 200–400 m from the camera and
+    inside the frame (item 11).
+
+  An empty or missing `crops.json` is a builder defect (CRITIC.md, "Pinned landmarks"), never a licence to grade
+  the item by eye. **Every pinned statistic is computed on the full-resolution PNG, never on a downscaled copy** —
+  at 480 px wide a 1 m patch is about two pixels.
+- **Which clock a probe runs on.** Unless an item says otherwise, probes run at the captures' `speed = 0`, where
   the signal phase is pinned by `?time=` and the fleet still moves (§ standing assumptions). Items that need the
   phase to advance say so and run with `window.__sim.setSpeed(1)` or step the clock with `window.__sim.setTime(h)`;
   items that need repeatability use `api.freeze(true)` + `api.step(n)`. Nothing below is timed off the wall clock,
-  and nothing below compares pixels between two page loads.
+  and nothing below compares **pixels** between two page loads — item 7's chroma ratio is the one cross-load
+  comparison, and it compares an aggregate (mean chroma over a mask inside a landmark rect), not a pixel diff.
 
 1. **Wheels on the road, nothing floating, nothing sunk.** Probe over every live vehicle **with a non-null
    `edgeId`** (§2: mid-junction vehicles are excluded and capped at 12 % of the fleet):
@@ -267,16 +328,17 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    with a dark tyre and a lighter hub, tyre bottom within 0.02 m of the ground; (c) a red rear lamp cluster and a
    pale rear plate; (d) a front lamp pair and a darker grille; (e) a roof plane distinct in shading from the sides.
    Probe: `stats().byKindTris[kind]` with `forceLod(0)` at the `fleet` preset — ≥ 700 for `hatchback`, `sedan`,
-   `suv`, `van`, `pickup` and `motorbike`; ≥ 1100 for `bus`, `box_truck` and `semi`. (Per class, from
-   `byKindTris`: `tris / byLod[0]` is one fleet-wide mean over vehicles, pedestrians, masts, pools and beams and
-   cannot check a per-class threshold.) Flat-shaded coloured boxes are a 5.
+   `suv`, `van`, `pickup` and `motorbike`; ≥ 1100 for `bus`, `box_truck` and `semi` (§2 says why the per-class
+   figure and not `tris / byLod[0]`). Flat-shaded coloured boxes are a 5.
 3. **Fleet variety.** `world.traffic.kinds` has ≥ 9 entries, at minimum
    `['hatchback','sedan','suv','van','pickup','box_truck','semi','bus','motorbike']`, each with a distinct
    silhouette and these dimensions ±10 %: hatchback 4.0×1.75×1.48 m, sedan 4.75×1.82×1.45, suv 4.7×1.90×1.72,
    van 5.2×2.00×2.20, pickup 5.3×2.00×1.90, box_truck 8.0×2.40×3.30, semi 6.2 m tractor + 13.6 m trailer
    articulated at the fifth wheel ×2.55×4.00, bus 12.0×2.55×3.20, motorbike 2.1×0.80×1.30. At `fleet_12` an art
    director can name all nine from silhouette alone. ≥ 14 body colours from `ctx.rng`, distributed like the
-   references: 55–70 % achromatic (white / silver / grey / black), the remainder saturated (`$REF/cs2_5.jpg`).
+   references: 55–70 % achromatic (white / silver / grey / black), the remainder saturated (`$REF/cs2_5.jpg`);
+   read by probe from the per-instance colour buffer of the body-paint `InstancedMesh` under
+   `window.__sim.registry.get('traffic').group`, achromatic = max−min of the sRGB channels ≤ 24/255.
    In any 12 consecutive vehicles in a queue at `queue_12`, no two adjacent share both kind and colour. At least
    two liveries exist on the shared body meshes (taxi, police or delivery) and appear in `stats().byKind`.
 4. **Lane discipline, correct side, correct direction.** Probe over every vehicle **with a non-null `edgeId`**
@@ -292,25 +354,31 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    traffic and the two directions are visibly opposed.
 5. **Car-following: no interpenetration, real queues.** Probe over vehicles **with a non-null `edgeId`**: for
    every pair on the same edge and lane, the bumper-to-bumper gap ≥ 1.2 m at rest and ≥ `0.55 × speed` metres in
-   motion (a ~2 s headway); **zero** pairs with a negative gap at any of the four gauntlet times. Speeds obey the
+   motion — a **0.55 s clear-road time gap**, which at the 50 km/h street limit (13.9 m/s) is 7.6 m of clear
+   asphalt, or ~0.9 s front-to-front behind a 4.5 m car; **zero** pairs with a negative gap at any of the four
+   graded times. Speeds obey the
    type limit: `v.speed ≤ world.roads.types[edge.type].speed / 3.6 × 1.10` for 100 %, and the free-flow mean is
    0.75–1.0 × the limit. At `queue_17p5` there is a visible queue of ≥ 4 stopped vehicles behind a stop line with
    even spacing, and `stats().queued ≥ 6` — this forms at `speed = 0` because the phase is pinned by `?time=` and
    the fleet still rolls (§ standing assumptions). The queue must also **discharge**: with
    `window.__sim.setSpeed(1)` the same probe over one full cycle shows `stats().queued` falling below 2 and rising
    again. Standing still with `speed === 0` must not leave the wheels spinning.
-6. **Traffic-light compliance and intersection behaviour.** **The phase belongs to `props` wherever props is
-   live** (§ standing assumptions, §7).
-   - *Integrated (`?showcase=all`, times 12 and 22).* Every stop/go decision is taken from
-     `ctx.modules.props.signalFor(edgeId, atA)` for the arm the vehicle is on. Probe: for every signalised node and
-     every arm, `api.signalState(nodeId).greenArms` **agrees 100 %** with the arms props reports `green`, and no
-     vehicle is stopped at an arm props reports green for more than 2 s. A disagreement — a car at a green lens or
-     crossing a red one — is a fail on this item even if traffic's own machine is self-consistent.
-   - *Standalone (`?showcase=traffic`, props not loaded).* The internal fallback clock applies: every node from
-     `ctx.modules.roads.intersections()` — read **after** the explicit rebuild in §8 — with `arms.length ≥ 3` and
-     `roundabout === false` is signalised; `api.signalState(nodeId)` returns a phase on the fixed **1.2 game-hour**
-     cycle (§ standing assumptions), opposing arms green together, with an all-red/amber gap of ≥ 8 % of the cycle
-     between phases.
+6. **Traffic-light compliance and intersection behaviour.** **Traffic owns the phase in every showcase**
+   (§ standing assumptions, §7); props renders the heads where it is live.
+   - *The machine (both showcases).* Every node from `ctx.modules.roads.intersections()` — read **after** the
+     explicit rebuild in §8 — with `arms.length ≥ 3` and `roundabout === false` is signalised;
+     `api.signalState(nodeId)` returns a phase on the fixed **1.2 game-hour (4 320 game-second)** cycle
+     (§ standing assumptions), opposing arms green together, with an all-red/amber gap of ≥ 8 % of the cycle
+     between phases. Every stop/go decision a vehicle takes comes from that machine, never from
+     `props.signalFor`.
+   - *Integrated (`?showcase=all`, times 12 and 22) — the probe grades a direction, not an agreement.* For every
+     signalised node and every arm, `ctx.modules.props.signalFor(edgeId, atA)` returns `state === 'green'`
+     exactly for the arms in `api.signalState(nodeId).greenArms`, **and** returns `source === 'traffic'`
+     (props.md:104–109) — that is props mirroring traffic. Traffic taking its own decision from
+     `props.signalFor` fails this item even if the two then agree, because that is the read-through loop the
+     standing assumptions forbid. Additionally: no vehicle crosses its arm's `stopT` while `api.signalState`
+     reports that arm red, no vehicle is stopped at an arm `signalState` reports green for more than 2 s, and
+     traffic draws zero masts (item 22).
    - *Phase advance (a clock that never turns is a fail).* Because the phase is a pure function of `world.time`,
      the probe advances the clock rather than waiting: `window.__sim.setTime(h)` then `setTime(h + 0.6)` — half a
      cycle — gives a **different** `greenArms` set at every signalised node, and twelve samples across two cycles
@@ -324,7 +392,7 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
      `window.__sim.setSpeed(1)`, the probe watches the four radial entry edges named in §8 (the south radial from
      the avenue and the east radial from the `z = -40` street are the two that carry fed traffic) and records ≥ 3
      **yield events** — a vehicle whose `speed` drops below 1 m/s within 12 m of the ring and then enters — over
-     20 s, with zero ring/entry pairs closer than the item 5 gap.
+     20 s, with zero ring/entry pairs closer than the item 5 gap. Seen at `roundabout_12`.
    - At `junction_12` and `junction_22` the crossing arm is moving while the stopped arm queues.
 7. **Night is headlights, taillights and pools — not glowing toys.** At `headlights_22`, `street_22`,
    `night_street_22` and `junction_22` (`$REF/cs2_8.jpg`). **Reference frame for every radiance below: linear scene
@@ -334,27 +402,32 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    `lerp(2.6, 2.2, night) / exposure ≈ 2.2 / 2.8 ≈ 0.79` (`effects/index.js:141`, the same 0.79 `effects_r1`
    issue 2 measured). Everything above 0.79 haloes, in proportion; everything below cannot halo at all.
    - Every vehicle has `lightsOn === true` (probe: 100 % at hour 22, **0 %** at hour 12).
-   - Head lamps: a pair of small emissive lenses, radiance **3.0–5.0** — ~4–6× the night threshold, so they halo
-     clearly, and below the signal lens so they never out-glow it — plus a forward **light pool projected on the
-     road** 10–18 m long, 3–4.5 m wide, warm-white, additively blended, peaking at ≤ 0.55 of the lens luminance
-     and falling to 0 at its far edge.
-   - Tail lamps: radiance **1.2–2.0** — above 0.79, so the halo exists but is faint, which is exactly the
-     reference's "small, saturated, only faintly haloed" — and saturated red (r ≥ 2.5 × g and ≥ 2.5 × b). Brake
-     lamps **3.5–5.0** whenever `speed` is dropping by > 1.5 m/s², with a rear pool 6–8 m long.
+   - Head lamps: a pair of small emissive lenses, radiance **3.0–5.0** — 3.8–6.3× the 0.79 threshold
+     (3.0/0.79 = 3.8, 5.0/0.79 = 6.3), so they halo clearly and still sit below the signal lens — plus a forward
+     **light pool projected on the road** 10–18 m long, 3–4.5 m wide, warm-white, additively blended, peaking at
+     ≤ 0.55 of the lens luminance and falling to 0 at its far edge.
+   - Tail lamps: radiance **1.2–2.0** — 1.5–2.5× the threshold, so the halo exists but is faint, which is exactly
+     the reference's "small, saturated, only faintly haloed" — and saturated red (r ≥ 2.5 × g and ≥ 2.5 × b).
+     Brake lamps **3.5–5.0** (4.4–6.3×) whenever `speed` is dropping by > 1.5 m/s², with a rear pool 6–8 m long.
    - **Ceiling, so the prose follows from the numbers:** no vehicle emissive radiance may exceed **6.5**, the
-     lowest signal-lens radiance (item 22). Probe:
-     `max(stats().emissive.head, .tail, .brake) < 6.5 ≤ stats().emissive.mast`. "Nothing about the vehicles is
-     brighter than the signal's green lens" is then a consequence of the ranges, not a claim in tension with them.
+     lowest signal-lens radiance (item 22). Probe: `max(stats().emissive.head, .tail, .brake) < 6.5` always, and
+     `6.5 ≤ stats().emissive.mast` **only where this module draws a mast**. Where it draws none —
+     `stats().emissive.mast === null`, i.e. `?showcase=all`, where the mast is props' (item 22) — the ceiling is
+     the literal 6.5 and the mast comparison is skipped; comparing against `null` would fail a module that is
+     behaving correctly. "Nothing about the vehicles is brighter than the signal's green lens" is then a
+     consequence of the ranges, not a claim in tension with them.
    - The vehicle **body is still readable in colour** at 22:00 under lamps: over the **vehicle mask** (§4
-     preamble) within the 400 × 400 px crop centred on the frame centre at `junction_22`, mean chroma
-     (max − min of the RGB channels, 0–255) is ≥ 60 % of the same measurement over the same crop and mask at
-     `junction_12`. Silhouetted black cut-outs fail.
+     preamble) inside the `traffic.lead_vehicle` rect of `junction_22.crops.json`, mean chroma
+     (max − min of the RGB channels, 0–255) is ≥ 60 % of the same measurement inside the same landmark's rect and
+     mask at `junction_12` — both taken on the full-resolution PNG, both shot with `--crops`. The landmark tracks
+     the nearest vehicle in each frame, so the two rects cover a comparable body even though their pixel
+     coordinates differ. Silhouetted black cut-outs fail.
    - Pixels at 255 in all three channels are < 0.05 % of the frame and all of them fall inside the vehicle mask or
      a mast head; the frame's p1 luminance > 0 and p99 < 250. No lamp lens is larger on screen than the signal
      head next to it.
 8. **Density follows the hour, not a constant.** The fleet target is
    `round(maxVehicles × simulation.profile(hour).traffic)` with `maxVehicles = 240`, and pedestrians
-   `round(260 × simulation.profile(hour).pedestrians)`. Probe `stats()` at the four gauntlet hours must satisfy:
+   `round(260 × simulation.profile(hour).pedestrians)`. Probe `stats()` at the four graded hours (6.5, 12, 17.5, 22, set with `window.__sim.setTime(h)`) must satisfy:
    `vehicles(17.5) ≥ 200`, `vehicles(12)` in 130–190, `vehicles(6.5)` in 60–110, `vehicles(22)` in 30–65, and
    `vehicles(22) ≤ 0.35 × vehicles(17.5)`. The difference is visible: `aerial_17p5` shows visibly more traffic
    than `aerial_22` on the same roads. Class mix varies with the hour — `box_truck`+`semi` are ≥ 18 % of the
@@ -363,7 +436,7 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    curve (peaks 8.1 and 17.4) and the numbers above still hold. Because the clock is stopped in a graded shot, the
    target for the pinned hour must be **reached, not grown into**: `showcase.setup` seeds the fleet to target
    synchronously, and after any change of hour or density the fleet is within 10 % of target inside 3 s of agent
-   time — the gauntlet captures ~2–3 s after `__sim.ready`.
+   time — a capture happens ~2–3 s after `__sim.ready`.
 9. **Pedestrians on the sidewalk.** Only on edges with `world.roads.types[type].sidewalk > 0.05`
    (`alley` 2, `street` 3, `avenue` 4 — never `highway`, `ramp` or `gravel`). Lateral offset
    `±(asphaltHalf + sidewalk × 0.5)` ± 0.6 m jitter, so `|offset|` = 6.5 ± 0.6 m on a street and 10.0 ± 0.6 m on
@@ -394,8 +467,8 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     albedo ≤ 0.06 linear; tyres `roughness ≥ 0.85`; chrome/trim `metalness ≥ 0.8`, `roughness 0.25–0.4` and
     ≤ 4 % of a vehicle's surface area. At `skyline_12`, `aerial_12`, `aerial_17p5`, with `api.freeze(true)` held
     across both renders: pixels with luma > 245 **inside the vehicle mask** (§4 preamble) are < 0.05 % of the
-    frame; no per-pixel speckle (a 128×128 crop of the road at 200–400 m has < 0.2 % of pixels differing from both
-    horizontal neighbours by > 40/255). Any custom `ShaderMaterial` is registered with
+    frame; no per-pixel speckle (inside the `traffic.far_asphalt` rect of that shot's `.crops.json`, on the
+    full-resolution PNG, < 0.2 % of pixels differ from both horizontal neighbours by > 40/255). Any custom `ShaderMaterial` is registered with
     `ctx.modules.environment?.setupMaterial?.(mat)` so CSM and fog apply — an unfogged vehicle at 600 m against
     fogged road is a fail.
 12. **LOD, culling, and no pile at the origin.** Three LODs with the switch distances
@@ -406,7 +479,7 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     **vehicle-mask** bounding box (§4 preamble) moves by ≤ 2 px on every side; the LOD switch must not change body
     colour, size or heading. Probe: every `InstancedMesh.count` equals the number of agents actually assigned to
     it, and **no instance sits within 5 m of (0, 0)** unless a road is there — a cluster of parked instances at
-    the world origin at `overview`/`aerial_12` is an automatic fail. **No popping**, measured step-pinned instead
+    the world origin at `overview_12` / `aerial_12` is an automatic fail. **No popping**, measured step-pinned instead
     of by wall clock (two loads are not comparable, § standing assumptions): at `aerial_12`, render, then
     `api.freeze(true); api.step(4)` — 0.2 s of agent time at the 20 Hz fixed step — and render again; the two
     frames differ by meanAbs < 3/255 outside the fleet mask.
@@ -436,8 +509,8 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
 16. **Budget — traffic is graded on what traffic owns.** Binding numbers, all attributable to this module: probe
     `stats().draws ≤ 45` and `stats().tris ≤ 300_000`; `moduleMs.traffic ≤ 1.6` at every shot and ≤ 0.6 with the
     fleet at the 22:00 size; `stats().stepMs ≤ 1.2`; `modules.traffic.initMs ≤ 1200`; `textures ≤ 6` added by this
-    module, none above 1024²; declared `budget` in `index.js` exactly `{ drawCalls: 60, triangles: 300_000 }`.
-    From every gauntlet `.json`, whole-frame `drawCalls ≤ 200` at every camera/time (roads alone peaks at 44 —
+    module, at most four of them 1024² and none above it (§5); declared `budget` in `index.js` exactly `{ drawCalls: 60, triangles: 300_000 }`.
+    From every shot `.json` in §8's capture list, whole-frame `drawCalls ≤ 200` at every camera/time (roads alone peaks at 44 —
     `shots/roads/rdev2/summary.json` — so this ceiling is traffic's to keep). **Whole-frame triangles are recorded
     in every shot and graded as a delta, never as an absolute this module cannot control:** the whole-frame ceiling
     is ARCHITECTURE §9's `3_000_000` for the entire demo city, and the traffic-attributable figure is the
@@ -450,7 +523,7 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     unavailable — `src/core/debug.js:24`).
 17. **`ready` in the integrated shots.** `errors: []` and `modules.traffic.status === 'ready'` in the three
     named shots — `--showcase all --time 12`, `--showcase all --time 22`, and one
-    `--showcase traffic --w 1280 --h 720` — as well as in every gauntlet shot. No warning about a missing road API.
+    `--showcase traffic --w 1280 --h 720` — as well as in every shot of §8's capture list. No warning about a missing road API.
 18. **API contract.** Probe, item by item: every function in §2 exists and returns the documented shape;
     `signalState(nodeId)` returns `null` for a non-intersection node and an object for every signalised one;
     `flowGrid().congestion` is a 256² `Float32Array` whose values are 0 off-road and > 0 on the busiest avenue at
@@ -469,15 +542,24 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
 20. **Reacts to the road graph.** Probe: `world.roads.removeEdge(id)` on an occupied edge leaves **zero**
     vehicles or pedestrians referencing it after one frame, with no error and no vehicle stranded off-road;
     `world.roads.addEdge(...)` makes the new edge drivable within **1 s of agent time** — that is one second of
-    real `dt`, not of game time, so the check holds at the gauntlet's `speed = 0`. With an **empty** road graph
+    real `dt`, not of game time, so the check holds at the captures' `speed = 0`. With an **empty** road graph
     (probe deletes every edge) the module logs one warning, holds `stats().vehicles === 0` and throws nothing.
 21. **Determinism, graded from a pinned state.** Boot is not a pinned state — the number of steps taken before
     `__sim.ready` depends on machine load (§ standing assumptions) — so the probe pins it first:
     `api.freeze(true)`; `api.setDensity(0)`; `api.step(60)` to flush; `api.setDensity(null)`; `api.step(1)` to
-    re-seed; `api.step(600)`. Re-seeding must re-fork the module rng from a fixed sequence position
-    (`ctx.rng.fork('traffic:fleet')`), so the re-seeded fleet is a pure function of `world.seed` and
-    `world.time.hour`. Two runs at `--seed 1337 --time 12` then give identical `stats().byKind` and identical
-    `x, z, heading` (to 1e-4) for the first 20 vehicle ids; `--seed 7` differs in ≥ 30 % of `byKind` counts.
+    re-seed; `api.step(600)` (30 s of agent time at the 20 Hz fixed step).
+    **Ids are not comparable across runs** — §2 makes them unique for the session and never reused, and the
+    number of spawns and despawns before the pin depends on machine load, so the id counter stands at a different
+    value in run A and run B. The comparison is therefore over **the first 20 entries of
+    `world.traffic.vehicles` in insertion order**, never over "ids 1–20". Two runs at `--seed 1337 --time 12`
+    give identical `stats().byKind` and identical `x, z, heading` (to 1e-4) for those 20 entries; `--seed 7`
+    differs in ≥ 30 % of `byKind` counts.
+    Re-seeding re-forks the module rng. The real contract:
+    ``ctx.rng.fork(label)`` is ``new RNG(this.seed, `${this.label}/${label}`)`` (`src/core/rng.js:64`) — keyed on
+    `world.seed` and the label chain **only**, with no notion of sequence position — so
+    `ctx.rng.fork('traffic:fleet')` restarts the identical stream every time it is called, which is exactly the
+    property this item needs. Nothing in that chain carries `world.time.hour`: if the re-seeded fleet is also to
+    differ by hour, fold the hour into the label (`fork('traffic:fleet:' + hour.toFixed(2))`).
     `Date.now()` / `performance.now()` appear only in profiling counters; agent stepping accumulates from the `dt`
     handed to `update()` and the signal phase from `world.time`, never the reverse and never the wall clock.
 22. **Fallback signal masts, only where `props` is not live.** `props` owns signal geometry (props.md item 10);
@@ -502,9 +584,9 @@ demo city keeps headroom, and instances per class rather than per chunk because 
 | Metric | Budget | Where measured |
 |---|---|---|
 | Declared `budget` in `index.js` | `{ drawCalls: 60, triangles: 300_000 }` | source |
-| Traffic's own draw calls | ≤ 45 (≤ 9 classes × 3 LOD + peds 2 + beams 1 + pools 1 + masts 2) | probe `stats().draws` |
+| Traffic's own draw calls | ≤ 45 — the enumeration totals 33 (9 classes × 3 LOD = 27, + peds 2 + beams 1 + pools 1 + masts 2), leaving 12 for extra kinds and liveries | probe `stats().draws` |
 | Whole-frame draw calls, `?showcase=traffic` | ≤ 200 at every camera/time | shot `.json` `drawCalls` |
-| Traffic's own triangles | ≤ 300 000 | probe `stats().tris` |
+| Traffic's own triangles | ≤ 300 000 **submitted this frame**, after LOD and culling — not authored source geometry (§2) | probe `stats().tris` |
 | Whole-frame triangles | ≤ 3 000 000 (ARCHITECTURE §9, the whole demo city). Recorded in every shot, **not** attributed to traffic: roads' own showcase already renders 1 208 995 at `highway` | shot `.json` `triangles` |
 | Traffic's attributable triangle delta | ≤ 320 000 — full density minus the same camera/time at `setDensity(0)` | two shots |
 | Triangles per vehicle | LOD0 700–1 800 (bus/semi ≤ 2 600), LOD1 ≤ 0.35 × LOD0, LOD2 ≤ 45 | probe with `forceLod` |
@@ -514,7 +596,7 @@ demo city keeps headroom, and instances per class rather than per chunk because 
 | Fixed agent step | ≥ 20 Hz, ≤ 1.2 ms per step, ≤ 4 steps caught up per frame | probe `stats().stepMs` |
 | `init()` | ≤ 1200 ms (procedural meshes + one atlas) | `.json` `modules.traffic.initMs` |
 | `showcase.setup()` | ≤ 6 s under SwiftShader | `.json` `elapsedMs` vs baseline |
-| GPU texture memory | ≤ 24 MB: ≤ 6 textures, none above 1024² (one vehicle albedo/livery atlas, one ORM, one emissive mask, one light-pool gradient) | probe `stats()` / renderer info |
+| GPU texture memory | ≤ 24 MB: ≤ 6 textures, **at most four at 1024²** and none above it — 1024² RGBA with mipmaps ≈ 5.6 MB, so 4 × 5.6 = 22.4 MB fits and 6 × 5.6 = 33.5 MB would not; the other two ≤ 256². The four are one vehicle albedo/livery atlas, one ORM, one emissive mask, one light-pool gradient | probe `stats()` / renderer info |
 | JS heap drift | < 4 MB over 30 s at speed 4; skipped when `heapMB` is `null` (no `performance.memory`) | `__sim.stats().heapMB` (`src/core/debug.js:24`) |
 
 ---
@@ -561,13 +643,14 @@ screen so a round is not spent rediscovering it.
 - **UI/probe overflow at 720p.** `ui_r1` major: layout breaks at 1280×720. Any debug overlay this module draws
   must be off by default and must not be part of the graded frame.
 - **A dead fleet, or a phase that cannot be probed.** Two opposite versions of the same mistake, both booked by
-  `simulation_r1` issue 6 and props.md:33–35. (a) Stepping agents from `dt × world.time.speed`: the gauntlet runs
+  `simulation_r1` issue 6 and props.md:59–62. (a) Stepping agents from `dt × world.time.speed`: the gauntlet runs
   at `speed = 0` (`main.js:82`), so the product is zero and **every graded frame is a still life** — no queues, no
   yields, no spawns, and a third of this list becomes unobservable. Step from the raw `dt` handed to `update()`.
   (b) Driving the signal phase from accumulated `dt`: every capture then lands on a different phase and every
   pixel diff is meaningless. Derive the phase from `world.time` only. Symptom of (a): identical `stats().queued`
   and identical positions in two shots taken minutes apart; symptom of (b): `junction_12` shows a different arm
-  green on every re-shoot.
+  green on every re-shoot. The version already on disk (`index.js:98–99`, see the preamble) is (a) with a 0.5
+  floor: not a still life, but agent motion that changes with `?speed=`, which item 13 forbids.
 - **Reading the road graph before it exists.** `showcase.setup` stages nodes and edges and then immediately reads
   `intersections()` or `edge.ring`. Both are produced by `RoadBuilder.rebuild()` (`build.js:1231–1233` for the
   intersection list, `detectRings()` at `build.js:166–185` for the `ring` flag), and roads coalesces rebuilds over
@@ -583,13 +666,13 @@ screen so a round is not spent rediscovering it.
 
 ## 7. Dependencies and their real APIs
 
-`dependencies: ['terrain', 'roads', 'simulation']`. **`props` is a soft, undeclared dependency, and traffic reads
-its API when it is there.** It is left undeclared not to avoid a cycle — there is none; props declares
-`dependencies: ['terrain','roads']` (props.md:11, :384) and never traffic — but because declaring it would make
-`selectModules` initialise the whole props scatter inside `?showcase=traffic` (`src/core/showcase.js:20–31`) and
-change every graded traffic frame. The consequence is a clean split: under `?showcase=all` and `democity`,
-`ctx.modules.props.signalFor(edgeId, atA)` exists and **is the phase**; under `?showcase=traffic` it is
-`undefined` and traffic's fallback clock applies. Feature-detect with
+`dependencies: ['terrain', 'roads', 'simulation']`. **`props` is a soft, undeclared dependency, feature-detected
+for one purpose only — the mast gate in item 22.** It is left undeclared not to avoid a cycle — there is none;
+props declares `dependencies: ['terrain','roads']` (props.md:27, :658) and never traffic — but because declaring
+it would make `selectModules` initialise the whole props scatter inside `?showcase=traffic`
+(`src/core/showcase.js:20–31`) and change every graded traffic frame. The split it creates is about **geometry**,
+not the clock: under `?showcase=all` and `democity` props draws the masts and heads and traffic draws none; under
+`?showcase=traffic` traffic draws its own. **The phase is traffic's in both.** Feature-detect with
 `typeof ctx.modules.props?.signalFor === 'function'`, never by module name. Remember
 `ctx.modules[name]` **is the api object itself** (`registry.makeCtx` passes `modules: this.apis`, and
 `this.apis[name] = def.api`) — call `ctx.modules.roads.intersections()`, not `ctx.modules.roads.api.…`.
@@ -635,14 +718,18 @@ coalesces rebuilds over 0.05 s (`roads/index.js:41–44`). Anything that stages 
 `democity`); guard every call:**
 
 ```js
-signalFor(edgeId, atA) -> {state:'red'|'amber'|'green', timeToChange} | null   // frozen by props.md:31-32, 74-75
-signals() -> [{nodeId, x, y, z, cycle, phase, arms:[{edgeId, atA, state, timeToChange}]}]
+signalFor(edgeId, atA) -> {state:'red'|'amber'|'green', timeToChange, source:'traffic'|'props'} | null
+     // props.md:108-109: a pure read-through of ctx.modules.traffic.signalState(nodeId) whenever traffic is there
+signals() -> [{nodeId, x, y, z, arms:int, phase:int, greenArms:[edgeId], cycle, source,
+               armStates:[{edgeId, atA, state, timeToChange}]}]   // props.md:104-106; a superset of traffic's
 place(kind, x, z, opts?) ; remove(id) ; at(x, z, radius) ; count(kind?) ; lampsFor(edgeId) ; stops()
 ```
 
 `signalFor(edgeId, atA)` takes the arm's edge and the `atA` flag straight from `roads.intersections()`, so no
-translation layer is needed. Traffic calls it, obeys it, mirrors it through `signalState()`/`signals()` and draws
-no signal geometry whenever it exists.
+translation layer is needed in either direction — but the direction is **props reading traffic**. Traffic
+**never calls `signalFor` or props' `signals()` to decide a lens state or a stop**: that would route its own
+machine's answer back through props and into itself. Traffic's only use of `ctx.modules.props` is item 22's gate —
+is props live, and has it published a `trafficlight` item — and it draws no signal geometry whenever it has.
 
 **`ctx.modules.simulation` (`src/modules/simulation/index.js`, curves in `activity.js`):**
 
@@ -676,8 +763,8 @@ reject spawn points and to place nothing; vehicle and pedestrian heights come fr
 |---|---|
 | `roads` failed, or `world.roads.edges.size === 0` | one `log.warn`, `stats().vehicles === 0`, empty groups, no error, module stays `ready`; picks traffic up within 1 s of the first `roads:changed` |
 | `simulation` absent | internal copy of `traffic(hour)` / `pedestrians(hour)` with the same 8.1 / 17.4 peaks; item 8's numbers still hold |
-| `props` not loaded (`?showcase=traffic`) | internal fallback phase clock (1.2 game-hour cycle, pure function of `world.time`) **and** traffic draws its own masts (item 22) |
-| `props` live (`?showcase=all`, `democity`) | `props.signalFor(edgeId, atA)` is the only phase source and `signalState()`/`signals()` mirror it exactly (item 6). Masts: traffic draws none once any `world.props.items` entry has `kind === 'trafficlight'`; in the window before props has published one, traffic's masts stand and are removed within one frame of `props:changed` |
+| `props` not loaded (`?showcase=traffic`) | phase unchanged — it is traffic's in every showcase (1.2 game-hour cycle, pure function of `world.time`) — **and** traffic draws its own masts (item 22) |
+| `props` live (`?showcase=all`, `democity`) | phase still traffic's; props reads `api.signalState(nodeId)` and drives every lens from it, so `signalFor(…).source === 'traffic'` (item 6). Masts: traffic draws none once any `world.props.items` entry has `kind === 'trafficlight'`; in the window before props has published one, traffic's masts stand and are removed within one frame of `props:changed` |
 | `environment` absent (cannot happen in practice) | materials still render; every `setupMaterial` call is optional-chained |
 | `terrain` flat fallback | unaffected — heights come from roads |
 
@@ -735,23 +822,47 @@ Declared `showcase.cameras` (registered by core from `showcase.cameras`; `positi
 | `headlights` | `[150, 3.0, 44] → [-40, 1.4, 40]` | **night preset**: oncoming headlights down the avenue, pools on the road |
 | `fleet` | `[-260, 16, 66] → [-260, 1, 40]` | every kind and livery in one frame |
 
-Critics shoot `aerial, street, skyline, closeup` × `6.5, 12, 17.5, 22` plus every preset above, `headlights` at 22,
-and one shot at `--w 1280 --h 720`. What each must show:
+**Captures this module needs.** The standard matrix belongs to `CRITIC.md` and is not restated here; what follows
+is only the *extra* frames the acceptance items name, because the standard run either does not produce them or
+does not pin the hour a preset is shot at. The standard
+run gives `aerial/street/skyline/closeup` × `12, 22` from
+`node tools/gauntlet.mjs --module traffic --round <n> --times 12,22`, plus the hand shots `skyline_17p5` and
+`street_6p5`, plus one at `--w 1280 --h 720`. Shoot these as well, one command each:
+`node tools/screenshot.mjs --showcase traffic --camera <cam> --time <t> --out shots/traffic/r<n>/<cam>_<t>.png --timeout 240`
+(the file name writes the time as `6p5, 12, 17p5, 22`).
 
-- **aerial (520 m, pitch 0.85)** — 06.5: a light commute, long shadows east-to-west, trucks over-represented.
-  12: mid density, both carriageways opposed, no carpeting. 17.5: the peak, queues visible at the signalised
-  nodes, long shadows. 22: sparse traffic, headlight pools and red taillight strings legible on the avenue and
-  the highway, the roads otherwise dark.
+| camera | times | needed by |
+|---|---|---|
+| `aerial` | 17.5 | items 8, 11 |
+| `closeup` | 17.5 | item 10 |
+| `overview` | 12 | item 12 |
+| `junction` | 6.5, 12, 22 | items 1, 6, 7, 10 |
+| `queue` | 12, 17.5 | items 1, 2, 3, 5 |
+| `crossing` | 6.5, 12 | items 1, 9 |
+| `merge` | 12 | item 1 |
+| `fleet` | 12 | items 2, 3 |
+| `roundabout` | 12 | item 6 |
+| `headlights` | 22 | item 7 |
+| `night_street` | 22 | items 7, 9 |
+
+Add `--crops` to `junction_12` and `junction_22`, and re-shoot `skyline_12` with `--crops` (the gauntlet does not
+pass that flag): items 7 and 11 measure inside the rects it writes (§4 preamble). Sixteen extra frames at 3–10 s
+each under SwiftShader. What each camera must show:
+
+- **aerial (520 m, pitch 0.85)** — 12: mid density, both carriageways opposed, no carpeting. 17.5: the peak,
+  queues visible at the signalised nodes, long shadows. 22: sparse traffic, headlight pools and red taillight
+  strings legible on the avenue and the highway, the roads otherwise dark.
 - **street (60 m, pitch 0.18, target `[40,0,40]`)** — vehicles passing at eye level with readable glazing,
   wheels, plates and shut-lines; pedestrians on both sidewalks. At 22 the frame is lit by the signal head, the
   vehicles' own lamps and their pools; bodies are still coloured, not silhouettes.
 - **skyline (900 m, pitch 0.16)** — vehicles are coloured dashes distributed over the network with no flicker and
   no sparkle; at 22 the avenue reads as a moving line of white and red points.
 - **closeup (110 m, pitch 0.35, target `[20,6,20]`)** — the model-quality shot: item 2's checklist must be
-  satisfiable here at 06.5, 12 and 17.5, and item 7's at 22.
-- **06.5 and 17.5 (golden hour)** — the two times where the shadow test (item 10) and the density test (item 8)
-  are graded. Frames must not go milky (`environment_r2` major: "17:30 frames milky and blown toward the sun");
-  vehicle bodies must keep chroma against the low sun rather than blowing to white.
+  satisfiable here at 12 and 17.5, and item 7's at 22.
+- **06.5 and 17.5 (golden hour)** — `junction_6p5` and `crossing_6p5`, `closeup_17p5`, `aerial_17p5` and
+  `queue_17p5`: where the shadow test (item 10) and the density test (item 8) are graded. Frames must not go
+  milky (`environment_r2` major: "17:30 frames milky and blown toward the sun"); vehicle bodies must keep chroma
+  against the low sun rather than blowing to white.
 
 `showcase.description`: one sentence naming the crossroads, roundabout, highway merge, outside connections,
 pedestrians and the fleet line-up.

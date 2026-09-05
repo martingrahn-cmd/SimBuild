@@ -86,6 +86,9 @@ diffuseColor.rgb *= tCol;
 export function createVehicleMaterial() {
   const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.6 });
   m.name = 'traffic:vehicle';
+  // closed bodies: cast from the FRONT faces, otherwise the shadow depth is the car's underside and the
+  // scene's large shadow normalBias makes every vehicle shadow disappear.
+  m.shadowSide = THREE.FrontSide;
   m.onBeforeCompile = (sh) => {
     sh.vertexShader = VEH_VERT_PARS + sh.vertexShader;
     sh.vertexShader = sh.vertexShader
@@ -173,6 +176,58 @@ diffuseColor = vec4( c * a, 1.0 );
   return m;
 }
 
+// ---------------------------------------------------------------- contact shadow decal
+/**
+ * Soft elliptical darkening under every vehicle/pedestrian, multiplied onto whatever is beneath.
+ * Cascaded shadow maps in this engine drop sub-2 m occluders on the ground (they still self-shadow),
+ * so vehicles would otherwise float; this is the grounding contact shadow.
+ */
+export function createContactMaterial(strength = 1) {
+  const m = new THREE.MeshBasicMaterial({
+    color: 0x000000, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -12,
+  });
+  m.name = 'traffic:contact';
+  // world-space offset (metres) the shadow is thrown, i.e. away from the sun; updated per frame
+  m.userData.uSun = { value: new THREE.Vector3(0.6, 0, 0.6) };
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uSun = m.userData.uSun;
+    sh.vertexShader = `
+attribute vec2 aUv;
+attribute vec2 aHalf;
+attribute vec2 aCore;
+attribute vec2 aLights;
+uniform vec3 uSun;
+varying vec2 cUv;
+varying vec2 cShift;
+varying vec2 cCore;
+varying float cNight;
+` + sh.vertexShader.replace('#include <begin_vertex>', `
+#include <begin_vertex>
+cUv = aUv; cNight = aLights.x; cCore = aCore;
+#ifdef USE_INSTANCING
+  vec3 sunLocal = transpose( mat3( instanceMatrix ) ) * uSun;
+#else
+  vec3 sunLocal = uSun;
+#endif
+cShift = clamp( vec2( sunLocal.x / aHalf.x, sunLocal.z / aHalf.y ), vec2( -0.75 ), vec2( 0.75 ) );
+`);
+    sh.fragmentShader = `
+varying vec2 cUv;
+varying vec2 cShift;
+varying vec2 cCore;
+varying float cNight;
+` + sh.fragmentShader.replace('#include <color_fragment>', `
+vec2 cq = ( cUv * 2.0 - 1.0 ) - cShift;
+float cr = length( cq );
+float ca = pow( max( 0.0, 1.0 - cr ), 1.05 ) * ${strength.toFixed(3)} * ( 0.30 + 0.58 * ( 1.0 - cNight ) );
+diffuseColor = vec4( vec3( 0.012, 0.015, 0.024 ), clamp( ca, 0.0, 1.0 ) );
+`);
+  };
+  m.customProgramCacheKey = () => 'traffic-contact-' + strength.toFixed(2);
+  return m;
+}
+
 // ---------------------------------------------------------------- pedestrians
 const PED_VERT = /* glsl */`
 attribute float aMat;
@@ -229,6 +284,7 @@ diffuseColor.rgb *= pc;
 export function createPedestrianMaterial() {
   const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8, metalness: 0.0 });
   m.name = 'traffic:pedestrian';
+  m.shadowSide = THREE.FrontSide;
   m.onBeforeCompile = (sh) => {
     sh.vertexShader = PED_VERT + sh.vertexShader
       .replace('#include <begin_vertex>', PED_BEGIN)

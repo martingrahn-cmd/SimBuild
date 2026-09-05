@@ -8,8 +8,64 @@
   "height": 1080,
   "quality": "high",
   "gpu": "swiftshader",
-  "ok": false,
-  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 306390,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 11248.8,
+  "drawCalls": 130,
+  "triangles": 2101985,
+  "programs": 56,
+  "textures": 50,
+  "geometries": 68,
+  "heapMB": 60.6,
+  "moduleMs": {
+    "environment": 0.29999999701976776,
+    "props": 7.400000002235174,
+    "terrain": 0.09999999776482582,
+    "roads": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      86.2,
+      26.1,
+      76.7
+    ],
+    "target": [
+      40,
+      0,
+      40
+    ],
+    "distance": 60
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 572
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 7.4,
+      "initMs": 540
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5335
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 125
+    }
+  },
   "errors": [],
   "warnings": [],
   "png": "shots/props/rdev1/street_22.png"

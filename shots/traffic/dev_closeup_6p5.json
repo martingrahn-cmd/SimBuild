@@ -1,7 +1,7 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=traffic&time=12&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5173/?showcase=traffic&time=6.5&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "traffic",
-  "time": 12,
+  "time": 6.5,
   "camera": "closeup",
   "seed": 1337,
   "width": 1920,
@@ -10,23 +10,23 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 278048,
+  "elapsedMs": 291590,
   "fps": 11.6,
   "measuredFrames": 2,
-  "frameMs": 9458.7,
-  "drawCalls": 98,
-  "triangles": 1489245,
-  "programs": 42,
+  "frameMs": 11846.3,
+  "drawCalls": 96,
+  "triangles": 1543985,
+  "programs": 34,
   "textures": 40,
-  "geometries": 61,
-  "heapMB": 56.8,
+  "geometries": 52,
+  "heapMB": 55.1,
   "moduleMs": {
-    "environment": 0.3999999985098839,
-    "traffic": 0.6999999992549419,
+    "environment": 0.10000000149011612,
+    "traffic": 0.8000000007450581,
     "roads": 0,
     "terrain": 0
   },
-  "hour": 12,
+  "hour": 6.5,
   "cameraState": {
     "position": [
       78.3,
@@ -44,29 +44,29 @@
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.4,
-      "initMs": 525
+      "ms": 0.1,
+      "initMs": 368
     },
     "traffic": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.7,
-      "initMs": 46
+      "ms": 0.8,
+      "initMs": 45
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 144
+      "initMs": 91
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 5397
+      "initMs": 5100
     }
   },
   "errors": [],
   "warnings": [],
-  "png": "shots/traffic/dev_closeup_12.png"
+  "png": "shots/traffic/dev_closeup_6p5.png"
 }

@@ -10,8 +10,16 @@ Standing assumptions, stated so nobody has to ask:
   exception in §3 that is labelled as such and explains why.
 - `props` owns trees. Terrain may add **ground cover ≤ 1.5 m tall** (blades, tufts, scrub, heather, reeds, bracken).
   Terrain may **not** add trees, bushes above 1.5 m, rocks-as-props, or anything on `world.props`.
-- `environment` owns exposure, fog, tone mapping and all lights. Core-request #2 (noon exposure) is unresolved;
-  terrain compensates in **albedo**.
+- `environment` owns exposure, fog, tone mapping and all lights. Core-request #2 is unresolved on **both** halves:
+  noon exposure (terrain compensates in **albedo**) and the haze cap. Measured today, `partly` publishes
+  `world.weather.fogDensity = 0.00011` (`src/modules/environment/index.js:17`); through environment's height-fog term
+  (`shaders.js` `fog_fragment`, `fogK = 1/320` for any density below 0.0008) that veils ground 500 m out by
+  `1 − exp(−0.00011 · e^(−390.7/320) · 1.958 · 500) = 3.1 %` for the `aerial` camera, which sits 390.7 m up
+  (`520·sin(0.85)`) — 0.1 pp over the ≤ 3 % the core request asks for, i.e. terrain is not being sabotaged today.
+  **Escape:** the ground probe also reads `__sim.world.weather.fogDensity` at capture. If it is above **0.00011**,
+  record the value in the build record, file it in `docs/core-requests/terrain.md`, and grade item 14(a) and item 1's
+  "near-clear inside 800 m" clause against the veil that density implies rather than as a terrain failure. Terrain
+  still may not set fog itself (item 14).
 - `world.roads.isRoad` / `world.roads.coverage` may be absent (core's default `world.roads` has neither). Guard it.
 
 ---
@@ -105,7 +113,17 @@ api.coverAt(x, z) -> {                      // the module's own splat weights at
   grass, dirt, rock, scree, sand, snow,     // the six land materials in use (+ snow, new this round)
   id                                        // integer land-cover id from gen/landcover.js, stable across frames
 }
+api.cropRects({project, width, height, camera}) -> {   // items 12(b) and 15; ARCHITECTURE §8
+  islandReflection: [x, y, w, h],           // 64×64, centred on project(island.x, 2*seaLevel - yTop, island.z)
+  shadowEdge:       [x, y, w, h],           // 192×192, on a valley-wall cast-shadow edge within 45° of vertical
+}                                           // rects in FULL-RESOLUTION pixels of the capture
 ```
+
+`cropRects` is how a pinned measurement is taken. `node tools/screenshot.mjs … --crops` calls
+`window.__sim.cropRects()` (`src/core/debug.js:41`), which collects `api.cropRects` from every ready module and
+writes `<out>.crops.json` beside the PNG — **that tool is the only producer of `crops.json`**. If a shot's
+`crops.json` is empty or missing, the two items above are ungraded and that is a *builder* defect
+(`CRITIC.md` §Pinned landmarks), not a pass.
 
 `stats()` today returns `{visible, lod:[n0,n1,n2]}` from `TerrainMesh`. It must be widened to — keeping those two
 fields — the shape the probes read:
@@ -113,12 +131,15 @@ fields — the shape the probes read:
 ```js
 api.stats() -> { visible, lod: [n0, n1, n2],      // chunks drawn per LOD level; item 24 counts non-zero entries
                  chunks, drawCalls, triangles,     // terrain-attributable, not the whole frame (§5)
+                 texBytes,                         // §5: bytes the module allocated for textures, summed at its
+                                                   // own allocation sites (w·h·bpp·1.33 when mipmapped)
                  clutter: { blades, tufts } }      // live instance counts
 ```
 
-`setReflection`, `setGrassTufts`, `coverAt` and `stats` are load-bearing: the critic uses them for toggled-feature
-pixel diffs and for every region mask (items 5, 6, 7, 10, 12, 13, 14, 24). A frame the probe cannot classify is a
-frame the critic grades by eye, which is exactly what this spec exists to prevent.
+`setReflection`, `setGrassTufts`, `coverAt`, `cropRects` and `stats` are load-bearing: the critic uses them for
+toggled-feature pixel diffs, for every region mask (items 5, 6, 7, 10, 12, 13, 14, 24) and for the two pinned rects
+(items 12(b), 15). A frame the probe cannot classify is a frame the critic grades by eye, which is exactly what this
+spec exists to prevent.
 
 ## 3. Visual/behavioural target
 
@@ -161,6 +182,16 @@ std 39.3, but a third of its contrast is city. SimBuild's aerial band has no cit
 plain, hill ring and range in one frame, so item 1 sits deliberately between the two anchors: **≥ 26 at noon,
 ≥ 32 at golden hour**. Item 3 (macro patch variation) is the mechanism that buys that without buildings.
 
+The other two item-1 numbers are derived from the same table, and one of them changed because no anchor supported it.
+**Spread, not levels.** Item 1 used to say `p5 ≤ 95` and `p95 ≥ 150`; nothing here supports the absolute level —
+cs2_2's whole frame measures p5–p95 = 21–142, so the *primary reference* would fail `p95 ≥ 150` by 8 levels, and the
+near forested slope (20–87) by 63. The pair encoded a spread anyway (150 − 95 = 55), so item 1 now asks for that
+spread directly: **`p95 − p5 ≥ 55`**, which cs2_2's whole frame (121) clears with room and r1's aerial_12 (118–146,
+spread 28) fails by the margin the wording always intended. **Saturation floors.** SimBuild's aerial band is roughly
+half near ground and half haze-flattened far ground, whose terrain-only anchors are 0.346 and 0.141 → mean 0.244; the
+noon floor **0.22** is 10 % under that. cs2_2 *is* a golden-hour aerial and its whole frame measures 0.300; the golden
+hour floor **0.28** is 7 % under that. Both are floors under a measured anchor, not asserted levels.
+
 ### What an art director must be able to see
 
 - **Aerial (cs2_2).** The land is *modelled by light*: sunlit slopes clearly brighter than shaded slopes, valley floors
@@ -192,13 +223,21 @@ plain, hill ring and range in one frame, so item 1 sits deliberately between the
 ### Measurement conventions
 
 Both builder and critic use these; deviating from them is a finding, not a defence. *(This paragraph is invariant
-across modules and is currently copied into `roads.md`, `props.md`, `effects.md` and `audio.md` as well. INTEGRATOR:
-it belongs in `CRITIC.md`, cited from the module specs. Only the GROUND BAND definition and the ground probe below are
-terrain-specific.)*
+across modules and is currently copied into `roads.md`, `props.md`, `effects.md` and `audio.md` as well, and it has
+already drifted on the **scale** rule — `roads.md` §4 takes every per-material statistic on full-resolution named
+crops, `props.md` §4 splits its items 1–4/8–12 to full resolution, while terrain's version took everything at 480 px.
+INTEGRATOR: promote this paragraph to `CRITIC.md §Measurement`, delete it from all five specs, and reconcile the scale
+rule to the version below. Until it moves, this block governs every number in this file. Only the GROUND BAND
+definition and the ground probe below are terrain-specific.)*
 
-- `L = 0.2126R + 0.7152G + 0.0722B` on the 8-bit sRGB PNG **downsampled to 480 px wide** (box filter).
-  `sat` = mean of `(max−min)/max` per pixel. `blackPct` = % pixels with `max(R,G,B) < 8`; `whitePct` = % pixels with
-  `min(R,G,B) > 247`. Percentiles are over `L`.
+- `L = 0.2126R + 0.7152G + 0.0722B` on the 8-bit sRGB PNG. `sat` = mean of `(max−min)/max` per pixel (this is HSV
+  `S`, the same definition `props.md` uses under that name). `blackPct` = % pixels with `max(R,G,B) < 8`;
+  `whitePct` = % pixels with `min(R,G,B) > 247`. Percentiles are over `L`.
+- **Two scales, and every item names its own.** Whole-frame and GROUND BAND statistics are taken on the frame
+  **downsampled to 480 px wide** (box filter): items 1, 3, 4, 5, 6, 7, 8, 10, 13, 14. **Pinned crops are taken on the
+  full-resolution PNG, never on a downscaled copy**: item 11's distant-rock crop, item 12(b)'s `islandReflection`
+  rect and item 15's `shadowEdge` rect. At 480 px wide a 1 m patch is about two pixels, and item 15's 8 m step is
+  about five — the tests do not resolve at that scale.
 - **Reference implementation:** `shots/environment/r2/imgstats.mjs` implements exactly this, but it emits **p1/p50/p99**
   and measures the **whole frame** — it cannot produce a `p5`/`p95` or a GROUND BAND number, which items 1, 3, 8, 13 and
   14 all need. Copy it to `shots/terrain/r<n>/imgstats.mjs` and add two flags:
@@ -251,43 +290,64 @@ function sunLit(x, y, z, dir = __sim.world.weather.sunDir) {   // dir points TOW
 
 Region masks are then defined once and used everywhere: **water region** = pixels with `water === true`;
 **snow pixels** = `cover.snow > 0.5`; **sand pixels** = `cover.sand > 0.5`; **rock pixels** = `cover.rock > 0.5`;
-**near / far** = by `dist`. The probe must dump its per-pixel map to
+**near / far** = by `dist`. The probe must dump its map to
 `shots/terrain/r<n>/groundmap_<camera>_<time>.json` so the critic's numbers are reproducible from the same file.
+
+**Probe cost.** `T.raycast` marches up to 4000 iterations per call (`src/modules/terrain/data.js:99`), so the map is
+sampled on a **2 px stride in the 480-wide space** — 240×135 = 32 400 casts — and every item indexes it at the
+nearest sampled pixel. The whole probe must finish in **≤ 60 s**; report its wall time. Item 15's `shadowEdge` rect
+is the one exception: it re-runs `groundAt` at full resolution inside that 192×192 rect (36 864 casts).
+The probe also records `__sim.world.weather.fogDensity` and `sunDir` into the same file (standing assumptions).
 
 ### The checklist
 
 Ordered by how much each moves the score. This is the requirement set: if it is not here and not in ARCHITECTURE, it
 is a suggestion.
 
-1. **Aerial relief and contrast.** GROUND BAND of `aerial_12.png`: `std ≥ 26`, `sat ≥ 0.22`, `p5 ≤ 95`, `p95 ≥ 150`.
+1. **Aerial relief and contrast.** GROUND BAND of `aerial_12.png`: `std ≥ 26`, `sat ≥ 0.22`, `p95 − p5 ≥ 55`.
    `aerial_6p5.png` and `aerial_17p5.png`: `std ≥ 32`, `sat ≥ 0.28`. No frame may have `blackPct > 0.5` or
-   `whitePct > 0.2` at 06.5/12/17.5. (r1: std 8.8 / p5–p95 118–146; r2: std 17.3. Anchors and the derivation of these
-   numbers: §3.)
+   `whitePct > 0.2` at 06.5/12/17.5. (r1: std 8.8, p5–p95 118–146 → spread 28, fails; r2: std 17.3. Anchors and the
+   derivation of every number here, including why the old absolute `p5 ≤ 95` / `p95 ≥ 150` became one spread: §3.)
 
 2. **Sun-shadow modelling of form.** Two parts, both mechanical.
-   (a) *Real slopes must cast and receive.* In `aerial_17p5.png` and `skyline_6p5.png` the probe picks the patch pair —
-   the critic does not hand-pick crops. Over the GROUND BAND, sample on an 8 px grid; keep points whose grade
-   `100·tan(T.getSlope(x,z))` is between **8 % and 25 %** and whose `cover.id` is the same value; among those take one with
-   `sunLit() === true` and one with `sunLit() === false` within 300 m of it. Centre a 64×64 px patch (480-wide scale)
-   on each: `mean(lit) / mean(shadow) ≥ 2.5`. (CS2 reaches **6.1×** on mown grass in cs2_4 — 2.5 is a floor, not a target.)
-   If the probe cannot find such a pair, the item **fails**: at 06.5 there must be shadowed ground.
+   (a) *Real slopes must cast and receive.* In `aerial_17p5.png` and `skyline_6p5.png` the probe picks the patches —
+   the critic hand-picks nothing, and the selection is fully determined by the groundmap. Over the GROUND BAND, sample
+   on an 8 px grid (480-wide scale); keep points whose grade `100·tan(T.getSlope(x,z))` is between **8 % and 25 %**.
+   Enumerate **in raster order of the lit member** every pair (lit, shadow) with the same `cover.id`, opposite
+   `sunLit()`, and ≤ 300 m apart in world units. Centre a 64×64 px patch on each member and **discard the pair**
+   unless ≥ 90 % of each patch's groundmap samples share that patch centre's `sunLit()` state *and* `cover.id` —
+   that is what throws out a patch straddling the shadow boundary. Grade the **median** of
+   `mean(lit) / mean(shadow)` over the surviving pairs: **≥ 2.5**, and report how many pairs survived.
+   (CS2 reaches **6.1×** on mown grass in cs2_4 — 2.5 is a floor, not a target.)
+   If no pair survives, the item **fails**: at 06.5 there must be shadowed ground.
    (b) *The plain must shade even though it may not cast.* At 06.5 the core clock puts the sun at **8.46° elevation**
    (`clock.sunElevation(6.5) = sin(2π·0.5/24)·0.72·π/2 = 0.1476 rad`). A lee slope only enters cast shadow above
    `tan 8.46° = 15 %` grade, which item 17 forbids on the plain — so the plain is graded on its Lambert term instead.
    Over 400 stratified samples inside item 17's plain mask, compute `max(0, dot(getNormal(x,z), sunDir))`:
    **p90 / p10 ≥ 2.5**. See the reconciliation note under item 17 for the geometry that satisfies both.
 
-3. **Macro variation, measured.** Overlay a 3×3 grid of **80×80 px** patches on `aerial_12.png` (480-wide scale, so the
-   frame is 480×270 and a 3×128 grid would not fit) whose centres the ground probe reports as non-water,
-   `cover.rock < 0.2`, and inside item 17's plain mask: the **standard deviation of the nine patch means must be
-   ≥ 5 L-levels**, and at least two patches must differ in `sat` by ≥ 0.06. Uniform plain = fail.
+3. **Macro variation, measured.** On `aerial_12.png` at 480-wide scale (the frame is 480×270, so a 3×128 grid would
+   not fit) take nine **80×80 px** patches at the **fixed** centres `(px, py) = (120 + 120i, 56 + 80j)` for
+   `i, j ∈ {0,1,2}` — the grid origin is pinned so two critics cannot lay it down differently, and both offsets are
+   even so every centre lands exactly on the groundmap's 2 px stride grid. A centre
+   **qualifies** if the ground probe reports it non-water, `cover.rock < 0.2`, and inside item 17's plain mask; a
+   centre that does not qualify moves to the nearest qualifying sampled pixel within 40 px (increasing Chebyshev
+   distance, ties in raster order) and is then clamped so its 80×80 patch stays inside the frame. The item **fails if
+   fewer than 7 of the 9 qualify** (at the aerial camera the plain mask is only ±600 m, so some will not). Over the
+   qualifying patches: the **standard deviation of the patch means must be ≥ 5 L-levels**, and at least two patches
+   must differ in `sat` by ≥ 0.06. Uniform plain = fail.
 
-4. **No tiling repetition.** On the GROUND BAND of `aerial_6p5.png` and `coast_12.png`:
-   resample to **256 px wide** (box filter), take `L`, subtract a **16×16 box blur** (high-pass), then for each
-   horizontal shift `s = 4…128` compute the normalised cross-correlation of the overlap, each half mean-subtracted
-   over the overlap. Two requirements, both on the resulting curve `NCC(s)`:
+4. **No tiling repetition.** On the GROUND BAND of `aerial_6p5.png` and `valley_12.png` — **not** `coast_12.png`,
+   whose GROUND BAND is mostly water, normal-mapped from `makeRippleNormal(…, 256, …)`
+   (`src/modules/terrain/index.js:77`), a genuinely periodic 256² texture this test would flag as the tiling it is not
+   written to police — restricted to pixels the ground probe reports `water === false`:
+   resample to **256 px wide** (box filter), take `L`, subtract a **16×16 box blur** (high-pass, **clamped at the
+   border**, never wrapped), then for each horizontal shift `s = 4…128` compute the normalised cross-correlation of
+   the overlap, each half mean-subtracted over the overlap, with every mean, variance and product taken **only over
+   pixel pairs whose two members are both non-water**. Two requirements, both on the resulting curve `NCC(s)`:
    (a) `max NCC over s ≥ 8` must be **< 0.20**;
-   (b) no local maximum at `s ≥ 8` may exceed the **9-shift centred moving average** of the curve by more than **0.10**
+   (b) no local maximum at `s ≥ 8` may exceed the **9-shift centred moving average** of the curve — computed only
+   where that window is full, i.e. for `s = 8…124` — by more than **0.10**
    (the autocorrelation must decay smoothly, with no periodic echo).
    Reference implementation (the critic runs this; the high-pass is what makes the test about tiling rather than about
    large-scale structure — a mean-subtracted *unfiltered* NCC measures 0.94–0.98 on any natural image and would be
@@ -357,24 +417,29 @@ is a suggestion.
     (c) horizontal break-up: along a horizontal traverse at the mean crossing elevation, the `rock` weight must cross
     0.5 at least **6 times** per 500 m.
     Distant rock must show no dark speckle aliasing: in `skyline_12.png`, take the **rock pixel with the greatest
-    `dist`** from the ground probe, and a 128×128 crop centred on it: `std ≤ 22`. (r1 issue 5.)
+    `dist`** from the ground probe (ties broken in raster order) and a 128×128 crop centred on it, measured **on the
+    full-resolution PNG, never a downscaled copy**: `std ≤ 22`. (r1 issue 5.)
 
 12. **Water reflection and glint.** At `coast_12.png`'s camera:
     (a) `api.setReflection(false)` vs `(true)`: ≥ 8 % of water-region pixels change by > 10 L-levels.
-    (b) *The island is actually mirrored:* project the world point `(island.x, 2·seaLevel − yTop, island.z)` — where
-    `yTop = getHeight(island.x, island.z)` — to screen with the probe's camera matrices; in a 64×64 px patch centred
-    there, mean `|ΔL|` between reflection-on and reflection-off must be **≥ 15 levels**.
+    (b) *The island is actually mirrored:* the module declares `islandReflection` in `api.cropRects` (§2) — a 64×64
+    **full-resolution** pixel rect centred on `project(island.x, 2·seaLevel − yTop, island.z)`, where
+    `yTop = getHeight(island.x, island.z)`. Shoot `coast_12` with `--crops` twice, `setReflection(true)` and
+    `(false)`; inside the rect named `terrain.islandReflection` in `coast_12.png.crops.json`, on the
+    **full-resolution PNG**, mean `|ΔL|` between the two must be **≥ 15 levels**.
     (c) *Broken glitter path:* in `coast_17p5.png`, within the water region, `p99.5 − p50 ≥ 60 L-levels` and the pixels
     above `p50 + 60` must form **≥ 25 connected components** (a broken path, not a disc). In `coast_22.png` the moon
     glint needs `p99.5 − p50 ≥ 20` with ≥ 8 components.
     (d) *Depth tint:* mean L of a shore band (water-region pixels within 8 m of the waterline, by the probe's world
     positions) exceeds mean L of mid-channel water by **≥ 12 levels** at noon. (r1 issue 9.)
 
-13. **Shoreline is not a pink ribbon.** Beach width along the coast varies between **8 m and 50 m**, and the ratio of
-    widest to narrowest over three sites ≥ 300 m apart is **≥ 2.0** (probe `coverAt` along coast normals). Mean colour
+13. **Shoreline is not a pink ribbon.** Sample the coast every **25 m of arc length** along `features.coast.xAt(z)`
+    and measure beach width along the coast normal with `coverAt` (`sand > 0.5`) — the sites are the samples, not a
+    grader's choice. Over those widths: **`p10 ≥ 8 m`**, **`p90 ≤ 50 m`** and **`p90 / p10 ≥ 2.0`** (constant-width
+    sand is the failure mode; the two bounds are satisfiable together — e.g. 10 m and 30 m). Mean colour
     of **sand pixels** (`cover.sand > 0.5`) in `skyline_6p5.png`: `R − B ≤ 28` and `sat ≤ 0.30` (grey-tan, not pink).
-    At `--time 22` the foam/wet line must not read as a white outline: `p99 ≤ 90` over sand+water pixels within 8 m of
-    the waterline. (r1 issue 6.)
+    In `coast_22.png` the foam/wet line must not read as a white outline: `p99 ≤ 90` over sand+water pixels within
+    8 m of the waterline. (r1 issue 6.)
 
 14. **Aerial perspective, not blanket haze.** In `skyline_12.png`, with crops located by the ground probe's `dist`
     field, not by eye. The geometry is fixed and known: the `skyline` preset is `yaw 2.2, pitch 0.16, distance 900,
@@ -386,15 +451,28 @@ is a suggestion.
     `std ≥ 10` (the far ridge desaturates but does not go flat — cs2_6's heavily hazed far band still measures 11.2).
     Terrain must use `environment`'s fog uniforms via `setupMaterial` and must not add its own fog. (r1 blocker 2.)
 
-15. **Terrain shadows are smooth.** In `aerial_6p5.png` and `aerial_17p5.png`, a 4× crop of a valley-wall shadow edge
-    shows **no staircase with steps ≥ 8 m** (2 heightfield cells) and no blobbing. Shadows are cast from the visible
-    LOD, not a coarser proxy. (r1 issue 7.)
+15. **Terrain shadows are smooth.** The module declares `shadowEdge` in `api.cropRects` (§2): a 192×192
+    **full-resolution** pixel rect, one per frame, centred on a valley-wall cast-shadow edge whose run is within 45°
+    of vertical in screen space. The module knows the heightfield and `sunDir`, so it can place it; the critic does
+    not choose the crop. Shoot `aerial_6p5` and `aerial_17p5` with `--crops` and measure inside
+    `terrain.shadowEdge` **on the full-resolution PNG, never a downscaled copy** (at 480 px wide 8 m is ~5 px at this
+    camera and the test cannot resolve it). Re-run the probe's `groundAt` at full resolution over the rect for each
+    pixel's world position. Let `Llit`/`Lshadow` be the mean L of the pixels the probe reports `sunLit() === true` /
+    `=== false`; trace the boundary per row as the first column where L crosses `(Llit + Lshadow)/2`. Requirement:
+    **no two adjacent boundary rows may differ by ≥ 8 m** in world position (2 heightfield cells — that difference
+    *is* a staircase step; a smoothly cast edge moves sub-metre between rows, which at this camera are ~0.4 m apart
+    on the ground). Shadows are cast from the visible LOD, not a coarser proxy. (r1 issue 7.)
 
-16. **Erosion reads — counted on the heightfield.** Over cells with `getHeight > seaLevel + 45` (hill ring and range),
-    compute D8 flow accumulation on the 4 m grid. A **channel cell** has accumulation ≥ 200 cells. Count connected
-    channel components of ≥ 40 cells whose lowest cell is below `seaLevel + 45`: **≥ 8**. In `aerial_17p5.png` the
-    same flanks must show sediment/flow-lightened valley floors and darkened gullies (art direction; the count is what
-    is graded).
+16. **Erosion reads — counted on the heightfield.** Compute D8 flow accumulation on the 4 m grid over the **whole
+    513² grid** — the domain may not be restricted, because accumulation over a truncated domain silently discards
+    the flow entering from outside it. A **channel cell** has accumulation ≥ 200 cells **and**
+    `getHeight > seaLevel + 45` (hill ring and range). Take connected components of ≥ 40 channel cells; from each
+    component's lowest cell follow the D8 pointer downstream until the height drops below `seaLevel + 45` or the path
+    leaves the grid. Count the components whose path **reaches below `seaLevel + 45`** — a channel that drains
+    somewhere rather than a scratch that ends on the hillside: **≥ 8**. (The earlier wording restricted the *domain*
+    to cells above `seaLevel + 45` and then counted components whose lowest cell was *below* it, which is always
+    zero.) In `aerial_17p5.png` the same flanks must show sediment/flow-lightened valley floors and darkened
+    gullies (art direction; the count is what is graded).
 
 17. **Buildable plains, verified by probe.** Over the square `x,z ∈ [−600, 600]` sampled on an **8 m grid** (151² =
     22 801 cells), a cell is **in the plain mask** unless any of:
@@ -410,12 +488,31 @@ is a suggestion.
     comparable to the requirement.
 
     **Reconciling item 17 with items 1, 2 and 16.** These pull against each other and the round is lost if the builder
-    guesses. The resolution is a wavelength, not a compromise: give the plain undulation of **1.5–2.5 m amplitude at
-    120–200 m wavelength**. A sinusoid has maximum grade `2πA/λ`, so `A = 2 m, λ = 170 m` peaks at **7.4 %** — inside
-    item 17 — while swinging the direct-light term across one undulation by
-    `sin(8.46° + 4.2°) / sin(8.46° − 4.2°) = 2.9×` at 06.5/17.5, which is what item 2(b) measures. At noon (sun
-    elevation 64.8°) the same undulation swings the direct term by only **1.07×**, so item 1's *noon* contrast must
-    come from albedo, macro land cover (item 3) and cavity AO — never from slope. Cast shadows on the plain are
+    guesses. The resolution is a wavelength, not a compromise. Size the plain undulation by the **maximum grade** of
+    the sinusoid, `k = 2πA/λ`, which must land in **[7.0 %, 7.8 %]** — with `A = 2.0 m` that is `λ = 161–179 m`, and
+    the worked pair is **`A = 2.0 m, λ = 170 m` → `k = 2π·2/170 = 7.39 %`**. The undulation must also be
+    **anisotropic, with its dominant ridge axis within 30° of north–south**, i.e. its phase advancing along **x**:
+    `clock.sunAzimuth(6.5) = 97.5°` and `(17.5) = 262.5°` (`src/core/clock.js:41`), so the golden-hour sun rakes
+    almost due east/west, and an isotropic 2D undulation gives away most of the along-sun slope component that
+    item 2(b) actually measures.
+
+    *The arithmetic, in the form the critic will run it.* Item 2(b) grades the **p90/p10** of the Lambert term, not
+    its extremes. For `h = A·sin(2πx/λ)` the slope is `k·cos u` with `u` uniform, so `cos u` is arcsine-distributed
+    and its p10/p90 are `∓0.951`; the Lambert term is `sin(e ∓ θ)`, monotone in `cos u`, so
+    `p90/p10 = sin(e + atan(0.951k)) / sin(e − atan(0.951k))` at `e = 8.46°`. Setting that equal to 2.5 gives
+    `tan θ = 1.5·tan(8.46°)/3.5 = 0.0638`, i.e. `k = 6.71 %` — hence the **7.0 %** floor, which yields **2.62** with
+    a little margin. At the top, the mean grade of a sinusoid is `k·(2/π)` and item 17 caps the mean at 5.5 %, so
+    `k ≤ 8.64 %`; **7.8 %** yields mean grade **4.97 %**, leaving 0.53 pp of that cap for everything else on the
+    plain, and stays under item 17's 8 % per-cell grade outright (it yields p90/p10 **2.99**). The worked pair
+    `A = 2, λ = 170` gives **p90/p10 = 2.79** and **mean grade 4.71 %** — both clear with margin.
+    The earlier "1.5–2.5 m at 120–200 m" range was wrong at both corners and is withdrawn: `A = 1.5, λ = 200` gives
+    p90/p10 = **1.86**, below item 2(b)'s 2.5 floor, and `A = 2.5, λ = 120` gives mean grade **8.3 %**, above item
+    17's 5.5 % cap. The "2.9×" quoted with it was the *extreme-value* ratio `sin(e+θmax)/sin(e−θmax)`, which is not
+    what item 2(b) computes.
+
+    At noon (sun elevation 64.8°) the same undulation swings the direct term by only **1.07×**, so item 1's *noon*
+    contrast must come from albedo, macro land cover (item 3) and cavity AO — never from slope. Cast shadows on the
+    plain are
     impossible at 8.46° sun below a 15 % grade and are **not** required there; items 2(a) and 15 are graded on the
     valley walls, hill ring and range, which item 17's mask excludes. Item 16's channels live above
     `seaLevel + 45 m`, also outside the mask.
@@ -433,7 +530,8 @@ is a suggestion.
     `modify({mode:'raise'|'lower'|'flatten'|'smooth'})` changes heights, bumps `version` and emits `terrain:changed`
     with `{x,z,radius}`, and a +12 m raise changes the rendered frame. `coverAt(x,z)` returns six finite weights
     summing to 1 ± 0.02 and a stable integer `id` at 20 scattered points, including one in water and one above the
-    snow line.
+    snow line. `cropRects` returns both named rects with every corner inside the frame at the `coast` and `aerial`
+    cameras, so `--crops` produces a non-empty `crops.json` (items 12(b), 15).
 
 20. **`writeHeights` / `flattenStrip`.** Probe: writing `heights` directly then calling
     `writeHeights(ix0,iz0,ix1,iz1)` updates the rendered mesh, normals and chunk bounds, bumps `version`, emits
@@ -458,6 +556,39 @@ is a suggestion.
     `api.stats()` at the `aerial` camera must report **≥ 2 non-zero entries in `stats().lod`** while item 1's frame
     shows no seam. `--w 1280 --h 720` at `aerial_12` reproduces items 1 and 3 within 10 % of the 1080p numbers.
 
+### Artefacts the checklist consumes
+
+All 1920×1080 unless stated. `CRITIC.md`'s standard routine produces the noon/night set and the declared presets; the
+four **starred** rows are not in it and are ungraded unless shot explicitly.
+
+| Artefact | Produced by | Read by |
+|---|---|---|
+| `aerial_12.png` | gauntlet `--times 12,22` | 1, 3, 22, 24 |
+| `aerial_22.png` | gauntlet | 8 |
+| `street_12.png` / `street_22.png` | gauntlet | 6 / 8 |
+| `skyline_12.png` / `skyline_22.png` | gauntlet | 11, 14 / 8 |
+| `closeup_12.png` / `closeup_22.png` | gauntlet | 5, 6 / 8 |
+| `valley_12.png`, `ridge_12.png`, `coast_22.png` | gauntlet, declared presets at 12 and 22 (§8) | 4, 5 / 10 / 12(c), 13 |
+| `aerial_6p5.png` **\*** + `.crops.json` | `--camera aerial --time 6.5 --crops` | 1, 4, 15 |
+| `aerial_17p5.png` **\*** + `.crops.json` | `--camera aerial --time 17.5 --crops` | 1, 2(a), 15, 16 |
+| `skyline_6p5.png` **\*** | `--camera skyline --time 6.5` | 2(a), 13 |
+| `coast_17p5.png` **\*** | `--camera coast --time 17.5` | 12(c) |
+| `coast_12.png` + `.crops.json`, reflection on/off pair | re-shot with `--crops` (the gauntlet's `coast_12` has none), probe toggling `setReflection` | 12(a), 12(b) |
+| `setGrassTufts` on/off pairs at `street_12`, `closeup_12`, `valley_12`, and all four cameras at 22 | probe re-shooting the same frame twice | 5, 6(c), 7 |
+| `aerial_12` at `--seed 1337` twice and at `--seed 7` once | `--seed` | 22 |
+| `groundmap_<camera>_<time>.json` | the ground probe above, once per frame it grades | 2, 3, 5, 6, 10, 12, 13, 14, 15 |
+| `aerial_12` at `--w 1280 --h 720` | `--w 1280 --h 720` | 24 |
+| `?showcase=all --camera aerial --time 12` | screenshot.mjs | 23 |
+
+```bash
+node tools/gauntlet.mjs --module terrain --round <n> --times 12,22 --timeout 240
+node tools/screenshot.mjs --showcase terrain --camera aerial  --time 6.5  --out shots/terrain/r<n>/aerial_6p5.png   --crops --timeout 240
+node tools/screenshot.mjs --showcase terrain --camera aerial  --time 17.5 --out shots/terrain/r<n>/aerial_17p5.png  --crops --timeout 240
+node tools/screenshot.mjs --showcase terrain --camera skyline --time 6.5  --out shots/terrain/r<n>/skyline_6p5.png  --timeout 240
+node tools/screenshot.mjs --showcase terrain --camera coast   --time 17.5 --out shots/terrain/r<n>/coast_17p5.png   --timeout 240
+node tools/screenshot.mjs --showcase terrain --camera coast   --time 12   --out shots/terrain/r<n>/coast_12.png     --crops --timeout 240
+```
+
 ## 5. Budget
 
 Declare in `index.js`: `budget: { drawCalls: 25, triangles: 900_000 }`.
@@ -466,7 +597,10 @@ Declare in `index.js`: `budget: { drawCalls: 25, triangles: 900_000 }`.
 environment 15**. A `?showcase=terrain` frame therefore contains up to 40 draws legitimately, and
 `summary.json.maxDrawCalls` — which is the whole frame, `renderer.info.render.calls` — must be graded against that,
 not against terrain's 20. r1's 16 and r2's 19 are whole-frame numbers, so there is real headroom: roughly six terrain
-draws for the snow layer (item 10) and any clutter rework, not zero.
+draws for the snow layer (item 10) and any clutter rework, not zero. **INTEGRATOR:** this per-module-versus-whole-frame
+rule is not terrain-specific and does not change how `CRITIC.md`'s pass condition ("draw calls within the declared
+budget") reads, so it will be re-argued in `roads.md` next round; it belongs in `CRITIC.md`. Until it moves, terrain
+declares the two numbers below and the critic grades both.
 
 **Triangles: three numbers exist in three places.** ARCHITECTURE §4 shows `triangles: 400_000` in its illustrative
 terrain snippet — that is an example of the *field*, not a budget (§9 caps the whole scene at 3 M). The code currently
@@ -480,13 +614,15 @@ to match it. Do not grade against §4's example.
 | Triangles, `street` / `closeup` / `valley` | **≤ 900 000** | shot JSON. r2 hit 1 018 696 — over. Trim clutter instance counts or blade complexity. |
 | Triangles, `aerial` / `skyline` / `overview` / `ridge` / `coast` | **≤ 500 000** | shot JSON |
 | `update()` JS per frame | **≤ 2.0 ms** median of 120 frames | `__sim.stats().moduleMs.terrain` (JS only; SwiftShader does not distort it, CPU contention does — take the median) |
-| GPU texture memory owned by terrain | **≤ 120 MB** | 6 PBR sets at 1 k max (no 2 k), height 513² R32F, derived 513² RGBA8, land-cover ≤ 1024² RGBA8, macro/ripple ≤ 256², one reflection RT ≤ 768² half-float at `quality=high` |
+| GPU texture memory owned by terrain | **≤ 120 MB** | `api.stats().texBytes` — the module sums `w·h·bpp·1.33` (mipmapped) at its own allocation sites — cross-checked against `__sim.stats().textures`, which is a *count* (`renderer.info.memory.textures`) and can only confirm nothing extra was allocated. The composition this cap was written for: 6 PBR sets × 3 maps × 1024² RGBA8 × 4/3 (mips) = 6·3·5.33 = **96.0 MB**, + height 513² R32F 1.0 + derived 513² RGBA8 1.0 + land-cover 1024² RGBA8 4.0 + macro/ripple 2 × 256² 0.5 + one 768² half-float RGBA reflection RT 4.5 = **≈ 107 MB**, i.e. **13 MB of headroom** |
 | Init time (generation + land cover + textures) | ≤ 6 s warm cache | `log.info` timings, part of the 15 s app budget |
-| Heap added | ≤ 80 MB | `__sim.stats().heapMB` delta with `debug.setTerrain(false)` |
+| Heap added | ≤ 80 MB | `__sim.stats().heapMB` at `?showcase=terrain` **minus** the same at `?showcase=environment`, both after `window.__sim.ready` plus 60 frames (`src/main.js` imports only the wanted module + environment in showcase mode, so that delta is terrain's). **Not** `debug.setTerrain(false)`: it sets `S.mesh.group.visible` and disposes nothing (`src/modules/terrain/index.js:160`), so its delta is ~0 whatever the module allocates, and GPU texture memory is not in the JS heap at all |
 
 Assets: CC0 only, appended to `public/assets/manifest.json`, 1 k JPG (§10). The six sets in use
 (`aerial_grass_rock`, `leafy_grass`, `brown_mud_leaves_01`, `rock_face`, `aerial_beach_01`, `gravel_floor_02`) are
-already fetched; a snow/frost set is the only justified addition, and only if procedural snow looks worse.
+already fetched. They cost **≈ 107 MB of the 120 MB cap** (table above), so the headroom is **13 MB** and one more
+1 k set is 3 × 5.33 = **16 MB**: a snow/frost set would land at ≈ 123 MB and breach the cap. It is justified only if
+it **replaces** one of the six — and only if procedural snow looks worse.
 
 ## 6. Known failure modes
 
@@ -496,7 +632,9 @@ Observed on this module — do not spend a round rediscovering them.
   every river and estuary (r1 blocker). Two independent causes were found: the clutter mesh being on a layer the
   reflection camera includes, and the reflection lookup distortion being so large (3.0 × width) that the sunlit far
   bank smeared over the channel. Hide clutter in `onReflection(true)` **and** keep the distortion ≤ 0.4 × width.
-- **Milky, relief-free aerial.** Fog already at ~30 % by 500–700 m, albedo pulled toward luminance
+- **Milky, relief-free aerial.** Fog already at ~30 % by 500–700 m in r1 — note that the `partly` preset alone
+  computes to 3.1 % at 500 m today (standing assumptions), so most of that veil was terrain's own material, not
+  environment's density; measure both before blaming either. Albedo pulled toward luminance
   (`mix(vec3(lum), c, 0.45)`, `min(c, 0.62)`), flat plains that never self-shadow, cavity AO too weak to read.
   Symptom: a green carpet with `std < 15` and no visible valley at 500 m.
 - **Bleached noon.** `skyline_12` at `sat 0.16` — the frame is technically lit but has no colour. Fix in albedo and
@@ -539,9 +677,13 @@ refreshEnvironment()         // force a PMREM rebuild
 All ten verified in `src/modules/environment/index.js:296–323`. `sunDir`/`moonDir`/`lightDir` point **toward** the
 light (`sunDirectionAt`, index.js:44 — `y = sin(elevation)`), which is what the ground probe's `sunLit()` assumes.
 
-Read per frame from `world.weather` (published by environment, ARCHITECTURE §3 + the integrator's §3 addendum):
-`sunDir`, `sunIntensity`, `skyLight`, `moonDir`, `lightDir`, `lightIntensity`, `sunColor`, `exposure`, `night`,
-`wetness`, `cloudiness`, `rain`, `fogDensity`, `wind:{x,z,speed}`, `preset`.
+Read per frame from `world.weather`. **`src/modules/environment/index.js` is the source of truth for what is on it**,
+not ARCHITECTURE §3: §3's `weather` block still lists only `cloudiness, rain, wind, fogDensity, temperature, sunDir,
+sunIntensity, skyLight`, and the wave-1 integrator note in `docs/core-requests/terrain.md` claims the rest were added
+to §3 when they were not. There is no "§3 addendum" to find — read the code and file the omission in
+`docs/core-requests/terrain.md`. The published set is `sunDir, sunIntensity, skyLight, moonDir, moonPhase, lightDir,
+lightIntensity, sunColor, exposure, night` (publish block, `:271–281`), `wetness` (integrated at `:198`), and
+`cloudiness, rain, fogDensity, wind:{x,z,speed}, preset` (set by `applyPreset`, `:53–55`).
 **Degrade:** if `environment` is absent or `setupMaterial` is missing, log a warning once, keep the materials as plain
 `MeshStandardMaterial`s, use `world.weather`'s defaults (`sunDir (0.3,0.8,0.5)`, `sunIntensity 3`), and render. Never
 throw, never add a light of your own to compensate.
@@ -590,8 +732,8 @@ the seed:
 | Preset | Frames | Must show |
 |---|---|---|
 | `valley` | From low on the **southern valley wall**, looking west along the river | Both valley walls in frame with **≥ 18 m of relief** between the water surface and the near wall's skyline; the meander, shore bands, and clean water with no confetti |
-| `coast` | Over the estuary from the south-east toward the sea and the island | Beach of varying width, estuary mouth, the island's inverted reflection, sun/moon glint, deep-water tint |
-| `ridge` | From the plains toward the eastern range, sun raking across it | ≥ 4 summits, spurs, talus aprons, the rock→scree→grass band, the snow dusting (item 10), aerial-perspective banding |
+| `coast` | Over the estuary from the south-east toward the sea and the island | Beach of varying width, estuary mouth, sun/moon glint, deep-water tint, and **`features.island` and its inverted reflection both inside the frustum** — item 12(b) is unmeasurable otherwise |
+| `ridge` | From the plains toward the eastern range, sun raking across it | Spurs, talus aprons, the rock→scree→grass band, the snow dusting (item 10), aerial-perspective banding, and **≥ 4 of item 9(b)'s eastern-range summits inside the frustum** — otherwise item 10's "0.5–6 % of the GROUND BAND" is satisfied by choosing the pitch rather than by building the snow layer |
 
 **How each standard camera must read** (critic shoots `aerial, street, skyline, closeup` × `06.5, 12, 17.5, 22`;
 noon and night are default, golden hour always added). The four core presets are
@@ -599,15 +741,15 @@ noon and night are default, golden hour always added). The four core presets are
 `skyline {yaw 2.2, pitch 0.16, distance 900, target [0,40,0]}`, `closeup {yaw 0.6, pitch 0.35, distance 110,
 target [20,6,20]}` (`src/core/camera.js:23–27`).
 
+No number appears in this list: §4 is the only place a threshold lives, so it cannot drift into a second copy here.
 - **aerial (520 m, pitch 0.85)** — the whole landscape as a modelled surface: river meander, hill ring, coast, macro
-  patchwork, drainage channels. 06.5/17.5: long slope shadows, warm ridges, cool valleys, `std ≥ 32`. 12: crisp,
-  `std ≥ 26`, `sat ≥ 0.22`, near-clear inside 800 m. 22: navy-blue relief, moonlit slopes, no black frame.
+  patchwork, drainage channels. 06.5/17.5: long slope shadows, warm ridges, cool valleys. 12: crisp and near-clear in
+  the foreground. 22: navy-blue relief, moonlit slopes, no black frame. (Items 1, 3, 8, 15.)
 - **street (60 m, pitch 0.18)** — a continuous ground carpet with fine grain to the horizon line, no fade band, no
-  discrete tufts beyond 15 m; middle distance rolls, far ridge hazed. 22: ground L ≈ 8–40, clutter invisible as a
-  light source.
-- **skyline (900 m, pitch 0.16)** — banded aerial perspective toward the eastern range; water plane with glint; horizon
-  not a razor line. 12 must not be bleached (`sat ≥ 0.22` in the 300–800 m crop). Nothing in this frame is further
-  than 2330 m away (item 14).
+  discrete tufts in the middle distance; middle distance rolls, far ridge hazed. 22: clutter invisible as a light
+  source. (Items 6, 7, 8.)
+- **skyline (900 m, pitch 0.16)** — banded aerial perspective toward the eastern range; water plane with glint;
+  horizon not a razor line; noon not bleached. Nothing in this frame is further than 2330 m away. (Items 11, 13, 14.)
 - **closeup (110 m, pitch 0.35)** — material identity readable: grass grain, dirt patch, rock face, wet shore band,
-  water depth tint, contact darkening. Nothing may be resolvable as a repeating sprite.
+  water depth tint, contact darkening. Nothing may be resolvable as a repeating sprite. (Items 5, 6.)
 - One shot at `--w 1280 --h 720` (item 24) and one `?showcase=all --camera aerial --time 12` (item 23).

@@ -8,8 +8,64 @@
   "height": 1080,
   "quality": "high",
   "gpu": "swiftshader",
-  "ok": false,
-  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 291122,
+  "fps": 11.6,
+  "measuredFrames": 1,
+  "frameMs": 16513.3,
+  "drawCalls": 160,
+  "triangles": 2175798,
+  "programs": 50,
+  "textures": 49,
+  "geometries": 65,
+  "heapMB": 59.8,
+  "moduleMs": {
+    "environment": 0.19999999925494194,
+    "props": 0,
+    "terrain": 0,
+    "roads": 0.10000000149011612
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      193.8,
+      404.8,
+      283.2
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 520
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 466
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 606
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 6052
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 102
+    }
+  },
   "errors": [],
   "warnings": [],
   "png": "shots/props/rdev1/aerial_12.png"

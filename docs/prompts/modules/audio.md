@@ -9,8 +9,8 @@ finished is listed in §6; none of it may be rediscovered at the cost of a round
 Two measured facts from r1 that already fail the bar, before anyone looks at a picture:
 `shots/audio/r1/summary.json` reports **996 288 triangles against a declared budget of 900 000** (an automatic budget
 fail under CRITIC.md), and `shots/audio/r1/imgstats.json` reports `closeup_22.png` mean luminance **56.2** where
-`environment`'s own night aerial measures **43** (a milky-night fail) and `closeup_12.png` with `bootFrame: true`
-(the capture caught the boot overlay).
+`environment`'s own night aerial measures **43** (a milky-night fail) and `closeup_12.png` at mean **20.3** —
+the capture caught the boot overlay.
 
 Role-invariant rules — what you may write, the verification loop, determinism, instancing, no per-frame allocation,
 reporting, never inflate — live in `docs/prompts/BUILDER.md` and `docs/prompts/CRITIC.md` and are not repeated here.
@@ -95,7 +95,7 @@ setMasterVolume(v: 0..1) -> number          getMasterVolume() -> 0..1
 mute(on = true) -> boolean                  unmute() -> boolean
 toggleMute() -> boolean                     isMuted() -> boolean
 setBusVolume(bus, v) -> number              getBusVolume(bus) -> number      // bus ∈ 'ambient'|'world'|'ui'
-play(name, {x?, z?, volume?, rate?, bus?}) -> boolean     // true iff audible output was scheduled
+play(name, {x?, z?, volume?, rate?, bus?}) -> boolean     // true iff a voice was scheduled (§3.1: headless too)
 enable() -> Promise<boolean>                isEnabled() -> boolean
 state() -> 'headless'|'idle'|'suspended'|'running'|'closed'
 sampleRate() -> number                      sounds() -> [{name, group, label, desc, loop, seconds, channels, sampleRate}]
@@ -114,6 +114,11 @@ rms() -> number                             // 0..1 output level; real analyser 
 setScenario(name) -> boolean                // 'dawn'|'noon'|'dusk'|'night'|'rain'|'clear'|'aerial'|'street'|'industrial'|'commercial'|'park'
 duck(db, seconds) -> void                   // ambient+world bus duck; used by milestone/notification
 ```
+
+**`play` returns `true` in headless too**, whenever it schedules a virtual voice: §3.1 runs the whole model
+headless and only the WebAudio graph is absent, so `play`'s return and `probeVoice().wouldPlay` agree in every mode
+and item 14's table is one law, not two. (r1 returns `false` unconditionally when the mixer is absent,
+`src/modules/audio/index.js:70`; that is the behaviour this round changes.)
 
 **`setAmbienceHint` — the exact argument type**, because two of the graded items pass it and r1 accepts only
 `{traffic}` (`src/modules/audio/index.js:261`), so `zone` is entirely new surface with no precedent to fall back on:
@@ -153,11 +158,19 @@ because r1's panel and the `audio:mix` payload already publish `birdRate`.
 
 ## 3. Visual / behavioural target
 
-Per CRITIC.md, `audio` is a **non-visual module**, scored on *correctness, determinism (same seed ⇒ same numbers),
-robustness with neighbours stubbed, API completeness, and the polish of its showcase panel*. Weighting the critic must
-use: **60 % soundscape correctness (selftest JSON + live probe + API probes) · 25 % the panel · 15 % the staged park.**
-A beautiful park cannot rescue a broken soundscape, and a correct soundscape behind a programmer-art frame with a milky
-night still trips the CRITIC.md hard-fail list.
+This is a **non-visual module**; CRITIC.md ("Scoring", line 71) defines what that means and is not restated here.
+What is specific to this module is the weighting: **60 % soundscape correctness (selftest JSON + live probe + API
+probes) · 25 % the panel · 15 % the staged park.** A beautiful park cannot rescue a broken soundscape, and a correct
+soundscape behind a programmer-art frame with a milky night still trips the CRITIC.md hard-fail list.
+
+The panel and park components use ARCHITECTURE §13's CS2 scale unchanged. The 60 % soundscape axis cannot — there is
+no CS2 `selftest.json` to sit beside — so it gets its own anchors and the critic interpolates between them:
+**9.0** = all of items 1–14 pass · **7.5** = one whole item fails on a single curve (the rush-hour bump, a cutoff
+slope) · **5.0** = the mix model is not steppable in node, or determinism is broken · **3.0** = the catalogue does not
+cover item 1.
+Items 17, 18 and 26 (console errors, `status: ready`, draw calls and triangles) are **not** weighted components: they
+are gates — per ARCHITECTURE §13 a pass requires them regardless of score, so a triangle overage fails the round but
+is not also a deduction on the three weighted axes.
 
 ### 3.1 The unavoidable problem, and the required answer
 
@@ -179,7 +192,9 @@ no audible output**, and both still hold — item 15 grades exactly that (`__acC
 after 5 s, `api.state() === 'headless'`, `api.stats().audioContexts === 0`, `api.enable()` resolving `false`). Running
 the mix model, the Poisson scheduler and the meters with no audio graph attached is not a violation of §12, is not a
 contract break, and needs no `docs/core-requests/audio.md` entry: the gesture gate and the headless mute are both
-still enforced, and §12 is silent on whether the numbers behind a silent mixer keep moving.
+still enforced, and §12 is silent on whether the numbers behind a silent mixer keep moving. Record this reading in
+`docs/builds/audio_r2.json` under `assumptions`, so the integrator can fold it into §12 rather than it living only in
+the spec that benefits from it.
 
 ### 3.2 What correct looks like in the panel
 
@@ -194,11 +209,9 @@ and a 720p layout that does not clip.
 
 ### 3.3 What correct looks like in a probe
 
-**Three** scripts the module ships and the critic runs. All three live inside your blast radius,
-`src/modules/audio/**` — BUILDER.md's "what you may write" list is `src/modules/<module>/**`,
-`public/assets/manifest.json`, `docs/core-requests/` and `docs/builds/`, and does **not** include `tools/` or a script
-committed under `shots/`. The scripts therefore live in the module folder; only their *output* is written to
-`shots/audio/r<n>/`.
+**Three** scripts the module ships and the critic runs. All three live in `src/modules/audio/`, inside the blast
+radius BUILDER.md defines — which covers neither `tools/` nor a script committed under `shots/`. Only their *output*
+is written to `shots/audio/r<n>/`.
 
 - `node src/modules/audio/selftest.mjs --seed 1337 --json shots/audio/r<n>/selftest.json` — **pure node, no browser,
   no `three` import.** It imports `synth.js` and `mix.js` directly, renders the whole catalogue, and writes the DSP,
@@ -208,18 +221,11 @@ committed under `shots/`. The scripts therefore live in the module folder; only 
   ES with no `three` and no DOM import, so it loads in plain node. Nothing else from `src/core/` may be imported.
 - `node src/modules/audio/liveprobe.mjs --json shots/audio/r<n>/live.json` — Playwright, **without** `headless=1` in
   the URL and with the autoplay policy relaxed, so a real `AudioContext` runs and the real graph can be measured.
-  **Launch exactly as CRITIC.md's `apicheck` probe block does**, with exactly two deltas: no `headless=1` in the URL,
-  and `--autoplay-policy=no-user-gesture-required` appended to `args`. Do **not** hard-code a Chromium path — resolve
-  `executablePath` the way `tools/screenshot.mjs:28` does, so a browser bump does not break this module:
-
-  ```js
-  const executablePath = process.env.SIM_CHROME
-    || ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
-        '/opt/pw-browsers/chromium/chrome-linux/chrome'].find((p) => fs.existsSync(p));
-  // then CRITIC.md's args + '--autoplay-policy=no-user-gesture-required'
-  // http://127.0.0.1:5173/?showcase=audio&time=12&seed=1337   (NO headless=1)
-  ```
-
+  **Launch exactly as CRITIC.md's `apicheck` probe block does**, with exactly two deltas: no `headless=1` in the URL
+  (`http://127.0.0.1:5173/?showcase=audio&time=12&seed=1337`) and `--autoplay-policy=no-user-gesture-required`
+  appended to `args`. Do **not** hard-code a Chromium path and do not copy one into this file: resolve
+  `executablePath` at run time exactly as `tools/screenshot.mjs:28` does (`process.env.SIM_CHROME` first, then the
+  first path in that line's list that exists), so a browser bump does not break this module.
   Then a real `page.mouse.click` on the Enable button, tap the master gain with an `AnalyserNode` and sample
   `getFloatTimeDomainData` over ≥ 2 s per scenario. It writes exactly:
 
@@ -228,16 +234,17 @@ committed under `shots/`. The scripts therefore live in the module folder; only 
     scenarios: {name: {rmsDb, peakDb, centroidHz}},
     muteRmsDb, duckDb, duckRecoverS, rt60S,
     voicesPeak, voicesDropped,
-    voiceDrop: {maxDroppedVolume, minPlayedVolume},   // item 13; requested volumes, 0..1
+    voiceDrop: {maxDroppedVolume, minPlayedVolume, sound},  // item 13; requested volumes 0..1 + the sound fired
     filter:    {db4kAt10m, db4kAt300m},               // item 14; dBFS at 4 kHz, same sound, two distances
     errors: [] }
   ```
 
 - `node src/modules/audio/imgstats.mjs --dir shots/audio/r<n> --json shots/audio/r<n>/imgstats.json` — pure node, no
-  browser, reads the round's PNGs and writes one row per shot with every image measurement items 23–25 are graded
-  from: `{shot: {meanL, p1, p50, p99, pctOver245, tilingR, horizonDeltaL, poolCount, poolPx, fogColor, horizonRow,
-  stagedPct, bootFrame}}`. §4 item 24 defines each of those measurements exactly; the critic reads the JSON, not the
-  script.
+  browser, reads the round's **full-resolution** PNGs and writes one row per shot: `{shot: {meanL, p1, p50, p99,
+  pctOver245, tilingR, horizonDeltaL, fogColor, horizonRow, stagedPct}}`. §4 item 24 defines each of those
+  measurements exactly; the critic reads the JSON, not the script. Night lamp pools are deliberately **not** measured
+  here — a blob count defined inside the builder's own script is not a falsifiable number. Item 23 grades them from
+  `<shot>.crops.json`, which only `node tools/screenshot.mjs … --crops` produces (ARCHITECTURE §8).
 
 ### 3.4 What correct looks like in the frame
 
@@ -249,6 +256,10 @@ Reference `$REF/cs2_2.jpg` for distance: terrain loses contrast into a warm haze
 is no razor line. r1's `street_12.png` is a smooth green felt to a hard horizon with a bush of green static at frame
 right; `closeup_22.png` is a fully lit lawn at 22:00 with weak lamp pools. Both are hard fails below.
 
+**Lamp pools are emissive geometry and projected ground decals, never `PointLight` / `SpotLight`** — BUILDER.md's
+lane rule is that only `environment` adds lights, and `props.md`, `traffic.md` and `transit.md` all settle it the same
+way. Four shadowless lights on top of three CSM cascades would also threaten the 34-draw-call ceiling.
+
 **Permitted, and stated so it is not treated as cheating: shrink the backdrop instead of upgrading it.** A tight,
 well-lit park with a short ground plane that has fully faded into the fog colour before its edge scores better than
 1 400 m of hills and 2 000 trees at 996 k triangles. Whatever stays in frame must meet the bar; **item 25's
@@ -258,8 +269,16 @@ frame**, and it is the one number that makes this permission safe to grant.
 ## 4. Acceptance criteria
 
 Ordered by how much each moves the score. Every item is observable in a screenshot, in `summary.json`, in
-`selftest.json`, in `live.json`, in `imgstats.json`, or in a `page.evaluate` probe. In-page handle for all probes:
+`selftest.json`, in `live.json`, in `imgstats.json`, in a rect of `<shot>.crops.json` (`--crops`), or in a
+`page.evaluate` probe. In-page handle for all probes:
 `const api = window.__sim.registry.apis.audio`. `$REF` = the reference folder named in `docs/reference/CS2-LOOK.md`.
+
+**The gauntlet runs at `speed=0`** — `tools/screenshot.mjs:22` sets `speed: args.speed ?? '0'` — so the clock is
+frozen in every standard frame. The scheduler, the VU and the timeline "now" marker must therefore run off the `dt`
+carried by `time:tick`, which `Clock.advance` emits even while paused (`src/core/clock.js:32`); that is how items
+20(e) and 20(f) work in a frozen frame without touching `performance.now()`. Items 15 and 21 are the only two that
+need a running clock: shoot them explicitly with `--speed 1`, as `panel_12_speed1_a.png` and `panel_12_speed1_b.png`
+six seconds apart.
 
 ### Soundscape correctness — the catalogue (graded from `selftest.json`)
 
@@ -314,7 +333,8 @@ Ordered by how much each moves the score. Every item is observable in a screensh
    integers instead of reconstructing a grid. (Any other grid size is a fail even if the model is correct: 7 696 is
    the number both sides count.)
 8. **Time of day is a curve, not a switch.** Sweeping `hour` 0→24 in 0.05 h steps at `distance = 110, rain = 0,
-   wind = 3, temperature = 18, zone = residential 1` — **481 steps, hour 0.00 through 24.00 inclusive**.
+   wind = 3, temperature = 18, zone = residential 1` — **481 steps, hour 0.00 through 24.00 inclusive**
+   (24 / 0.05 + 1 = 481; those 481 hours × the 16 distance steps of item 9 = the 7 696 grid points item 7 pins).
    `sunElevation` is an input to `mixTargets` independent of `hour`, so it is pinned here: **`sunElevation` at each
    hour is `clock.sunElevation(hour)` from `src/core/clock.js`**, which is pure ES with no `three` and no DOM import,
    so `selftest.mjs` imports it directly —
@@ -323,7 +343,9 @@ Ordered by how much each moves the score. Every item is observable in a screensh
    cricket, `birdRate` and no-snap tables below are only reproducible if builder and critic use the same one, and
    `selftest.json` writes `sunCurve: 'core/clock.js'` to say which was used.
    - `crickets` = 0 whenever `sunElevation > 0.05`; ≥ 0.6 × its own maximum throughout 22:00–04:00; = 0 at
-     `temperature ≤ 5`; ≤ 0.15 × max at `rain ≥ 0.6`.
+     `temperature ≤ 5`; ≤ 0.15 × max at `rain ≥ 0.6`. Those last two are off-sweep inputs, so they are pinned:
+     **evaluate both at hour 01:00 with every other sweep input unchanged**, and `max` always means the maximum of
+     `crickets` over the pinned `rain = 0, temperature = 18` sweep — never over the wet or cold run.
    - `birdRate` = 0 for 22:00–04:00; its 06:00–07:30 maximum ≥ 2.0 × its 12:00 value; a second local maximum in
      17:30–19:00 ≥ 1.3 × the 12:00 value.
    - `traffic_near` has a **double diurnal bump**: its values at 08:00 and at 17:30 are each ≥ 1.8 × its value at
@@ -375,10 +397,13 @@ Ordered by how much each moves the score. Every item is observable in a screensh
     `night` centroid > `noon` centroid because crickets replace traffic).
 13. **Mute, duck, voices, suspend.** `api.mute(true)` ⇒ measured `muteRmsDb ≤ −80` within 200 ms and back within
     200 ms of `unmute()`. `api.duck(-6, 0.9)` and the `milestone` fanfare each duck the ambient bus by 4–8 dB and
-    fully recover within 1.5 s (`duckDb`, `duckRecoverS`). Firing 40 one-shots inside 200 ms, with requested volumes
-    spread over 0.05…1.0: `voicesPeak ≤ 18`, `voicesDropped ≥ 22`, zero console errors, and **the quietest requests
-    are the ones dropped** — graded as `live.json.voiceDrop.maxDroppedVolume ≤ live.json.voiceDrop.minPlayedVolume`,
-    i.e. the loudest request that was refused or evicted is no louder than the quietest request that was kept. (r1's
+    fully recover within 1.5 s (`duckDb`, `duckRecoverS`). Firing 40 one-shots inside 200 ms — **all of a single
+    catalogue sound whose `seconds ≥ 2`** (`siren` in the reference catalogue), recorded as
+    `live.json.voiceDrop.sound`, so that no voice completes and frees a slot mid-burst — with requested volumes
+    spread over 0.05…1.0: `voicesPeak ≤ 18`, `voicesDropped ≥ 22` (40 − 18 = 22 exactly, which is why the burst has
+    to be shorter than the sound: a 120 ms `ui_click` would free slots and report ~15 drops from a correct mixer),
+    zero console errors, and **the quietest requests are the ones dropped** — graded as
+    `live.json.voiceDrop.maxDroppedVolume ≤ live.json.voiceDrop.minPlayedVolume`, i.e. the loudest request that was refused or evicted is no louder than the quietest request that was kept. (r1's
     mixer already implements exactly this policy at `src/modules/audio/mixer.js:102-107`; the probe only has to
     report the two numbers, so no critic has to read source and form an opinion.) `document.hidden` ⇒ context
     `suspended` within 500 ms; visible again ⇒ `running`.
@@ -396,7 +421,8 @@ Ordered by how much each moves the score. Every item is observable in a screensh
     wouldPlay = (d <= 4r) && volume >= 0.01
     ```
 
-    Probe at the `bandstand` preset (`distance = 70` ⇒ `r = 82`, pan divisor 96, `yaw = 2.60`), sound at
+    Probe at the `bandstand` preset (`distance = 70` ⇒ `r = 0.6 × 70 + 40 = 82`, pan divisor `0.8 × 70 + 40 = 96`,
+    `yaw = 2.60` — all three **frozen** by §8 precisely because this table is derived from them), sound at
     `{x: target.x + d, z: target.z}` (due east), requested volume 1, at three named distances:
 
     | d | expected `volume` | expected `pan` | expected `wouldPlay` |
@@ -405,6 +431,9 @@ Ordered by how much each moves the score. Every item is observable in a screensh
     | 300 m | 0.069517 | −0.800000 (clamped) | `true` |
     | 329 m (`4r + 1`) | — | — | `false` |
 
+    (Derivation, so both sides can check it rather than trust it: `1/(1 + (10/82)²) = 0.985346` and
+    `1/(1 + (300/82)²) = 0.069517`; `cos 2.60 = −0.856889`, so `pan(10) = 10 × −0.856889 / 96 × 0.8 = −0.071407`
+    while `pan(300) = −2.6778` clamps to −1 and scales to −0.800000; `4r + 1 = 4 × 82 + 1 = 329`.)
     Both `volume` and `pan` must match the formula **to within 1e-3** at all three distances; at `4r + 1` the matching
     `api.play(name, {x, z})` returns `false`, schedules nothing, and leaves `api.stats().schedulerEvents` unchanged.
     Two consecutive `probeVoice` calls return the **same object identity** (no per-call allocation), and no
@@ -461,11 +490,13 @@ Ordered by how much each moves the score. Every item is observable in a screensh
     a play button, a **spectrogram thumbnail** (time × log-frequency, ≥ 96 × 18 px, not a waveform), duration and
     group; (i) a footer with sounds, samples, buffer MB, sample rate, render ms, seed and peak voices.
     Every numeric value right-aligned in tabular figures; ≥ 5 hairline dividers; value text contrast ≥ 7:1 and label
-    text ≥ 4.5:1 against the panel ground, measured on a crop.
+    text ≥ 4.5:1 against the panel ground, measured inside the `audio.panel` rect of `closeup_12.crops.json`
+    (item 23's `cropRects`), on the full-resolution PNG.
 21. **The panel is alive and is the module's own DOM.** Over a 6 s capture at `speed=1` from hour 12, at least three
-    bed meters change by ≥ 2 percentage points and the event log gains ≥ 1 row (compare two screenshots 6 s apart, or
-    read `api.getMix()` twice in a probe). Mounted on a module-created root `#audio-ui` appended to the core-provided
-    `#ui` container from `index.html`, `z-index` below the `ui` module's HUD, removed by `dispose()`.
+    bed meters change by ≥ 2 percentage points and the event log gains ≥ 1 row — compare `panel_12_speed1_a.png` and
+    `panel_12_speed1_b.png` (§4 preamble: the standard gauntlet is frozen at `speed=0`, so these two are shot with
+    `--speed 1`), or read `api.getMix()` twice in a probe. Mounted on a module-created root `#audio-ui` appended to
+    the core-provided `#ui` container from `index.html`, `z-index` below the `ui` module's HUD, removed by `dispose()`.
     `grep -rn "modules/ui\|\.\./ui/" src/modules/audio/` returns nothing. In `?showcase=all` the panel is absent
     entirely (item 18).
 22. **UI feedback is feedback, not a machine gun.** `ui` emits `ui:action {action:'setAudio', args:['master', v]}` on
@@ -484,13 +515,20 @@ Ordered by how much each moves the score. Every item is observable in a screensh
 
 23. **Night is night.** Mean luminance of the frame **excluding the panel region** (`x < 460 px` at 1080p): `aerial_22
     ≤ 46`, `street_22 ≤ 54`, `closeup_22 ≤ 54`, `skyline_22 ≤ 56` (`environment`'s night aerial measures 43; r1's
-    `closeup_22` measured 56.2 with a fully lit lawn). Light must come *from* the lamps: ≥ 4 distinct pools of
-    L ≥ 110 on ground or path, each ≥ 350 px, adjacent to lamp geometry, in `street_22.png` and `closeup_22.png`; no
-    emissive lamp head brighter than the pool it casts. Scale ground and foliage albedo by `(1 − 0.5 ·
-    world.weather.night)` rather than lighting them independently.
-24. **No tiling lattice, no razor horizon, no blown golden hour.** Write **`src/modules/audio/imgstats.mjs`** (§3.3
-    — inside the blast radius; BUILDER.md does not permit a script committed under `shots/`), writing its output to
-    `shots/audio/r<n>/imgstats.json`, one row per shot. It computes:
+    `closeup_22` measured 56.2 with a fully lit lawn). Light must come *from* the lamps, and that is a **pinned**
+    measurement, so the module implements `api.cropRects({project, width, height, camera})` returning, for each of at
+    least four staged lamps, `audio.pool<i>` (the ground rect the lamp lights) and `audio.lamp<i>` (its head), plus
+    `audio.panel` for item 20 — `window.__sim.project(x, y, z)` maps world to pixels, and
+    `node tools/screenshot.mjs … --crops` is the **only** producer of `<shot>.crops.json` (ARCHITECTURE §8). Shoot
+    `street_22.png`, `closeup_22.png` and `closeup_12.png` (the last for item 20's panel rect) with `--crops`. Then,
+    **measured on the full-resolution PNG and never on a downscaled copy** (at 480 px wide a lamp pool is a couple of
+    pixels and any statistic on it is noise), each of the four `audio.pool<i>` rects covers ≥ 350 px and has mean
+    L ≥ 110, and no `audio.lamp<i>` rect has a mean L greater than its own pool's. An empty or missing `crops.json`
+    is a builder defect under CRITIC.md, not a pass. Scale ground and foliage albedo by
+    `(1 − 0.5 · world.weather.night)` rather than lighting them independently.
+24. **No tiling lattice, no razor horizon, no blown golden hour.** Write **`src/modules/audio/imgstats.mjs`** (§3.3),
+    writing its output to `shots/audio/r<n>/imgstats.json`, one row per shot. Every statistic below is computed on the
+    full-resolution 1920×1080 PNG, never on a downscaled copy. It computes:
     - Tiling: greyscale (Rec.709), discard columns left of `x = 460`, detrend per-column and per-row means with a
       101 px moving average, normalised autocorrelation **max |r| < 0.35** over lags 24–400 px, in `aerial_12.png`,
       `aerial_6p5.png` and `skyline_6p5.png`.
@@ -514,9 +552,10 @@ Ordered by how much each moves the score. Every item is observable in a screensh
     `street_12` and `closeup_12`**, using item 24's definition of staged content (non-panel pixels below the
     ground/sky boundary that are ΔE > 6 from `fogColor` — park, road, bandstand, lamps, planting, and *not* haze).
     This is the only guard on the §3.4 permission to shrink the backdrop, so it is measured, not judged: a frame that
-    passes by being mostly fog fails here. No shot in the round's gauntlet is a boot-overlay frame (r1's `closeup_12` was:
-    mean 20.3, `bootFrame: true`) — every shot's `summary.json` entry has `ok: true`, `moduleStatus: 'ready'`, and the
-    panel visible. Planting within 60 m of any declared camera shows ≥ 3 distinguishable species by silhouette, ≥ 4
+    passes by being mostly fog fails here. No shot in the round's gauntlet is a boot-overlay frame (r1's `closeup_12`
+    was, at mean luminance 20.3). Graded mechanically, with no new field to define: every shot's `summary.json` entry
+    has `ok: true` and `moduleStatus: 'ready'`, and the panel is visible in the PNG.
+    Planting within 60 m of any declared camera shows ≥ 3 distinguishable species by silhouette, ≥ 4
     crown-colour variants, no two adjacent instances sharing rotation and scale, and no visible icosahedron facets or
     8 %-alpha-cut green static (r1's frame-right bush). Alternatively remove planting from within 60 m of every
     declared camera — the absence satisfies the planting clause, and the `stagedPct ≥ 25` floor still applies.
@@ -545,7 +584,7 @@ Ordered by how much each moves the score. Every item is observable in a screensh
 | `update()` per frame | **≤ 0.30 ms mean, ≤ 0.8 ms worst** over 120 frames | `__sim.stats().moduleMs.audio` |
 | Panel DOM/canvas update | **≤ 0.35 ms**, DOM text ≤ 12 Hz, spectrograms drawn **once** at init, VU/timeline ≤ 20 Hz | probe timing around `Panel.update` |
 | Synthesis at init | **≤ 1400 ms total**, **≤ 30 ms per macrotask slice** (chunk long beds; one 12 s stereo bed is not one slice) | `api.stats().renderMs`, `log.info` line, `elapsedMs` in the shot JSON |
-| Buffer memory (Float32 + `AudioBuffer` copies) | **≤ 56 MB** | `api.stats().bufferBytes × 2`; ≥ 35 sounds at 32 kHz ≈ 20 MB of Float32 |
+| Buffer memory (Float32 + `AudioBuffer` copies) | **≤ 56 MB** | `api.stats().bufferBytes × 2`. Derivation, because the old "≈ 20 MB" figure failed its own arithmetic: the nine beds at their item-3 minimum lengths are 4 × 12 s + 5 × 8 s = 88 s of stereo = 88 × 2 × 32 000 × 4 B ≈ 22.5 MB, and ~34 s of mono one-shots adds ≈ 4.4 MB → ≈ 27 MB of Float32, ≈ 54 MB after the `AudioBuffer` copy. Headroom is ~4 %: keep beds at their minimum lengths and render one-shots mono |
 | Texture memory, showcase | **≤ 40 MB** — at most three 1k PBR sets plus the procedural foliage/glow/mask textures | manifest entries × resolution |
 | Concurrent WebAudio voices | **≤ 18** plus 9 bed sources; nodes reused, no node churn per one-shot beyond source+gain(+panner+filter) | `live.json.voicesPeak`, `api.stats().voices` |
 | JS heap growth | **≤ 2 MB over 60 s** at `speed=4` | `__sim.stats().heapMB` sampled twice |
@@ -567,9 +606,9 @@ neighbouring module a round. Do not rediscover them.
   ground. Symptom: `closeup_22.png` mean 56.2 against `environment`'s 43; the frame reads as 19:00.
 - **Over budget by declaration.** r1 declared 900 000 triangles and measured 996 288 — a hard fail on budget
   regardless of how the frame looks, and the gauntlet that would have caught it was never finished.
-- **Boot-overlay frames.** `closeup_12.png` captured `#boot` (mean 20.3, `bootFrame: true`). A 900 ms synchronous-ish
-  synthesis at init plus a slow SwiftShader first frame makes this likely; keep init ≤ 2.0 s and re-shoot any frame
-  whose stats look like the overlay.
+- **Boot-overlay frames.** `closeup_12.png` captured `#boot` (mean 20.3; r1's own `imgstats.json` flagged it).
+  A 900 ms synchronous-ish synthesis at init plus a slow SwiftShader first frame makes this likely; keep init
+  ≤ 2.0 s and re-shoot any frame whose stats look like the overlay.
 - **The volume-slider machine gun.** `ui` emits `ui:action {action:'setAudio'}` on every slider `input`; an unmapped
   action falling through to `ui_click` fires dozens of clicks per drag. Same class of bug: one `build_place` per
   building in a 200-building `buildings:changed`.
@@ -693,7 +732,11 @@ Neighbours — call exactly these, degrade exactly as stated:
   park-dominant blend) and **`residential` as its largest key at `junction`** (the street-side blend that gives the
   traffic beds their context) — the two values item 10 and the item 20(d) "dominant zone" chip are graded against.
 
-Declared `showcase.cameras` — exactly these three names; retune the numbers if a shot demands it, keep the intent:
+Declared `showcase.cameras` — exactly these three names. Retune `pitch` and `target` if a shot demands it, keep the
+intent; **`bandstand.yaw = 2.60` and `bandstand.distance = 70` are frozen** and may not be retuned, because item 14's
+expected `volume` and `pan` are derived from exactly those two numbers (`r = 82`, pan divisor 96) — moving them fails
+a correct positional law. If a night framing needs a different shot of the bandstand, change `pitch`/`target`, or
+shoot `grove`.
 
 ```js
 cameras: {
@@ -710,11 +753,13 @@ matrix is `aerial, street, skyline, closeup` × `06.5, 12, 17.5, 22`, plus the t
 | | 06.5 golden hour | 12 noon | 17.5 late afternoon | 22 night |
 |---|---|---|---|---|
 | **aerial** (520 m) | Long soft shadows across the lawn; ground warm and non-repeating (item 24) | Whole park legible, no lattice, horizon faded; panel chips read `aerial` zoom and a traffic-heavy far mix | Warm rim on the bandstand roof; no blown sky | Mean ≤ 46; lamp pools are the only light; crickets bed at ≥ 0.6 in the meters |
-| **street** (60 m) | Rim-lit kerbs, contact AO at every lamp base, birds meter at its dawn peak | Slab and asphalt tone variation readable; nine bed meters and the 24 h timeline legible | Best light — keep r1's warm side light | Mean ≤ 54; ≥ 4 pools of L ≥ 110; no lamp head brighter than its pool |
+| **street** (60 m) | Rim-lit kerbs, contact AO at every lamp base, birds meter at its dawn peak | Slab and asphalt tone variation readable; nine bed meters and the 24 h timeline legible | Best light — keep r1's warm side light | Mean ≤ 54; shot with `--crops`, each of the four `audio.pool<i>` rects mean L ≥ 110, no `audio.lamp<i>` rect brighter than its own pool |
 | **skyline** (900 m) | Haze gradient, no razor horizon | ΔL ≤ 12 across the horizon; timeline "now" marker at 12:00 | ≤ 1.5 % blown pixels, mean ≤ 150 | Deep blue sky; the park a lit island; far mix dominated by `traffic_far` |
 | **closeup** (110 m) | Bandstand roof highlights, bench and gravel detail | Materials hold at 20 m: no icosahedron facets, no alpha-cut static; spectrograms legible in the panel | Warm side light on the bandstand columns | Mean ≤ 54; emissive never brighter than its own pool |
 
 Also required in the round's evidence, named in the build record: `selftest.json` (with `gridPoints: 7696`,
 `distanceSteps` and `sunCurve`), `live.json` (with `voiceDrop` and `filter`), `imgstats.json` (with `stagedPct` per
-shot), `apicheck.out.json`, `panel_12_720p.png`, and the `--showcase all` frame proving 0 draw calls, no panel, and
-`errors: []`. All three probe scripts live in `src/modules/audio/`; only their output lives under `shots/audio/r<n>/`.
+shot), `street_22.crops.json`, `closeup_22.crops.json` and `closeup_12.crops.json` (from `--crops`, for items 20
+and 23), `panel_12_speed1_a.png` and `panel_12_speed1_b.png` (shot with `--speed 1`, for item 21),
+`apicheck.out.json`, `panel_12_720p.png`, and the `--showcase all` frame proving 0 draw calls, no panel, and
+`errors: []`.

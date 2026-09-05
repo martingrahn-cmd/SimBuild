@@ -60,6 +60,8 @@ Field contract, enforced by probe:
 - `load` is **derived, never an input**: for a producer of category `c` in road component `k`,
   `load = effectiveCapacity(item, c) × min(1, componentDemand(c,k) / max(1e-6, componentSupply(c,k)))`, so
   `load ≤ effectiveCapacity` always. For a civic/park kind, `load` = the number of people in covered buildings.
+  `load` is a scalar, so a producer of **two** categories — `incinerator` is the only one — reports it for its
+  larger capacity, `garbage` (700 > 120); item 13(e) grades that item against `effectiveCapacity(item,'garbage')`.
 - `supply.<c>` = Σ `effectiveCapacity(item, c)` over **all** live producers in **all** road components;
   `demand.<c>` = Σ of the per-building need (§4.2) of every building within 60 m of any road. Both are plain
   numbers ≥ 0, refreshed at least once per `sim:tick`. **These two are reporting numbers only** — they are what the
@@ -100,7 +102,8 @@ category keys as well; returning 0 for them silently disables utilities for the 
 
 | Accepted key | Meaning |
 |---|---|
-| any of the 17 `kinds` | the formula above, restricted to facilities of that kind alone |
+| any of the ten civic/park `kinds` | the road-distance falloff above, over facilities of that kind alone |
+| any of the seven utility `kinds` | the component ratio above for that kind's **primary** category, numerator restricted to producers of that kind: `power_coal`/`power_wind`/`power_solar` → `power`, `water_pump` → `water`, `sewage` → `sewage`, `landfill` → `garbage`, `incinerator` → `garbage` (its larger capacity, as for `load`). Diagnostic only — nothing in the game reads these seven; item 3(a) is the whole of their grading. |
 | `'power'` | the formula above with `c = power`; producers are `power_coal`, `power_wind`, `power_solar`, `incinerator` |
 | `'water'` | `c = water`; producer `water_pump` |
 | `'sewage'` | `c = sewage`; producer `sewage` — identical to the kind key of the same name |
@@ -119,20 +122,39 @@ Events consumed: `roads:changed` (road graph moved → recompute components and 
 **There is no `infoview:changed` event** — `infoviews` is a stub and emits nothing. Poll `world.infoview.active` in
 `update()` (it is one string compare) and rebuild the desaturation uniform only when the value changes.
 
-`api` (`ctx.modules.services`) must expose exactly these 18 functions:
+`api` (`ctx.modules.services`) must expose exactly these 19 functions:
 `catalog()` · `place(kind,x,z,heading)` · `remove(id)` · `validate(kind,x,z,heading) -> {ok, reason, x, z, y, heading, slope, frontage}` ·
 `footprint(kind) -> {w,d}` · `coverage(key,x,z)` · `coverageGrid(key) -> {res, cell, data:Float32Array, version}|null` ·
 `at(x,z) -> item|null` · `get(id)` · `count()` · `stats()` · `setCoverageOverlay(key|null)` ·
-`setInfoview(active|null)` · `setNight(v)` · `setEmissive(v)` · `flush()` · `serialize()` · `deserialize(d)`.
-`setNight(v)`/`setEmissive(v)` mirror `buildings.api.setNight/setLit` and exist so the critic can toggle one
+`setInfoview(active|null)` · `setNight(v)` · `setEmissive(v)` · `flush()` · `cropRects(c)` · `serialize()` · `deserialize(d)`.
+`setNight(v)`/`setEmissive(v)` mirror `buildings`' `setNight/setLit` and exist so the critic can toggle one
 feature and diff the frame (item 10); `setEmissive(false)` must kill every emissive contribution this module makes
 — windows, floodlight pools, beacons — and change nothing else.
 
+`cropRects({project, width, height, camera})` is the pinned-landmark hook (ARCHITECTURE §8, `core/debug.js:41`):
+`window.__sim.cropRects()` collects it from every ready module and `node tools/screenshot.mjs … --crops` writes the
+result to `<out>.crops.json`. **That tool is the only producer of `crops.json`.** Return `{name: [x, y, w, h]}` in
+pixels, computed with the supplied `project(x, y, z)` so the rect follows the camera, for exactly these seven
+landmarks — nothing else in this spec is pinned — omitting any that is off screen for the given `camera`, and
+never throwing:
+
+`civic_facade` (the clinic's south wall — items 7, 10a) · `wall_base` (a 40 px column over the bottom 1.5 m of that
+wall plus 1.0 m of ground in front of it — item 21) · `park_lawn` and `grass_ref` (equal-area patches of mown lawn
+inside the large park and of untouched terrain grass just outside its hedge — item 5) · `solar_field` (item 11) ·
+`plume` and `sky_ref` (equal-area patches of the tallest cooling-tower plume at half its height, and of open sky
+at the same screen height beside it — item 2).
+
 `stats()` must return
-`{items, kinds:{<kind>:n}, draws, tris, textures, gridMs, buildMs, coverageVersion, supply:{...}, demand:{...}, served:{power,water,sewage,garbage}, plumeQuads, overlay}`
+`{items, kinds:{<kind>:n}, decor:{...}, draws, tris, textures, gridMs, buildMs, coverageVersion, supply:{...}, demand:{...}, served:{power,water,sewage,garbage}, plumeQuads, overlay}`
 where `draws` = renderable meshes in `ctx.group` with `visible === true` (this is the number the draw-call budget
 is graded on), `textures` = the count of `THREE.Texture` objects this module created and still holds (the number
 §5 caps), and `served.<c>` = fraction 0–1 of `world.buildings.items` with `coverage(c, b.x, b.z) ≥ 0.5`.
+
+`decor` exists because `kinds` counts facilities and cannot see a bench: it is
+`{trees, treeSpecies, benches, bins, pathLamps, hedgePerimeterFrac, treeHash}` over the park/plaza furniture this
+module places (§7), where `hedgePerimeterFrac` is 0–1 and `treeHash` is a stable 32-bit hash of the first 64 tree
+instance matrices with each element rounded to 0.01. Items 5 and 12 are graded against these fields; without them
+their counts have no observation method.
 
 ---
 
@@ -177,19 +199,19 @@ Coverage is visible as a soft ground gradient under `setCoverageOverlay('power')
 
 ## 4. Acceptance criteria
 
-`BUILDER.md` §Engineering rules and §Definition of done apply in full and are graded — determinism through
-`ctx.rng` (no `Math.random`, no `Date.now()` in logic), instancing, no per-frame allocation, lane discipline,
-colour space, zero console errors in every shot including `--showcase all`, `status === 'ready'` everywhere, and
-draw calls/triangles within the declared budget. `CRITIC.md` owns the greps and the 1280×720 shot. **The items
-below are what is specific to `services`** and are not repeated from either role file.
+`BUILDER.md` §Engineering rules and §Definition of done apply in full and are graded. `CRITIC.md` owns the greps
+and the 1280×720 shot. **The items below are what is specific to `services`.**
 
 Ordered by how much each moves the score. Every item is checked in a named shot from the command list in §8
-(`shots/services/r<n>/<camera>_<time>.png`), in that shot's `.json`, or in a page-evaluate probe against
-`window.__sim.registry.apis.services` at `?showcase=services&headless=1`.
+(`shots/services/r<n>/<camera>_<time>.png`), in a rect of that shot's `.crops.json`, in its `.json`, or in a
+page-evaluate probe against `window.__sim.registry.apis.services` at `?showcase=services&headless=1`.
+**Every pinned statistic is taken on the full-resolution 1920×1080 PNG, never on the 1280×720 or any downscaled
+copy** — at 480 px wide a 1 m calibration patch is about two pixels.
 
 ### 4.1 Checklist
 
-1. **The four hero silhouettes exist and are unmistakable at 400 m.** At `utilities_12` and `skyline_12`, an art
+1. **The four hero silhouettes exist and are unmistakable.** At `utilities_12` (~380 m, 0.29 m/px) and
+   `skyline_12` (~1.04 km, 0.80 m/px — a 60 m tower is 75 px tall there), an art
    director names, without a caption: two hyperboloid cooling towers (height ≥ 60 m, throat radius ≤ 0.62 × base
    radius, waist at 0.50–0.60 of height, ≥ 24 radial segments so the silhouette has no visible facets), a
    three-blade wind turbine (hub ≥ 45 m, rotor Ø ≥ 50 m, tapered blades, nacelle box), a solar field (≥ 40
@@ -197,11 +219,13 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
 2. **Steam and smoke plumes.** At `plant_close_12`, `utilities_12`, `skyline_12` and `aerial_17p5`, each cooling
    tower and each stack emits a plume that (a) starts inside the mouth with no visible seam, (b) reaches ≥ 2.0 ×
    the emitter height before it fades below 5 % opacity, (c) widens by ≥ 2.5 × from mouth to top, (d) leans in the
-   direction of `world.weather.wind` (probe: set `wind.x = ±1`, re-shoot, the plume apex moves ≥ 40 px in the
-   expected direction), (e) is **soft-particle depth-faded** — no hard quad edge where a plume crosses a tower or
-   the terrain. Cooling-tower plume near-white (r≈g≈b, luma 190–235 at noon); incinerator/landfill smoke warm grey
-   (luma 90–150). At 22:00 the plume is at most **0.35 ×** its noon luminance and is never brighter than the sky
-   directly behind it (probe: mean plume-pixel luma ≤ mean sky luma in the same 64×64 crop). `$REF/cs2_6.jpg`.
+   direction of `world.weather.wind` (in the critic's Playwright session of §8.1: set `wind.x = ±1`, re-shoot, the
+   plume apex moves ≥ 40 px in the expected direction), (e) is **soft-particle depth-faded** — no hard quad edge
+   where a plume crosses a tower or the terrain. Cooling-tower plume near-white (r≈g≈b, luma 190–235 at noon);
+   incinerator/landfill smoke warm grey (luma 90–150). Luma is measured inside the `services.plume` rect of
+   `utilities_12.crops.json`. At 22:00 the mean luma inside `services.plume` in `utilities_22` is ≤ **0.35 ×** the
+   same rect's mean in `utilities_12`, and ≤ the mean inside `services.sky_ref` in the same 22:00 frame.
+   `$REF/cs2_6.jpg`.
 3. **`coverage()` is correct, fast and allocation-free.** Probe:
    (a) all 17 kinds + `power|water|sewage|garbage` + `'nonsense'` return a finite number in [0,1], never NaN/undefined;
    (b) with one `power_coal` on the staged network, `coverage('power', b.x, b.z) ≥ 0.9` for ≥ 95 % of staged
@@ -211,9 +235,10 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    (`stats().gridMs` unchanged, no `new` in the query path — the query is a bilinear read of a precomputed grid);
    (e) `coverageGrid('power')` returns `{res: 128, cell: 16, data: Float32Array(16384)}`; `coverageGrid()` returns
    `null` for the six ungridded kinds named in §5 and for any unknown key, and never throws.
-   Items (a)–(d) apply to the **14 gridded keys** (§5); the six ungridded utility kinds are exempt from (d) only.
-   This is graded first among the non-visual items because `simulation/grids.js` calls `coverage()` **12 288 times
-   per game hour**; a per-call graph walk stalls the whole game.
+   (a)–(c) apply to **all 20 keys**; (d) applies to the **14 gridded keys** only (§5 names them and the six
+   ungridded utility kinds). This is graded first among the non-visual items because `simulation/grids.js` calls
+   `coverage()` **12 288 times per game hour** (a 64² coarse grid × the 3 park kinds, `grids.js:119`); a per-call
+   graph walk stalls the whole game. The 20 000-call / 8 ms figure in (d) is §5's ≤ 0.4 µs per query × 20 000.
 4. **Road-distance coverage, not a euclidean circle.** The formula is §2's, once, and this item only names its
    observable consequences. Probe on the staged network: a point 120 m from a clinic along the road returns
    ≥ 0.55; a point 120 m away in a straight line but ≥ 400 m away by road returns ≤ 0.15; a point on the far side
@@ -226,25 +251,31 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    vegetation, furniture and path lamps itself, out of its own 60-draw budget* — `props` declares
    `dependencies: ['terrain','roads']` and is therefore **not loaded** at `?showcase=services` (`core/showcase.js`
    `selectModules`), and its api has no placement entry point (§7). Match props' look rather than inventing one:
-   same three species and the same crown-tint palette as `src/modules/props/place.js:129-134`.
-   At `park_12`, `park_6p5` and `street_12` the large park contains, verifiable by eye and by
-   `stats().kinds`: a mown lawn plate whose hue differs from the
-   surrounding terrain grass by ≥ 12° or whose luminance differs by ≥ 12/255; ≥ 2 curved (not axis-aligned) paths
-   in pale concrete, 2.5–3.5 m wide; ≥ 24 trees of ≥ 3 species by silhouette with ≥ 4 crown-colour variants and no
-   two adjacent instances sharing rotation and scale; ≥ 8 benches, ≥ 4 bins, ≥ 6 path lamps standing inside the
-   green; a hedge or low wall on ≥ 60 % of the perimeter; and a water feature or sports court. The plaza is paved
+   same three species and the same crown-tint palette as `src/modules/props/place.js:128-135`.
+   Graded at `park_12` and `park_6p5` — **not** at `street_*`, whose core preset frames the civic street (§8).
+   Counts come from `stats().decor` (§2), which is why that field exists; the rest is read off the shot:
+   `decor.trees ≥ 24`, `decor.treeSpecies ≥ 3`, `decor.benches ≥ 8`, `decor.bins ≥ 4`, `decor.pathLamps ≥ 6`,
+   `decor.hedgePerimeterFrac ≥ 0.60`. In the shot: a mown lawn plate whose mean hue inside the
+   `services.park_lawn` rect of `park_12.crops.json` differs from `services.grass_ref` by ≥ 12°, or whose mean
+   luminance differs by ≥ 12/255; ≥ 2 curved (not axis-aligned) paths in pale concrete, 2.5–3.5 m wide; path lamps
+   standing inside the green rather than only on the kerb; and a water feature or sports court. The plaza is paved
    with a **patterned** surface (banded or radial paving, ≥ 2 tones) plus a fountain or monument at its focus.
    `$REF/cs2_4.jpg`.
 6. **Every facility is seated in the ground on a graded pad.** Probe over every staged item, 12 samples on the
-   footprint perimeter: `|padY − world.terrain.getHeight(x,z)| ≤ 0.30 m` at the highest sample; the base skirt
+   footprint perimeter: `|item.y − world.terrain.getHeight(x,z)| ≤ 0.30 m` at the highest sample (`y` is the pad
+   height, the field named in §2 — there is no `padY`); the base skirt
    extends ≥ 0.35 m below the **lowest** of the 12 samples; 0 samples show terrain above the ground-floor slab; and
    for pads on slope the surrounding grade is a batter or retaining wall, never a sheer black cliff (`roads_r1`
    issue 6). Visual check at `civic_6p5` and `utilities_12`. No item floats, no item is sunk.
-7. **Civic buildings match the `buildings` module's material quality.** Two shots, two scales — a 0.10 m recess is
-   sub-pixel at 260 m, so it is graded only up close.
-   At **`closeup_12`** (~110 m): window openings recessed ≥ 0.10 m behind the wall plane with a visible head
-   shadow at 12:00; a floor/spandrel band projecting or receding ≥ 0.04 m; a parapet or eave cap projecting
-   ≥ 0.15 m; a signed, canopied entrance facing its road frontage.
+7. **Civic buildings match the `buildings` module's material quality.** Two shots, two scales, and both thresholds
+   are set by what the pixels resolve. At the core `closeup` preset (distance 110, 45° vertical fov, 1080 px) one
+   pixel is `2 × 110 × tan 22.5° / 1080 = 0.084 m`; at `civic` (260 m) it is 0.20 m. So a 0.10 m reveal is barely
+   one pixel even up close and is not gradable; 0.25 m is three.
+   At **`closeup_12`**, inside the `services.civic_facade` rect of `closeup_12.crops.json` (§2 pins it to the
+   clinic's south wall; §8 stages the clinic on the core `closeup` target so the rect is always in frame), read on
+   the full-resolution PNG: window openings are recessed ≥ 0.25 m behind the wall plane and read as holes with a
+   head shadow at 12:00, not as painted rectangles; a parapet or eave cap projects ≥ 0.25 m; and there is a signed,
+   canopied entrance facing the road frontage.
    At **`civic_12`** (~260 m): every civic building (clinic, hospital, school, high_school, university, police,
    fire) reads by massing — a broken roofline or a wing/setback rather than one extruded box, and ≥ 2 roof-clutter
    pieces (HVAC, vent, lift bulkhead, roof monitor, mast, solar array) casting their own shadows.
@@ -257,23 +288,27 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
    hose-drying tower ≥ 12 m. Probe: `stats().kinds` shows ≥ 1 of each of the 17 kinds staged.
 9. **Parking and service yards, marked.** Every civic facility and both power plants have a hard-surface yard with
    painted bay lines at 2.5 × 5.0 m, a marked access from the kerb, and ≥ 4 parked vehicles or plant items where
-   the bay count allows. Bay lines are crisp white at `closeup_12` with no dashing aliasing into sparkle at 200 m
-   (mip-aware line width or a box-filtered decal, per `roads/materials.js`). `$REF/cs2_5.jpg`.
+   the bay count allows. At `civic_6p5` and `civic_12` the bays read as a regular marked grid (a 2.5 m bay is 12 px
+   at `civic`'s 0.20 m/px) and do not shimmer or break into dashes — mip-aware line width or a box-filtered decal,
+   per `roads/materials.js`. `$REF/cs2_5.jpg`.
 10. **Night: lit, not glowing.** At `night_civic_22`, `utilities_22` and `street_22`: emissive is present as
     (a) per-window on/off lighting in civic buildings baked to a vertex attribute from `ctx.rng` (**not** a
-    `fract(sin(...))` fragment hash — `grep -rn "fract(sin(" src/modules/services/` returns nothing, and a 128×128
-    crop of a facade at 250–400 m has < 0.2 % single-pixel outliers differing from both horizontal neighbours by
-    > 40/255; this exact bug cost `environment` a round, `docs/critic/environment_r2.md` issue 2);
+    `fract(sin(...))` fragment hash — `grep -rn "fract(sin(" src/modules/services/` returns nothing, and inside the
+    `services.civic_facade` rect of `civic_22.crops.json` — the clinic wall at `civic`'s 260 m, in the 250–400 m
+    band where this artefact shows — < 0.2 % of pixels differ from both horizontal neighbours by > 40/255; this
+    exact bug cost `environment` a round, `docs/critic/environment_r2.md` issue 2);
     (b) floodlit yards — school yard, fire apron, plant yard — as a *pool on the ground*, brightest under the mast
     and falling off, not a uniform lift;
     (c) red aviation warning lights on every stack, cooling tower and turbine nacelle, phase derived from
     `world.time.hour` so a frozen clock gives a repeatable frame.
-    Constraints: the unlit wall mass must be ≥ 6 × darker than its lit windows in the same 200×200 crop; the frame's
+    Constraints: inside that same `services.civic_facade` rect the unlit wall mass is ≥ 6 × darker than its lit
+    windows; the frame's
     p1 luminance > 0 and p99 < 250; < 0.3 % of pixels are 255 in any channel; and no emissive element is visible at
     `?time=12` — probe: capture `civic_12`, then `setEmissive(false)`, capture again, diff: **meanAbs < 0.5/255**
     (at 22:00 the same toggle must move the frame by meanAbs > 8/255, proving the switch is real).
-11. **Solar panels do not sparkle or blow out.** At `utilities_12` and `utilities_17p5`, pixels with luma > 245 on
-    the solar field are < 0.05 % of the frame. Panel glass roughness ≥ 0.25, albedo ≤ 0.09 (dark blue-black),
+11. **Solar panels do not sparkle or blow out.** At `utilities_12` and `utilities_17p5`, pixels with luma > 245 are
+    < 0.05 % of the full 1920×1080 frame (≈ 1000 px), and the `services.solar_field` rect of
+    `utilities_12.crops.json` says where to look for them. Panel glass roughness ≥ 0.25, albedo ≤ 0.09 (dark blue-black),
     `normalScale` ≤ 0.3 and faded to ≤ 0.15 beyond 150 m; metal racking roughness ≥ 0.40; concrete/render ≥ 0.60;
     gravel/roofing ≥ 0.75 (`roads_r1` issue 5, `environment_r1` issue 7).
 12. **Placement validation is real and deterministic.** Probe `validate(kind,x,z,heading)` returns `ok:false` with a
@@ -283,9 +318,11 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     `'no_frontage'` (no `world.roads.nearestEdge(x,z,40)` hit on the entrance side). `place()` returns `null` for
     every invalid case and mutates nothing; on success it returns a new id, adds the item, bumps
     `world.services.version`, and emits `services:changed {added:[id]}` within one frame. Two runs at `--seed 1337`
-    give identical `stats().kinds`, `tris` and `supply`; a run at `--seed 7` keeps the **facility placements
-    identical** (they are laid out from the road grid, not from noise) while ≥ 20 % of the park-vegetation instance
-    transforms differ — probe a hash of the first 64 tree matrices.
+    give identical `stats().kinds`, `tris`, `supply` and `stats().decor.treeHash`; a run at `--seed 7` keeps the
+    **facility placements identical** (they are laid out from the road grid, not from noise) — same `stats().kinds`
+    and the same `x, z, heading` on every item — while `stats().decor.treeHash` differs, which is what proves the
+    park vegetation is re-scattered from the seed. `treeHash` (§2) is the only instrument for this; no api function
+    exposes tree matrices and none is being added.
 13. **Supply, demand and load are live and drive growth.** Probe with `simulation` running:
     (a) `world.services.supply.power` equals Σ `effectiveCapacity(item,'power')` over live producers — including
     `incinerator`'s `capacity.power = 120` — with wind scaled by `world.weather.wind.speed` and solar 0 at
@@ -298,9 +335,9 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     `sim:tick`s** — `simulation` recomputes per-building service levels once per game hour, at
     `tick % TICKS_PER_HOUR === GRID_TICK` (`economy.js:227`, `TICKS_PER_HOUR = 100`, `GRID_TICK = 50`), so the
     worst case is 100 ticks and 25 is unreachable by any correct implementation. Drive it with
-    `simulation.api.step(110)` before reading. Then `simulation.api.building(id).power < 0.5` for a staged
+    `ctx.modules.simulation.step(110)` before reading. Then `ctx.modules.simulation.building(id).power < 0.5` for a staged
     building (growth blocked, `economy.js:355`);
-    (e) each item's `load` ≤ its `effectiveCapacity` for that category (§2 defines `load`; it can never exceed it)
+    (e) each item's `load` ≤ its `effectiveCapacity` for the category §2 assigns it (`incinerator` → `garbage`)
     and is refreshed at least once per second of game time.
 14. **Coverage overlay reads like CS2 and is off by default.** `setCoverageOverlay('power')` draws a single ground
     decal (≤ 2 draw calls, one texture ≤ 512²) with a soft gradient from full at the source to 0 at the edge, a
@@ -311,12 +348,8 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     it is **null in every shot the gauntlet takes** — the module never enables it by itself, never sniffs the
     camera or URL, and `stats().overlay === null` in every `.json` produced by the §8 gauntlet commands. The only
     thing that turns it on is an explicit `setCoverageOverlay(key)` call from a probe.
-15. **Budget** (§5 below), read from every gauntlet `.json` and probe: `stats().draws ≤ 60`,
-    `stats().tris ≤ 800_000`, scene `drawCalls ≤ 300` and `triangles ≤ 2_400_000` at every camera and time,
-    `moduleMs.services ≤ 2.0` (≤ 0.4 ms with nothing dirty), `modules.services.initMs ≤ 1500`, scene
-    `textures ≤ 70` and `stats().textures ≤ 16` (this module's own, none above 2048² — §5 says which atlases).
-    Declared `budget` in `index.js` is exactly `{ drawCalls: 60, triangles: 800_000 }` (`constants.BUDGET`
-    allots services 60).
+15. **Budget.** Every row of §5's table holds, at every camera and every time, read from the instrument that row
+    names. The numbers live in §5 only, so there is one copy of each to keep true.
 16. **Catalogue matches the UI contract exactly.** `catalog()` returns all 17 kinds with `{label, cost, category,
     unlock, footprint:{w,d}, capacity, radius, upkeep, output}`; `label`, `cost` and `unlock` are **identical** to
     `src/modules/ui/hud.js:SERVICE_KINDS`, and `category` equals that table's `cat` field (one of
@@ -341,14 +374,25 @@ Ordered by how much each moves the score. Every item is checked in a named shot 
     a kerb, a band or ≥ 0.4 m of blended edge — no hard material line (`terrain_r1` issue 8 — brush-stroke swirl
     repetition of the coarse layer at aerial scale — and `environment_r1` issue 3). Plates sit 0.03–0.06 m above
     the terrain and never rely on `polygonOffset` alone.
-20. **Wind turbine blades read at every distance.** At `utilities_12`, blades are ≥ 3 px wide at their root at
-    400 m and do not alias into dashed lines; blade pitch angle differs between turbines (≥ 3 distinct rotor
+20. **Wind turbine blades read at every distance.** At `utilities_12` (~380 m, so one pixel is
+    `2 × 380 × tan 22.5° / 1080 = 0.29 m`) blades are ≥ 3 px wide at their root — a root chord ≥ 0.88 m — and do not
+    alias into dashed lines; blade pitch angle differs between turbines (≥ 3 distinct rotor
     azimuths across the staged turbines at a frozen clock, derived from `world.time.hour` + instance index) so the
     field does not look like one asset copy-pasted; and blade rotation rate follows `world.weather.wind.speed`.
-21. **Contact darkening.** In `closeup_12`, `civic_12` and `park_12`, the bottom 1.5 m of every wall and the ground
-    within 1.0 m of it is ≥ 25 % darker than the same surface at mid height / 5 m away (vertical luminance profile
-    in a 40 px column). Trees, benches, lamps and parked vehicles each have a visible contact shadow at 12:00
+21. **Contact darkening.** Measured in the `services.wall_base` rect of `closeup_12.crops.json` (§2: a 40 px column
+    over the bottom 1.5 m of the clinic wall and the 1.0 m of ground in front of it): its mean luminance is ≥ 25 %
+    below the mean of the same column at mid height and 5 m out, read on the full-resolution PNG. Judged again by
+    eye at `civic_12` and `park_12`. Trees, benches, lamps and parked vehicles each have a visible contact shadow at 12:00
     (`effects_r1` issue 5 — do not rely on the post-AO pass to supply it).
+22. **The props overlap at `--showcase all` is not left silent.** §7: props' forest avoids roads, water, steep
+    ground and zoned lots, and a service pad is none of those, so trees grow through the coal-plant pad, the school
+    yard and the fire apron in the integrated build. The keep-out lives in `props/place.js` and you may not touch
+    it, so what is graded here is the handoff: (a) `docs/core-requests/services.md` exists and asks `props` to skip
+    cells covered by a `world.services.items` footprint, naming the `inLot` guard as the place to add it; (b) the
+    `--showcase all` aerial that BUILDER.md already requires is shot and looked at, and the number of trees
+    standing inside a service footprint in it is reported in `docs/builds/services_r<n>.json` under
+    `remainingWeaknesses`. A round that ships an unreported overlap fails this item; a round that reports it
+    honestly and files the request passes it.
 
 ### 4.2 Catalogue (the numbers the builder must ship)
 
@@ -385,7 +429,9 @@ State any deviation in the build report.
 
 ## 5. Budget
 
-Consistent with ARCHITECTURE §9 and `constants.BUDGET.perModuleDrawCalls.services = 60`.
+Consistent with ARCHITECTURE §9 (≤ 3 M triangles on screen, ≤ 768 MB textures scene-wide, ≤ 2 ms per module).
+§9's draw-call table does **not** itemise `services`; the 60 comes from
+`constants.BUDGET.perModuleDrawCalls.services = 60` (`src/core/constants.js:23`).
 
 | Metric | Budget | Where measured |
 |---|---|---|
@@ -399,10 +445,15 @@ Consistent with ARCHITECTURE §9 and `constants.BUDGET.perModuleDrawCalls.servic
 | `coverage()` query | ≤ 0.4 µs, zero allocation (20 000 calls ≤ 8 ms) | probe |
 | `init()` | ≤ 1500 ms | `.json` `modules.services.initMs` |
 | `showcase.setup()` | ≤ 8 s under SwiftShader | `.json` `elapsedMs` vs baseline |
-| GPU texture memory | **≤ 64 MB is the real ceiling**; ≤ 16 textures created by this module, none above 2048² | probe `stats().textures` |
+| Textures created by this module | ≤ 16 | probe `stats().textures` |
+| Their sizes | ≤ 1024², except the facade/clutter atlas at ≤ 2048² | source check — no tool reports texture bytes |
 | Scene texture count | ≤ 70 | shot `.json` `textures` |
 | Coverage grids in JS heap | ≤ 1.0 MB (14 × `Float32Array(128²)` = 0.875 MB + one `Uint16Array(128²)` component id) | probe |
 | Plume quads | ≤ 40 per emitter, ≤ 320 total, one instanced draw | probe `stats().plumeQuads` |
+
+There is deliberately **no per-module megabyte ceiling**: nothing in the toolchain reports texture bytes, and the
+"≤ 64 MB" this replaces contradicted the count beside it (16 textures at 2048² RGBA with mips is
+`16 × 4 B × 2048² × 1.33 ≈ 340 MiB`, 5× the stated ceiling). ARCHITECTURE §9's 768 MB is the scene-wide bound.
 
 **The 16-texture line is a count of `THREE.Texture` objects, not of atlases** — one `ctx.assets.pbr()` set is 3–4
 maps (`core/assets.js:62`, `applyPbr` at :89) and would eat a 6-texture cap by itself. The material list the
@@ -421,8 +472,7 @@ still never throw, they are exempt from item 3(d)'s ≤ 8 ms / zero-allocation r
 
 Chunk at 128 m (`constants.TILE_SIZE`); one merged geometry per chunk per material so a chunk is one draw call and
 frustum culling works by bounding sphere. Park vegetation, benches, bins, lamps, panels, parked vehicles and bay
-lines are `InstancedMesh` or merged — a per-object `Mesh` for repeated content is an automatic budget fail.
-Nothing in this module allocates per frame.
+lines are the repeated content BUILDER.md §Engineering rules is about.
 
 ---
 
@@ -455,7 +505,7 @@ Symptoms as they appear on screen. The neighbouring modules' critics have alread
 - **Z-fighting on ground plates.** Yards, lawns, paving, bay lines and coverage overlays coplanar with terrain or
   roads flicker at distance. Offset 0.03–0.06 m and order explicitly; never rely on `polygonOffset` alone.
 - **Terrain grass tufts through paving.** Roads hit this (`roads_r1` issue 2). Publish nothing to terrain; if tufts
-  poke through a yard, raise the plate — do not touch another module's group. `terrain.api.setGrassTufts(false)` is
+  poke through a yard, raise the plate — do not touch another module's group. `ctx.modules.terrain.setGrassTufts(false)` is
   a showcase-only fallback, and only in *this* module's showcase.
 - **Green-rectangle parks.** A flat lawn quad with a handful of lollipop trees is the single loudest "programmer
   art" tell at street level (`simulation_r1` issues 7 and 8, `effects_r1` issue 7). Layered leaf-card canopies,
@@ -479,6 +529,14 @@ Symptoms as they appear on screen. The neighbouring modules' critics have alread
 `dependencies: ['roads', 'zoning', 'buildings', 'simulation']` (ARCHITECTURE §15). `terrain` and `environment` are
 pulled in transitively by the showcase router and are always present. Guard everything else with optional chaining.
 
+**`ctx.modules.<name>` *is* that module's api object** — `registry.js:36` passes `modules: this.apis` and
+`registry.js:14` stores `def.api` directly, so the call is `ctx.modules.roads.rebuild()`. There is no `.api`
+sub-object: `ctx.modules.roads.api` is `undefined`, and `ctx.modules.roads?.api?.rebuild?.()` silently does
+nothing — no rebuild, no frontage, no `isRoad` mask, no components, and coverage, `validate()` and the whole
+showcase fail in a way that looks like a logic bug. Every shipped module uses the short form
+(`buildings/showcase.js:70`, `zoning/index.js:143`, `props/index.js:256`). BUILDER.md §Fail soft's example
+(`ctx.modules.props?.api?.place?.(…)`) has the extra `.api` and is wrong; the headings below are the real paths.
+
 **Verified state of the repo at the time this module is built** (checked module by module, not assumed):
 `terrain`, `environment`, `roads`, `zoning`, `buildings`, `simulation`, `props`, `effects`, `ui` and `audio` are
 **built and shipped**. The stubs are `traffic`, `tools`, `infoviews`, `transit` and `democity` — plus `services`
@@ -498,15 +556,18 @@ both mechanical: props exposes no placement api (above), and props is **not even
 `?showcase=services` — it declares `dependencies: ['terrain','roads']`, so `core/showcase.js:selectModules` never
 pulls it in for this showcase, and a park that delegated to props would render empty in every graded shot.
 Acceptance item 5 says the same. To keep the two subsystems looking like one city, reuse props' species set and
-crown-tint palette (`props/place.js:129-134`: `HEIGHTS` oak 8.5–15.5 m, pine 12–24 m, birch 8–15 m, and the
-per-species `TINT` triples) rather than inventing a second tree look. `ctx.modules.props?.api?.stats?.()` may be
+crown-tint palette (`props/place.js:128-135`: `HEIGHTS` oak 8.5–15.5 m, pine 12–24 m, birch 8–15 m, and the
+per-species `TINT` triples) rather than inventing a second tree look. `ctx.modules.props?.stats?.()` may be
 read for diagnostics; nothing in this module may depend on props being present.
+The reverse direction is not yours to solve: props' forest skips roads, water, steep ground and **zoned lots**
+(`place.js:61` `lotTest`) but knows nothing about service pads, so at `--showcase all` it grows trees through them.
+Item 22 says what you owe instead.
 
 **`world.terrain`** (single source of height; a flat fallback exists if terrain failed):
 `getHeight(x, z) -> m` · `getNormal(x, z, out?) -> Vector3` · `getSlope(x, z) -> rad` · `isWater(x, z) -> bool` ·
 `raycast(ray) -> {point, normal}|null` · `modify({x, z, radius, strength, mode:'raise'|'lower'|'flatten'|'smooth', target}) -> bool`
 (flatten uses `target ?? getHeight(x,z)`, weight `min(1, w*strength)`, emits `terrain:changed`).
-Also `world.terrain.features.river`, `.minHeight`, `.maxHeight`. `ctx.modules.terrain.api`: `data()`, `stats()`,
+Also `world.terrain.features.river`, `.minHeight`, `.maxHeight`. `ctx.modules.terrain`: `data()`, `stats()`,
 `material()`, `setGrassTufts(enabled)`, `setReflection(enabled)`, `debug.*`.
 
 **`world.roads`**: `nodes: Map<id,{id,x,y,z,designY,edges:Set<edgeId>}>` — this is the graph to BFS ·
@@ -518,26 +579,26 @@ Also `world.terrain.features.river`, `.minHeight`, `.maxHeight`. `ctx.modules.te
 **`isRoad(x,z)` returns `0 | 1 | 2`** (0 none, 1 asphalt, 2 sidewalk/verge) — *not* 0..1 as ARCHITECTURE §3 says —
 and it only exists after the first `rebuild()`; guard with `typeof world.roads.isRoad === 'function'`.
 `world.roads.coverage = {res, cell, data: Uint8Array, version}` is the same mask.
-`ctx.modules.roads.api`: `rebuild()` · `lampPositions(edgeId)` · `intersections()` · `nodeInfo(id)` · `types()` ·
+`ctx.modules.roads`: `rebuild()` · `lampPositions(edgeId)` · `intersections()` · `nodeInfo(id)` · `types()` ·
 `edges()` · `stats()` · `edgeDebug(edgeId, step)` · `serialize()` · `deserialize(d)`.
 Degrade: with an empty road graph, coverage takes the §2 exception path (euclidean) and `validate()` skips the frontage test
 (reason `'no_frontage'` is never returned) — log it once with `ctx.log.warn`.
 
 **`world.zones`**: `cells`, `lots: Map<id, {id, edgeId, side, cells, x, y, z, w, d, heading, nx, nz, ax, az, type,
 density, corner, t, buildingId}>`, `lotsFor(edgeId)`, `freeLots()`, `paint()`, `erase()`, `version`.
-`ctx.modules.zoning.api`: `paint(x,z,radius,type,density)` · `erase(x,z,radius)` · `bulk(fn)` · `lotsFor(edgeId)` ·
+`ctx.modules.zoning`: `paint(x,z,radius,type,density)` · `erase(x,z,radius)` · `bulk(fn)` · `lotsFor(edgeId)` ·
 `freeLots()` · `lotAt(x,z)` · `cellAt(x,z)` · `zonableAt(x,z)` · `debugEdge(id)` · `refresh()` ·
 `setOverlayVisible(v)` · `overlayVisible()` · `stats()` · `serialize()` · `deserialize(d)`.
 Use `lotAt`/`zonableAt` so a service pad never lands inside a zoned lot.
 
 **`world.buildings`**: `items: Map<id,{id,lotId,type,density,level,footprint:{w,d},floors,height,x,y,z,heading,
 styleId,occupants,jobs,lit}>`, `at(x,z)`, `spawn(lot)`, `demolish(id)`, `levelUp(id)`, `version`.
-`ctx.modules.buildings.api`: `requestSpawn(lot)` · `setLevel(id,n)` · `demolish(id)` · `at(x,z)` · `get(id)` ·
+`ctx.modules.buildings`: `requestSpawn(lot)` · `setLevel(id,n)` · `demolish(id)` · `at(x,z)` · `get(id)` ·
 `count()` · `flush()` · `spawnFreeLots(limit)` · `stats()` · `material()` · `atlasTextures()` · `setNight(v)` ·
 `setLit(v)` · `serialize()` · `deserialize(d)`. Used for the demand denominator and for the overlap test in
 `validate()`. Degrade: no buildings ⇒ `demand` is 0 and every coverage value is 1 on the served network.
 
-**`ctx.modules.simulation.api`**: `profile(hour, out)` · `activity(hour)` · `demand()` · `economy()` ·
+**`ctx.modules.simulation`**: `profile(hour, out)` · `activity(hour)` · `demand()` · `economy()` ·
 `building(id)` · `landValueAt(x,z)` · `pollutionAt(x,z)` · `noiseAt(x,z)` · `milestone()` · `isUnlocked(what)` ·
 `canAfford(a)` · `spend(a, force=false)` · `earn(a)` · `grids()` · `step(n)` · `constants` · `serialize()` ·
 `deserialize(save)`. `place()` charges its `cost` through `spend(cost)` and returns `null` when unaffordable in
@@ -550,7 +611,7 @@ already models service expense per capita; do not double-charge. Degrade: no sim
 park_small, park_large, plaza, power, water, garbage`, catching throws to 0. `economy.js:355` blocks growth when
 `power < 0.5 || water < 0.5`. `grids.js:119` calls the three park kinds on a 64² grid.
 
-**`ctx.modules.environment.api`** (present in every showcase): `setWeather(preset|obj)` · `getWeather()` ·
+**`ctx.modules.environment`** (present in every showcase): `setWeather(preset|obj)` · `getWeather()` ·
 `getSunDirection()` · `getMoonDirection()` · `getLightDirection()` · `getExposure()` · `getNight()` ·
 `setupMaterial(material)` — **must** be called on every custom `ShaderMaterial` so CSM shadows and fog uniforms are
 injected — · `hookScene()` after staging · `refreshEnvironment()` · `presets` · `_debug()`.
@@ -575,8 +636,8 @@ weighted([[v,w]…]) gauss() shuffle(arr) fork(label)`. `ctx.assets` → `pbr(na
 
 Asset policy (§10): the facade/clutter atlas, paving patterns, bay-line decals, plume sprite and coverage ramp are
 **procedural** (canvas-drawn, seeded from `ctx.rng`); any photographic detail must be CC0 from Poly Haven or
-ambientCG, added to `public/assets/manifest.json` and fetched with `tools/fetch-assets.mjs`. Albedo canvases
-`SRGBColorSpace`; normal/roughness/AO/ORM/emissive-mask linear.
+ambientCG, added to `public/assets/manifest.json` and fetched with `tools/fetch-assets.mjs`. Colour space is
+BUILDER.md's rule and is not restated here.
 
 ---
 
@@ -585,13 +646,17 @@ ambientCG, added to `public/assets/manifest.json` and fetched with `tools/fetch-
 `?showcase=services` initialises `environment`, `terrain`, `roads`, `zoning`, `buildings`, `simulation` and this
 module. The stage is a **compact service district**, laid out by this module: it creates its own road grid through
 `world.roads.addNode/addEdge` (pattern: `src/modules/zoning/showcase.js:stageRoads`), calls
-`ctx.modules.roads?.rebuild?.()`, paints a modest amount of zoning and calls
-`ctx.modules.buildings?.spawnFreeLots?.(≤ 120)` so there is a real demand load — then places services.
-Keep the building count low enough that the scene stays under 300 draw calls (§5).
+`ctx.modules.roads?.rebuild?.()`, paints enough zoning for **140–180 free lots** and calls
+`ctx.modules.buildings?.spawnFreeLots?.(160)` so there is a real demand load — then places services.
+One reconciled number, because the two constraints do not actually conflict: `buildings` merges per 128 m chunk,
+so ~150 houses over a ~400 m district is ~16–32 draw calls, and the scene sums to roughly
+terrain 20 + environment 15 + roads 80 + zoning 10 + buildings ~30 + services 60 ≈ 215, inside the 300 of §5. If a
+gauntlet `.json` still reads over 300 `drawCalls`, **cut lots, not services**.
 
 It must contain, verifiable by `stats()`:
 
-- **All 17 kinds, ≥ 1 of each**, and ≥ 22 items total (2 wind turbines beyond the first, 2 extra parks).
+- **All 17 kinds, ≥ 1 of each**, and **≥ 22 items total**: the 17 plus 3 extra wind turbines (so the row below is
+  ≥ 4) plus 2 extra parks — 17 + 3 + 2 = 22.
 - A **utilities yard** on the west: coal plant (2 cooling towers + stack, all plumed), a wind row of ≥ 4 turbines
   on a ridge at differing rotor azimuths, a solar field, landfill and incinerator.
 - A **water group** on the river: pump station with water tower ≤ 60 m from water, sewage outfall on the bank.
@@ -600,8 +665,31 @@ It must contain, verifiable by `stats()`:
 - A **green core**: large park with lawn/paths/water feature, small park, plaza with patterned paving and fountain,
   all fronting the same avenue as `$REF/cs2_4.jpg`.
 - ≥ 4 facilities on ground sloping more than 1.5 m across their footprint (pad grading proof, item 6).
-- ≥ 120 buildings on the surrounding blocks so `demand` is non-zero and `served.*` is meaningful.
+- ≥ 120 buildings on the surrounding blocks so `demand` is non-zero and `served.*` is meaningful — probe
+  `world.buildings.items.size ≥ 120` after `spawnFreeLots(160)` (it returns fewer than its limit when the free
+  lots run out, which is why the limit is 160 and the floor is 120).
 - The coverage overlay **off** (`stats().overlay === null`).
+
+**Staging coordinates — binding, because five items are graded through core presets this module does not own.**
+`showcase.cameras` declares exactly the six names below and **overrides none of the core presets**
+(`aerial|street|skyline|closeup`, `core/camera.js:22-29`), so the only way the graded content lands in those frames
+is to build the district around them. The whole district fits a **560 × 560 m box centred on the world origin**:
+at the core `aerial` preset (distance 520, target `[0,0,0]`, 45° vertical fov, 16:9, pitch 0.85) the visible ground
+is `2 × 520 × tan(atan(tan 22.5° × 16/9)) ≈ 766 m` across and `2 × 520 × tan 22.5° / sin 0.85 ≈ 573 m` deep, so
+±280 m fits both ways. Within the box:
+
+- The **civic street** is an avenue on the centreline `z = 46`, running `x = −40 … 160`. The **clinic** stands on
+  its north side with its footprint centre within 6 m of `(20, 20)`, entrance facing south. The core `closeup`
+  preset (distance 110, target `[20, 6, 20]`) therefore looks at that facade from `(78, 44, 105)` — this is the
+  frame item 7 and item 21 are graded in, and the rect `services.civic_facade` must be inside it. The core
+  `street` preset (distance 60, target `[40, 0, 40]`) stands on the avenue's north verge looking north-west along
+  the same frontages — the frame item 10 is graded in.
+- The **green core** (large park, small park, plaza) is centred within 120 m of the origin, fronting that same
+  avenue. It is graded only through the module's own `park` preset (item 5), never through `street`.
+- The **utilities yard** is centred near `(−200, −60)`, framed by the module's `utilities` preset and 9.3° off the
+  core `skyline` preset's axis at ~1.04 km (camera `(718, 183, −523)` looking at `[0, 40, 0]`), well inside its
+  36.4° horizontal half-angle — so the cooling towers and turbine row are in `skyline_12` (item 1).
+- The **water group** sits on the river bank inside the same box; `sewage` must be ≤ 60 m from water (§4.2).
 
 Declared presets (`showcase.cameras`, registered through `ctx.camera.registerPreset`) — exactly these six names:
 
@@ -611,14 +699,16 @@ Declared presets (`showcase.cameras`, registered through `ctx.camera.registerPre
 | `plant_close` | ~110 m at the coal plant base | tower surface material, mouth, plume origin, coal yard, contact shadows |
 | `civic` | ~260 m over the civic street | seven distinct plans, yards, parking, entrances, roof clutter |
 | `park` | ~90 m street level in the large park | lawn tone, paths, ≥ 3 tree species, benches, lamps, hedge, water feature |
-| `coverage` | ~520 m top-down over the whole district | with `setCoverageOverlay('power')` on: gradient follows roads, no hard rim |
+| `coverage` | ~700 m top-down over the district centre — at 700 m the ground is 1031 × 580 m, the smallest round distance that contains the 560 × 560 m box above (560 m of depth needs 560 / (2 tan 22.5°) = 676 m) | with `setCoverageOverlay('power')` on: gradient follows roads, no hard rim |
 | `night_civic` | ~140 m at the civic street, shot at 22 | per-window lighting, floodlit yards, red stack lights, dark mass between |
 
 ### 8.1 The exact shot list the checklist is graded against
 
 `tools/gauntlet.mjs` is a plain `cameras × times` cross product (default `aerial,street,skyline,closeup` ×
-`6.5,12,17.5,22`) and `tools/screenshot.mjs` accepts only `--showcase/--time/--camera/--seed/--w/--h/--out/
---measure/--quality/--weather/--modules/--speed/--url/--timeout` — **there is no `--eval` and no script hook**, and
+`6.5,12,17.5,22`, and it forwards only `--w/--h/--seed/--weather/--quality/--timeout`, **not `--crops`**) and
+`tools/screenshot.mjs` accepts only `--showcase/--time/--camera/--seed/--w/--h/--out/
+--measure/--quality/--weather/--modules/--speed/--url/--timeout/--crops` — **there is no `--eval` and no script
+hook**, and
 `ctx.camera` presets are inert data (`core/camera.js:36-52`), so no preset can turn anything on by itself. These
 four commands produce every file the checklist names. Run them in this order (each `gauntlet` invocation rewrites
 `summary.json` in `shots/services/r<n>/`, so the standard matrix goes last and owns the summary):
@@ -629,9 +719,20 @@ node tools/gauntlet.mjs --module services --round <n> --cameras night_civic --ti
 node tools/screenshot.mjs --showcase services --camera civic --time 12 --w 1280 --h 720 \
   --out shots/services/r<n>/civic_12_720.png --timeout 240
 node tools/gauntlet.mjs --module services --round <n>          # the standard 16: aerial|street|skyline|closeup × 6p5|12|17p5|22
+
+# pinned-measurement shots. gauntlet.mjs does NOT pass --crops, so the five shots that carry a pinned
+# statistic are re-taken to the SAME paths by screenshot.mjs, which writes <shot>.crops.json beside each PNG.
+for s in closeup_12 civic_22 park_12 utilities_12 utilities_22; do
+  node tools/screenshot.mjs --showcase services --camera "${s%_*}" --time "${s##*_}" --crops \
+    --out "shots/services/r<n>/$s.png" --timeout 240
+done
 ```
 
-Resulting files in `shots/services/r<n>/` (each with a sibling `.json`) — 34 PNGs:
+`screenshot.mjs` defaults to 1920×1080, which is what "full-resolution PNG" means throughout §4. The
+`civic_12_720` shot above is for CRITIC.md's layout check only — **no pinned statistic may be read off it.**
+
+Resulting files in `shots/services/r<n>/` (each with a sibling `.json`, and five of them with a sibling
+`.crops.json`) — 34 PNGs:
 
 | From | Files |
 |---|---|

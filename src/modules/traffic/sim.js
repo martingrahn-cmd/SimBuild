@@ -3,9 +3,9 @@
 // so the per-frame loop writes matrices straight into the InstancedMesh buffers (no allocations).
 import * as THREE from 'three';
 import { LAYERS, RENDER_ORDER } from '../../core/constants.js';
-import { buildVehicleGeometry, buildLightRig, buildPedestrianGeometry } from './geometry.js';
+import { buildVehicleGeometry, buildLightRig, buildPedestrianGeometry, buildContactShadow, buildPedShadow } from './geometry.js';
 import {
-  createVehicleMaterial, createLightMaterial, createPedestrianMaterial,
+  createVehicleMaterial, createLightMaterial, createPedestrianMaterial, createContactMaterial,
   PAINTS, PAINT_WEIGHTS, SHIRTS, PANTS,
 } from './materials.js';
 
@@ -52,7 +52,8 @@ export class Traffic {
   buildMeshes(maxVehicles, maxPeds) {
     const vehMat = createVehicleMaterial();
     const lightMat = createLightMaterial();
-    this.vehMat = vehMat; this.lightMat = lightMat;
+    const contactMat = createContactMaterial(1);
+    this.vehMat = vehMat; this.lightMat = lightMat; this.contactMat = contactMat;
     const totalW = MIX.reduce((a, m) => a + m[1], 0);
     for (let ci = 0; ci < MIX.length; ci++) {
       const [kind, w] = MIX[ci];
@@ -88,7 +89,19 @@ export class Traffic {
       rig.instanceMatrix = mesh.instanceMatrix; // same transforms, shared buffer
       this.group.add(rig);
 
-      this.classes.push({ kind, spec, mesh, rig, paint, lights, spin, cap, count: 0, big: kind === 'truck' || kind === 'bus' });
+      const shGeo = buildContactShadow(spec);
+      shGeo.setAttribute('aLights', lights);
+      const shadow = new THREE.InstancedMesh(shGeo, contactMat, cap);
+      shadow.name = `traffic:${kind}:contact`;
+      shadow.count = 0;
+      shadow.frustumCulled = false;
+      shadow.castShadow = false; shadow.receiveShadow = false;
+      shadow.layers.enable(LAYERS.VEHICLES);
+      shadow.renderOrder = RENDER_ORDER.MARKINGS + 4;
+      shadow.instanceMatrix = mesh.instanceMatrix;
+      this.group.add(shadow);
+
+      this.classes.push({ kind, spec, mesh, rig, shadow, paint, lights, spin, cap, count: 0, big: kind === 'truck' || kind === 'bus' });
       this.capacity.push(cap);
     }
     this.counters = new Int32Array(this.classes.length);
@@ -117,7 +130,21 @@ export class Traffic {
     pmesh.renderOrder = RENDER_ORDER.PROPS;
     pmesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     this.group.add(pmesh);
-    this.pedMesh = { mesh: pmesh, shirt, pants, tone, walk, cap: pcap };
+    const pShadowGeo = buildPedShadow();
+    const pLights = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 2), 2);
+    pShadowGeo.setAttribute('aLights', pLights);
+    const pcontact = createContactMaterial(0.75);
+    this.pedContactMat = pcontact;
+    const pshadow = new THREE.InstancedMesh(pShadowGeo, pcontact, pcap);
+    pshadow.name = 'traffic:pedestrians:contact';
+    pshadow.count = 0;
+    pshadow.frustumCulled = false;
+    pshadow.castShadow = false; pshadow.receiveShadow = false;
+    pshadow.layers.enable(LAYERS.VEHICLES);
+    pshadow.renderOrder = RENDER_ORDER.MARKINGS + 4;
+    pshadow.instanceMatrix = pmesh.instanceMatrix;
+    this.group.add(pshadow);
+    this.pedMesh = { mesh: pmesh, shadow: pshadow, pLights, shirt, pants, tone, walk, cap: pcap };
   }
 
   // ------------------------------------------------------------------ spawning
@@ -519,6 +546,23 @@ export class Traffic {
       this._flowAcc = 0;
     }
 
+    // contact-shadow direction: away from the sun, length from its elevation
+    {
+      const sd = this.world.weather.sunDir;
+      if (sd) {
+        const sy = Math.max(0.20, sd.y);
+        const set = (mat, h, cap) => {
+          if (!mat) return;
+          let ox = -(sd.x / sy) * h, oz = -(sd.z / sy) * h;
+          const mm = Math.hypot(ox, oz);
+          if (mm > cap) { ox *= cap / mm; oz *= cap / mm; }
+          mat.userData.uSun.value.set(ox, 0, oz);
+        };
+        set(this.contactMat, 0.75, 1.2);
+        set(this.pedContactMat, 0.45, 0.5);
+      }
+    }
+
     for (const v of this.vehicles.values()) {
       const rec = v.rec;
       g.laneAt(rec, v.lane, v.dir, v.s, out);
@@ -584,6 +628,7 @@ export class Traffic {
       const c = this.classes[ci];
       c.mesh.count = counters[ci];
       c.rig.count = this.lightsOn > 0.02 ? counters[ci] : 0;
+      c.shadow.count = counters[ci];
       c.mesh.instanceMatrix.needsUpdate = true;
       c.paint.needsUpdate = true;
       c.lights.needsUpdate = true;
@@ -608,9 +653,12 @@ export class Traffic {
       pm.pants.array[pn * 3] = p.pants[0]; pm.pants.array[pn * 3 + 1] = p.pants[1]; pm.pants.array[pn * 3 + 2] = p.pants[2];
       pm.tone.array[pn * 2] = p.tone[0]; pm.tone.array[pn * 2 + 1] = p.tone[1];
       pm.walk.array[pn * 2] = p.phase; pm.walk.array[pn * 2 + 1] = 0.52;
+      pm.pLights.array[pn * 2] = this.lightsOn;
       pn++;
     }
     pm.mesh.count = pn;
+    pm.shadow.count = pn;
+    pm.pLights.needsUpdate = true;
     pm.mesh.instanceMatrix.needsUpdate = true;
     pm.shirt.needsUpdate = true; pm.pants.needsUpdate = true;
     pm.tone.needsUpdate = true; pm.walk.needsUpdate = true;
@@ -629,10 +677,12 @@ export class Traffic {
     for (const c of this.classes) {
       c.mesh.geometry.dispose();
       c.rig.geometry.dispose();
-      this.group.remove(c.mesh); this.group.remove(c.rig);
+      c.shadow.geometry.dispose();
+      this.group.remove(c.mesh); this.group.remove(c.rig); this.group.remove(c.shadow);
     }
     this.pedMesh?.mesh.geometry.dispose();
     this.vehMat?.dispose(); this.lightMat?.dispose(); this.pedMat?.dispose();
+    this.contactMat?.dispose(); this.pedContactMat?.dispose();
     this.classes.length = 0;
     this.vehicles.clear();
     this.peds.length = 0;

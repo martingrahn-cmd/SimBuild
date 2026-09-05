@@ -173,7 +173,7 @@ const SPECS = {
     ],
   },
   pickup: {
-    L: 5.40, HW: 1.00, ring: 14, wheelR: 0.395, wheelW: 0.14, wheelZ: 1.70, wheelXf: 0.79,
+    L: 5.40, HW: 1.00, ring: 14, wheelR: 0.395, wheelW: 0.14, wheelZ: 1.70, wheelXf: 0.79, round: 0.37,
     pillars: [0.310, 0.480], pw: 0.018, bedFrom: 0.56,
     rows: [
       [0.000, 0.44, 0.98, 0.66, 1, 1, 0],
@@ -193,7 +193,7 @@ const SPECS = {
     ],
   },
   van: {
-    L: 5.45, HW: 1.02, ring: 14, wheelR: 0.365, wheelW: 0.125, wheelZ: 1.72, wheelXf: 0.80,
+    L: 5.45, HW: 1.02, ring: 14, wheelR: 0.365, wheelW: 0.125, wheelZ: 1.72, wheelXf: 0.80, round: 0.34,
     pillars: [0.245, 0.430], pw: 0.018, panelFrom: 0.50,
     rows: [
       [0.000, 0.40, 0.92, 0.66, 1, 1, 0],
@@ -211,7 +211,7 @@ const SPECS = {
     ],
   },
   truck: {
-    L: 8.40, HW: 1.26, ring: 14, wheelR: 0.505, wheelW: 0.19, wheelZ: 2.62, wheelXf: 0.78,
+    L: 8.40, HW: 1.26, ring: 14, wheelR: 0.505, wheelW: 0.19, wheelZ: 2.95, wheelXf: 0.78, round: 0.30,
     pillars: [0.135, 0.255], pw: 0.014, panelFrom: 0.34, twinRear: true,
     rows: [
       [0.000, 0.62, 1.20, 0.66, 1, 1, 0],
@@ -231,7 +231,7 @@ const SPECS = {
     ],
   },
   bus: {
-    L: 11.60, HW: 1.29, ring: 16, wheelR: 0.505, wheelW: 0.19, wheelZ: 3.85, wheelXf: 0.78,
+    L: 11.60, HW: 1.29, ring: 16, wheelR: 0.505, wheelW: 0.19, wheelZ: 3.85, wheelXf: 0.78, round: 0.32,
     pillars: [0.155, 0.300, 0.450, 0.600, 0.745, 0.880], pw: 0.011, busGlass: true,
     rows: [
       [0.000, 0.34, 1.00, 0.62, 1, 1, 0],
@@ -259,7 +259,7 @@ export function vehicleSpec(kind) { return SPECS[kind]; }
 function ringPoint(sec, k, M, out) {
   const phi = (k / M) * Math.PI * 2 - Math.PI / 2;
   const c = Math.cos(phi), s = Math.sin(phi);
-  const e = 0.42; // 2/n with n ~ 4.8 -> crisper rounded rectangle
+  const e = sec.e;
   const yc = (sec.y0 + sec.y1) * 0.5, b = (sec.y1 - sec.y0) * 0.5;
   const sy = (s < 0 ? -1 : 1) * Math.pow(Math.abs(s), e);
   const y = yc + b * sy;
@@ -301,8 +301,9 @@ function buildSections(spec) {
     for (let k = 1; k < n; k++) list.push(a + (b - a) * (k / n));
   }
   list.push(1);
+  const e = spec.round || 0.42;
   return list.map((u) => ({
-    u, z: -spec.L * 0.5 + u * spec.L,
+    u, e, z: -spec.L * 0.5 + u * spec.L,
     y0: fy0(u), y1: Math.max(fy0(u) + 0.06, fy1(u)), hw: fhw(u) * spec.HW,
     belt: fbe(u), topW: ftw(u), glass: fgl(u),
   }));
@@ -314,6 +315,7 @@ function isPillar(spec, u) {
 }
 
 function addBody(acc, spec) {
+  spec.archZ = spec.twinRear ? [-spec.wheelZ, spec.wheelZ] : [-spec.wheelZ, spec.wheelZ];
   const secs = buildSections(spec);
   const M = spec.ring;
   const NS = secs.length;
@@ -365,9 +367,13 @@ function addBody(acc, spec) {
       const tmid = (T[i * M + k] + T[i * M + k1i] + T[(i + 1) * M + k] + T[(i + 1) * M + k1i]) * 0.25;
       const beltM = (sa.belt + sb.belt) * 0.5;
       const nyAvg = (n0[1] + n1[1] + n2[1] + n3[1]) * 0.25;
+      const zm = (sa.z + sb.z) * 0.5;
+      const arch = spec.archZ ? spec.archZ.some((wz) => Math.abs(zm - wz) < spec.wheelR * 1.15) : false;
       let m = MAT.PAINT;
       if (tmid < 0.10) m = MAT.DARK;
+      else if (arch && tmid < 0.30) m = MAT.DARK;
       else if (tmid < 0.20) m = MAT.TRIM;
+      else if (glassSec && Math.abs(tmid - beltM) < 0.05 && nyAvg < 0.72) m = MAT.TRIM;
       else if (glassSec && tmid > beltM + 0.035 && nyAvg < 0.60) m = MAT.GLASS;
       else if (spec.panelFrom !== undefined && um > spec.panelFrom && tmid > 0.24) m = MAT.PANEL;
       else if (spec.bedFrom !== undefined && um > spec.bedFrom && nyAvg > 0.72) m = MAT.DARK;
@@ -514,6 +520,32 @@ export function buildLightRig(kind, lamps, spec) {
   g.setAttribute('aLamp', new THREE.Float32BufferAttribute(lamp, 1));
   g.computeBoundingSphere();
   return g;
+}
+
+/** Flat contact-shadow / ambient-occlusion decal that sits just under a vehicle. */
+export function buildContactShadow(spec) {
+  const hx = spec.HW + 0.80, hz = spec.L * 0.5 + 0.95, y = 0.10;
+  return quadDecal(hx, hz, y, spec.HW / hx, (spec.L * 0.5) / hz);
+}
+
+function quadDecal(hx, hz, y, cx, cz) {
+  const pos = [-hx, y, -hz, hx, y, -hz, hx, y, hz, -hx, y, -hz, hx, y, hz, -hx, y, hz];
+  const uv = [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1];
+  const half = [];
+  const core = [];
+  for (let i = 0; i < 6; i++) { half.push(hx, hz); core.push(cx, cz); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('aUv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setAttribute('aHalf', new THREE.Float32BufferAttribute(half, 2));
+  g.setAttribute('aCore', new THREE.Float32BufferAttribute(core, 2));
+  g.computeBoundingSphere();
+  return g;
+}
+
+/** Small elliptical contact shadow for a pedestrian. */
+export function buildPedShadow() {
+  return quadDecal(0.62, 0.62, 0.09, 0.30, 0.30);
 }
 
 // ---------------------------------------------------------------- pedestrian

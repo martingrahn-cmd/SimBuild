@@ -39,8 +39,11 @@ The r1 build already added these fields; they are now **contract**, and their sh
 ```js
 world.economy.milestone   = { level, name, next, nextPop, progress, unlocked:[string] }
 world.economy.loans       = [{ id, amount, remaining, perDay, daysLeft, rate }]
-world.economy.grids       = { size:256, cellSize, version, ground:Float32Array, air:Float32Array,
-                              noise:Float32Array, landValue:Float32Array, sample(name, x, z) -> 0..1 }
+world.economy.grids       = { size:256, cellSize:8, version, ground:Float32Array, air:Float32Array,
+                              noise:Float32Array, landValue:Float32Array, index(x, z) -> int,
+                              sample(name, x, z) -> 0..1 }   // exactly the shape infoviews pins; `index` and
+                              // `cellSize` are contract, not incidental (grids.js:20-29 exposes both; cellSize is
+                              // worldSize/size = 2048/256 = 8 m and must stay 8)
 world.economy.incomeBreakdown  = { tax, trade, ... }      // ¢/day, sums to `income`
 world.economy.expenseBreakdown = { services, upkeep, roads, admin, loans, ... }  // sums to `expenses`
 world.economy.tick, .day, .hour, .populationF, .households, .labour, .employed, .unemployment,
@@ -124,6 +127,11 @@ by adjective.** Every item is observable in a screenshot, a screenshot/summary J
 `page.evaluate` probe. Probe handle for everything in-page:
 `const api = window.__sim.registry.modules.get('simulation').api`.
 
+**Two rules for every pixel statistic below.** (a) It is computed on the **full-resolution PNG** (1920×1080 unless
+the item says otherwise), never a downscaled copy — at 480 px wide a 1 m patch is about two pixels. (b) "The panel
+region" means the `simulation.panel` rect in `<shot>.crops.json`, written by `tools/screenshot.mjs … --crops` from
+this module's `api.cropRects()` (ARCHITECTURE §8; landmarks listed in §8). Fallback if a shot has no rect: x < 420.
+
 **Economy balance and dynamics** — graded from `shots/simulation/r<round>/selftest.json`, produced by
 `node src/modules/simulation/selftest.mjs --days 120 --seed 1337 --json shots/simulation/r<round>/selftest.json`.
 The file must contain `{seed, days, tickUs, rows:[{day, population, households, jobs, employed, unemployment,
@@ -143,15 +151,21 @@ milestone:{level,name}, reward}], scenarios:{...}}`. All windows below are days 
    `max(0, …)` floor is deliberate: a milestone landing inside a deficit stretch (which clause 1 demands be common)
    caps at ¢0, it does not become a penalty. Day-120 `money` > day-20 `money` (the city is still viable).
    (r1: rewards of ¢20k–¢220k dwarfed a ¢24k/day net.)
-5. **The city reaches a real size.** Day-120 population ∈ [12 000, 80 000]; `milestone.level` ≥ 8 by day 120;
+5. **The city reaches a real size.** Day-120 population ∈ [12 000, 80 000]; `milestone.level` ≥ 7 by day 120;
    `buildings` ≥ 600. Daily population growth rate is not constant: std of `Δpopulation/population` ≥ 20 % of its mean.
+   `level` is the **0-based index into `api.constants.MILESTONES`** (economy.js:147 starts at 0 = 'Hamlet'), so the
+   clauses agree at both ends: 12 000 → level 7 ('Busy Town', 10 000), 80 000 → level 11 ('Metropolis', 70 000).
+   Level 8 ('Big Town', 16 000) would fail a legal 13 000-population city, which is why it is 7.
 6. **The model responds to shocks.** `scenarios` in the same JSON, each a 40-day continuation from a day-60 snapshot:
    - `tax`: `taxRate` 0.10 → 0.25 at day 60 ⇒ within 10 days happiness drops ≥ 0.08, daily tax income rises ≥ 30 %,
      and residential demand falls ≥ 0.10 from its day-60 value.
-   - `blackout`: `world.services.coverage(kind, x, z)` forced to return 0 for every `power_*` and `water_pump`/`sewage`
-     kind ⇒ growth requests fall to 0 within 2 days and population is lower at day 100 than at day 60. (In
-     `selftest.mjs` there is no `world`; the harness overrides the same accessor the module reads through, and the
-     scenario name in the JSON is still `blackout`.)
+   - `blackout`: the harness sets the module's env hooks (economy.js:84-92, the pair index.js:119-120 installs) to
+     `servicesActive: () => true` **and** `coverage: () => 0` for every kind in `world.services.kinds`. Both halves
+     are required — `coverage()` already returns 0 with no services module, and §7 makes that mean "outside-connection
+     baseline, keep growing" (item 15 depends on it); starvation exists only when `servicesActive()` is true
+     (economy.js:229). The run records `scenarios.blackout.applied = {servicesActive:true, kindsForced:[…]}` so the
+     critic re-runs the command above and diffs it instead of trusting the harness. Required: growth requests fall to
+     0 within 2 days and population is lower at day 100 than at day 60.
    - `boom`: `taxRate` → 0.04 ⇒ population at day 100 at least 15 % above the baseline run's day-100 population.
 
 **Correctness, determinism, persistence**
@@ -159,8 +173,9 @@ milestone:{level,name}, reward}], scenarios:{...}}`. All windows below are days 
 7. **Byte-identical replay.** Two runs of `selftest.mjs --days 120 --seed 1337` produce identical JSON (compare with
    `sha256`), and two headless page loads of `?showcase=simulation&time=12&seed=1337&headless=1` return an identical
    `JSON.stringify(api.serialize())` hash. `--seed 42` differs.
-   `grep -rn "Math.random\|Date.now()" src/modules/simulation/ --exclude=selftest.mjs` returns nothing (profiling
-   lines are permitted in `selftest.mjs` only, which is why it is excluded rather than expected to match).
+   `grep -rn "Math.random\|Date.now()" src/modules/simulation/ --exclude=selftest.mjs` returns nothing (the grep
+   excludes `selftest.mjs` because it profiles; per ARCHITECTURE §11 `performance.now()` remains permitted for the
+   pre-roll timing line in `index.js` — which §5's init row is checked from — and nowhere else in logic).
 8. **`deserialize()` restores derived state immediately.** After `api.deserialize(api.serialize())` *and before any
    further tick*, every one of `jobs, employed, income, expenses, net, households, housingVacancy, unemployment,
    landValue, attractiveness` equals its pre-serialize value to within 1e-6, and `world.economy.grids.version` is
@@ -191,7 +206,9 @@ graded against a world the probe stages **itself**, exactly as written below. Th
 simulation defect, and it must never cost the builder a round.
 
 12. **Growth actually reaches the buildings module.** New required API: `api.stats()` →
-    `{tick, spawnRequests, spawnsAccepted, spawnsRejected, levelUpRequests, levelUpsApplied, lotSource:'zoning'|'world'|'virtual'|'none', ticksPerFrameMax, droppedTicks}`.
+    `{tick, spawnRequests, spawnsAccepted, spawnsRejected, levelUpRequests, levelUpsApplied, lotSource:'zoning'|'world'|'virtual'|'none', ticksPerFrameMax, droppedTicks, panelUpdateMs:{mean, max}}`
+    (`panelUpdateMs` covers the last 60 panel updates; item 27 grades it, because the panel class is module-internal
+    and no critic can reach it).
     Lot source order must be `ctx.modules.zoning?.freeLots?.()` → `world.zones.freeLots?.()` → the virtual city, each
     in a try/catch. Graded in `?showcase=all&time=12&headless=1`, after `__sim.ready`, by a probe that stages its own
     lots with these exact calls before stepping (`world.roads.addNode/addEdge` are installed by the roads module;
@@ -209,7 +226,9 @@ simulation defect, and it must never cost the builder a round.
     zon?.paint(0, -90, 70, 'industrial', 'low');   zon?.paint(0, 90, 70, 'office', 'low');
     const lots = zon?.freeLots?.().length ?? 0;       // decides which branch below applies
     const before = W.buildings.items.size, vBefore = api.virtualCity()?.count ?? 0;
-    api.setSimSpeed(0); api.step(2400);
+    // Item 12 is a FIVE-day probe: nothing in this spec makes a level-up reachable in a building's first game
+    // day, so a 2400-tick window would make `levelUpsApplied >= 1` below unachievable without special-casing it.
+    api.setSimSpeed(0); api.step(2400 * 5);
     ```
 
     - **If `lots > 0`** (roads + zoning staged successfully): `api.stats().lotSource === 'zoning'`,
@@ -232,12 +251,16 @@ simulation defect, and it must never cost the builder a round.
     fallback.
 14. **Grids are meaningful, not noise.** Graded against the virtual city's district layout, which §8 makes contract —
     do not rewrite `virtualcity.js`'s `DISTRICT` table without reading that paragraph first.
-    With the showcase staged: `api.grids()` returns the documented shape;
+    With the showcase staged: `api.grids()` returns the §2 shape with **every** field present and of the stated type
+    (`size === 256`, `cellSize === 8`, `version`, the four `Float32Array`s, `index(x, z)`, `sample(name, x, z)`) —
+    infoviews pins the same object, so a trimmed one breaks a neighbour silently;
     `landValue` std over the 256² grid ≥ 0.06; mean `landValue` within 150 m of the **office/commercial centre —
     the origin (0, 0)** — exceeds the mean within 150 m of the **industrial centroid, ≈ (500, 0)** (the area-weighted
-    centre of the ±0.7 rad × 300–720 m wedge) by ≥ 0.10; mean `air` pollution sampled 200 m downwind of that centroid
-    (direction from `world.weather.wind`, default +x) ≥ 2 × the mean 200 m upwind; every sample of all four grids ∈ [0,1] and
-    finite. `api.landValueAt/pollutionAt/noiseAt` agree with `grids.sample` to 1e-6.
+    centre of the ±0.7 rad × 300–720 m wedge) by ≥ 0.10; **mean `air` over all cells within 150 m of
+    `centroid + 200 m × normalise(world.weather.wind)` ≥ 2 × the mean over all cells within 150 m of
+    `centroid − 200 m × normalise(wind)`** — same disc radius as the land-value clause, so the two regions are
+    symmetric about the centroid (wind defaults to +x ⇒ discs at ≈ (700, 0) and ≈ (300, 0)) and only the plume breaks
+    the tie; every sample of all four grids ∈ [0,1] and finite. `api.landValueAt/pollutionAt/noiseAt` agree with `grids.sample` to 1e-6.
 15. **Stub tolerance.** With `?showcase=simulation` (no zoning / buildings / services / roads / traffic), zero console
     errors, zero warnings, module status `ready`, and the panel still shows a growing city — `api.stats().lotSource === 'virtual'`.
     Deleting `world.services.coverage` / `world.roads.edges` at runtime via a probe must not throw.
@@ -251,63 +274,76 @@ simulation defect, and it must never cost the builder a round.
 17. **Panel reads as CS2 HUD.** In `stats_12.png` at 1920×1080: panel width 320–380 px; every label uppercase
     ≥ 10 px with ≥ 0.08em tracking; every numeric value right-aligned tabular figures; ≥ 4 hairline section dividers;
     KPI value text contrast ratio ≥ 7:1 against the panel ground and label text ≥ 4.5:1 (measure on the crop);
-    the four RCI bars use the four zone colours, the milestone badge shows level + name + progress. It must also read
-    at night: the same measurements in `stats_22.png`.
-18. **The panel is the module's own DOM.** Mounted on a module-created root (`#sim-ui` appended to `document.body`,
-    `z-index` below the `ui` module's HUD), removed by `dispose()`. `grep -rn "modules/ui\|\.\./ui/" src/modules/simulation/`
-    returns nothing; the font comes from `public/assets/` via `manifest.json` (CC0) or is a system stack.
+    the milestone badge shows level + name + progress. The four RCI bars use the repo's existing zone palette —
+    `#5fd634` residential, `#2fb6f5` commercial, `#f7b515` industrial, `#c65ff5` office (the low-density row of
+    `src/modules/zoning/palette.js:10-13`; copy the values, do not import the module) — checked by a probe reading
+    `getComputedStyle(bar).backgroundColor` on the four bars, not by eye. It must also read at night: the same
+    measurements in `stats_22.png`.
+18. **The panel is the module's own DOM.** Mounted on a module-created root (`#sim-ui` appended to `document.body`),
+    removed by `dispose()`. (No stacking-order clause: `#ui`'s root sets no `z-index` — `ui/styles.js` sets 5/20/50 on
+    descendants only — so there is no operand; the `dev_all12.png` non-overlap check below is what separates them.)
+    `grep -rn "modules/ui\|\.\./ui/" src/modules/simulation/` returns nothing; the font comes from `public/assets/` via `manifest.json` (CC0) or is a system stack.
     In `?showcase=all` the simulation panel must not overlap the `ui` HUD's own panels — verified in `dev_all12.png`.
 
 **The staged plaza**
 
-19. **No tiling lattice.** Algorithm: greyscale the PNG (Rec.709), discard columns left of x = 420 (the panel),
-    detrend the per-column mean with a 101-px moving average, and compute the normalized autocorrelation.
+19. **No tiling lattice.** Algorithm: greyscale the full-resolution PNG (Rec.709), discard the columns inside the
+    `simulation.panel` rect of `<shot>.crops.json` (fallback: x < 420), detrend the per-column mean with a 101-px
+    moving average, and compute the normalized autocorrelation.
     **max |r| over lags 24–400 px must be < 0.35**, for both the column signal and the row signal, in
     `aerial_12.png`, `aerial_6p5.png` and `skyline_6p5.png`. (r1: a regular diagonal cross-hatch across every wide frame.)
     *Ownership, so the number is not argued in round 2:* the **critic** writes and runs
-    `shots/simulation/r<round>/tiling.mjs` — its own round directory, per `CRITIC.md`. The **builder** writes its own
-    copy at `shots/simulation/dev<round>/tiling.mjs` and reports the max |r| it measured per frame in
-    `docs/builds/simulation_r<round>.json`. `CRITIC.md`'s `git status` check already permits the builder `shots/`;
-    `dev<round>` keeps the two runs from colliding, and adding `shots/<module>/dev*` to `BUILDER.md`'s "What you may
-    write" is a pending role-file change, not a licence to write anywhere else under `shots/`. The algorithm above is
-    the definition — **if the two runs disagree, the critic's run stands.**
-20. **Horizon and distance.** Measured in `skyline_12.png` and `skyline_6p5.png` by the same kind of script as item 19
-    (same ownership rule: critic `shots/simulation/r<round>/horizon.mjs`, builder `dev<round>/`, critic's run stands):
+    `shots/simulation/r<round>/tiling.mjs` — its own round directory, per `CRITIC.md`. The **builder** keeps its copy
+    at `src/modules/simulation/tools/tiling.mjs` — inside its own folder, which is the write permission `BUILDER.md`
+    actually grants it — and reports the max |r| it measured per frame in `docs/builds/simulation_r<round>.json`.
+    The algorithm above is the definition — **if the two runs disagree, the critic's run stands.**
+20. **Horizon and distance.** Measured in `skyline_12.png` and `skyline_6p5.png`, both shot with `--crops`, by the
+    same kind of script as item 19 (same ownership rule: critic `shots/simulation/r<round>/horizon.mjs`, builder
+    `src/modules/simulation/tools/horizon.mjs`, critic's run stands):
 
-    1. Rec.709 greyscale; keep only the central 60 % of columns (x ∈ [0.2 W, 0.8 W]) — this also excludes the panel.
-    2. Per row y, take the mean luminance `L(y)` over those columns. The **boundary row** `yh` is the row maximising
-       `|L(y+1) − L(y−1)|` over the middle half of rows (y ∈ [0.25 H, 0.75 H]), so a lamp or a bar top cannot win it.
+    1. Rec.709 greyscale on the full-resolution PNG; keep only the central 60 % of columns (x ∈ [0.2 W, 0.8 W]) —
+       this also excludes the panel.
+    2. Per row y, take the mean luminance `L(y)` over those columns. The **boundary row** `yh` is the vertical centre
+       of the `simulation.horizon` rect in `<shot>.crops.json` — the *projected* horizon from the camera (§8), never
+       detected from the image: once the ΔL fade below succeeds, the strongest gradient in the frame is a plinth edge
+       or the sculpture, so an image detector would lock onto the terrace exactly when the module has done the work.
+       A shot with no `simulation.horizon` rect fails on the missing landmark, not on the frame.
     3. Ground band = rows `[yh + 4, yh + 23]`; sky band = rows `[yh − 23, yh − 4]` (20 px each, 4 px of clearance so
        the transition pixels themselves are in neither band). **ΔL = |mean(ground band) − mean(sky band)| ≤ 12.**
        Ground fades into `world.weather.skyLight` / the fog colour; the ground plane's own distance fade must reach 1.0.
-    4. **The frame is not empty:** over all non-panel pixels (x ≥ 420), **≥ 25 %** have luminance differing from the
-       sky-band mean by **≥ 15**. That is the content floor — plaza, bars, pillars, planting and backdrop all count,
-       flat sky and a sky-coloured haze do not. A probe alternative is equally acceptable and must be reported if
-       used: the projected screen-space bounding box of `ctx.group` covers ≥ 25 % of the viewport.
+    4. **The frame is not empty:** over all pixels outside the `simulation.panel` rect, **≥ 25 %** have luminance
+       differing from the sky-band mean by **≥ 15**. That is the content floor — plaza, bars, pillars, planting and
+       backdrop all count, flat sky and a sky-coloured haze do not. A probe alternative is equally acceptable and
+       must be reported if used: the projected screen-space bounding box of `ctx.group` covers ≥ 25 % of the viewport.
 21. **Night is night.** Mean luminance excluding the panel region: `aerial_22.png` ≤ 48, `street_22.png` ≤ 58,
     `closeup_22.png` ≤ 58, `skyline_22.png` ≤ 60 (environment's own night aerial measures 43; r1 measured 55.6 / 88 /
     81 / 78.6). How you get there is your call — §6 records the two terms that caused r1's dusk-at-22:00, and §3
     permits shrinking the backdrop instead of fixing it. And light must come *from* the sculpture: ≥ 3 distinct pools
     of L ≥ 120 on the plaza/ground, each ≥ 400 px and adjacent to emissive geometry, in `street_22.png` and
-    `closeup_22.png`. No emissive surface may be brighter than the pool it casts.
+    `closeup_22.png`. That three-pool floor is the whole measurement — the r1 mode is emissives with *no* pool under
+    them; a rule capping a source below the ground it lights has no instrument and is false in every night reference
+    cited here.
 22. **No blown golden hour.** `skyline_17p5.png`: ≤ 1.5 % of pixels > 245 and mean luminance ≤ 150 (r1: 7.4 % and 172).
     No frame at any of 06.5/12/17.5/22 has p1 = 0 over a region larger than 2 % of the frame.
 23. **The data is legible from the standard cameras.** Counted by probe, not by eye — 19 unoccluded bars versus 21 is
     not a judgement anyone can defend at 1080p. New required API: **`api.showcaseProbe()`** → `{camera,
-    rows:[{label:'POPULATION'|'JOBS'|'TREASURY', bars:[{i, rect:{x,y,w,h}, visible:0..1}]}],
+    rows:[{label:{text:'POPULATION'|'JOBS'|'TREASURY', rect:{x,y,w,h}, visible:0..1}, bars:[{i, rect:{x,y,w,h}, visible:0..1}]}],
     pillars:[{type, rect, visible}]}`, computed for the *current* camera: `rect` is the screen-space AABB of the bar's
     world bounds, and `visible` is the fraction of a 5×5 grid of sample points inside that rect whose camera ray hits
     that bar first (`THREE.Raycaster` against the staged meshes, nearest hit wins). With the `stats` preset applied:
-    **≥ 20 of the 30 bars of each of the three rows have `visible ≥ 0.60`**, and each row's own bars are contiguous
-    enough that its label strip is unoccluded (`visible ≥ 0.9` on the label). Step the rows in height or fan them
-    rather than lining up one opaque wall. From `pillars`, all four entries of `pillars` have `visible ≥ 0.60` and
+    **≥ 20 of the 30 bars of each of the three rows have `visible ≥ 0.60`**, and each row's label strip is
+    unoccluded: `rows[i].label.visible ≥ 0.9`, computed the same way as a bar's (`label.rect` is the screen-space
+    AABB of the plinth label strip). Step the rows in height or fan them rather than lining up one opaque wall. From `pillars`, all four entries of `pillars` have `visible ≥ 0.60` and
     their plinth labels are legible at 1080p in `pillars_12.png` (the legibility call is visual; the occlusion is not).
     (r1: the treasury row hid the other two from street/stats.)
 24. **Planting is not programmer art, or is not in frame.** Wherever foliage appears within 60 m of the camera in
-    `closeup_*` / `street_*`: ≥ 3 distinguishable tree species by silhouette, ≥ 4 crown-colour variants, canopies
-    built from leaf cards or equivalent (no visible icosahedron facets, no 8 %-alpha-cut "green static"), hedges with
-    rounded ends and a dark base band with contact AO — these are the visual calls, made on the crop.
-    Instance variety is not a visual call and is graded by probe on the `InstancedMesh` matrices: decomposing every
+    `closeup_*` / `street_*`, the anchor is `$REF/cs2_4.jpg`'s foreground planting (the frame §3 already cites):
+    canopies from leaf cards or equivalent (no visible icosahedron facets, no 8 %-alpha-cut "green static"), hedges
+    with rounded ends and a dark base band with contact AO — those are the visual calls, made on the crop against
+    that reference. The two countable claims are **not** visual calls: counted by the probe below over the foliage
+    within 60 m of the camera, ≥ 3 distinct canopy geometries and ≥ 4 distinct crown colours (distinct
+    instance-colour values or distinct materials).
+    Instance variety is graded by the same probe on the `InstancedMesh` matrices: decomposing every
     instance matrix, **no two instances whose origins are within 8 m of each other share both rotation to within
     0.01 rad and uniform scale to within 1 %**. Alternatively, reduce planting so none is within 60 m of any declared
     camera — then this item is satisfied by the absence, and item 20's 25 % content floor still applies.
@@ -327,9 +363,9 @@ simulation defect, and it must never cost the builder a round.
     increased, `history().length` gained ≥ 1 sample, and the two text reads differ. `__sim.errors` still empty.
 27. **The performance budget is actually measured.** §5's rows are requirements only because this item names them:
     `selftest.json.tickUs ≤ 25`; over 60 frames at ×20, `__sim.stats().moduleMs.simulation` mean ≤ 0.8 and max ≤ 2.0;
-    panel DOM update ≤ 0.3 ms measured around `Panel.update`; texture memory from the manifest entries ≤ 40 MB; init
-    including pre-roll ≤ 2.5 s from the shot JSON's `elapsedMs`. Heap growth: `__sim.stats().heapMB` is `null`
-    whenever `performance.memory` is absent (`src/core/debug.js:24`) — if it reads `null`, the ≤ 2 MB/60 s row is
+    `api.stats().panelUpdateMs.mean ≤ 0.3` (item 12's field, over the last 60 panel updates); texture memory ≤ **64
+    MB** by §5's formula; init including pre-roll ≤ 2.5 s from the shot JSON's `elapsedMs`. Heap growth:
+    `__sim.stats().heapMB` is `null` whenever `performance.memory` is absent (`src/core/debug.js:24`) — if it reads `null`, the ≤ 2 MB/60 s row is
     reported as **not measurable in this environment**, never as passed and never as failed.
 
 ## 5. Budget
@@ -341,10 +377,18 @@ simulation defect, and it must never cost the builder a round.
 | Triangles (showcase) | **≤ 400 000** | `summary.json` `maxTriangles`; r1 used 278 418 |
 | `update()` per frame | **≤ 0.8 ms mean, ≤ 2.0 ms worst** at sim speed ×20 | `__sim.stats().moduleMs.simulation` sampled over 60 frames |
 | Economy tick | **≤ 25 µs** | `selftest.json.tickUs`; r1 measured 11.3 |
-| Panel DOM update | **≤ 0.3 ms**, refreshed ≤ 12 Hz, canvases only on a new history sample | probe timing around `Panel.update` |
-| Texture memory (showcase) | **≤ 40 MB** — at most three 1k PBR sets + one 4096×512 label atlas | manifest entries × resolution |
+| Panel DOM update | **≤ 0.3 ms** mean, refreshed ≤ 12 Hz, canvases only on a new history sample | `api.stats().panelUpdateMs.mean` (item 12) |
+| Texture memory (showcase) | **≤ 64 MB** — at most three 1k PBR sets of ≤ 3 maps each + one 4096×512 label atlas | the formula below, over `public/assets/manifest.json` |
 | Init incl. pre-roll | **≤ 2.5 s** of the 15 s init budget | `log.info` pre-roll line, `elapsedMs` in the shot JSON |
 | JS heap growth | **≤ 2 MB over 60 s** at ×20 | `__sim.stats().heapMB` sampled twice |
+
+**Texture bytes = Σ over unique textures of `w × h × 4 × 1.333`** (RGBA8 plus the mip chain), divided by 1048576 for
+MB as `debug.js:24` does; the unique textures of a `ctx.assets.pbr(name)` set are that manifest entry's `files` (ARM
+is one file serving ao/rough/metal, `assets.js:81`), and procedural textures count at their declared `size`. So a 1k
+3-map set = 3 × 1024² × 4 × 1.333 = 16.0 MB, three sets = 48.0 MB, the 4096 × 512 atlas = 10.7 MB, total
+**58.7 MB ≤ 64** — and a fourth 1k set (74.6 MB) does not fit, which is what this row really constrains. (r1's
+"≤ 40 MB *and* three 1k sets" cannot both hold under any pixel accounting — 44.0 MB even at base level with no mips —
+so the allowance stands and the byte figure now follows it.)
 
 Every row above is enforced by **item 27**; `BUILDER.md` already bans per-frame allocation, so the only allocation
 rule specific to this module is the one it cannot infer: the 256² grids are rebuilt **at most once per game hour**,
@@ -419,8 +463,14 @@ Neighbours — call exactly these, degrade as stated:
   lot object. Degrade: `VirtualCity`.
 - `services` (stub today): `world.services.coverage(kind, x, z)` → 0..1 with
   `kinds = ['power_coal','power_wind','power_solar','water_pump','sewage','landfill','incinerator','clinic','hospital','school','high_school','university','police','fire','park_small','park_large','plaza']`.
+  **Derive the utilities from that enum, not from invented kinds:** `power = max(power_coal, power_wind, power_solar)`,
+  `water = min(water_pump, sewage)`, `garbage = max(landfill, incinerator)`. `coverage('power')`, `coverage('water')`
+  and `coverage('garbage')` — what economy.js:420-421 asks for today — are **not** valid kinds, so a real services
+  module returns 0 for all three forever and the integration is dead on arrival. (infoviews' spec derives `power` the
+  same way, so the two agree.)
   Degrade: `coverage()` returns 0 ⇒ treat utilities as satisfied by an "outside connection" baseline so the showcase
-  still grows, but the `blackout` scenario (item 6) must be able to force real starvation.
+  still grows, but the `blackout` scenario (item 6) must be able to force real starvation — which is why it flips
+  `servicesActive()` as well as zeroing coverage.
 - `roads`: `world.roads.edges` (Map of `{id,a,b,type,lanes,width,length,…}`), `world.roads.nodes`,
   `world.roads.types[t].speed`. Used for road upkeep and traffic noise. Degrade: `VirtualCity.km`.
 - `traffic` (stub today): `world.traffic.stats.congestion` 0..1. Degrade: 0.
@@ -449,6 +499,12 @@ Neighbours — call exactly these, degrade as stated:
 - A deterministic pre-roll of `PREROLL_DAYS` (= 60) days so the history is a story, landing on an exact tick (item 10).
 - `api.showcaseProbe()` (item 23), returning bar/pillar screen-space rects and per-element occlusion for the camera
   currently applied. It is part of the staged scene, not a debug afterthought: without it item 23 cannot be graded.
+- `api.cropRects({ project, width, height, camera })` → `{ panel: [x, y, w, h], horizon: [x, y, w, h] }` in pixels of
+  the full-resolution capture, collected by `window.__sim.cropRects()` and written to `<out>.crops.json` by
+  `tools/screenshot.mjs … --crops` (ARCHITECTURE §8 — the authoritative producer of that file). `panel` is `#sim-ui`'s
+  `getBoundingClientRect()`; `horizon` is 48 px tall, centred on the row of `project(cam.x + 1e5·f.x, 0,
+  cam.z + 1e5·f.z)` with `f` the camera forward flattened to the ground plane — the vanishing row of `y = 0`.
+  Items 19–21 measure against these two rects; a shot without them is ungradeable.
 
 **The virtual city's district geometry is contract for item 14.** `virtualcity.js`'s `DISTRICT` table places office
 within 160 m of the origin, commercial within 260 m, residential in the west/south arc at 120–640 m, and industrial in
@@ -477,9 +533,10 @@ matrix is `aerial, street, skyline, closeup` × `06.5, 12, 17.5, 22`, plus the t
 | **aerial** (520 m) | Long soft shadows from bars and planting across the terrace; ground warm and non-repeating (item 19) | Whole composition legible; three rows distinct; no lattice; horizon faded (item 20) | Warm rim light on the plinths; no blown sky | Terrace dark (mean ≤ 48) with the sculpture the only light source; ≥ 3 pools |
 | **street** (60 m) | Rim-lit bar faces, contact AO at every plinth base | Paving slab tone variation readable; panel legible | Best light: keep the r1 warm side light | Glass bars glow and *light the paving under them*; ground L ≤ 58 |
 | **skyline** (900 m) | Haze gradient, no razor horizon | Same, ΔL ≤ 12 across the horizon (item 20) | ≤ 1.5 % blown pixels, mean ≤ 150 (item 22) | Deep blue sky with stars; terrace a lit island |
-| **closeup** (110 m) | Bar cap highlights, floor lines, plinth labels | Materials hold at 20 m: no icosahedron facets, no alpha-cut static (item 24) | Warm side light on the bar wall | Emissive never brighter than its own pool |
+| **closeup** (110 m) | Bar cap highlights, floor lines, plinth labels | Materials hold at 20 m: no icosahedron facets, no alpha-cut static (item 24) | Warm side light on the bar wall | Every lit bar cap sits over a pool of L ≥ 120 (item 21) |
 
 Also required in the round's evidence: `--showcase all --camera aerial --time 12` proving the module contributes
 0 draw calls to the integrated game (`ctx.group.children.length === 0`, not the frame total — item 25) and that the
 panel does not collide with the `ui` HUD; the item 12/13 staging probe; and the item 26 liveness probe at
-`speed=20` with no `time=`, which no screenshot can stand in for.
+`speed=20` with no `time=`, which no screenshot can stand in for. The `aerial_*` and `skyline_*` frames are shot with
+`--crops`, since items 19–21 measure against the two rects in `<shot>.crops.json`.

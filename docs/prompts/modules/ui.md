@@ -48,6 +48,12 @@ unlocked[]}`, `loans[]`, `grids` when `simulation` is loaded), `world.time{hour,
 `world.transit{lines,stops}`, `world.buildings.items`, `world.roads{nodes,edges,types}`, `world.terrain.heights`,
 `world.flags{showcase,headless}`.
 
+Those are the fields `ui` **reads**, not the full section shapes — ARCHITECTURE §3 and §15 stay authoritative for
+those (`world.services` also carries `coverage/place/remove/version`, `world.infoview` `buildingTint(id)`,
+`world.transit` `version`). `economy.milestone`, `economy.loans` and `economy.grids` are created by `simulation`'s
+`Economy.reset()` and exposed at `src/modules/simulation/index.js:204-212`; with `simulation` absent they do not
+exist, so guard every read.
+
 `api` (reachable as `ctx.modules.ui`) must keep at least the round-2 surface and stay callable when the HUD is
 disabled (`?nohud=1`, `src/modules/ui/index.js:19`) — every entry returns `undefined`/no-ops rather than throwing.
 Acceptance item 12 checks this; `transit` depends on it:
@@ -57,8 +63,15 @@ api: {
   notify(n), showInfo(sel), hideInfo(), setCategory(id), setSource(src), setCityName(name),
   openMenu(kind), closeMenu(), setPhotoMode(on), setInfoview(name), showLines(id), toast(t),
   serialize() -> {cityName, infoview, minimap}, deserialize(d), get hud,
+  cropRects({project, width, height, camera}) -> {name: [x, y, w, h]},   // items 2, 14, 20; {} when the HUD is off
 }
 ```
+
+`cropRects` is how every pinned measurement in §4 is taken (ARCHITECTURE §8: `tools/screenshot.mjs --crops` reads
+`window.__sim.cropRects()` and writes `<shot>.crops.json`; it is the only producer of that file). The landmarks are
+exactly these seven, and no item measures anything else: `band-sample`, `band-above` (item 2), `clock-value`,
+`money-value`, `muted-label`, `card-cost` (item 14), `tree-crown` (item 20). Every statistic on them is taken on the
+full-resolution PNG, never on a downscaled copy — at 480 px wide a HUD glyph is two pixels.
 
 ## 3. Visual/behavioural target
 
@@ -117,8 +130,12 @@ right; the selected card is filled solid accent. Cards are never flat rectangles
 `#53B1D4` = hsl(196°, 60 %, 58 %)** — a light azure. SimBuild's `--accent: #2f8ff5` is hsl(211°, 91 %, 57 %):
 15° too blue and half again too saturated, which is why the HUD reads "web app" rather than "CS2".
 
-**Info panel — `$REF/cs2_5.jpg`.** ≈445 px wide, translucent dark navy (~85 %), pinned top-left under a vertical
-rail of 4 round icon tabs (active tab a filled accent circle). Header: 28 px icon disc, entity name in **accent
+**Info panel — `$REF/cs2_5.jpg`.** ≈445 px wide, translucent dark navy — and *not* opaque: no single `--panel` hex
+can be sampled out of cs2_5, because the same footer strip reads rgb(24,31,45) where it covers a bright yellow
+vehicle (x 365–445, y 472–500) and rgb(74,77,82) over bright road (x 150–250, same rows). What the JPEG shows is a
+composite of fill over scene, not the token, so the requirement is "dark and blue-shifted (B > G > R)" and item 14's
+luminance band is the only pinned constraint on it. Pinned top-left under a vertical rail of 4 round icon tabs
+(active tab a filled accent circle). Header: 28 px icon disc, entity name in **accent
 caps**, white ×. Then a status row (coloured face + word). Then sections: a white CAPS section head with its
 headline value right-aligned, followed by muted `#9AA6B2` labels left / white values right-aligned; cross-references
 are accent-coloured links prefixed by a 12 px magnifier glyph. Bottom: a row of small icon action buttons.
@@ -161,7 +178,10 @@ anchors in ARCHITECTURE §13 and `docs/reference/CS2-LOOK.md` ("6 = repetitive t
 
 Items 20–22 are tie-breakers between two adjacent anchors; they never lift a build past an anchor whose own items
 still fail. **Hard fail** = any assertion in item 1 trips, or any hard fail on CRITIC.md's list; a hard fail caps
-the score at 7 regardless of everything else.
+the score at 7 regardless of everything else. Two of those are on this list: CRITIC.md's pass line is "score ≥ 8.5 ·
+zero console errors · module status `ready` in every shot · draw calls within the declared budget · API contract
+satisfied", so **item 19 (budget) and item 12's zero-console-errors clause are hard fails, not tie-breakers** — they
+are never among the three of items 9–19 that the 8.5 anchor lets you drop, and an over-budget build caps at 7.
 
 1. **No overlap, no overflow, at 1920×1080 and 1280×720.** A page-evaluate probe over
    `#ui *:not(.sb-hidden)` with a non-zero rect asserts: (a) every rect lies inside `[0,0,W,H]`;
@@ -178,14 +198,16 @@ the score at 7 regardless of everything else.
    assertion trips.
 2. **Dock geometry and translucency match the measurement.** At 1080p: toolbar band height 58–64 px, status strip
    44–52 px, combined ≤ 115 px (≤ 10.6 % of frame height); at 720p combined ≤ 96 px (≤ 13.3 %). Toolbar band
-   background alpha 0.32–0.46 with a backdrop blur ≥ 10 px; status strip alpha 0.68–0.82. Screenshot test on a
-   **located** sample, so builder and critic measure the same pixels: the builder marks one empty region of the
-   toolbar band — ≥ 200×16 px, free of pills, icons and text at every preset — with `data-sb-probe="band-sample"`,
-   and the probe reads its `getBoundingClientRect()`. If that attribute is absent, the critic samples the fixed rect
-   **x 900–1100, y 985–1001** at 1080p (**x 600–800, y 657–673** at 720p) and anything that lands there is the
-   builder's problem. In that sample: mean luminance at `aerial_12` minus mean luminance at `aerial_22` is **≥ 20**,
-   and at `aerial_12` the sample is **≤ 0.80 ×** the mean luminance of an identically sized rect immediately above
-   the band (same x, y shifted up 45 px) — cs2_3 measures 0.68 × (§3). Evidence: `aerial_12.png`, `aerial_22.png`.
+   background alpha 0.32–0.46 with a backdrop blur ≥ 10 px; status strip alpha 0.68–0.82. Measured in the §2
+   landmarks, so builder and critic read the same pixels at any viewport size: `band-sample` is one empty region of
+   the toolbar band,
+   ≥ 200×16 px, free of pills, icons and text at every preset; `band-above` is the identically sized rect 45 px
+   above the band. Shoot with
+   `node tools/screenshot.mjs --showcase ui --camera aerial --time 12 --crops --out shots/ui/r<n>/aerial_12.png`.
+   In `ui.band-sample`: mean luminance at `aerial_12` minus mean luminance at `aerial_22` is **≥ 20**, and at
+   `aerial_12` `band-sample` is **≤ 0.80 ×** `band-above` — cs2_3 measures 0.68 × (§3). If `cropRects` omits either
+   rect the item is scored as failed. Evidence: `aerial_12.png` + `aerial_12.crops.json`, `aerial_22.png` +
+   `aerial_22.crops.json`.
 3. **Demand widget in CS2 form.** Exactly **4 or 6** horizontal bars (no other count), each 3–5 px tall on 2–4 px
    gaps, each drawn on a visible unfilled rail spanning the widget's full bar width, rounded caps, an isometric
    city thumbnail ≥ 22 px at the left, **zero letter labels**, and the whole widget inside a pill ≤ 200×46 px whose
@@ -194,29 +216,46 @@ the score at 7 regardless of everything else.
    keys — `residential, commercial, industrial, office` (`src/core/world.js:91`; `simulation.api.demand()` returns
    that same object) — therefore:
    - **4 rails** map 1:1 to those four keys, in that order.
-   - **6 rails** (the cs2_3 form) are a *visual* split of the same four keys, not new data: rails 1–3
-     (light/mid/dark green) = `residential` × **0.40 / 0.35 / 0.25**; rail 4 (cyan) = `commercial` × 1.0; rail 5
-     (gold) = `industrial` × 1.0; rail 6 (purple) = `office` × 1.0. Every key is used exactly once.
+   - **6 rails** (the cs2_3 form) are a *visual* split of the same four keys, not new data. Rails 1–3
+     (light/mid/dark green) are three **staged** views of `residential`: rail *n* fills to
+     `clamp((residential − t_n) / 0.34, 0, 1)` with `t = [0, 0.33, 0.66]`, so each green rail reaches full fill:
+     at `residential = 1` all three read 1.0 ((1 − 0.66)/0.34 = 1.0), at 0.5 they read 1.0, 0.5, 0.0
+     ((0.5 − 0.33)/0.34 = 0.5), at 0.2 they read 0.59, 0, 0. **Do not scale them instead**: × 0.40/0.35/0.25 caps
+     the three green rails at 40/35/25 % fill for ever, which reads as permanent low demand and loses the cs2_3
+     comparison §3 pushes the builder toward. Rail 4 (cyan) = `commercial`, rail 5 (gold) = `industrial`, rail 6
+     (purple) = `office`, each ungated (`t = 0, w = 1`). Every key is used exactly once.
    - A rail driven by anything else — a density query, a second simulation call, a decay curve, a constant — **fails
      the item**. If `simulation` ever exposes a six-key demand object, drive the rails from it and say so below.
    The builder declares the mapping in `docs/builds/ui_r3.json` as
-   `demandSplit: [{rail:1, key:"residential", factor:0.40}, …]`; the probe checks each rail's
-   `getBoundingClientRect().width` ratio against `factor × world.economy.demand[key]` within **3 %**.
+   `demandSplit: [{rail:1, key:"residential", t:0, w:0.34}, …]` (a 4-rail widget declares `t:0, w:1` on every rail,
+   which reduces to `fill = demand[key]`). **Operands, so the ratio is defined:** the rail is `.sb-rci-b` and the
+   fill is its `> i` child (r2's markup, `src/modules/ui/styles.js:124`; a rename goes in the `selectors` map). The
+   probe compares `fill.getBoundingClientRect().width / rail.getBoundingClientRect().width` against
+   `clamp((world.economy.demand[key] − t) / w, 0, 1)` and requires agreement within **3 percentage points**.
    Evidence: crop of `ui_12.png`.
 4. **Toolbar icons read as CS2 icons.** ≥ 14 category icons, 34–42 px glyphs on 44–52 px centres, ≥ 2 group gaps of
    ≥ 20 px, **no visible button background/border at rest** on unselected unlocked icons (screenshots never hover —
    anything that only appears on `:hover` does not exist for the critic). Colour probe over each icon's rendered
    bounding box, with pixels of **saturation < 0.20 or alpha < 0.5 discarded** and the remainder binned into 15°
    **circular** hue bins (hue wraps; a linear mean of 350° and 10° is not what this asks for): an icon passes if its
-   **two largest bins are ≥ 25° apart**, and the row passes if **≥ 8 icons** are pairwise ≥ 25° apart on their
-   largest bin. The selected category shows a filled accent rounded square plus the 3 px top rule. Locked icons keep
-   **full colour** at opacity 0.70–0.80 with a 12–16 px lock badge at the bottom-right and a `title` tooltip
+   **two largest bins are ≥ 25° apart**, and the row passes when **≥ 12 icons individually pass that test** and
+   **≥ 8 icons** are pairwise ≥ 25° apart on their largest bin. The selected category shows a filled accent rounded
+   square plus the 3 px top rule. Locked icons keep **full colour** at opacity 0.70–0.80 with a 12–16 px lock badge
+   at the bottom-right and a `title` tooltip
    `Unlocks at <milestone>`; they are never desaturated to grey. Evidence: crop of `ui_12.png`.
 5. **Accent colour corrected.** The computed `--accent` (and the fill of `.sb-tool.is-active`, `.sb-tab.is-active`,
    `.sb-card.is-active`) has hue 190–202°, saturation 50–72 %, lightness 52–64 % (target `#53B1D4`, measured from
    cs2_1). Probe reads `getComputedStyle(document.querySelector('.sb-root')).getPropertyValue('--accent')`.
 6. **Asset cards are perspective thumbnails.** Every card in every category renders a 3/4 or isometric depiction of
-   the actual asset. **One tonal threshold governs and it is the probe's:** each `.sb-card` has a child
+   the actual asset. **The inventory is bounded, because "every card" is otherwise an open-ended workload:** the
+   toolbar declares **14–16 categories** — roads, zoning, landscaping, props, bulldoze, info views, plus the service
+   categories built from `world.services.kinds` (r2 shipped 15: those six and nine service categories, which is what
+   item 4's ≥ 14 counts) — and **48–72 cards in total across all of them** (r2 shipped ~64). There is no
+   per-category floor: `world.services.kinds` holds 17 kinds spread over nine service categories, so 1–3 cards in a
+   service category is correct, and `bulldoze` has one. `docs/builds/ui_r3.json` declares
+   `cardCounts: {categoryId: n}`; the critic checks that total against the range and counts `.sb-card` in the two
+   categories the shots open (roads in `ui_12.png`, a service category in `services_12.png`).
+   **One tonal threshold governs and it is the probe's:** each `.sb-card` has a child
    `<svg>`/`<canvas>` whose rendered content carries **≥ 4 distinct fill values**, of which ≥ 3 are tonal steps of a
    single hue (lit face, shaded face, dark edge); **flat single-colour rectangles fail**. The **contact shadow** is
    checked, not asserted: the card contains a fill or gradient darker than the card background directly beneath the
@@ -235,7 +274,8 @@ the score at 7 regardless of everything else.
    play/pause + `HH:MM` + `Mon YYYY` + speed control; weather (icon + `NN°C`); season; city name;
    population (+ trend); money `¢N,NNN,NNN` (+ trend arrow, red when negative); and a **five-face happiness meter**
    with exactly one face lit in the happiness colour and four dimmed. Chip icons 20–24 px against 12–14 px text.
-   Every numeric value right-aligned within its pill. `HH:MM` follows `world.time.hour` (probe: set
+   Every numeric value right-aligned within its pill (probe: in each pill, the numeric span's right edge and the
+   pill's content-box right edge agree within 2 px). `HH:MM` follows `world.time.hour` (probe: set
    `__sim.setTime(6.5)` ⇒ the clock pill reads `06:30` within 1 minute). Evidence: crop of `ui_12.png`.
 9. **Info panel matches cs2_5's structure.** Width 400–470 px at 1080p (320–400 px below 1440 px — item 15); header
    = icon disc + entity name in accent caps + close ×; ≥ 3 sections with CAPS heads; ≥ 8 label/value rows with
@@ -256,8 +296,10 @@ the score at 7 regardless of everything else.
     paused — probe asserts `world.time.paused === true`); `settings` → `settings_12.png` (quality / audio / autosave /
     minimap / dev / key list); `save` → `save_12.png` (slot list with day + timestamp, Download and Upload controls);
     `infoview` → `infoview_12.png` (item 10); `lines` → `lines_12.png` (transit line panel: ridership, bus stepper,
-    colour swatch, stop list, focus/edit/delete); `services` → `services_12.png` (services category open, ≥ 8 cards,
-    ≥ 2 of them locked with badge + tooltip); `photo` → `photo_22.png` (HUD hidden except a fading hint);
+    colour swatch, stop list, focus/edit/delete); `services` → `services_12.png` (a service category open with its
+    cards and ≥ 2 locked entries in frame — locked cards or locked service-category icons both count — each with a
+    lock badge and a `title` tooltip; nine service categories share 17 `world.services.kinds`, so no one category
+    holds 8 cards); `photo` → `photo_22.png` (HUD hidden except a fading hint);
     `closeup_hud` → `closeup_hud_6p5.png` (the `ui` HUD over a bright, busy foreground — the one frame that proves
     translucency does not lose to legibility). Each preset must produce a **visibly different** frame from
     `ui_12.png` (≥ 3 % of pixels differ) and none may show a clipped or scrolled panel. Evidence: ten PNGs, one per
@@ -273,22 +315,30 @@ the score at 7 regardless of everything else.
     returns without throwing, `serialize()` still returns an object carrying `cityName`, `infoview` and `minimap`,
     and the probe asserts **zero console errors** and `ui` status `ready` afterwards.
     Evidence: `uicheck.mjs` output.
-13. **Live binding, no literals, in `?showcase=all`.** Probe mutates `world.economy.money` by +50 000 and
-    `world.economy.demand.commercial` to 0.9, then **forces** one simulation tick — `--time` implies `speed=0`
-    (`src/main.js:82`; `tools/screenshot.mjs` sends `speed=0`), so `clock.advance` is a no-op and nothing ticks on
-    its own. Use either `window.__sim.registry.get('simulation').api.step(1)` (synchronous and deterministic) or
-    `window.__sim.setSpeed(1)`, await one `sim:tick` on `window.__sim.events`, then `window.__sim.setSpeed(0)`.
-    The money chip and the C bar both change within 1 s of that tick. `__sim.setTime(22)` turns the weather chip
-    to the moon glyph. No chip shows a value that is absent from `world`. Evidence: `all_aerial_12.png` + probe log.
-14. **Night and bright-background legibility.** Measured on a **≥ 20×8 px crop centred on a pill's primary value**
-    in `aerial_22.png` and `aerial_12.png`: the glyph pixels and the pill fill differ by a WCAG contrast ratio
-    **≥ 4.5:1** (**≥ 3:1** for muted `#9AA6B2` labels), and the pill fill itself has mean luminance **18–90 at both
-    12:00 and 22:00** — neither crushed to black nor washed out by the scene behind it. Sample at least the clock
-    value, the money value, one muted info-panel label and one card cost badge, at both times.
+13. **Live binding, no literals, in `?showcase=all`.** Two separate assertions.
+    **Binding, no tick:** the probe sets `world.economy.money += 50_000` and `world.economy.demand.commercial = 0.9`,
+    waits **one animation frame**, and asserts the money chip's text and the C rail's fill ratio (item 3's operands)
+    now read those values — `ui` reads `world` every frame, so a tick proves nothing about the binding.
+    **Refresh on `sim:tick`:** `--time` implies `speed=0` (`src/main.js:82`; `tools/screenshot.mjs` sends
+    `speed=0`), so `clock.advance` is a no-op and nothing ticks on its own — force one with
+    `window.__sim.registry.get('simulation').api.step(1)` (synchronous and deterministic) or
+    `window.__sim.setSpeed(1)`, await one `sim:tick` on `window.__sim.events`, then `window.__sim.setSpeed(0)`; after
+    it the chips still agree with `world` (the injection survives a tick: `world.economy` *is* the object the
+    simulation integrates — `src/modules/simulation/index.js:138-139` — money accumulates, `e.money += …`, and demand
+    is smoothed at `kD = 1 − exp(−(1/2400)/0.5) ≈ 8.3e-4` per tick, so 0.9 moves by under 0.001).
+    `__sim.setTime(22)` turns the weather chip to the moon glyph. No chip shows a value that is absent from
+    `world`. Evidence: `all_aerial_12.png` + probe log.
+14. **Night and bright-background legibility.** Measured in the §2 landmarks `clock-value`, `money-value`,
+    `muted-label` (a muted info-panel label) and `card-cost` (a card cost badge) — each ≥ 20×8 px, centred on the
+    glyphs it names — from `aerial_12.crops.json` and `aerial_22.crops.json`, on the full-resolution PNGs: the
+    glyph pixels and the pill fill differ by a WCAG contrast ratio **≥ 4.5:1** (**≥ 3:1** for muted `#9AA6B2`
+    labels), and the pill fill itself has mean luminance **18–90 at both 12:00 and 22:00** — neither crushed to
+    black nor washed out by the scene behind it. All four landmarks, both times. Evidence: the two `crops.json`
+    files + measured ratios.
     **CRITIC.md's blown/crushed limits (p99 ≥ 250, p1 ≤ 5) are a scene rule and apply to backdrop pixels only, never
     to HUD glyphs**: §3 requires white text on dark pills, so white at 255 over a near-black fill is the target here,
     not a defect, and a build must not be marked down for it. The dev corner, when enabled, holds the same ratios
-    over lit windows. Evidence: crops + measured ratios.
+    over lit windows.
 15. **1280×720 is a first-class size, with a stated horizontal budget.** `aerial_12_720p.png`: all of items 1, 2, 8
     hold; the toolbar keeps ≥ 12 category icons visible (icons may shrink to 34 px and gaps to 3 px, but no icon may
     be dropped from the unlocked set); the milestone chip may collapse to badge-only; no text is clipped mid-word
@@ -322,17 +372,26 @@ the score at 7 regardless of everything else.
     calls and 0 triangles — probe, from a page-evaluate where `ctx` is *not* reachable:
     `window.__sim.registry.get('ui').group.children.length === 0` outside the ui showcase
     (`src/core/registry.js:14` puts `group` on the record; `src/core/debug.js` exposes `registry`, not `ctx`).
-    `moduleMs.ui` from `__sim.stats()` averages **≤ 1.0 ms** and never exceeds 2.0 ms over a 3 s measure.
+    `moduleMs.ui` from `__sim.stats()` averages **≤ 1.0 ms** and never exceeds 2.0 ms over a 3 s measure. Plus the
+    one §5 row that a probe can actually read: `document.querySelectorAll('#ui *').length ≤ 1800` in the `ui` preset
+    with every panel open.
 20. **Backdrop is not programmer art.** It sits under every shot and is not the graded subject; how heavily it
     weighs against the HUD is CRITIC.md's business, not this spec's — nothing here caps or discounts it, and the two
     clauses below are CRITIC.md hard fails that this item does not soften.
     At `street_12`, `closeup_12`, `street_22`: trees have a trunk and a non-spherical
-    silhouette, ≥ 2 crown-colour variants, and darken with the night factor (mean tree-pixel luminance at 22:00
-    ≤ 55 % of the 12:00 value); facades show floor lines and window reveals rather than a flat grid on a box;
+    silhouette and ≥ 2 crown-colour variants (by eye, from the shots), and darken with the night factor — pinned in
+    the §2 landmark `tree-crown` (a rect over one crown in the `street` corridor, `project()`ed from its world
+    position): mean luminance in `ui.tree-crown` at `street_22` is **≤ 55 %** of the value at `street_12`;
+    facades show floor lines and window reveals rather than a flat grid on a box;
     ≥ 40 street lamps with warm emissive heads and ground pools visible at 22:00 and off at 12:00; no object floats
     or sinks; no z-fighting between road, kerb and ground.
 21. **Photo mode really hides the HUD.** In `photo_22.png`, no `#ui` descendant other than the hint has a visible
-    rect; the hint fades over ≤ 3 s of `dt` (not a CSS-only animation, so it is deterministic under `speed=0`).
+    rect, and the hint **is visible**: a page-evaluate probe on the `photo` preset asserts the hint has a non-zero
+    rect and computed opacity **≥ 0.5**. The hint's opacity is a pure function of accumulated **game** time and is
+    **pinned at 1.0 whenever `world.time.speed === 0`**. A `dt`-driven fade is no more deterministic than a CSS one:
+    `registry.update(dt)` is fed raw wall-derived frame time whatever the clock speed (`src/main.js:121-127`), and
+    the shutter falls ≥ 2.5 s after `__sim.ready` (400 ms + 600 ms + `--measure`, `tools/screenshot.mjs`), so any
+    ≤ 3 s fade has expired before the frame is taken.
 22. **`serialize()`/`deserialize()` round-trip.** `api.serialize()` returns `{cityName, infoview, minimap}`;
     feeding it back after changing all three restores all three. Idempotent when called twice.
 
@@ -346,11 +405,12 @@ the score at 7 regardless of everything else.
 | Triangles contributed in `?showcase=all` | 0 |
 | `moduleMs.ui` per frame | ≤ 1.0 ms mean, ≤ 2.0 ms peak (ARCHITECTURE §9 caps any module at 2 ms) |
 | `init` | ≤ 250 ms (r1 measured 6–7 ms; card/minimap work may raise it, not past this) |
-| GPU texture memory (ui showcase) | ≤ 24 MB; minimap canvas ≤ 256², card thumbnails are SVG/canvas, not GPU textures |
-| DOM | ≤ 1800 elements under `#ui`; no `innerHTML` rewrite of a container in `update()` — only changed text nodes |
-| Per-frame allocation in `update()` | none (reuse objects; the `_lastX` change-guard pattern stays) |
+| DOM | ≤ 1800 elements under `#ui` (graded by item 19) |
 | Shipped fonts | ≤ 60 KB total woff2, CC0, bundled — **no network font requests** |
-| JS heap attributable to ui | ≤ 24 MB |
+
+Not graded, engineering guidance only — no instrument here reads them per module, so the critic must not invent one:
+no `innerHTML` rewrite of a container in `update()` (only changed text nodes), no per-frame allocation in `update()`
+(reuse objects; the `_lastX` change-guard pattern stays), card thumbnails as SVG/canvas rather than GPU textures.
 
 ## 6. Known failure modes
 
@@ -393,8 +453,11 @@ Traps specific to this module and this environment:
   suspect — re-shoot it and say so in the report rather than reading the splash as the module.
 - **Emissive HUD-adjacent glow.** Lamp halos in the backdrop clipping to near-white at night (self-flagged in
   `ui_r2.json`) reads as a bloom bug and drags the whole frame.
-- **Photo-mode hint on a CSS transition** rather than `dt` — non-deterministic under `speed=0`, so the shot catches
-  it mid-fade at a random opacity.
+- **A photo-mode hint that fades on capture time at all.** A CSS transition and a `dt`-driven fade are equally
+  wrong: `registry.update(dt)` gets raw wall-derived frame time whatever the clock speed (`src/main.js:121-127`), and
+  the shutter falls ≥ 2.5 s after `__sim.ready`, so both land at a random opacity or at zero. Item 21 pins the hint
+  at full opacity while `speed === 0`. The same trap catches anything else staged with a short life — the three
+  notifications item 11 wants in `ui_12.png` must not expire before the capture.
 - **Writing to `world`.** `ui` owns no section. Setting `world.economy.taxRate` directly instead of emitting
   `ui:action {action:'setTaxRate'}` silently desyncs `simulation`.
 
@@ -417,8 +480,7 @@ Core, with the true signatures:
   in `dispose`.
 - `ctx.assets`: `pbr(name,{repeat})`, `hdri(name)`, `gltf(url)`, `procedural.noiseTexture(opts)`,
   `procedural.gradient(opts)` — every loader resolves even on failure.
-- `ctx.rng`: `float()`, `int(a,b)`, `range`, `pick(arr)`, `weighted`, `gauss`, `shuffle`, `fork(label)`
-  (determinism rules: BUILDER.md).
+- `ctx.rng`: see BUILDER.md.
 - `engine.stats` via `window.__sim.stats()`: `{fps, frameMs, drawCalls, triangles, programs, textures, geometries,
   frames, moduleMs, heapMB, hour, modules, camera}` — the dev corner's only data source.
 - `window.__sim.saves` (`src/main.js:91`, the object from `src/core/save.js`): `save(slot)`, `load(slot)`,
@@ -428,7 +490,7 @@ Core, with the true signatures:
   listens for exactly those.
 
 Optional modules — all are read through `ctx.modules.<name>?.api?.<fn>?.()` and every one must degrade to a
-self-contained fallback, because **`tools`, `props`, `services`, `infoviews` and `transit` are still stubs**
+self-contained fallback, because **`tools`, `services`, `infoviews` and `transit` are still stubs**
 (`api: {}` / `api:{serialize,deserialize}`) and `?showcase=ui` initialises none of them:
 
 | Module | Functions ui may call | Degrade to |
@@ -441,8 +503,8 @@ self-contained fallback, because **`tools`, `props`, `services`, `infoviews` and
 | `audio` | `setMasterVolume(v)`, `mute(on)` | settings sliders still emit `ui:action {action:'settings'}` |
 | `buildings` / `roads` | `world.buildings.items`, `world.roads.{types,edges,nodes}` for info-panel content and the minimap | the staged sample building/road records |
 
-`ui` must never: add a light, install a composer, call `renderer.render`, set `toneMapping`/`scene.fog`, touch
-another module's `group`, or write any `world` section. Core changes go in `docs/core-requests/ui.md`.
+The `ui`-specific half of BUILDER.md's lane rule: `ui` owns no `world` section and adds no scene content outside its
+own showcase backdrop.
 
 ## 8. Showcase
 
@@ -453,7 +515,11 @@ another module's `group`, or write any `world` section. Core changes go in `docs
 asphalt streets with lane markings, kerbs and concrete sidewalks; instanced facades with per-window night lights;
 a park block inside the `street`/`closeup` corridor; instanced trees with trunks and ≥ 2 crown tints; ≥ 40 instanced
 street lamps with emissive heads and an additive night glow driven by a `uNight` uniform derived from
-`clock.sunElevation()`. Deterministic from `ctx.rng.fork('showcase')`. All of it inside `ctx.group`, ≤ 20 draw calls.
+`clock.sunElevation()`. Deterministic from `ctx.rng.fork('showcase')`. All of it inside `ctx.group`,
+**≤ 13 draw calls** — §5 caps the whole `ui` showcase at 20 *including* `environment`, which the showcase loader
+always adds (`src/core/showcase.js:24`) and which takes the remaining ~7; item 19 grades the total, not the
+backdrop alone. r2 measured 12 total by day and 14 at
+night with the lamp glow.
 
 **HUD state per preset (all camera-identical to `ui` except `photo` and `closeup_hud`, so a diff isolates the HUD).**
 This table and acceptance item 11 are the same list of ten — all ten are required, and item 11 names the shot file
@@ -468,7 +534,7 @@ each one must produce:
 | `save` | same | save/load slot list with day + timestamp, Download / Upload / delete | 12 |
 | `infoview` | same | info-view picker open + legend panel for one view | 12 |
 | `lines` | same | transit line panel: 2 lines, ridership, bus stepper, colour swatches, stop list, actions | 12 |
-| `services` | same | services category open with ≥ 8 cards incl. 2 locked (lock badge + tooltip) | 12 |
+| `services` | same | a service category open with its cards, ≥ 2 locked entries in frame (lock badge + tooltip) | 12 |
 | `photo` | yaw 1.2, pitch 0.16, dist 90, target [20,4,20] | HUD hidden, fading hint only | 22 |
 | `closeup_hud` | yaw 0.6, pitch 0.35, dist 110, target [20,6,20] | same as `ui`, to prove the HUD holds over a bright, busy foreground | 6.5 |
 

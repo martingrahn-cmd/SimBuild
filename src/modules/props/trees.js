@@ -232,9 +232,10 @@ function buildBirch(rng, lod) {
   const geos = [];
   const tips = [];
   for (let s = 0; s < stems; s++) {
-    const off = stems > 1 ? new THREE.Vector3(rng.range(-0.05, 0.05), 0, rng.range(-0.05, 0.05)) : new THREE.Vector3();
+    const a0 = rng.float() * Math.PI * 2;
+    const off = stems > 1 ? new THREE.Vector3(Math.cos(a0 + s * Math.PI) * 0.035, 0, Math.sin(a0 + s * Math.PI) * 0.035) : new THREE.Vector3();
     const sk = grow(rng, {
-      origin: off, dir: new THREE.Vector3(off.x * 1.4 + rng.range(-0.05, 0.05), 1, off.z * 1.4 + rng.range(-0.05, 0.05)).normalize(),
+      origin: off, dir: new THREE.Vector3(off.x * 8 + rng.range(-0.10, 0.10), 1, off.z * 8 + rng.range(-0.10, 0.10)).normalize(),
       length: 0.60, r0: 0.019, r1: 0.010, depth: 0, maxDepth: near ? 2 : 0,
       sides: near ? 6 : 4, rings: near ? 3 : 2, curve: rng.range(-0.08, 0.08),
       splits: 3, spread: 0.66, lengthK: 0.50, radiusK: 0.46, gravity: -0.05,

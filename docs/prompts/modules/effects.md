@@ -69,7 +69,7 @@ api = {
   _override(opts|null) -> void,   // THE A/B TOGGLES. Keys: {bloom, ao, dof, glare, rain, grade, dehaze, glow},
                                   // each 0 (force that pass off) or 1 (force it on); null clears every override.
                                   // REQUIRED, not a dev nicety: the critic's probes for acceptance items 3, 4, 9,
-                                  // 10, 11, 13 and 18 produce their diffs with it. It exists today as an
+                                  // 10, 11, 12, 13 and 18 produce their diffs with it. It exists today as an
                                   // undocumented hook (`_override(o) { S.override = o || null; }`,
                                   // src/modules/effects/index.js:223); round 2 makes it contract and gives it
                                   // exactly these keys. Unknown keys are ignored, never thrown on.
@@ -84,6 +84,14 @@ api = {
     glare:  { enabled, sunScreen:[x,y], inFrame },
     debugView, size:[w,h], chainDrawCalls, passes:[{name, enabled}],
   },
+  cropRects({project, width, height, camera}) -> { <name>: [x,y,w,h] },
+                                  // THE MEASUREMENT LANDMARKS of §4, in pixels of the current
+                                  // full-resolution framebuffer. `window.__sim.cropRects()` collects it and
+                                  // `node tools/screenshot.mjs … --crops` writes `<out>.crops.json` beside the PNG
+                                  // (ARCHITECTURE §8; `src/core/debug.js:41-50` skips any module
+                                  // without this function, so without it every pinned item below fails).
+                                  // `project(x,y,z)` maps a world point to pixels. Return a name only when that
+                                  // landmark is genuinely in frame at that camera and meets its minimum size.
 }
 ```
 
@@ -129,124 +137,195 @@ Conventions the critic and the builder both use, so a number means the same thin
 - `luma = 0.2126R + 0.7152G + 0.0722B` computed on the delivered 8-bit sRGB PNG, range 0–255. `pN` = Nth percentile
   over all pixels of the frame.
 - Standard shots are `shots/effects/r<n>/<camera>_<time>.png` for `camera ∈ {aerial, street, skyline, closeup}` and
-  `time ∈ {6p5, 12, 17p5, 22}`, plus the declared presets `plaza`, `lamps`, `glare`, `photo` at 12 and 22.
+  `time ∈ {6p5, 12, 17p5, 22}` (16), plus the declared presets `plaza`, `lamps`, `glare`, `photo` at 12 and 22 (8)
+  **and `glare` at 17.5** (1, the frame item 13 is graded on) = **25 shots**. "All preset shots" means those nine.
 - "sun-side half" = the left or right half of the frame containing the screen-projection of `world.weather.sunDir`
   (or, when the sun is off-screen, the half its azimuth points into).
 - A/B diffs are produced with `api._override` / `setEnabled` / `setDebugView` from a probe at
   `shots/effects/r<n>/apicheck.mjs`; "changed by > X" means per-pixel |Δluma| > X.
+- **A/B capture size.** An override pair is two rendered frames and there are more than a dozen pairs, so capture a
+  pair at **1280×720** whenever every threshold in its item is a percentage of pixels or a mean/ratio of luma —
+  those are resolution-independent, and item 19 already requires 720p to track 1080p within `|Δp50| ≤ 4`. Only a
+  **pixel-distance** threshold forces 1920×1080: item 3's halo radius, item 12's streaks, item 13's glare radii.
 - **How a probe reaches the api:** `window.__sim.registry.apis.effects` (there is no `__sim.modules`). The module
   record — including `initMs` and `status` — is `window.__sim.registry.get('effects')`. `src/core/debug.js` puts
   `registry` on `__sim`; `src/core/registry.js` keeps `apis[name] = def.api`.
-- **Measurement rects are declared, not eyeballed.** Every item below that measures "a patch" or "a crop" names a
-  rect key instead. The build **must emit `shots/effects/r<n>/probes.json`** next to the shots, with one entry per
-  shot that any item measures:
-  ```json
-  { "street_12": { "unlitFacade": [x,y,w,h], "shadedAsphalt": [x,y,w,h], "sunlitAsphalt": [x,y,w,h],
-                   "distantTerrain": [x,y,w,h], "skyCrop": [x,y,w,h], "groundRect": [x,y,w,h],
-                   "flatSurfaceCorner": [x,y,w,h], "flatSurfaceCentre": [x,y,w,h] },
-    "skyline_22": { "unlitFacade": [x,y,w,h], "towerBand": [x,y,w,h], "emptyTerrainBand": [x,y,w,h] } }
-  ```
-  `x,y` are top-left pixel coordinates in the 1920×1080 frame; the 1280×720 shot declares its own key with its own
-  rects. Only the keys an item actually names are required for that shot. **The critic measures those rects and no
-  others**, and may reject a rect that visibly does not contain what its name claims (a `shadedAsphalt` rect with
-  kerb or grass in it, a `skyCrop` with a roofline in it) — a rejected rect fails its item, so declare rects that
-  are unambiguously on the material they name. `flatSurfaceCorner` and `flatSurfaceCentre` must be on the **same**
-  material.
+- **Measurement rects are declared, not eyeballed — and they come from `--crops`, from nothing else.** Every item
+  below that measures "a patch", "a band" or "a crop" names a landmark instead. `node tools/screenshot.mjs …
+  --crops` writes `<out>.crops.json` beside the PNG (ARCHITECTURE §8, `tools/screenshot.mjs:94-98`):
+  `{png, width, height, camera, time, rects: {"<module>.<name>": [x,y,w,h]}}`, in pixels of the full-resolution
+  capture, collected by `window.__sim.cropRects()` from every ready module's `api.cropRects` (`src/core/debug.js:41`).
+  **`effects` must implement `api.cropRects`** (§2) and return exactly these names, each only when that landmark is
+  in frame at that camera and time and meets its minimum size:
+
+  | rect | must enclose | min size |
+  |---|---|---|
+  | `unlitFacade` | one **unlit** facade wall — no window, no lamp, no sky, no roof edge | 64 × 64 |
+  | `shadedAsphalt` | asphalt in cast shadow — no kerb, no grass, no marking, no shadow boundary | 64 × 64 |
+  | `sunlitAsphalt` | **the same asphalt material** in sun — same exclusions | 64 × 64 |
+  | `distantTerrain` | the most distant terrain in frame, no sky | 256 × 256 |
+  | `skyCrop` | clear sky — no roofline, no sun disc, no cloud edge | 200 × 200 |
+  | `groundRect` | wet road below the emitters whose reflections item 12 measures | 200 × 200 |
+  | `flatSurfaceCorner`, `flatSurfaceCentre` | **the same material**, one near a frame corner, one near the centre | 100 × 100 each |
+  | `towerBand` | sky band 0–150 px above the tower roofline | 300 × 150 |
+  | `emptyTerrainBand` | same size and same screen height as `towerBand`, ≥ 600 px horizontally away, over empty terrain | 300 × 150 |
+  | `lampHead` | one **isolated** lamp head at the rect centre, no second emitter within 150 px | 200 × 200 |
+  | `aoJunction` | one building-base or kerb junction line | ≥ 32 px across it, ≥ 128 along |
+  | `aoOpenGround` | flat ground ≥ 200 px from any junction in that frame | 128 × 128 |
+  | `foliage` | alpha-cut foliage cards only — no trunk, no sky, no building behind the leaf edge | 128 × 128 |
+  | `focusSubject` | the in-focus subject of the `photo` preset | 128 × 128 |
+  | `sharpenEdge` | one lane-marking edge, the rect's **long axis perpendicular** to it | 128 × 32 |
+
+  Minimum sizes are in pixels of a 1920×1080 capture and **scale with the capture** — 1280/1920 = 0.667, so a
+  64×64 minimum is 43×43 in a 720p A/B frame; a landmark is never withheld merely because the frame is smaller.
+  They appear in `crops.json` as `effects.unlitFacade`, `effects.towerBand`, … **Where an item names a rect the
+  critic measures that rect and no other** (whole-frame percentiles, e.g. items 1, 5, 7, are unaffected), and it may
+  reject a rect that visibly does not contain what its name claims (a `shadedAsphalt` with kerb or grass in it, a
+  `skyCrop` with a roofline in it).
+  A rejected **or missing** rect fails its item — this stage is entirely yours to build (§7), so there is no shot in
+  which a landmark is unplaceable.
+- **Pinned statistics are taken on the full-resolution PNG, never on a downscaled copy** (ARCHITECTURE §8): at
+  480 px wide a 1 m patch is about two pixels. Only the "look at it" judgements (items 10, 20, 23's contour check)
+  are made on a downscaled read.
+- **`tools/gauntlet.mjs` does not pass `--crops`** (`tools/gauntlet.mjs:20-24`), so its PNGs arrive without rects.
+  Take every shot an item pins a statistic on with a direct `node tools/screenshot.mjs … --crops --timeout 240` call
+  writing to the same `shots/effects/r<n>/<camera>_<time>.png` path; the URL is the gauntlet's, so it is the same
+  frame (item 16), and the official gauntlet run still supplies `summary.json` and the error/draw-call record.
+- **An A/B pair has no `crops.json` of its own** — the probe renders those frames itself, and
+  `screenshot.mjs --crops` is the only producer of `crops.json` (ARCHITECTURE §8). The probe reads
+  `window.__sim.cropRects()` in-session and records the rects in `apicheck.json`; they must equal that camera/time's
+  `crops.json` rects **at the same capture size**, which is what makes a 720p pair gradable against a 720p landmark.
 - **The emitter mask** used by item 3 is a `setDebugView('mask')` capture of the same frame at the same
   camera/time/size, dilated by 24 px; "within 24 px of an emitter" means "inside that dilated mask". The critic does
   not hand-pick emitter locations.
 
-**Cut line for round 2 — read this before starting.** Round 2 must pass items **1–9 and 14–19**. Items **20–21**
-(the stage rebuild) and **12–13** (rain, glare) may slip to round 3 and, if they do, must be listed as `deferred`
-with a one-line reason in `docs/builds/effects_r2.json` rather than shipped half-built. **A round that passes items
-1–9 and defers the stage scores higher than a round that touches all 24 and lands none.** Budget the captures the
-same way: SwiftShader spends 30–390 s per 1080p frame on this box, so shoot the must-pass matrix first and the
-deferred items' shots last. Within the must-pass set, ordered by how much each moves the score.
+**Cut line for round 2 — read this before starting. Every item is classified; nothing is left to guess.**
+**Must-pass: 1–11, 14–19, 24 — 18 items.** (10 and 11 ride free on the AO and DOF passes 9 and 18 already require;
+24 is two cheap shots.) **Deferrable to round 3: 12, 13, 20, 21, 22, 23 — 6 items**, and a deferred item must be
+listed as `deferred` with a one-line reason in `docs/builds/effects_r2.json` rather than shipped half-built.
+18 + 6 = 24. **A round that passes items 1–9 and defers the stage scores higher than a round that touches all 24 and
+lands none.** Budget the captures the same way: on this box a 1080p capture cost **107–591 s** end to end in
+round 1 (`elapsedMs` across all 21 shots) — about 6–27 s of that is one rendered frame (`frameMs`) — so shoot
+the must-pass matrix first and the deferred items' shots last. Within the must-pass set, ordered by how much each
+moves the score.
 
 1. **Night is night, and it glows.** At `--time 22`, every one of `aerial/street/skyline/closeup/lamps/plaza`:
-   `p50 ∈ [10, 34]`, `mean ≤ 48`, and `≥ 0.20 %` of pixels `≥ 200` luma. The `unlitFacade` rect declared for each of
-   those six shots in `probes.json` (≥ 64×64 px, on an **unlit** facade wall) has `mean ≤ 30`. Round 1 measured
+   `p50 ∈ [10, 34]`, `mean ≤ 48`, and `≥ 0.20 %` of pixels `≥ 200` luma. `effects.unlitFacade` in each of those six
+   shots' `crops.json` has `mean ≤ 30`. Round 1 measured
    `mean 45–56, p50 42–49` with no pixels above 200 — that frame fails this item.
-2. **Emissives are warm; the sky stays blue.** Among pixels `≥ 200` luma at 22:00, `mean(R) − mean(B) ≥ 25`
-   (sodium/tungsten, ≈2700 K). Among sky pixels (top 12 % of `skyline_22`), `mean(B) − mean(R) ≥ 12` and
-   `mean luma ≤ 55`. Verified in `skyline_22.png`, `street_22.png`.
+2. **Emissives are warm; the sky stays blue.** Among pixels `≥ 200` luma at 22:00 **that lie inside the dilated
+   emitter mask** (§4 convention), `mean(R) − mean(B) ≥ 25` (sodium/tungsten, ≈2700 K). The mask scope is not
+   optional: unmasked, the `≥ 200` population also contains `environment`'s stars (~1.3 px, tinted anywhere from
+   blue-white to warm, `src/modules/environment/sky.js:114-136`) and its moon disc, which `effects` could only move
+   with a global grade that breaks items 1, 5 and 8 — an item that fails on another module's pixels is not
+   gradable. Among sky pixels (top 12 % of `skyline_22`), `mean(B) − mean(R) ≥ 12` and `mean luma ≤ 55`. Verified in `skyline_22.png`,
+   `street_22.png`.
 3. **Bloom is attached to emitters, at night and only at night.** Bloom on/off diff (`_override({bloom:0})` vs
    `_override(null)`) at `closeup_22` and `lamps_22`: `1 %–6 %` of pixels change by `> 8`, and `≥ 60 %` of that
    changed area lies **inside the dilated emitter mask** (§4 convention: `setDebugView('mask')` on the same frame,
-   dilated 24 px). An isolated lamp head's halo reaches half amplitude between **20 and 70 px** from the head. At
-   noon (`street_12`, `aerial_12`) the same diff changes `≤ 0.15 %` of pixels by `> 4`. Round 1 passed the noon half of
-   this and failed the night half (windows never crossed the threshold) — keep the restraint, fix the windows.
-4. **City glow at the skyline, and it must be `effects` producing it.** In `skyline_22`, sky luma averaged over the
-   `towerBand` rect (a band 0–150 px above the tower roofline, declared in `probes.json`) is `≥ 4` luma brighter than
-   the band 400–550 px above it — **and** the same two bands measured under `_override({glow: 0})` differ by
+   dilated 24 px). The radial mean of that diff about the centre of `effects.lampHead` falls to half its value at
+   `r = 0` between **20 and 70 px**, which pins the night pair at 1920×1080 (§4). At noon (`street_12`, `aerial_12`)
+   the same diff changes `≤ 0.15 %` of pixels by `> 4` — that pair may be 720p. Round 1 passed the noon half of this
+   and failed the night half (windows never crossed the threshold) — keep the restraint, fix the windows.
+4. **City glow at the skyline, and it must be `effects` producing it.** In `skyline_22`, sky luma averaged over
+   `effects.towerBand` (§4: a 300×150 band whose bottom edge is the tower roofline) is `≥ 4` luma brighter than the
+   **same rect translated 400 px upward** — i.e. the band 400–550 px above the roofline, which needs no second
+   landmark — **and** the same two bands measured under `_override({glow: 0})` differ by
    `≤ 1` luma, so the ≥ 4 luma difference is attributable to this module and not to `environment`'s sky dome, whose
-   horizon gradient satisfies the first clause on its own. **Localisation:** `towerBand` is `≥ 3` luma brighter than
-   `emptyTerrainBand` — the same-height band 600 px horizontally away over empty terrain — which is what
-   distinguishes a city glow from a horizon gradient. Round 1: "no city glow at all", and the first clause alone
-   would not have caught a "fix" that only steepened the sky gradient.
+   horizon gradient satisfies the first clause on its own. **Localisation:** `effects.towerBand` is `≥ 3` luma
+   brighter than `effects.emptyTerrainBand` — same size, same screen height, ≥ 600 px away over empty terrain —
+   which is what distinguishes a city glow from a horizon gradient. Round 1: "no city glow at all", and the first
+   clause alone would not have caught a "fix" that only steepened the sky gradient.
 5. **Golden hour does not wash out.** At `--time 6.5` and `--time 17.5`, all four standard cameras: `p50 ≤ 120`,
    `p99 ≤ 248`, `< 0.5 %` of pixels `≥ 250`, and `|p50(sun-side half) − p50(shadow-side half)| ≤ 40`. Round 1
    `skyline_17p5` was `p50 163 / p99 251` — the single worst frame in the set.
-6. **Aerial haze keeps distant structure.** In `skyline_12` and `skyline_17p5`, the `distantTerrain` rect declared
-   in `probes.json` (256×256, centred on the most distant terrain in frame) has luma `stddev ≥ 8` and
+6. **Aerial haze keeps distant structure.** In `skyline_12` and `skyline_17p5`, `effects.distantTerrain`
+   (§4, 256×256 on the most distant terrain in frame) has luma `stddev ≥ 8` and
    `p95 − p5 ≥ 28` (`$REF/cs2_2.jpg`, `$REF/cs2_6.jpg`). The dehaze must be depth-driven — subtract `fogColor · (1 − exp(−(density·d)²))` in **linear HDR before `OutputPass`**,
    not as a display-space lift after it — using `ctx.scene.fog.color/.density`.
-7. **Shadows are readable, not crushed.** At 12 and 17.5, all four cameras: `p1 ≥ 6`, `p5 ≥ 14`. On the declared
-   `shadedAsphalt` and `sunlitAsphalt` rects of each of those shots (`probes.json`, ≥ 64×64 px, **the same asphalt
-   material** in both), `mean(shadedAsphalt) / mean(sunlitAsphalt) ∈ [0.28, 0.50]` and `shadedAsphalt`'s own
+7. **Shadows are readable, not crushed.** At 12 and 17.5, all four cameras: `p1 ≥ 6`, `p5 ≥ 14`. On
+   `effects.shadedAsphalt` and `effects.sunlitAsphalt` of each of those shots (§4, **the same asphalt material** in
+   both), `mean(shadedAsphalt) / mean(sunlitAsphalt) ∈ [0.28, 0.50]` and `shadedAsphalt`'s own
    `stddev ≥ 5` (grain survives, per `$REF/cs2_5.jpg`). Round 1: `p1 = 0, p5 ≤ 5` in four separate shots. The black point must come from
    the frame's own histogram (see item 17), capped at 0.02 in display units, applied as a soft toe
    (`c − bp·(1−c)`), with contrast `≤ 1.10` around the pivot.
-8. **Shaded surfaces are neutral, not cyan.** On the declared `shadedAsphalt` rect at 6.5 and 17.5 (all four
-   cameras): `mean(B) − mean(R) ≤ 8` and HSV saturation `≤ 0.14`. On `sunlitAsphalt` in the same frame:
+8. **Shaded surfaces are neutral, not cyan.** On `effects.shadedAsphalt` at 6.5 and 17.5 (all four
+   cameras): `mean(B) − mean(R) ≤ 8` and HSV saturation `≤ 0.14`. On `effects.sunlitAsphalt` in the same frame:
    `mean(R) − mean(B) ≥ 10`. Round 1 painted every non-sunlit surface steel blue in four shots.
 9. **AO is contact occlusion you can see.** AO on/off diff (`_override({ao:0})` vs `_override(null)`) at
-   `closeup_12` and `plaza_12`: `≥ 5 %` of pixels darken by `> 12`, `≥ 1.2 %` by `> 30`. In a 32 px band along a building base or kerb, `mean darkening ≥ 20` luma; more than
-   200 px from any junction, `mean darkening ≤ 3`. Round 1: `meanAbs 0.8`, zero pixels beyond 24. Implement a second
+   `closeup_12` and `plaza_12`: `≥ 5 %` of pixels darken by `> 12`, `≥ 1.2 %` by `> 30`. Inside
+   `effects.aoJunction`, `mean darkening ≥ 20` luma; inside `effects.aoOpenGround`, `mean darkening ≤ 3` (§4 fixes
+   both rects: the 32 px band on a junction line, and the ground ≥ 200 px from any junction). 720p pair.
+   Round 1: `meanAbs 0.8`, zero pixels beyond 24. Implement a second
    short radius (0.6–1.5 m contact term) alongside the existing view-scaled radius (2.4–14 m).
-10. **AO does not halo foliage.** On alpha-cut foliage pixels, `mean |AO diff| ≤ 4` luma in the same
-    `_override({ao:0})` diff as item 9, and the `setDebugView('ao')` capture shows no closed leaf-shaped outlines. Reject samples across a depth discontinuity
-    greater than the AO radius (thickness test).
-11. **DOF is off in the standard matrix.** DOF on/off diff (`_override({dof:0})` vs `_override(null)`) has
-    `meanAbs ≤ 0.15` luma in all 16 standard shots and in `lamps_12`/`lamps_22`/`plaza_12`/`plaza_22`; `state().dof.enabled === false` for all of them. Only under
-    `setPreset('photo')` / the `photo` camera does near blur engage, and there anything at `≥ 0.6 × focus` keeps
-    `≥ 70 %` of its dof-off Laplacian variance. Round 1 smeared a foreground tree into a green blob at 42 m.
-12. **Rain reads like `$REF/cs2_8.jpg`.** `--weather rain --time 22 --camera street`: `≥ 250` distinguishable
-    streaks, each 1–3 px wide and 12–40 px long, tilted 4–14° from vertical, adding 8–40 luma over a dark facade;
-    **inside the road region declared as `groundRect` in `probes.json`** bright emissives smear downward for `≥ 40`
-    px. That test is stated in image terms deliberately: the deliverable is an 8-bit sRGB PNG and `setDebugView` has
-    no depth or normal buffer, so a depth-reconstructed normal is not gradable — declare the rect instead. Frame
+10. **AO does not halo foliage.** Inside `effects.foliage` (§4), `mean |AO diff| ≤ 4` luma in the same
+    `_override({ao:0})` diff as item 9, and the `setDebugView('ao')` capture shows no closed leaf-shaped outlines.
+    Reject samples across a depth discontinuity greater than the AO radius (thickness test).
+11. **DOF is off in the standard matrix.** `state().dof.enabled === false` at all 16 standard and all four
+    `lamps`/`plaza` camera–time pairs, read in **one** `apicheck.mjs` session that walks them with
+    `__sim.setCamera(name)` + `__sim.setTime(h)` (`src/core/debug.js:53-54`) — 20 state reads, no captures. The
+    pixel proof is two 720p pairs, not twenty: `_override({dof:0})` vs `_override(null)` has `meanAbs ≤ 0.15` luma
+    at `street_12` and `lamps_22`. Only under `setPreset('photo')` / the `photo` camera does near blur engage, and
+    there `effects.focusSubject` (§4) keeps `≥ 70 %` of its dof-off Laplacian variance — a rect, because the
+    delivered PNG carries no depth and a "`≥ 0.6 × focus`" selection is not gradable (see item 12).
+    Round 1 smeared a foreground tree into a green blob at 42 m.
+12. **Rain reads like `$REF/cs2_8.jpg`.** `--weather rain --time 22 --camera street`, and the streak count is
+    **counted, not eyeballed**: label the 4-connected components of the `_override({rain:0})` diff at 1920×1080
+    thresholded at `|Δluma| > 8`, accept components of **12–150 px area**, and require `≥ 250` of them. The window is
+    the streak geometry itself — 1–3 px wide × 12–40 px long is 12 to 120 px of area, and 150 allows the
+    anti-aliased edge; anything larger is a wet-road reflection, not a streak. Streaks are near-vertical, tilted
+    4–14° with the wind (checked by eye on the crop, not counted). **Inside `effects.groundRect`** (§4) bright
+    emissives smear downward for `≥ 40` px. Both tests are stated in image terms deliberately: the deliverable is an
+    8-bit sRGB PNG and `setDebugView` has no depth or normal buffer, so a depth-reconstructed normal is not
+    gradable — a declared rect and a component count are. Frame
     `p50` stays within `±10` of the dry frame at the same camera/time. At `weather=clear` the rain pass costs **0 draw
     calls** and `state().rain.enabled === false`. Round 1 had no rain pass at all.
 13. **Sun glare exists and is disciplined.** Measured as the `_override({glare:0})` A/B at the declared `glare`
-    preset, `--time 17.5`: a radial glare centred within 30 px of the projected sun position, reaching half amplitude between 80 and 260 px, adding `≥ 25` luma at
+    preset, `--time 17.5`, at 1920×1080 (§4 — its thresholds are pixel distances): a radial glare centred within
+    30 px of `state().glare.sunScreen` (the module's own projected sun position, §2 — the critic does not
+    hand-pick it), reaching half amplitude between 80 and 260 px, adding `≥ 25` luma at
     60 px from centre, with `≤ 2 %` of the frame `≥ 250`. When the sun is below the horizon or more than 25 % of the
     frame width outside it, glare contributes `mean ≤ 0.1` luma. Round 1: bloom diff was exactly 0 with the sun near
     frame edge.
 14. **Zero console errors and `ready` everywhere.** `errors: []` and `warnings: []` in the JSON of all 16 standard
-    shots, all four preset shots, the 1280×720 shot, the `--weather rain` shot, `--showcase all --time 12`, and
+    shots, all **nine** preset shots (§4: plaza/lamps/glare/photo at 12 and 22, plus `glare` at 17.5), the
+    1280×720 shot, the `--weather rain` shot, `--showcase all --time 12`, and
     `?quality=low`, `medium`, `ultra`. `modules.effects === 'ready'` in every one. At `quality=low`
     (`QUALITY.low.post === false`) the page renders with `state().installed === false` and no error.
 15. **Budget, measured by A/B.** `chainDrawCalls = drawCalls(setEnabled(true)) − drawCalls(setEnabled(false)) ≤ 28`
     in every 1080p shot (ARCHITECTURE §9 allots `effects` 30). Whole staged frame `≤ 64` draw calls and
-    `≤ 900 000` triangles. `state().chainDrawCalls` must agree with the probe to within one call:
+    `≤ 900 000` triangles — **so the stage gets 64 − 28 = 36 draw calls**, and a chain that lands under 28 does not
+    hand its surplus to the stage; round 1 was 41 total (22 chain + 19 stage), so §8's rebuild has 17 calls of room
+    and must instance or merge for the rest. `state().chainDrawCalls` must agree with the probe to within one call:
     `|state().chainDrawCalls − (drawCalls(on) − drawCalls(off))| ≤ 1`, measured on the same frame size and the same
     quality tier. (The two numbers come from different mechanisms — an in-module per-frame attribution vs a
     `renderer.info.render.calls` delta that also moves with CSM shadow passes — so one call of slack, and no more.)
 16. **Deterministic and allocation-free.** Two consecutive captures of the same URL are byte-identical (round 1
-    achieved diff 0 — do not regress it with a temporally adapting exposure). `update()` costs `≤ 0.5 ms` of JS and
-    the JS heap grows `< 2 MB` over 300 frames. No `Math.random`, `Date.now`, `performance.now` in module logic
-    (the critic greps).
+    achieved diff 0 — do not regress it with a temporally adapting exposure). `update()` costs `≤ 0.5 ms` of JS,
+    read as `moduleMs.effects` in **every** shot's JSON (`tools/screenshot.mjs` writes it from `__sim.stats()`;
+    round 1 read 0.0–0.4 ms). Heap growth is measured by `apicheck.mjs` at **640×360**, sampling
+    `__sim.stats().heapMB` at the first and the last of `≥ 100` rendered frames: growth `< 0.7 MB`, and report the
+    frame count reached. That is the same leak rate as the 2 MB / 300 frames it replaces (2 × 100/300 = 0.67,
+    rounded to `heapMB`'s 0.1 MB resolution). 300 frames at 1080p is **not** measurable on this box: round 1's own
+    shots recorded `frameMs` 6 081–27 050 ms, so 300 frames is 30–135 minutes. No `Math.random`, `Date.now`,
+    `performance.now` in module logic (the critic greps).
 17. **Auto black point / auto white point is GPU-side and converged at capture.** The histogram or 1×1 average is
     produced by downsample passes and consumed as a sampler uniform — **no `readPixels` / `getBufferSubData` stall in
-    the render path** (the existing headless 1×1 sync read stays; that one is deliberate). Adaptation reaches within
-    1 % of its steady value in `≤ 4` rendered frames, or is instantaneous when `ctx.headless` — `window.__sim.ready`
-    fires after 5 frames, so anything slower makes screenshots non-reproducible. `state().grade.blackPoint` and
-    `.whitePoint` report the live values.
+    the render path** (the existing headless 1×1 sync read stays; that one is deliberate). Adaptation is
+    **instantaneous when `ctx.headless`** — `window.__sim.ready` fires after 5 frames, so anything slower makes
+    screenshots non-reproducible — and reaches within 1 % of its steady value in `≤ 4` rendered frames when it is
+    not. Both halves are read by `apicheck.mjs`, which samples `state().grade.blackPoint` on frames 1–8: once at
+    `?showcase=effects&headless=1&time=22` (frame 1 already at the steady value) and once at the same URL with
+    `headless=0`. The second URL only exists in the probe: `tools/screenshot.mjs:22` hardcodes `headless: '1'`, so no
+    screenshot in this repo can capture that branch. `state().grade.blackPoint` and `.whitePoint` report the live
+    values.
 18. **API contract.** Every key of §2's `api` object exists with the stated type; `setEnabled(false)` yields
     `engine.composer === null` and exactly the pre-chain draw-call count, `setEnabled(true)` reinstalls;
-    `setPreset('flat')` is a true bypass (grade, bloom, AO, glare, rain all off — a diff against `setEnabled(false)`
-    changes `≤ 0.5 %` of pixels by `> 2`, AA aside); `_override` accepts every key in §2, forces exactly that pass
+    `setPreset('flat')` is a true bypass — grade, bloom, AO, glare, rain **and SMAA/FXAA** all off, which is what
+    makes the comparison decidable: with no AA in the chain a diff against `setEnabled(false)` changes `≤ 0.5 %` of
+    pixels by `> 2` with **no exclusion**. ("AA aside" was ungradable: 0.5 % of 1920×1080 is 10 368 pixels and a
+    dense city frame has more geometry-edge pixels than that, so whoever argued harder won);
+    `_override` accepts every key in §2, forces exactly that pass
     (an `_override({ao:0})` frame differs from the base only where AO acts) and `_override(null)` restores a
     **byte-identical** frame — the override isolation rule in §2 is itself an acceptance check;
     `setDebugView('ao'|'bloom'|'mask'|'coc'|'dehaze')` each render a visibly different, legible buffer;
@@ -265,15 +344,17 @@ deferred items' shots last. Within the must-pass set, ordered by how much each m
     units at 22:00 (round 1 emitted `0.11` against a threshold of `0.79` — a factor of 7 short), **and** the night
     threshold is low enough (`state().bloom.threshold ≤ 0.55` in exposed units at `night = 1`) that a future
     `buildings` module emitting at that documented level glows without the scene being lifted.
-22. **Vignette and sharpen stay honest.** In **`street_12`** with `preset='default'`, mean luma of the declared
-    `flatSurfaceCorner` rect (100×100) is `≥ 82 %` of the `flatSurfaceCentre` rect (100×100); both rects must sit on
-    the **same** material, which is why they are declared rather than taken as the literal frame corner and centre.
-    CAS sharpen produces no ringing: along a high-contrast edge in the same shot (a lane marking), no pixel
-    overshoots the brighter side by `> 6` luma or undershoots the darker side by `> 6`.
-23. **No banding.** In the declared `skyCrop` rect (200×200, clear sky, no roofline in it) of **`skyline_17p5`**,
-    the count of distinct luma values is `≥ 40` and no contour band is visible at 100 % zoom (the dither is already
-    there — keep it after the grade, not before). If `skyline_17p5` has no 200×200 clear-sky region, declare the
-    rect on `aerial_17p5` instead and say so in the build record.
+22. **Vignette and sharpen stay honest.** In **`street_12`** with `preset='default'`, mean luma of
+    `effects.flatSurfaceCorner` is `≥ 82 %` of `effects.flatSurfaceCentre` (§4: both 100×100 on the **same**
+    material, which is why they are declared rather than taken as the literal frame corner and centre).
+    CAS sharpen produces no ringing: inside `effects.sharpenEdge` — 128×32 straddling one lane-marking edge, long
+    axis across it — no pixel exceeds the rect's own `p95` by `> 6` luma or falls below its `p5` by `> 6`. The
+    percentiles are the two plateaus: the ring occupies ~2–3 of the rect's 128 columns (≈ 2 %), so `p95` and `p5`
+    sit on flat paint and flat asphalt, not in the overshoot.
+23. **No banding.** In `effects.skyCrop` (§4, 200×200) of **`skyline_17p5`**, the count of distinct luma values is
+    `≥ 40` and no contour band is visible at 100 % zoom (the dither is already there — keep it after the grade, not
+    before). If `skyline_17p5` has no 200×200 clear-sky region, return `skyCrop` on `aerial_17p5` instead and say so
+    in the build record.
 24. **Degrades without `environment`.** With `environment` absent, `effects` still installs, produces a non-black
     frame (`mean ≥ 8` luma) at 12 and 22, logs no error, and falls back to
     `night = f(clock.sunElevation(clock.hour))`, `exposure = renderer.toneMappingExposure`, `fog = null → dehaze
@@ -291,20 +372,23 @@ deferred items' shots last. Within the must-pass set, ordered by how much each m
 | Metric | Limit | How it is checked |
 |---|---|---|
 | Chain draw calls (chain on − chain off) | **≤ 28** | probe A/B via `setEnabled`; ARCHITECTURE §9 allots 30 |
-| Whole staged frame draw calls | **≤ 64** | `summary.json` `drawCalls`; declare `budget.drawCalls = 64` |
-| Triangles (staged frame) | **≤ 900 000** | `summary.json` `triangles`; round 1 was 814 984 — the stage upgrade must not blow this, cut forest instances if needed |
+| Whole staged frame draw calls | **≤ 64** (chain 28 + stage 36, item 15) | `drawCalls` in each shot JSON (`summary.json` carries `maxDrawCalls`); declare `budget.drawCalls = 64` |
+| Triangles (staged frame) | **≤ 900 000** | `triangles` in each shot JSON (`summary.json` carries `maxTriangles`); round 1 was 814 984 — the stage upgrade must not blow this, cut forest instances if needed |
 | JS per frame in `update()` | **≤ 0.5 ms** (ARCHITECTURE §9 allows 2 ms) | `stats().moduleMs.effects` |
-| GPU texture memory, chain render targets | **≤ 64 MB** at 1080p | HDR RGBA16F 16.6 MB + AO half-res pair 4.2 MB + bloom mip chain ≈ 11 MB + mask/glare/histogram ≤ 8 MB + SMAA LUTs 0.6 MB |
-| GPU texture memory, staged scene | **≤ 96 MB** | 1k PBR sets only; no 2k in the stage |
-| JS heap growth over 300 frames | **< 2 MB** | probe |
+| Textures resident (chain + staged scene) | **≤ 80** | `textures` in every shot JSON (`__sim.stats()`); round 1 read 42, and §8's stage adds ~4 facade families × 4 maps + 3 tree species — 80 is round 1 doubled |
+| JS heap growth over 100 frames at 640×360 | **< 0.7 MB** | `apicheck.mjs`, `__sim.stats().heapMB` (item 16) |
 | Init time | **`effects.initMs` ≤ 4000 ms**, warm asset cache | `window.__sim.registry.get('effects').initMs` (`src/core/registry.js` `initOne`), read by the apicheck probe; `window.__sim.readyAt` bounds whole-app boot. **Never `elapsedMs`** — see the note under this table |
 | Passes | `RenderPass → dehaze+AO+contact (+DOF when enabled) → emissive mask → bloom → glare → OutputPass → SMAA/FXAA → grade (+rain, dither)` | `state().passes` |
 
+**GPU texture *bytes* are not readable here** — `renderer.info.memory.textures` is a count and nothing in `tools/`
+reports bytes, so the two MB budgets this table used to carry were numbers no one could check. What replaces them is
+the count row above plus one policy: **1k PBR sets only, no 2k** (ARCHITECTURE §10). Report the chain's render-target
+inventory in the build record.
+
 **`elapsedMs` is not an init measurement.** It is capture wall time in `tools/screenshot.mjs` (`Date.now() - t0`
 with `t0` set at line 27, *before* the browser launches), so it covers launch, `goto`, the wait for `__sim.ready`,
-the fps measure window and the PNG write. Round 1's own shots recorded 113 941 / 126 821 / 150 217 / 314 123 /
-393 148 ms under SwiftShader. Read literally, a 4 s bar against `elapsedMs` fails in every shot this module will
-ever take. Report both in the build record — `initMs` against the budget, `elapsedMs` as capture cost.
+the fps measure window and the PNG write. Round 1's 21 shots recorded 107 081–590 943 ms under SwiftShader. Read
+literally, a 4 s bar against `elapsedMs` fails in every shot this module will ever take. Report both in the build record — `initMs` against the budget, `elapsedMs` as capture cost.
 
 **Quality scaling.** `QUALITY` (`src/core/constants.js:39-44`) gives the chain only two meaningful keys, `post` and
 `pixelRatio`; its others (`shadowMap`, `cascades`, `anisotropy`, `instanceLod`) belong to `environment` and the
@@ -352,8 +436,8 @@ Symptoms as they appear on screen. Every one of these has already happened here.
   critic re-measures the same numbers on the same shots and rects. Moving the vignette will not fix `p1 = 0`.
 - **Screenshot infrastructure — the two timeouts are different.** `tools/gauntlet.mjs` passes `--timeout 240` for
   you (`tools/gauntlet.mjs:23`), but `tools/screenshot.mjs` still defaults to **90 s** (`tools/screenshot.mjs:17`).
-  So on every direct `screenshot.mjs` shot — the rain shot, the 1280×720 shot, the `?quality=low`/`ultra` shots, the
-  `--showcase all` shot, the apicheck probe — **pass `--timeout 240` explicitly**, or round 1's timeout failures come
+  So on every direct `screenshot.mjs` shot — every `--crops` capture (§4), the rain shot, the 1280×720 shot, the
+  `?quality=low`/`ultra` shots, the `--showcase all` shot — **pass `--timeout 240` explicitly**, or round 1's timeout failures come
   straight back (12 of 16 shots died last round). The official `tools/gauntlet.mjs --module effects --round <n>` run
   must complete this time; if shots still die, say so with the log rather than shipping a private wrapper's summary.
 
@@ -385,6 +469,10 @@ Module `showcase.cameras` entries are registered automatically by `src/main.js` 
 Manifest names available today: `asphalt_02`, `aerial_grass_rock`, `brown_mud_leaves_01`, `rock_face`,
 `aerial_beach_01`, `concrete_wall_008`, `concrete_floor_worn_001`, `gravel_floor_02`, `leafy_grass`. Every loader
 resolves even on failure. Rain streaks, lens droplets and glare kernels must be **procedural**, not new downloads.
+**Brick and plaster — two of item 20's four facade families — are not in that list**, so pick a route and do not
+guess: either generate them from `assets.procedural.noiseTexture`/`gradient` layered over `concrete_wall_008`, or
+append CC0 entries to `public/assets/manifest.json` (inside the blast radius) and run `tools/fetch-assets.mjs`.
+State which route you took in the build record.
 
 **core — `ctx.rng`**: `float()`, `range(a,b)`, `int(a,b)`, `bool(p)`, `pick(arr)`, `weighted([[v,w]…])`, `gauss()`,
 `shuffle(arr)`, `fork(label)`. The only randomness source.
@@ -469,12 +557,16 @@ own scene — no other module's showcase is available.
   a soft glow above the skyline (items 1–4). `lamps_22` and `plaza_22` are the close-range proof.
 
 Also required in the round's shot set — each of these is a direct `tools/screenshot.mjs` call, so **pass
-`--timeout 240` on every one** (§6): `--weather rain --time 22 --camera street` (item 12), `--w 1280 --h 720` at
-`street 12` (item 19), `--showcase all --camera aerial --time 12` (item 14), `?quality=low` and `?quality=ultra` at
-`street 12` (items 14, 15), and the two degradation shots at
-`?showcase=effects&modules=effects&headless=1&time=12` and `&time=22` (item 24).
+`--timeout 240` on every one** (§6): `--camera glare --time 17.5` (item 13 — the 25th shot of §4's matrix, and the
+one a builder who shot only this list used to miss), `--weather rain --time 22 --camera street` (item 12),
+`--w 1280 --h 720` at `street 12` (item 19), `--showcase all --camera aerial --time 12` (item 14), `?quality=low`
+and `?quality=ultra` at `street 12` (items 14, 15), and the two degradation shots at
+`?showcase=effects&modules=effects&headless=1&time=12` and `&time=22` (item 24). **Add `--crops` to every shot an
+item pins a statistic on** (§4) — `gauntlet.mjs` does not pass it.
 
-**Also part of the deliverable, not optional:** `shots/effects/r<n>/probes.json` (the measurement rects, §4) and
-`shots/effects/r<n>/apicheck.mjs` (the A/B probe that drives `_override`, `setEnabled` and `setDebugView`, reaching
-the api at `window.__sim.registry.apis.effects`). A shot set without `probes.json` cannot be graded on items 1, 6,
-7, 8, 12, 22 or 23, and those items fail by default.
+**Also part of the deliverable, not optional:** `api.cropRects` (§2) with the landmarks of §4, the
+`<shot>.crops.json` files that `screenshot.mjs --crops` writes from it, and `shots/effects/r<n>/apicheck.mjs` (the
+A/B probe that drives `_override`, `setEnabled` and `setDebugView`, reaching the api at
+`window.__sim.registry.apis.effects`). A shot without its `crops.json` cannot be graded on items 1, 3, 4, 6, 7, 8,
+9, 10, 11, 12, 22 or 23, and those items fail by default. Do not write a `crops.json` by hand or from the probe:
+`tools/screenshot.mjs --crops` is the only producer (ARCHITECTURE §8).

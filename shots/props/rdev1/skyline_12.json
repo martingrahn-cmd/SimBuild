@@ -1,8 +1,8 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=skyline&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "props",
   "time": 12,
-  "camera": "street",
+  "camera": "skyline",
   "seed": 1337,
   "width": 1920,
   "height": 1080,
@@ -10,63 +10,63 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 472930,
+  "elapsedMs": 339427,
   "fps": 11.6,
-  "measuredFrames": 2,
-  "frameMs": 10668.7,
-  "drawCalls": 127,
-  "triangles": 2101509,
+  "measuredFrames": 1,
+  "frameMs": 17015.7,
+  "drawCalls": 101,
+  "triangles": 1792089,
   "programs": 50,
   "textures": 49,
   "geometries": 66,
-  "heapMB": 60.2,
+  "heapMB": 60.7,
   "moduleMs": {
-    "environment": 0.30000000074505806,
-    "props": 3.5,
-    "terrain": 0.10000000149011612,
+    "environment": 0.3999999985098839,
+    "props": 10.800000000745058,
+    "terrain": 0.09999999776482582,
     "roads": 0
   },
   "hour": 12,
   "cameraState": {
     "position": [
-      86.2,
-      26.1,
-      76.7
+      718.4,
+      183.4,
+      -522.9
     ],
     "target": [
-      40,
       0,
-      40
+      40,
+      0
     ],
-    "distance": 60
+    "distance": 900
   },
   "modules": {
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.3,
-      "initMs": 498
+      "ms": 0.4,
+      "initMs": 399
     },
     "props": {
       "status": "ready",
       "errors": 0,
-      "ms": 3.5,
-      "initMs": 523
+      "ms": 10.8,
+      "initMs": 545
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
       "ms": 0.1,
-      "initMs": 5402
+      "initMs": 5190
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 109
+      "initMs": 124
     }
   },
   "errors": [],
   "warnings": [],
-  "png": "shots/props/rdev1/street_12.png"
+  "png": "shots/props/rdev1/skyline_12.png"
 }

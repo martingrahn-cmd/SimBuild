@@ -39,8 +39,8 @@ nothing for props to line, and no man-made structure on the landscape at all.
 
 ## 2. World data owned
 
-Implement exactly this on `world.roads` (mutate in place; **never** `world.roads = {…}`). Signatures copied from
-ARCHITECTURE §3:
+Implement exactly this on `world.roads` (BUILDER.md's "mutate, never replace" applies unchanged). Signatures copied
+from ARCHITECTURE §3:
 
 ```js
 roads: {                           // owner: roads
@@ -98,6 +98,14 @@ debug: { setVisible(v) -> void }  // NEW this round: show/hide the whole roads g
   values in `TYPE_DEFAULTS` are authoritative and are **not** changed this round — where an acceptance item quotes
   one (item 12's `cornerR`), the code value wins and the quote is there to save a lookup.
 - `api.debug.setVisible(v)` as above.
+- **`api.cropRects({project, width, height, camera}) -> { <name>: [x, y, w, h] }`** — the pinned measurement
+  landmarks of §4, in pixels of the current full-resolution framebuffer. `window.__sim.cropRects()` collects it and
+  `node tools/screenshot.mjs … --crops` writes it to `<out>.crops.json` (ARCHITECTURE §8, `src/core/debug.js:41`);
+  `project(x, y, z)` maps a world point to pixels. Return a name **only** when that landmark is genuinely in frame
+  and meets its minimum size — an absent rect leaves its statistic ungraded, a wrong rect fails the item.
+- **`api.debug.terrainWrites() -> { res, cell, indices }`** — `indices` is the list of heightfield indices
+  (`iz * res + ix`) this module changed on the last rebuild, so `indices.length === stats().terrainVerts`. Item 22
+  is unverifiable without it: nothing else in this api exposes *where* roads wrote.
 
 **Events emitted** (ARCHITECTURE §5), after the mutation is complete, with `version` already bumped:
 
@@ -144,32 +152,37 @@ about **surface, edge and furniture**, not about re-engineering the graph.
 - `L = 0.2126R + 0.7152G + 0.0722B` on the 8-bit sRGB PNG. `whitePct` = % pixels with `min(R,G,B) > 247`;
   `blackPct` = % with `max(R,G,B) < 8`. Two measurement scales, and **every acceptance item names which it uses**:
   - **480-px whole frame** (as `shots/environment/r2/imgstats.mjs` does): only the whole-frame `whitePct` /
-    `blackPct` numbers (items 4, 14), item 13's hierarchy and band reads, and item 24's layout comparison.
-    Nothing else. No per-material statistic is ever taken at this scale — at 480 px a 0.10–0.15 m edge line is
-    sub-pixel and its measured value is asphalt, not paint.
-  - **Full-resolution named crops**: every other statistic in items 3–8 and 14–16. Each crop is saved beside the
-    shot it came from as `shots/roads/r<n>/<shot>_<CROPNAME>.png`, and its pixel rectangle `(x, y, w, h)` and the
-    world extent it covers are listed in the report. A statistic whose crop is not saved and named is **ungraded**:
-    the critic records it as missing evidence, not as a failure.
-- **The four crops.** Each is a full-resolution rectangle cut from a named shot and reported as above:
-  - **CARRIAGEWAY CROP** — ≥ 256 × 128 px, entirely on sunlit asphalt: no marking, no manhole, no kerb, no seam
-    running off an edge, no shadow boundary.
-  - **SIDEWALK CROP** — ≥ 128 × 64 px, entirely on sunlit sidewalk top: no kerb face, no shadow, no dropped kerb.
-  - **PAINT CROP** — a ≥ 64 px run along a single edge line or a single centre-line dash, ≥ 8 px across, containing
-    the paint and its ≤ 2 px feather and nothing else.
-  - **SHADOW CROP** — ≥ 128 × 64 px of asphalt in cast shadow (kerb, parapet, barrier or deck soffit), taken from
-    the **same shot** as the CARRIAGEWAY CROP it is compared against.
+    `blackPct` numbers (items 4, 14), item 13's width and band reads, and item 24's layout comparison.
+    Nothing else. No per-material statistic is ever taken at this scale — at 480 px the `aerial` frame is
+    **≈ 1.6 m per pixel** (45° fov at 520 m gives 431 m of frame height, 766 m of width, over 480 px), so a
+    0.10–0.15 m edge line is a tenth of a pixel and its measured value is asphalt, not paint.
+  - **Pinned rects on the full-resolution PNG**: every other statistic in items 3–8 and 14–16. Never on a
+    downscaled copy — 1 m of road is under a pixel in the 480-px `aerial` frame.
+- **Pinned rects come from `--crops`, and from nothing else.** `node tools/screenshot.mjs … --crops` writes
+  `<out>.crops.json` beside the PNG (ARCHITECTURE §8): `{png, width, height, camera, time, rects: {"<module>.<name>":
+  [x, y, w, h]}}`, in pixels of the full-resolution capture, collected from every ready module's `api.cropRects`.
+  **Roads must implement `api.cropRects`** (§2) and return exactly these names, each only when that landmark is in
+  frame at that camera and meets its minimum size:
 
-  The probe returns, for each crop, the world-space extent of its corners unprojected onto the road surface
-  (`{x0,z0,x1,z1}` and the derived metres-per-pixel), so any "per N metres" requirement is computable from the crop
-  itself. Where an item asks for a statistic on a material, it means the corresponding crop, at full resolution.
-  **One crop per material per shot**, named `<shot>_CARRIAGEWAY.png`, `<shot>_SIDEWALK.png`, `<shot>_PAINT.png`,
-  `<shot>_SHADOW.png`: items 4, 5(a) and 5(e) all read `armtop_12_CARRIAGEWAY.png`, and a crop chosen to satisfy one
-  of them may not be re-cut to satisfy another. Size the `armtop_12` carriageway crop so its world extent spans
-  ≥ 60 m of carriageway (item 5a) as well as ≥ 256 × 128 px.
+  | rect | must enclose | min size |
+  |---|---|---|
+  | `carriageway` | sunlit asphalt only — no marking, no manhole, no kerb, no seam, no shadow boundary | 256 × 128 px |
+  | `sidewalk` | sunlit sidewalk top only — no kerb face, no shadow, no dropped kerb | 128 × 64 px |
+  | `kerb` | kerb face only | 64 × 16 px |
+  | `gutter` | a run along one kerb line: the gutter band **and** ≥ 0.5 m of the carriageway beside it | 128 × 32 px |
+  | `paint` | one edge line or one centre-line dash along its long axis, its ≤ 2 px feather, nothing else | 64 × 8 px |
+  | `shadow` | asphalt in cast shadow (deck soffit, parapet, barrier, retaining wall) | 128 × 64 px |
+
+  They appear in `crops.json` as `roads.carriageway`, `roads.gutter`, … A statistic whose rect is **absent** from
+  that shot's `crops.json` is **ungraded**: the critic records it as missing evidence, not as a failure. Where an
+  item asks for a statistic on a material it means that rect, on the full-resolution PNG. Metres per pixel inside a
+  rect is computed by the probe from `window.__sim.project(x, y, z)` on two known road points — `crops.json` carries
+  pixels only, so every "per N metres" requirement is converted that way and not from the rect.
 - **ROADS REGION** = the pixels covered by asphalt + sidewalk + bridge structure. Isolate it in **one page session**:
   capture the frame, call `api.debug.setVisible(false)`, wait 5 frames, capture again, and take the pixels with
-  `|ΔL| > 6`. Same process, same camera, same clock — never two separate `screenshot.mjs` runs.
+  `|ΔL| > 6` **where the roads-visible value is the darker of the two**. That second clause is not optional: a
+  pixel that gets *brighter* when roads are hidden was terrain in a road-cast shadow, not road surface, and without
+  it items 8 and 14 grade terrain. Same process, same camera, same clock — never two separate `screenshot.mjs` runs.
 - **Probe** = a throwaway Playwright script under `shots/roads/r<n>/` against
   `http://127.0.0.1:5173/?showcase=roads&headless=1&time=12&seed=1337`, waiting for `window.__sim.ready`. **These
   access paths are verified against the code; use exactly these and invent no others:**
@@ -181,10 +194,12 @@ about **surface, edge and furniture**, not about re-engineering the graph.
   - engine counters — `window.__sim.stats()` → `{fps, frameMs, drawCalls, triangles, moduleMs, heapMB, modules, …}`
     (`debug.js:18–27`)
   - weather — `window.__sim.world.weather` (item 15)
+  - world→pixel and the pinned rects — `window.__sim.project(x,y,z)` (`debug.js:30`) and
+    `window.__sim.cropRects()` (`debug.js:41`)
 
   **There is no `window.__sim.modules`.** `__sim` exposes exactly `ready, readyAt, verbose, errors, warnings, world,
-  events, clock, camera, engine, registry, stats(), setTime(), setCamera(), setSpeed(), modulesStatus()`
-  (`debug.js:13–32`); module status comes from `stats().modules` or `modulesStatus()`.
+  events, clock, camera, engine, registry, stats(), project(), cropRects(), setTime(), setCamera(), setSpeed(),
+  modulesStatus()` (`debug.js:13–58`); module status comes from `stats().modules` or `modulesStatus()`.
 - Shot paths are the gauntlet's: `shots/roads/r<n>/<camera>_<time>.png`, `.` → `p` (`street_12.png`, `bridge_17p5.png`).
 
 Ordered by how much each moves the score.
@@ -201,9 +216,9 @@ Ordered by how much each moves the score.
 3. **Kerb and sidewalk are modelled, material and grounded.** (`$REF/cs2_4.jpg`, `$REF/cs2_8.jpg`; the single largest
    "obviously synthetic" tell left in r2.)
    (a) Kerb face **0.13–0.18 m** tall, continuous along every street/avenue arm and around every corner fillet.
-   (b) `kerb_12`, full-res crops: `mean L(kerb face crop) ≤ 0.65 × mean L(SIDEWALK CROP)`, and
-   `mean L(SIDEWALK CROP) − mean L(CARRIAGEWAY CROP) ≥ 35` levels. The kerb-face crop is a ≥ 64 × 16 px run of
-   kerb face only, saved and named like the others.
+   (b) `kerb_12.crops.json`: `mean L(roads.kerb) ≤ 0.65 × mean L(roads.sidewalk)`. The sidewalk-vs-asphalt
+   separation is **not** restated here — item 4 owns the levels and item 13 the band delta. (The r2 spec asked for
+   ≥ 35 levels of separation here; item 4's own ranges only guarantee 18, so the two could not both be met.)
    (c) Sidewalk carries **slab joints**: darker lines at **1.0–1.5 m** pitch, ≤ 0.05 m wide, contrast 8–25 L levels
    (subtle, never a checkerboard), resolvable in `kerb_12` and `closeup_12`.
    (d) **Dropped kerb** (face ≤ 0.04 m) across the full width of every crosswalk, with a 0.6–1.0 m contrast landing
@@ -212,25 +227,33 @@ Ordered by how much each moves the score.
    `|sidewalkTopY − h − terrain.getHeight| ≤ 0.15 m` at every one — where `h` is **the kerb height chosen under (a)**,
    reported by the probe as a single number in 0.13–0.18 — and a chamfered verge (0.6–1.0 m) carries it into the
    ground. (r1 issue 8.)
-4. **Noon albedo and contrast.** At 12:00, measured on **full-resolution named crops** — not on the 480-px frame.
-   One complete set of four crops (CARRIAGEWAY, SIDEWALK, PAINT, SHADOW) from `street_12` and one from `armtop_12`,
-   plus a CARRIAGEWAY + SIDEWALK pair from `closeup_12`; every rectangle listed in the report. Thresholds, on every
-   set: CARRIAGEWAY CROP `p50 ∈ [72, 120]` and `std ∈ [6, 26]`; SIDEWALK CROP `p50 ∈ [130, 185]`;
-   PAINT CROP `p95 ∈ [195, 248]`; `mean L(CARRIAGEWAY CROP) / mean L(SHADOW CROP) ≥ 2.0` — the shadow being a kerb,
-   parapet or deck-soffit shadow in that same shot. Whole frame at 480 px, all three shots: `whitePct ≤ 0.15 %`.
-   (r1 issue 4: `p1 ≥ 97`, sidewalks near white.)
+4. **Noon albedo and contrast.** At 12:00, measured on the **full-resolution PNG inside the pinned rects** — not on
+   the 480-px frame. `roads.carriageway`, `roads.sidewalk` and `roads.paint` in both `street_12.crops.json` and
+   `armtop_12.crops.json`; `roads.carriageway` + `roads.sidewalk` in `closeup_12.crops.json`. Thresholds, on every
+   one: `carriageway` `p50 ∈ [72, 112]` and `std ∈ [6, 26]`; `sidewalk` `p50 ∈ [130, 185]`; `paint` `p95 ∈ [195, 248]`.
+   The carriageway ceiling is 112, not 120, so that the worst legal pair (112 vs 130) still clears item 13's
+   `ΔL ≥ 18` sidewalk band.
+   **Lit-vs-shadow asphalt is graded once, at `overpass_12`** — the one noon shot with a shadow caster big enough for
+   a 128 × 64 px rect (the highway deck over the avenue; a 0.15 m kerb at noon casts centimetres, which is why
+   `street_12` and `armtop_12` are not asked for one): `mean L(roads.carriageway) / mean L(roads.shadow) ≥ 2.0`. If
+   `roads.shadow` is absent from `overpass_12.crops.json`, report it as absent — the sub-item is ungraded, not failed.
+   Whole frame at 480 px, all three noon shots: `whitePct ≤ 0.15 %`. (r1 issue 4: `p1 ≥ 97`, sidewalks near white.)
 5. **The asphalt is a used surface, not a fill.** Within 60 m of the camera in `armtop_12` and `closeup_12`:
-   (a) surface-age patches, counted in a CARRIAGEWAY CROP whose **reported world extent covers ≥ 60 m** of
-   carriageway (this is what the crop's world extent is for — if one crop cannot span 60 m at that camera, report
-   two adjacent crops and sum): ≥ 3 regions of ≥ 400 px each whose mean L differs from the crop's median by
-   **6–20 levels**; boundaries irregular — at 4× magnification no patch boundary runs straight for more than 3 m,
-   and none is parallel or perpendicular to the road axis within 5° over more than half its length;
+   (a) surface-age patches, counted inside `roads.carriageway` at `armtop_12`: ≥ 3 regions of ≥ 400 px each whose
+   mean L differs from the rect's median by **6–20 levels**; boundaries irregular — at 4× magnification no patch
+   boundary runs straight for more than 3 m, and none is parallel or perpendicular to the road axis within 5° over
+   more than half its length. (This count is per rect, not per metre: the `armtop` frame covers ≈ 68 m along its long
+   axis at the staged distance, so a rect that both spans 60 m and avoids every cover and seam does not fit.)
    (b) ≥ 1 utility cover (manhole / gully grate) per 40 m of street lane and ≥ 2 per 4-way intersection, modelled as a
-   0.6–0.8 m disc or 0.4×0.6 m rectangle with a rim, not a painted circle;
-   (c) a gutter grime band 0.4–0.8 m wide along every kerb, 6–18 L darker;
-   (d) ≥ 2 tar-seam repairs per 100 m of carriageway, none straight-and-parallel to the road axis;
-   (e) **no tiling — measured as periodicity, not as correlation.** `shots/roads/r<n>/tiling.mjs`, run on the very
-   same CARRIAGEWAY CROP file the report names for item 4: mean-subtract the crop, compute the normalised
+   0.6–0.8 m disc or 0.4×0.6 m rectangle with a rim, not a painted circle — counted in the full-resolution frame,
+   px → m via `__sim.project`;
+   (c) a gutter grime band 0.4–0.8 m wide along every kerb: inside `roads.gutter` at `closeup_12`,
+   `mean L(the gutter band) is 6–18 levels below mean L(the carriageway strip in the same rect)`. The band is
+   measured against the asphalt beside it in one rect, because the `carriageway` rect excludes kerbs by definition
+   and there is otherwise nowhere this statistic can legally be taken;
+   (d) ≥ 2 tar-seam repairs per 100 m of carriageway, none straight-and-parallel to the road axis (counted as (b));
+   (e) **no tiling — measured as periodicity, not as correlation.** `shots/roads/r<n>/tiling.mjs`, run on
+   `armtop_12.png` cut to the `roads.carriageway` rect item 4 reads: mean-subtract the crop, compute the normalised
    cross-correlation against itself at every integer shift from **24 to 128 px**, horizontally and then vertically,
    and require `max(NCC) − median(NCC) < 0.15` over that range in both directions — i.e. no local peak stands above
    the smooth decay envelope. **Shifts below 24 px are not measured**: the macro mottling 5(a) demands necessarily
@@ -243,8 +266,8 @@ Ordered by how much each moves the score.
    1.0–2.5 m before the ladder; turn arrows with shaft ≥ 0.28 m, head ≥ 1.0 m wide and ≥ 1.2 m long, total ≥ 4.0 m,
    one per approach lane within 30 m of a stop line, **no hooked "L" shapes**; dashed centre 3 m mark / 6 m gap ±10 %;
    edge line 0.10–0.15 m wide inset 0.2–0.4 m from the asphalt edge; avenue double-solid centre with a 0.10–0.15 m
-   gap; yellow (hue 45–55°) inner lines on `highway` only; paint edges soft and worn, measured on the
-   PAINT CROP — the per-column mean L along the crop's long axis has **standard deviation ≥ 8 levels** (a dead-flat
+   gap; yellow (hue 45–55°) inner lines on `highway` only; paint edges soft and worn, measured on the `roads.paint`
+   rect at `armtop_12` — the per-column mean L along its long axis has **standard deviation ≥ 8 levels** (a dead-flat
    stencil scores ≈ 0), and the cross-section from asphalt to full paint takes **≥ 2 px** at 1080p (a hard
    one-pixel step is a finding). (r1 issues 8, 11.)
 7. **No sparkle, no shimmer.** In `highway_12`, `merge_12`, `aerial_12`, over **paint-free asphalt only**: pixels
@@ -253,12 +276,14 @@ Ordered by how much each moves the score.
    pixels differs from its 3×3 median by far more than 35 L — items 6 and 13 require exactly that crispness, so
    blurring markings to pass this item is itself a finding, not a fix. Build the region one of two ways, and say
    which: (i) the shot's asphalt pixels minus a **marking mask dilated by 2 px**, the mask projected from the
-   probe's marking geometry; or (ii) paint-free crops of ≥ 256 × 256 px, saved and named like every other crop.
+   probe's marking geometry; or (ii) the `roads.carriageway` rect of that shot, which is paint-free by definition.
    Regions, stated per shot in the report: `highway_12` — the carriageway strip between the median barrier and the
    outer guardrail, markings masked; `merge_12` — the gore area and the two carriageways either side of it,
-   markings masked; `aerial_12` — three paint-free crops, one each over street, avenue and highway asphalt.
-   Roughness ≥ 0.55 beyond 60 m, `normalScale` faded
-   to ≤ 0.25 beyond 120 m, anisotropy = `ctx.assets.anisotropy` on every road map, dash coverage box-filtered.
+   markings masked; `aerial_12` — the `roads.carriageway` rect.
+   **The graded quantity for this item is only the ≤ 0.05 % number on those three regions.** Roughness ≥ 0.55 beyond
+   60 m, `normalScale` faded to ≤ 0.25 beyond 120 m, anisotropy = `ctx.assets.anisotropy` on every road map, and
+   box-filtered dash coverage are **how to pass it, not clauses of it** — they are material state, invisible to a
+   screenshot, to the shot JSON and to a page-evaluate probe alike, so nobody grades them.
    (r1 issue 5: white speckle across the highway; r2 traced it to a non-`flat` packed-integer varying — keep the
    `flat` qualifier and never interpolate a packed flag word.)
 8. **Bridges land, and read as structures.** (r1 blocker 3; r2 self-flagged "plain box girders".)
@@ -266,8 +291,9 @@ Ordered by how much each moves the score.
    it approaches the coast (§8 staged scene, item 9), which is where r1 blocker 3's dark void lived and which no
    camera preset now frames head-on.
    The abutment mesh spans deck soffit to ground with **zero** gap, wing walls extend ≥ 3 m either
-   side, and the gravel/verge skirt continues under the deck end. One named full-res crop of the coast terminus, cut
-   from `aerial_12` and saved as `aerial_12_COASTEND.png`, goes in the report: no air gap, no black void, no cliff
+   side, and the gravel/verge skirt continues under the deck end. One full-resolution crop of the coast terminus, cut
+   by hand from `aerial_12.png` and saved as `aerial_12_COASTEND.png`, goes in the report (this one is a picture to
+   look at, not a pinned statistic, so it is not a `cropRects` landmark): no air gap, no black void, no cliff
    face darker than `mean L 25` at noon. Parapet 0.9–1.1 m
    with a coping course and a modelled railing rhythm at ≤ 3.0 m pitch. Pier caps ≤ deck outer width, piers 18–30 m
    apart. Deck soffit and pier sides `mean L ≥ 25` at noon (r2 flagged them as near-black).
@@ -305,47 +331,69 @@ Ordered by how much each moves the score.
     from the node centre; corner fillet radius equals the type's `cornerR` ± 0.5 m — the shipped values in
     `TYPE_DEFAULTS` (`src/modules/roads/network.js:6–12`) are **alley 4, gravel 4, street 6, avenue 8, highway 10,
     ramp 8**, they are authoritative, and this round does not change them; the corner sidewalk follows the fillet at
-    constant width ± 0.3 m. For the two crossing 16 m
-    streets at (40, 40) the paved square measures **≤ 34 × 34 m**. In `closeup_12` no intersection may read as a blank
+    constant width ± 0.3 m. (40, 40) is the **avenue × street** crossing `showcase.js:27–30` stages, not a
+    street × street one: with `avenue asphaltHalf 8, cornerR 8` and `street asphaltHalf 5, cornerR 6` the fillet
+    puts the street arms at `trim ≈ 14.4 m` and the avenue arms at `≈ 11.4 m`, so `max(arm.trim) + 2.0` bounds the
+    paved square at **≤ 34 × 34 m** with about a metre to spare. The probe reports `max(arm.trim)` from `nodeInfo`
+    and the rule above, not the 34, is the binding form. In `closeup_12` no intersection may read as a blank
     asphalt lake — every 4-way carries 4 ladders, 4 stop lines and per-lane arrows inside that envelope.
-13. **Hierarchy reads from 520 m.** In `aerial_12`, measured at 480 px wide, these five of the six types are
-    distinguishable from one another (`ramp` is graded by item 16, not here): `highway` by median + shoulders
-    + 6 lanes, `avenue` by 4 lanes + double-solid centre, `street` by 2 lanes + dashed centre, `alley` by a single
-    lane and no centre line, `gravel` by no paint at all. A lighter sidewalk band is visible along **both** sides of
-    every street/avenue arm (`ΔL ≥ 18` vs adjacent asphalt at 480-wide scale), and `|mean L(asphalt) − mean L(adjacent
-    ground)| ≥ 25` so no road dissolves into the terrain.
+13. **Hierarchy reads from 520 m.** In `aerial_12`, measured at 480 px wide — so **width and band only**, never
+    paint. At ≈ 1.6 m per pixel the carriageways are 20 / 15 / 10 / 5 px wide (highway 32 m, avenue 24, street 16,
+    alley and gravel 8), and the ranks must come out strictly ordered `highway > avenue > street > {alley, gravel}`
+    with ≥ 3 px between neighbouring ranks. `alley` vs `gravel` is the same 8 m at this scale and is **not** graded
+    here — item 17 separates that pair at full resolution, and the dashed / double-solid / no-centre-line
+    discriminators the r2 spec asked for here are item 6's, because a 0.15 m line is a tenth of a pixel at 480 px
+    and the conventions block already forbids reading paint at this scale.
+    A lighter sidewalk band is visible along **both** sides of every street/avenue arm: a 3–4 m sidewalk is ~2 px
+    wide here, so the read is `ΔL ≥ 18` between the **brightest single pixel** of the band and the asphalt beside it,
+    not a band average. `|mean L(asphalt) − mean L(adjacent ground)| ≥ 25` so no road dissolves into the terrain.
 14. **Night is moonlit road, not dimmed noon.** At 22:00 (`street_22`, `closeup_22`, `intersection_22`,
-    `bridge_22`, `roundabout_22`, `highway_22`, `overpass_22`). Per-material numbers on **full-resolution crops**,
-    one CARRIAGEWAY CROP and one PAINT CROP per shot, saved and named like every other crop:
-    CARRIAGEWAY CROP `p50 ∈ [8, 38]`; `PAINT CROP p50 / CARRIAGEWAY CROP p50 ≥ 3.0` (retroreflective paint);
-    PAINT CROP `p95 ≤ 190`. Over the whole **ROADS REGION** (isolated as the conventions block says): **zero**
-    pixels > 225 — nothing on a road may glow — and `mean(B) − mean(R) ≥ +5` (cool night cast). Whole frame at
+    `bridge_22`, `roundabout_22`, `highway_22`, `overpass_22`). Per-material numbers on the full-resolution PNG
+    inside `roads.carriageway` and `roads.paint` of that shot's `crops.json`:
+    `carriageway p50 ∈ [8, 38]`; `paint p50 / carriageway p50 ≥ 3.0` (retroreflective paint); `paint p95 ≤ 190`.
+    Over the whole **ROADS REGION** (isolated as the conventions block says): **zero** pixels > 225 — nothing on a
+    road may glow — and `mean(B) − mean(R) ≥ +5` (cool night cast). Whole frame at
     480 px: `blackPct ≤ 3 %`. Roads adds no light and no emissive material with intensity > 0.15.
 15. **Wet roads under rain.** Roads reads `world.weather.wetness` (never a private timer, never its own rain state).
     **Procedure — one page session, one process, three captures at the `street` camera, at 17.5 and again at 22**
     (this is the rain pair §8 names; `--weather rain` on the command line is *not* how the numbers are taken,
-    because `environment` ramps wetness over time — `w.wetness += (w.rain − w.wetness) · min(1, dt·0.25)`,
-    `src/modules/environment/index.js:198` — so a capture at t ≈ 1.5 s sits at an indeterminate wetness that varies
-    run to run under SwiftShader):
+    because `environment` ramps wetness over time — `w.wetness += (w.rain − w.wetness) · min(1, dt · (rain > wetness
+    ? 0.25 : 0.03))`, `src/modules/environment/index.js:197` — so a capture at t ≈ 1.5 s sits at an indeterminate
+    wetness that varies run to run under SwiftShader):
     1. capture **DRY** with `world.weather.wetness = 0` and `world.weather.rain = 0`;
     2. set `world.weather.rain = 1; world.weather.wetness = 1` through the probe, wait **30 frames**, capture **WET**;
     3. set both back to `0`, wait 30 frames, capture **DRY2**.
-    Thresholds, all at `wetness = 1` and all on the CARRIAGEWAY / PAINT crops at the same pixel rectangles across
-    the three captures: WET CARRIAGEWAY `p50` is **≥ 12 % below** DRY's; a specular response appears — ≥ 0.5 % of
-    the carriageway region above DRY's `p99 + 25`; `PAINT p50 / CARRIAGEWAY p50 ≥ 2.0` still holds when wet.
-    Reversibility: **≥ 99.9 % of DRY2's pixels are within ±1 level of DRY's** (not "byte-identical" — ARCHITECTURE
-    §11 itself says "modulo float driver noise"). (`$REF/cs2_8.jpg`.)
+    Thresholds, all at `wetness = 1` and all inside `roads.carriageway` / `roads.paint`, at the **same pixel
+    rectangles** across the three captures (the camera does not move, so `crops.json` from the DRY capture is used
+    for all three). `paint p50 / carriageway p50 ≥ 2.0` still holds when wet, at both hours. The darkening threshold
+    is **stated per hour**, because the two regimes are not the same measurement:
+    - **17.5** — WET `carriageway p50` is **≥ 12 % below** DRY's, and a specular response appears: ≥ 0.5 % of the
+      `roads.carriageway` rect above DRY's `p99 + 25`.
+    - **22** — WET `carriageway p50` is **≥ 4 levels below** DRY's, absolute, not a percentage: item 14 puts the
+      night carriageway at `p50 ∈ [8, 38]`, where 12 % is 1–4.6 levels and lands inside SwiftShader/AgX
+      quantisation. **No specular clause at 22**: the standing assumptions leave the moon as the only specular
+      source in this showcase, and a grazing moon highlight covering half a percent of the carriageway is not
+      something this spec has evidence is achievable.
+    Reversibility: **≥ 99.9 % of DRY2's pixels are within ±1 level of DRY's, over the union of the
+    `roads.carriageway` and `roads.paint` rects** — not the whole frame, which would drag in terrain grass and any
+    residual animation (not "byte-identical" either — ARCHITECTURE §11 itself says "modulo float driver noise").
+    (`$REF/cs2_8.jpg`.)
 16. **Highway furniture.** Hard shoulder 1.8–2.2 m with a continuous inset edge line; chevron gore hatching ≥ 12 m
     long plus a painted nose triangle at the ramp merge; **steel guardrail** (post + beam silhouette, posts ≤ 4.0 m
     pitch) along both outer edges of the highway; median barrier with a lighter top face (`ΔL ≥ 20` vs its side faces
     at noon). At the mid-distance of `highway_12` the barrier subtends ≥ 3 px vertically — it must read as an object,
     not a line. (r1 issue 12; `$REF/cs2_1.jpg`, `$REF/cs2_6.jpg`.)
 17. **Every declared type is in frame and visibly different.** All six of `alley, gravel, street, avenue, highway,
-    ramp` (the closed set of §2) appear in the staged scene and each is identifiable in a named shot:
-    `gravel` has no paint, no kerb, a 0.4–0.8 m soft edge dissolving into terrain and a coarser normal; `alley` has
-    one lane, kerbs, no centre line; `ramp` is one lane with shoulders and no sidewalk. `alley` is already staged
-    (two chains, `src/modules/roads/showcase.js:33–35`) but has never been *graded* — name the shot it reads in.
-    `gravel` was never staged in r1/r2 — stage it (§8 item 3).
+    ramp` (the closed set of §2) appear in the staged scene, and each is identified **at full resolution in a named
+    shot** — the shot is named here, not left to the builder:
+    `street` and `avenue` in `armtop_12` and `intersection_12` (lane count and centre line; items 6 and 12 grade the
+    geometry); `highway` in `highway_12` and `ramp` in `merge_12` (item 16 grades the furniture; `ramp` is one lane
+    with shoulders and no sidewalk); `alley` and `gravel` in **`closeup_12`**, which at ≈ 0.084 m per pixel resolves
+    a 0.12 m line — `alley` one lane, kerbs, no centre line; `gravel` no paint, no kerb, a 0.4–0.8 m soft edge
+    dissolving into terrain. "A coarser normal" was in the r2 spec and is **withdrawn**: it is not observable in a
+    screenshot, a shot JSON or a probe. `alley` is already staged (two chains,
+    `src/modules/roads/showcase.js:33–35`) but has never been *graded*; `gravel` was never staged in r1/r2. Both must
+    be staged inside the `closeup` frame (§8 items 2 and 3).
 18. **API contract, unchanged and probe-verified** (r1 verified all of this; it must not regress). With zero console
     errors: `addNode`/`addEdge` return ids and build geometry within 3 frames; `version` bumps and `roads:changed`
     fires with `{added,removed,nodes}`; `sample(id,0/1)` lands within 0.5 m of the node, mid-point on the curve,
@@ -368,11 +416,23 @@ Ordered by how much each moves the score.
     zero console errors and `ready` in every shot; this item adds only that the manifest is the set they apply to.
 22. **The corridor exception.** BUILDER.md's "stay in your lane" applies unchanged; the one roads-specific
     delta is the heightfield: `world.terrain.heights` may be written **strictly inside the road corridor and its
-    graded slope**, through the sanctioned path in the standing assumptions, and nowhere else. The probe records the
-    index bounds it wrote; any vertex outside the corridor + graded slope is an automatic fail.
-23. **Edits are responsive, and `update()` does not allocate.** After init on the 75-edge showcase network, a probe
-    that calls `addEdge` and waits settles in ≤ **800 ms** of `api.stats().ms` (dirty-region rebuild, not a
-    whole-network rebuild), and the new edge's triangles are present. No-allocation is measured, not asserted:
+    graded slope**, through the sanctioned path in the standing assumptions, and nowhere else. Verified through
+    `api.debug.terrainWrites()` (§2): the probe converts every returned index to world coordinates
+    (`x = ix·cell − 1024`, `z = iz·cell − 1024`) and requires each one to be **either** within
+    `asphaltHalf + sidewalk + 24 m` of an edge centreline (`world.roads.nearestEdge(x, z, 80)`) **or** within
+    `max(arm.trim) + asphaltHalf + sidewalk + 24 m` of a node (`nodeInfo(id).arms`, the node plateau). The 24 m is
+    `GRADE_REACH = 22` plus the ~2 m the corridor mask itself carries (`corridorHalf` adds `FLAT_MARGIN 0.8` and the
+    node reach a further 1 m — `src/modules/roads/build.js:14, 16, 503`). **One vertex outside both is an automatic
+    fail.** Without `terrainWrites()` this item is unverifiable and the corridor exception is taken on trust, which
+    is why §2 sanctions the accessor.
+23. **Edits are responsive, and `update()` does not allocate.** After init on the showcase network as staged in §8
+    (report its edge count — r2 staged 70 and round 3 adds to it, so no number is pinned here), a probe that calls
+    `addEdge` and waits settles in ≤ **800 ms** of `api.stats().ms` (dirty-region rebuild, not a whole-network
+    rebuild), and the new edge's triangles are present. That 800 ms is a **SwiftShader wall-clock number on this
+    box**, the same instrument as §5's ≤ 3.5 s full-rebuild row; r1 measured 1.58 s for a full 66-edge rebuild. The
+    ratio is the real requirement: if the full init rebuild in the same run exceeds 2.4 s, the binding form is
+    **dirty-region rebuild ≤ ⅓ of that run's full rebuild** (⅓ of 2.4 s is exactly the 800 ms above).
+    No-allocation is measured, not asserted:
     `__sim.stats().heapMB` sampled after a forced settle, then again after **600 idle frames** at the `street`
     camera, must have grown by **< 1 MB** (`heapMB` is null when `performance.memory` is absent — then say so and
     the item is ungraded, not failed).
@@ -387,7 +447,7 @@ Ordered by how much each moves the score.
 
 | Metric | Limit | How measured |
 |---|---|---|
-| Declared `budget` in `index.js` | `{ drawCalls: 48, triangles: 600_000 }` | ARCHITECTURE §9 allocates roads 80; roads declares **48** so that CRITIC.md's "draw calls within the declared budget" and the row below are the same test. A 60-draw-call build must not pass the role file and fail the spec |
+| Declared `budget` in `index.js` | `{ drawCalls: 48, triangles: 300_000 }` | ARCHITECTURE §9 allocates roads 80; roads declares **48** so that CRITIC.md's "draw calls within the declared budget" and the row below are the same test. A 60-draw-call build must not pass the role file and fail the spec. The same argument applies to triangles, which `index.js:23` still declares at 600 000: a 450 k build must not pass the role file and fail item 20 either |
 | Draw calls **attributable to roads** in any showcase shot (incl. shadow cascades) | **≤ 48** | probe, one page session: `api.debug.setVisible(false)` → wait 5 frames → diff on `__sim.stats().drawCalls`. r2 = 16 — spend the headroom on furniture, not on unmerged meshes |
 | Scene draw calls in any `?showcase=roads` shot (terrain + environment + roads) | ≤ 90 | `summary.json.maxDrawCalls`. r1 = 86, r2 = 44 |
 | Triangles attributable to roads, showcase | **≤ 300 000** | same `setVisible` diff on `__sim.stats().triangles`. r2 = 55 587 |
@@ -399,9 +459,9 @@ Ordered by how much each moves the score.
 | GPU texture memory owned by roads | **≤ 96 MB** | ≤ 4 PBR sets at 1 k (no 2 k), one ≤ 512² noise, one ≤ 1024² paint/decal atlas |
 | Heap added | ≤ 60 MB | `__sim.stats().heapMB` delta |
 
-Geometry rule: per-tile merged geometry, tiles ≤ 1024 m, one draw call per (tile × material). Anything repeated more
-than ~50 times across the map (manhole covers, guardrail posts, railing balusters, kerb-side gullies) is an
-`InstancedMesh` or is merged into the tile — never a `Mesh` each.
+Geometry rule: BUILDER.md owns the ~50-instance threshold; the roads-specific delta is the draw-call accounting —
+per-tile merged geometry, tiles ≤ 1024 m, one draw call per (tile × material) — and the named repeated objects it
+applies to here: manhole covers, guardrail posts, railing balusters, kerb-side gullies.
 
 Assets: CC0 only, appended to `public/assets/manifest.json`, 1 k JPG (§10). `asphalt_02`,
 `concrete_floor_worn_001`, `gravel_floor_02` are already fetched. At most **one** further PBR set is justified
@@ -499,8 +559,8 @@ constants: WORLD_SIZE 2048, HALF_WORLD 1024, SEA_LEVEL 0, TILE_SIZE 128,
 ctx.quality ∈ 'low'|'medium'|'high'|'ultra' ; ctx.headless ; ctx.log.info/warn/error
 ```
 Decals and markings use `RENDER_ORDER.MARKINGS` with `polygonOffset`; roads meshes set `castShadow` and
-`receiveShadow` and sit on `LAYERS.ROADS`. `Math.random`, `Date.now()` in logic, and writing any `world` section other
-than `world.roads` (plus the corridor heights) are forbidden.
+`receiveShadow` and sit on `LAYERS.ROADS`. Determinism and "stay in your lane" are BUILDER.md's and are not restated
+here; the one roads-specific delta is the corridor heights, and item 22 is where it is graded.
 
 **Consumers to not break:** `terrain` reads `coverage`/`isRoad`; `zoning` will read `frontage`; `traffic` will read
 `sample`/`laneCenter`/`intersections`; `props` will read `lampPositions`/`intersections`; `democity` builds through
@@ -515,8 +575,11 @@ the heightfield changes. `setup(ctx)` must produce:
 
 1. A 5 × 4 **street grid** with an `avenue` running east–west through it and a signalised 4-way crossroads at
    (40, 40) with ladder crosswalks, stop lines and per-lane arrows on all four approaches.
-2. Two `alley` links through blocks, and one gently curved (`ctrl`) residential street.
-3. A **gravel** spur of ≥ 120 m leaving the grid into open ground, ending in a dead-end cap.
+2. Two `alley` links through blocks, **at least one of them inside the `closeup` frame** (item 17 reads it there),
+   and one gently curved (`ctrl`) residential street.
+3. A **gravel** spur of ≥ 120 m leaving the grid into open ground, ending in a dead-end cap. It leaves the grid on
+   the `closeup` camera's side, so that its surface is in frame at `closeup_12` — item 17 has no other shot in the
+   manifest that resolves gravel's absence of paint.
 4. A true-circle **roundabout** (radius 26–30 m) west of the grid with four radial entries, give-way markings and a
    finished central island.
 5. A dual-carriageway **highway** S-curve with median barrier, guardrails, hard shoulders, and a `ramp` on-ramp with
@@ -524,12 +587,13 @@ the heightfield changes. `setup(ctx)` must produce:
 6. A **grade separation** where the highway crosses over the avenue (item 9).
 7. A **street bridge** over the river with abutments, wing walls, piers and parapets, plus its embankment approaches.
 8. One street climbing a hillside steep enough to require a **retaining wall** (cut or fill > 3 m).
-9. **The highway's western end.** The r1/r2 `coastwest` camera is gone from the preset list, so the coast transition
-   that produced r1 blocker 3 ("dark void under the deck", black cliff embankment) now has no dedicated frame. It
-   does not therefore stop being graded: the highway's west end **terminates on land, ≥ 40 m east of
+9. **The highway's western end.** **Remove the `coastwest` preset** from `CAMERAS` and from the registered set
+   (`src/modules/roads/showcase.js:10`, where it is still defined today) — `showcase.cameras` must be exactly the
+   nine in the table below, or the 38-capture manifest does not close. The coast transition that produced r1
+   blocker 3 ("dark void under the deck", black cliff embankment) then has no dedicated frame; it does not therefore
+   stop being graded: the highway's west end **terminates on land, ≥ 40 m east of
    `world.terrain.features.coast.xAt(z)`**, with a modelled dead-end cap, a graded verge and no deck over the beach.
-   Item 8 probes it as a terminus and the report carries one named crop of it cut from `aerial_12`
-   (`aerial_12_COASTEND.png`).
+   Item 8 probes it as a terminus and the report carries `aerial_12_COASTEND.png` cut from `aerial_12`.
 10. Never call `setWeather`, never move the clock (the showcase router owns `?time=`), never add anything that is not
     road, kerb, sidewalk, verge, barrier, bridge or retaining wall.
 
@@ -576,6 +640,7 @@ whole, and no item may name a shot that is not in it. **38 captures**, all under
 | E | Cross-module | `?showcase=all --camera aerial --time 12` → `all_aerial_12.png` (item 21) | 1 |
 | F | 720p | `aerial` at 12, `--w 1280 --h 720` → `aerial_12_720p.png` (item 24) | 1 |
 
-Every named crop (§4 conventions) is saved beside the shot it came from as `<shot>_<CROPNAME>.png` and is *not*
-counted in the 38. Groups A, B, C and F come from `tools/gauntlet.mjs` / `tools/screenshot.mjs` and keep the
-gauntlet's `.` → `p` naming; groups D and E are driven by the probe script and named exactly as above.
+Every capture is taken with **`--crops`**, so each PNG has its `<shot>.crops.json` beside it (§4 conventions);
+those sidecars are *not* counted in the 38. Groups A, B, C and F come from `tools/gauntlet.mjs` /
+`tools/screenshot.mjs` and keep the gauntlet's `.` → `p` naming; groups D and E are driven by the probe script and
+named exactly as above.

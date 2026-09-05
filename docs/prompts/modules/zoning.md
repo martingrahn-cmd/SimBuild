@@ -59,17 +59,31 @@ required surface — `tools.md` and `infoviews.md` already call it by name, so n
     zonableAt(x,z) -> {edgeId, side, depth, lat, t, ix, iz} | null
     lotsFor(edgeId) -> [lot]                          freeLots() -> [lot]
     setOverlayVisible(v)                              overlayVisible() -> bool
-    setBrushPreview({x,z,radius,type,density} | null) // the game's only brush cursor — §4.17
     refresh()                                         // rebuild band + lots + overlay after external edits
     stats() -> {cells, zonable, lots, per:{residential,commercial,industrial,office},
                 overlay:{cells,lots,tris,draws,ms}}
     probePoints() -> [{type, density, x, z}]          // 8 class-representative block centres — §4.1–4.3
+    frontEdge(edgeId, side) -> [{x, z}]               // ordered vertices of the overlay's road-facing edge, ≤ 2 m
+                                                      //   apart — the instrument for §4.7 and §4.8
+    cropRects({project, width, height, camera})       // pinned landmark rects — §4.18, §4.19
+      -> {emptyBand, bareGround, nearBlock, farBlock} //   each [x, y, w, h] in pixels
     serialize() -> {cells:[…]}                        deserialize(data)
 ```
 
 `bulk`, `cellAt`, `lotAt`, `zonableAt`, `setOverlayVisible`, `refresh` and `stats` already exist in
-`src/modules/zoning/index.js` and are enumerated as zoning's contract by `tools.md` §7. `setBrushPreview` and
-`probePoints` are new in this round.
+`src/modules/zoning/index.js` and are enumerated as zoning's contract by `tools.md` §7. `probePoints`, `frontEdge`
+and `cropRects` are new in this round. There is deliberately **no** `setBrushPreview`: the brush cursor is `tools`'
+(§4.17).
+
+`cropRects` is read by `node tools/screenshot.mjs … --crops`, which writes `<out>.crops.json`
+(`{png, width, height, camera, time, rects:{"zoning.<name>":[x,y,w,h]}}`) from `window.__sim.cropRects()` —
+ARCHITECTURE §8, and the **authoritative** producer of `crops.json`; `window.__sim.project(x,y,z)` maps a world
+point to pixels. `gauntlet.mjs` does not pass `--crops`, so the frames items 18 and 19 measure in are captured by
+direct `screenshot.mjs` calls (§4's capture table). The four landmarks, all in pixels of the **full-resolution**
+capture: `emptyBand` = 120×120 px centred on an unpainted zonable block (§8.8); `bareGround` = 120×120 px on
+unzonable ground ≥ 24 m outside the band; `nearBlock` / `farBlock` = 100×100 px on painted blocks whose distance
+from the `zoneswide` camera is 150 ± 30 m and 600 ± 60 m. Return only the landmarks that are on screen for the
+camera passed in.
 
 **Zone palette — owned here, quoted elsewhere.** The eight sRGB hexes in `src/modules/zoning/palette.js` are a
 cross-module contract:
@@ -79,9 +93,10 @@ cross-module contract:
     industrial:  { low: 0xf7b515, high: 0xd05310 }    office:     { low: 0xc65ff5, high: 0x6a1cb8 }
 ```
 
-These values are quoted by `tools.md` item 10, which grades its zone-brush cursor at ΔE ≤ 8 against them; changing
-one is a core request (`docs/core-requests/zoning.md`), not a local decision. Item 2's pairwise-separation floor is a
-*minimum these hexes already satisfy* — it does not license a re-hue.
+These values are quoted by `tools.md` item 10, which grades its zone-brush cursor against them; changing one is a
+core request (`docs/core-requests/zoning.md`), not a local decision. Item 2's pairwise-separation floor is a
+*minimum these hexes already satisfy at item 1's alpha floor* (the derivation is in item 2) — it does not license a
+re-hue.
 
 **Events emitted** (ARCHITECTURE §5), after the mutation completes and after `zones.version++`:
 
@@ -101,10 +116,14 @@ rebuild), `zones:changed` (rebuild overlay geometry), `buildings:changed` (refre
 **Anchor image: `$REF/cs2_1.jpg`**, right-hand third — an office block under the violet zone overlay while the road
 tool is open. Read what CS2 actually does there:
 
-- The zone colour is a **translucent tint over the world, not a paint bucket**. The building's window grid, its roof
-  plant and the grass around it are all still legible *through* the violet; the overlay changes hue and lifts value,
-  it does not replace texture. Our current build (`shots/zoning/dev_zones_12.png`) fails exactly this: the blocks are
-  near-opaque pastel slabs and the ground under them is gone.
+- The zone colour is a **translucent tint over the world, not a paint bucket**. The building's window grid and its
+  roof plant are still legible *through* the violet; the overlay changes hue and lifts value, it does not replace
+  texture. Be honest about what the anchor shows: most of that violet block is building facade. The only ground it
+  covers is the tinted strip at the **bottom-left of the violet block**, where the grass still reads through — so
+  item 1's ground-legibility requirement **extrapolates** cs2_1's facade treatment onto ground cells, using that
+  strip as the one place in the anchor where the treatment is visible on ground. Our current build
+  (`shots/zoning/dev_zones_12.png`) fails it either way: the blocks are near-opaque pastel slabs and the ground
+  under them is gone.
 - The **cell lattice is visible as thin lines**, one shade lighter than the fill, at roughly one line per 8 m — a
   grid you could count, not a texture.
 - The zoned area's **outer boundary is a crisp bright line** with a soft inner falloff, and it follows the shape of
@@ -147,98 +166,143 @@ node tools/gauntlet.mjs --module zoning --round <N> \
 8 cameras × 4 times = **32 frames**, written to `shots/zoning/r<N>/<camera>_<time with . → p>.png` plus
 `summary.json`. **This overrides `CRITIC.md`'s default matrix (`--times 12,22` over four cameras) for zoning** — the
 override is deliberate, not an oversight: items 4, 6, 13 and the §8 reading notes need 06.5 and 17.5, and
-`zoneslope_17p5.png` exists only under this invocation. Budget roughly 30–170 s per capture under SwiftShader. Two
-extra captures are required on top of the matrix: `--w 1280 --h 720` at `zones`/12 (item 23) and one
-`?showcase=all&time=12` frame written to `shots/zoning/r<N>/all12.json` (item 16). Nothing else in this spec asks for
-a frame that this invocation does not produce.
+`zoneslope_17p5.png` exists only under this invocation. Budget roughly 30–170 s per capture under SwiftShader.
 
 `P` below means a page-evaluate probe against
 `http://127.0.0.1:5173/?showcase=zoning&headless=1&time=<h>`; the module api is reachable as
 `__sim.registry.get('zoning').def.api` and its stats as `api.stats()` →
-`{cells, zonable, lots, per:{residential,commercial,industrial,office}, overlay:{cells,lots,tris,draws,ms}}`.
+`{cells, zonable, lots, per:{residential,commercial,industrial,office}, overlay:{cells,lots,tris,draws,ms}}`. A `P`
+session is a Playwright page, so it can also take the frame it just set up (`page.screenshot()` at 1920×1080 unless
+the row says otherwise); frames captured that way are marked *(in-session)* below and are **not** products of
+`gauntlet.mjs`.
+
+**Every capture outside the 32-frame matrix**, so nothing is discovered mid-grade. Roughly a dozen extra frames at
+the same 30–170 s each — 5 to 30 minutes on top of the matrix; budget it.
+
+| Capture | How | Serves |
+|---|---|---|
+| overlay-off + overlay-on pair, `zones`/12 | session A: `api.setOverlayVisible(false)`, shoot, `(true)`, shoot *(in-session)* | 1, 2, 4 |
+| overlay-off + overlay-on pair, `zones`/22 | session B, same method at `&time=22` *(in-session)* | 4 |
+| overlay-off + overlay-on pair, `zoneswide`/12 | session C, same method *(in-session)* | 3 (aliasing clause) |
+| pulse-trough + pulse-peak pair, `zones`/12 | session D: drive `uTime` to each extreme, shoot *(in-session)*. Not needed if 6(a) is used | 6(b) |
+| two frames 0.5 s apart, `zoneslope`/12, camera static, `speed=1` | session E *(in-session)* | 9 (flicker) |
+| two frames 0.5 s apart at 1280×720, `zones`/12 | session F, viewport 1280×720 *(in-session)*; its first frame is also the 720p still | 23 |
+| `crops_zones_12.png` + `.crops.json` | `node tools/screenshot.mjs --showcase zoning --camera zones --time 12 --crops --out shots/zoning/r<N>/crops_zones_12.png` | 18 |
+| `crops_zoneswide_12.png` + `.crops.json` | same with `--camera zoneswide` | 19 |
+| `?showcase=all&time=12` → `shots/zoning/r<N>/all12.json` | `screenshot.mjs --showcase all --time 12` | 16 |
+| the two degradation URLs | `screenshot.mjs` on each URL of item 22 | 22, 24 |
+
+**Pinned statistics are taken on the full-resolution PNG** (1920×1080, or 1280×720 for the item-23 pair), never on a
+downscaled copy: at 480 px wide a 1 m calibration patch is about two pixels.
 
 **Where items 1–3 measure.** All three sample at `api.probePoints()` — the eight class-representative block centres
-the showcase stages, one per (type × density), returned as world coordinates and projected to screen with
-`ctx.camera.camera` for the frame being graded. Builder and critic therefore measure the same pixels; "the centre of
-a zoned block" is not a location, and §8 stages roughly twenty painted blocks over ground ranging from flat grid to
-hillside to waterfront, so the choice would otherwise move item 1's ratio and item 2's 28 distances by more than
+the showcase stages, one per (type × density), returned as world coordinates and projected to pixels with
+`window.__sim.project(x, y, z)` in the session that captured the frame being graded. Builder and critic
+therefore measure the same pixels; "the centre of a zoned block" is not a location, and §8 stages roughly twenty
+painted blocks over ground ranging from flat grid to hillside to waterfront, so the choice would otherwise move
+item 1's ratio and item 2's 28 distances by more than
 their thresholds. The builder lists the eight points in `docs/builds/zoning_r<round>.json`. All eight must sit on
 flat inland ground, ≥ 24 m from any water or slope exclusion boundary, so item 1's luminance-std ratio is measuring
 the overlay and not terrain shading.
 
-1. **Translucency — the ground survives the overlay.** With `api.setOverlayVisible(false)` then `true`, sampling the
-   same 200×200 px crop centred on each of `api.probePoints()` projected into `zones_12.png`: at every one of the
-   eight points, the crop's luminance standard deviation with the overlay on is **≥ 45 %** of its value with the
-   overlay off, and the mean luminance rises by **≤ 55 units** (0–255). Fill alpha must sit in **0.42–0.58**.
-   `P`+two screenshots.
-2. **Eight separable classes.** Mean sRGB of a 40×40 px patch at each of `api.probePoints()` projected into
-   `zones_12.png`: all 28 pairs among the 8 (type × density) classes are separated by Euclidean RGB distance
-   **≥ 45** (0–255), and the four type families remain identifiable by hue family (green / blue-cyan / orange-amber /
-   violet) at `zoneswide_12.png`. The palette that produces this is fixed in §2 and may not be re-hued to widen the
-   margin.
+1. **Translucency — the ground survives the overlay.** Session A's two frames, sampling the same 200×200 px crop
+   centred on each of `api.probePoints()` projected with `__sim.project`: at every one of the eight points, the
+   crop's luminance standard deviation with the overlay on is **≥ 45 %** of its value with the overlay off, and the
+   mean luminance rises by **≤ 55 units** (0–255). Fill alpha must sit in **0.50–0.54**, and both ends of that range
+   are forced: a flat tint at alpha `a` composites to `a·C + (1−a)·ground`, so the std ratio this item measures *is*
+   `1 − a` — 0.54 is the highest alpha that still clears the 45 % floor (1 − 0.54 = 0.46), and 0.50 is the lowest
+   that lets item 2 clear its floor (derivation there). `P` + two screenshots.
+2. **Eight separable classes.** Mean sRGB of a 40×40 px patch at each of `api.probePoints()` projected into session
+   A's overlay-on frame, sampled **between hatch lines** so item 3's darkening cannot eat this margin: all 28 pairs
+   among the 8 (type × density) classes are separated by Euclidean RGB distance **≥ 40** (0–255), and the four type
+   families remain identifiable by hue family (green / blue-cyan / orange-amber / violet) at `zoneswide_12.png`. The
+   palette that produces this is fixed in §2 and may not be re-hued to widen the margin — so the floor has to be one
+   the palette reaches. It is: alpha compositing scales every pair distance by the fill alpha, the closest raw pair
+   is commercial-high `0x1140c9` vs office-high `0x6a1cb8` at Euclidean distance **97.5**, and 97.5 × 0.50 (item 1's
+   alpha floor) = **48.7** before tone mapping. The 40 floor is that 48.7 with headroom for AgX compressing
+   saturated hues. Second-closest pair, for margin: industrial low↔high, 105.6 raw → 52.8 at alpha 0.50.
 3. **Density is legible by pattern, not only by value.** High density carries a 45° world-space hatch of period
    **3.0 m ± 0.2 m** darkening the fill by **14–22 %**; the hatch is resolvable (≥ 4 px period) in the four
    high-density `probePoints()` crops of `zonesclose_12.png` and `zones_12.png`, and does not alias into per-pixel
    static at `zoneswide_12.png` (no 100×100 px crop centred on a `probePoints()` projection in that frame has
-   luminance std > 1.6 × the std of the same crop with the overlay off).
+   luminance std > 1.6 × the std of the same crop in session C's overlay-off frame).
 4. **Night is night.** Overlay luminance is multiplied by `mix(1.0, 0.42, world.weather.night)` (fall back to
-   `1 - clamp((ctx.clock.sunElevation() + 0.13) / 0.15, 0, 1)` if `weather.night` is absent). Measured on the same
-   `probePoints()` crops: mean overlay luminance in `zones_22.png` is **0.35–0.55 ×** its value in `zones_12.png`; the whole
-   frame's p99 at 22:00 is **≤ 200/255**; no overlay pixel is the brightest pixel in the frame.
+   `1 - clamp((ctx.clock.sunElevation() + 0.13) / 0.15, 0, 1)` if `weather.night` is absent). State the method,
+   because "overlay luminance" in a composited frame is otherwise two quantities with opposite verdicts: from
+   sessions A and B, **overlay luminance at a probe point is the mean of (overlay-on − overlay-off) over that
+   point's 200×200 px crop**. Require L22/L12 ∈ **0.35–0.55** at every one of the eight points. Separately, and read
+   on the composited frame as written: `zones_22.png`'s whole-frame p99 is **≤ 200/255**, and no overlay pixel is
+   the brightest pixel in that frame.
 5. **Cell lattice present and screen-space stable.** The 8 m cell borders are drawn as lines whose on-screen width is
-   clamped to **1.0–2.5 px** across the 110–660 m camera range; region outlines are clamped to **1.5–4.0 px** over
-   the same range. Verified in `zonesclose_12.png` (must not be fat slabs) and `zoneswide_12.png` (must not vanish).
+   clamped to **1.0–2.5 px** across the **60–660 m** camera range; region outlines are clamped to **1.5–4.0 px** over
+   the same range. Width is read on the full-resolution PNG as the full-width-at-half-maximum of the luminance ridge
+   across a lattice line. Verified at the near end in `street_12.png` (60 m) and `closeup_12.png` (110 m), at
+   `zonesclose_12.png` (140 m — must not be fat slabs), and at `zoneswide_12.png` (660 m — must not vanish).
 6. **Region outline reads in a still and animates.** Every boundary between two different (type, density) regions and
    every boundary against unzoned land carries a bright outline whose peak luminance exceeds the adjacent fill by
    **≥ 35 %**, with a soft 2–3 m inner falloff — measured in `zones_12.png` at the region boundary staged by §8.8.
    *Animation runs* (`P`): read the shared `uTime` uniform twice 1.0 s apart with `speed=1`; it must have advanced by
    **0.8–1.2**. *Amplitude* — the gauntlet stills are captured with the clock parked at a fixed hour, so amplitude
    can never be read from one of them. Two ways, either sufficient: (a) `P` reads the outline material's amplitude
-   uniform, which the module must expose as `uPulseAmp`, and requires **0.20–0.31**; or (b) drive `uTime` to the
-   pulse trough and to the pulse peak, capture one frame at each, and require the outline's measured peak luminance
+   uniform, which the module must expose as `uPulseAmp`, and requires **0.20–0.31**; or (b) session D drives `uTime`
+   to the pulse trough and to the pulse peak, capturing one frame at each, and require the outline's measured peak luminance
    ratio peak:trough to fall in **1.25–1.45** (the same 20–31 % modulation). Anything below 1.25 is a static outline;
    above 1.45 it strobes.
-7. **Road-parallel front edge.** Along the curved street and the diagonal street of the showcase, the road-facing
-   boundary of the zoned band deviates from a line parallel to the road centreline by **≤ 1.5 m** — no 8 m staircase
-   steps. (The cell data stays world-aligned; the overlay draws this edge from `roads.frontage`/`roads.sample`
-   geometry.) Evidence: `zonesclose_12.png`, crop over the curved street.
-8. **Setback gap to the kerb.** The clear gap between the overlay's road-facing edge and the kerb line is
-   **0.5–2.0 m** on every road type, and **no overlay colour falls on asphalt, kerb or sidewalk anywhere**. Lane
-   markings and crosswalk bars are fully unobscured in `closeup_12.png` and `street_12.png`.
+7. **Road-parallel front edge.** A metre tolerance needs a metre instrument, not a PNG: `P` over
+   `api.frontEdge(edgeId, side)` for the curved street and the diagonal street of the showcase. For each returned
+   vertex take `r = world.roads.nearestEdge(v.x, v.z, 60)`; every vertex of one frontage run must satisfy
+   `|r.dist − median(r.dist over that run)| ≤ 1.5 m` — no 8 m staircase steps. (The cell data stays world-aligned;
+   the overlay draws this edge from `roads.frontage`/`roads.sample` geometry.) Visual record only:
+   `zonesclose_12.png`, crop over the curved street.
+8. **Setback gap to the kerb.** `P` over `api.frontEdge(edgeId, side)` for every staged edge. With
+   `r = world.roads.nearestEdge(v.x, v.z, 60)` and `T = world.roads.types[r.edge.type]`, the clearance
+   `r.dist − (T.asphaltHalf + (T.sidewalk ?? 0))` is **0.5–2.0 m** at every vertex on every road type, and
+   `world.roads.isRoad(v.x, v.z) === 0` at every vertex — that is the checkable form of "no overlay colour falls on
+   asphalt, kerb or sidewalk". Visual record only: lane markings and crosswalk bars fully unobscured in
+   `closeup_12.png` and `street_12.png`.
 9. **No z-fighting, no floating.** Overlay is lifted **0.16 m** (cells) / **0.26 m** (lot lines) above
    `terrain.getHeight` at 4 m tessellation (2×2 quads per cell) with `polygonOffset` on and `depthWrite:false`.
    Stipple and flicker are different artifacts and are graded differently:
    - **Stipple** (spatial, readable in a still): in every one of the 32 gauntlet frames, no 100×100 px crop lying
      wholly inside one zoned block contains **≥ 2 %** of pixels whose luminance differs from *both* horizontal
      neighbours by **≥ 30/255**.
-   - **Flicker** (temporal, not readable in a still — this is the **two-capture diff**): in one probe session at
-     `zoneslope`/12 with the camera static and `speed=1`, capture two frames **0.5 s** apart. Over the zoned blocks,
+   - **Flicker** (temporal, not readable in a still — this is the **two-capture diff**): session E at
+     `zoneslope`/12 with the camera static and `speed=1`, two frames **0.5 s** apart. Over the zoned blocks,
      with pixels within 3 px of a region boundary masked out (item 6's pulse is legitimate motion), the per-pixel
      **max |Δluminance| ≤ 12/255** and the **mean |Δluminance| ≤ 2/255**.
 
-   The overlay never detaches from a slope: max visible gap to the ground on the hillside in `zoneslope_12.png`
-   ≤ **0.3 m**.
+   The overlay never detaches from a slope. Because the overlay is (by this item's own construction) a
+   piecewise-linear surface through `terrain.getHeight` at the 4 m tessellation nodes, the gap is a terrain-curvature
+   quantity and needs no geometry accessor: `P` over every cell in `world.zones.cells` — for each of the cell's four
+   4 m quads, `|getHeight(quad centre) − the bilinear interpolation of getHeight at that quad's four corners|` must
+   be **≤ 0.3 m**. Any cell that exceeds it must be tessellated finer than 4 m. Visual record: `zoneslope_12.png`.
 10. **Lots exist, in rows, everywhere they should.** `P`: `api.stats()` in the showcase reports
-    **`cells` ≥ 1500`** and **`lots` ≥ 120**; **≥ 70 %** of zoned cells are claimed by a lot (`api.stats()` plus
+    **`cells` ≥ 1500** and **`lots` ≥ 120**; **≥ 70 %** of zoned cells are claimed by a lot (`api.stats()` plus
     `world.zones.lots`), and every lot has `2 ≤ w/8 ≤ 5` slots and `d ∈ {16, 24, 32}` m before corner extension.
     Within one contiguous run of the same class on one frontage, lot widths differ by **≤ 8 m**. Visible as equal
     rectangles in `zones_12.png`.
-11. **Lot dimensions per class.** Preferred frontage × depth in metres, ±8 m of corner extension allowed:
-    residential low 16×24, residential high 24×24, commercial low 16×24, commercial high 24×24, industrial low
-    24×32, industrial high 32×32, office low 24×24, office high 32×32. `P` over `world.zones.lots`.
-12. **Corner lots fit.** At every junction where two zoned frontages meet, the lot at the end of each run extends up
-    to 3 m toward the junction (`lot.corner === true`) so the block corner is covered. The showcase stages **N** such
+11. **Lot dimensions per class.** Preferred frontage × depth in metres: residential low 16×24, residential high
+    24×24, commercial low 16×24, commercial high 24×24, industrial low 24×32, industrial high 32×32, office low
+    24×24, office high 32×32. A corner lot (`lot.corner === true`) may exceed its preferred frontage by **one 8 m
+    slot** — `w` up to +8 m, `d` unchanged; every other lot matches exactly. `P` over `world.zones.lots`.
+12. **Corner lots fit.** At every junction where two zoned frontages meet, the end lot of each run claims the corner
+    cells of its own frontage band (`lot.corner === true`), growing by **one 8 m slot** — `w` increases by ≤ 8 m,
+    `d` is unchanged — so the block corner is covered. The rule is stated in the same units as its check on purpose:
+    lot membership is quantised to the 8 m grid (`lot.cells` is a list of cell keys), so a sub-cell geometric
+    extension claims no additional cells and could not move the number below. The showcase stages **N** such
     junctions; the builder states N and their node ids in `docs/builds/zoning_r<round>.json`, and the critic grades
     that list (there is no fixed count in this spec — §8's staging determines it). Mechanically, `P` over
     `world.zones.cells`: **no notch of unclaimed zoned cells larger than 2 cells** exists within **12 m** of any of
-    those N nodes. Evidence: `zonesclose_12.png` plus the probe.
+    those N nodes. Visual record: `zonesclose_12.png`.
 13. **Slope and water are respected, organically.** No cell exists where `terrain.isWater` is true at the centre or
     any of the 4 corners, where `terrain.getSlope > 0.42 rad`, or where the height range across the cell exceeds
     **6.5 m** — `P`, assert over all of `world.zones.cells`. "Ragged, follows the contour, not a rectangle" is
     graded by a count, not by eye: `P` walks the ordered boundary cell run of the zoned area and counts **direction
-    changes** (an axis flip between consecutive boundary steps). Over the showcase's river frontage that run must
-    contain **≥ 12** direction changes; over the hillside run, **≥ 8**. A rectangular boundary scores 4. Evidence:
-    the probe, with `zoneslope_12.png` and `zoneslope_17p5.png` as the visual record.
+    changes** (an axis flip between consecutive boundary steps). The two runs are not left to whoever is arguing:
+    the build record names the **first and last cell key** of the river-frontage run and of the hillside run (§8),
+    and the critic walks exactly those two sub-runs of the boundary loop and no others. The river-frontage run must
+    contain **≥ 12** direction changes; the hillside run, **≥ 8**. A rectangular boundary scores 4. Visual record:
+    `zoneslope_12.png` and `zoneslope_17p5.png`.
 14. **Highways and ramps carry no frontage.** Zero lots and zero zonable cells reference an edge of type `highway`
     or `ramp`. The showcase contains at least one highway edge to prove it. `P`.
 15. **Lot identity is stable.** Adding an unrelated road edge elsewhere and forcing `api.refresh()` leaves every
@@ -250,26 +314,27 @@ the overlay and not terrain shading.
     **0** draw calls and **0** triangles — zoning is contributing nothing to the frame. `shots/zoning/r<N>/all12.json`
     is the evidence for the *other* half only: zoning's `moduleStatus` is `ready` and the frame logs zero console
     errors. (`all12.json`'s `drawCalls` is the whole scene's and proves nothing about zoning — do not cite it for
-    the 0.) Then, in the same session, after `events.emit('tool:changed', {tool:'zone'})` the overlay fades in over
-    **0.15–0.25 s** and after `{tool:'road'}` it fades out to invisible.
-17. **Brush preview — one implementation, shared with `tools`.** `api.setBrushPreview({x, z, radius, type, density})`
-    is the game's **only** brush-cursor renderer; `tools` calls it rather than drawing its own, so there is exactly
-    one set of numbers to satisfy. Those numbers are `tools.md` item 10's, and they govern here too: preview cells
-    fill the same 8 m grid in the **same palette hex** as painted cells of that class (§2), at fill alpha
-    **0.40–0.50**, with a white **0.3 m** brush outline ring at the brush radius. In `zonesclose_12.png` a preview
-    cell and an already-painted cell of the same class sample to **ΔE ≤ 8**. Cells are drawn only where
-    `world.zones.zonableAt(x,z)` is non-null — never outside the buildable band. `api.setBrushPreview(null)` removes
-    it and costs **0** extra draw calls (the §5 toggle-diff, run with and without a preview parked, differs by 0).
-    Staged in the showcase (§8.9). `tools.md` §7's enumeration of zoning's api does not yet list `setBrushPreview`;
-    adding it there is a cross-module change — record it in `docs/core-requests/zoning.md` and do **not** fork a
-    second preview implementation to route around it.
+    the 0.) Then, in the same session, after `events.emit('tool:changed', {tool:'zone'})` the overlay fades in and
+    after `{tool:'road'}` it fades out to invisible. The fade is sampled, not eyeballed: `P` reads the overlay
+    material's opacity uniform every 50 ms for 0.4 s after each emit, and the 10 % → 90 % crossing must fall in
+    **0.15–0.25 s**.
+17. **(withdrawn — the brush cursor belongs to `tools`.)** `tools.md` item 10 already grades the zone-brush preview
+    in `tools`' own `zonetool_12.png`, and `tools.md`'s draw-call table already allocates the ground decal batch
+    (footprint / zone brush / marquee / coverage ring) inside `tools`' own 12 calls. Two owners for one cursor is a
+    round-costing conflict, and this spec is not the place to resolve it unilaterally: zoning renders **no** brush
+    cursor this round and exposes no `setBrushPreview`. Zoning's whole contribution to the cursor is
+    `world.zones.zonableAt(x,z)` (§2), which `tools.md` §7 already names as the test for which cells the preview may
+    fill.
 18. **Empty zonable band is visible.** Buildable-but-unpainted land renders as a faint neutral lattice (fill alpha
-    **0.08–0.14**, grid lines visible) so the player can see where zoning is possible; it is clearly distinguishable
-    from painted land and from unzonable ground in `zones_12.png` and `zoneswide_12.png`.
+    **0.08–0.14**, grid lines visible) so the player can see where zoning is possible. Measured on the
+    full-resolution `crops_zones_12.png` at the rects `zoning.emptyBand` and `zoning.bareGround` from its
+    `crops.json`: the mean RGB distance from `zoning.emptyBand` to the nearest painted class (item 2's 40×40 px
+    patches, re-sampled in this frame) is **≥ 30**, and from `zoning.emptyBand` to `zoning.bareGround` is **≥ 20**.
 19. **Fog and tone mapping are shared with the scene.** The overlay uses the scene fog uniforms and passes through
-    `tonemapping_fragment` + `colorspace_fragment`. At `zoneswide_12.png` the mean saturation of overlay blocks at
-    ~600 m is **≤ 0.75 ×** that of blocks at ~150 m, with no visible seam or "sticker" pop of saturated colour on
-    hazy ground.
+    `tonemapping_fragment` + `colorspace_fragment` — `P`: the overlay material's `fog === true`, and its compiled
+    fragment shader contains both chunk names. On the full-resolution `crops_zoneswide_12.png`, mean HSV saturation
+    inside the `zoning.farBlock` rect (600 ± 60 m from the camera) is **≤ 0.75 ×** that inside `zoning.nearBlock`
+    (150 ± 30 m), with no visible seam or "sticker" pop of saturated colour on hazy ground.
 20. **Budget.** Two separate measurements — do not confuse them (§5 has the same two rows):
     - **Draw calls attributable to zoning ≤ 10** and **triangles attributable to zoning ≤ 120 000**, by probe in one
       page session at `?showcase=zoning&time=12`: read `__sim.stats()`, set
@@ -280,10 +345,13 @@ the overlay and not terrain shading.
       also holds environment + terrain + roads, whose ARCHITECTURE §9 allocations are 15 + 20 + 80 = 115.
 
     Plus: `moduleMs.zoning` in every shot JSON **≤ 1.0 ms**; a full band+lot+overlay rebuild of the showcase logs
-    **≤ 45 ms**. No allocation in `update()` after the first frame.
+    **≤ 45 ms**. No allocation in `update()` after the first frame, borrowing `tools.md` item 13's probe because it
+    is the one that exists: `P` reads `renderer.info.memory.geometries` at frame 1 and again after 60 idle frames,
+    and the delta must be exactly **0** (buffers allocated once and updated in place).
 21. **Determinism and persistence.** Two runs at `seed=1337` give identical `api.stats()` (`cells`, `lots`, and the
     per-type histogram) and identical lot id sets. `api.serialize()` → `api.deserialize()` on a fresh load restores
-    the same painted cells and the same lot count; `grep -rn "Math.random" src/modules/zoning/` is empty. `P`.
+    the same painted cells and the same lot count. `P`. (`CRITIC.md`'s standing `Math.random` grep covers the
+    randomness source; it is not restated here.)
 22. **Degrades without its dependencies.** Two URLs, two distinct expected outcomes. `modules=` is a real override
     (`src/core/showcase.js` `parseParams`; `src/main.js:78` uses it in place of `selectModules`), so both are
     reachable:
@@ -295,21 +363,37 @@ the overlay and not terrain shading.
       `roads` running on the core terrain defaults (`getHeight` → 0, `getSlope` → 0, `isWater` → false). Zoning
       reaches status `ready`, stages its roads, and builds a **flat overlay at y = 0.16** with `cells > 0` and
       `lots > 0`, and logs **zero console errors**. No slope or water exclusion may fire when every height is 0.
-23. **Clean at 720p, and no crawl.** One shot at `--w 1280 --h 720` at `zones`/12 shows the same overlay with **no
+23. **Clean at 720p, and no crawl.** Session F's first frame (1280×720 at `zones`/12) shows the same overlay with **no
     outline dropout** — every region boundary present in `zones_12.png` at 1080p is present and continuous here, and
-    the cell lattice still satisfies item 5's 1.0–2.5 px clamp. *Crawl* is a frame-to-frame artifact and is not
-    observable in a still: grade it with the same **two-capture diff** as item 9, run at 1280×720 at `zones`/12 —
-    two frames 0.5 s apart, camera static, `speed=1`, pixels within 3 px of a region boundary masked out; over the
-    cell lattice the per-pixel **max |Δluminance| ≤ 12/255** and the **mean |Δluminance| ≤ 2/255**.
+    the cell lattice still satisfies item 5's 1.0–2.5 px clamp, measured on the full-resolution 1280×720 PNG.
+    *Crawl* is a frame-to-frame artifact and is not observable in a still: grade it with the same **two-capture
+    diff** as item 9, over session F's two frames — 0.5 s apart, camera static, `speed=1`, pixels within 3 px of a
+    region boundary masked out; over the cell lattice the per-pixel **max |Δluminance| ≤ 12/255** and the
+    **mean |Δluminance| ≤ 2/255**.
 24. **Zero console errors** across the whole §4 evidence set: all **32** gauntlet frames (the four declared zoning
-    presets at 12 and 22 are already among them), the 720p capture, the `?showcase=all&time=12` frame, and both
-    degradation URLs of item 22. `summary.json.totalErrors === 0` plus the `errors` array of each extra shot JSON.
+    presets at 12 and 22 are already among them), the 720p capture, the two `--crops` captures, the
+    `?showcase=all&time=12` frame, and both degradation URLs of item 22.
+    `summary.json.totalErrors === 0` plus the `errors` array of each extra shot JSON.
+25. **The lot frame is what `buildings` will consume.** §7 spends its longest paragraph on the `frontage().heading`
+    trap; this is that paragraph on the checklist, because a lot that fails it ships every building facing backwards
+    and surfaces two waves later as a `buildings` bug. `P` over `world.zones.lots` — for every lot:
+    - `nx, nz, ax, az, corner, t, y` are all present; `(nx,nz)` and `(ax,az)` are unit and mutually perpendicular to
+      **1e-3**;
+    - `|wrapPi(lot.heading − Math.atan2(-lot.nx, lot.nz))| ≤ 0.02 rad` (heading faces the road, §2);
+    - the point `(lot.x − lot.nx*(lot.d/2 + 3), lot.z − lot.nz*(lot.d/2 + 3))` — 3 m beyond the front edge, i.e.
+      *against* `(nx,nz)`, which points from the road *into* the lot — returns `world.roads.isRoad !== 0`;
+    - `|lot.y − world.terrain.getHeight(lot.x, lot.z)| ≤ 0.05 m`.
+26. **One event per call, and bursts coalesce.** §2 and failure mode 14 both turn on this and neither was gradeable.
+    `P` installs a `zones:changed` counter, then: one `api.bulk()` of 20 strokes emits exactly **1**; five separate
+    `api.paint()` calls emit exactly **5**; a scripted 10-edge road addition inside 200 ms produces **≤ 4** band
+    rebuilds, counted from the `ctx.log` rebuild lines of §5. Every payload matches
+    `{cells:[key], lots:{added:[id], removed:[id]}}`, and `world.zones.version` increments exactly once per emission.
 
 ## 5. Budget
 
 | Metric | Zoning | How it is measured |
 |---|---|---|
-| Draw calls **attributable to zoning** | **≤ 10** (typical 7: 4 zone-type meshes + empty-band mesh + lot-outline mesh + brush preview) | probe, one page session: read `__sim.stats().drawCalls`, set `__sim.registry.get('zoning').group.visible = false`, render 5 frames, read again, take the difference |
+| Draw calls **attributable to zoning** | **≤ 10** (typical 6: 4 zone-type meshes + empty-band mesh + lot-outline mesh; the brush cursor is `tools`' call, not zoning's — item 17) | probe, one page session: read `__sim.stats().drawCalls`, set `__sim.registry.get('zoning').group.visible = false`, render 5 frames, read again, take the difference |
 | Scene draw calls in any `?showcase=zoning` shot (terrain + environment + roads + zoning) | **≤ 130** | `summary.json.maxDrawCalls` — scene-total, not per module; ARCHITECTURE §9 already allocates 15 + 20 + 80 = 115 to the other three |
 | Triangles **attributable to zoning** | **≤ 120 000** (8 tris per 8 m cell at 2×2 subdivision ⇒ ≤ 15 000 cells) | the same group-toggle diff, on `__sim.stats().triangles` |
 | `update()` per frame | **≤ 0.4 ms** steady state, **≤ 1.0 ms** worst frame (ARCHITECTURE §9 caps any module at 2 ms) | `moduleMs.zoning` in every shot JSON |
@@ -370,9 +454,18 @@ shots. Do not rediscover them.
 getHeight(x, z) -> m                 getNormal(x, z, out?) -> Vector3
 getSlope(x, z) -> rad                isWater(x, z) -> bool
 raycast(ray) -> {point, normal}|null cellSize: 4   resolution: 513   seaLevel: 0
+minHeight                            maxHeight
+features: {                          // src/modules/terrain/index.js:58-63 — "generation features for other modules"
+  river: { zAt(x) -> z, halfWidthAt(x) -> m },
+  coast: { xAt(z) -> x },
+  island: {…},
+}
 ```
+`features` is the only deterministic way to find the river and the coast at `seed=1337`; §8.5 and §8.6 require it,
+so it is part of this list rather than something the showcase brute-forces by sampling `isWater` over 2048 m.
 Degrade: if `terrain` failed, `getHeight` returns 0, `getSlope` 0, `isWater` false (core defaults in
-`src/core/world.js`). The overlay must then build flat at y = 0.16 without erroring.
+`src/core/world.js`) and `features` is **absent** — guard with `world.terrain.features?.river` (item 22b). The
+overlay must then build flat at y = 0.16 without erroring.
 
 **`world.roads`** (read only — never `addEdge`/`removeEdge` outside `showcase.setup`):
 ```js
@@ -427,16 +520,16 @@ draws at `MARKINGS + 4…6`, i.e. above roads and markings, below buildings); `c
 `world.weather.night` (0–1, published each frame by `environment`) and `world.weather.fogDensity`; `ctx.events`;
 `ctx.log`.
 
-**Never**: touch another module's group; add a light; set `toneMapping`, `toneMappingExposure` or `scene.fog`; call
-`renderer.render`; call into `buildings`, `props`, `tools` or `simulation` (none is a dependency, `tools` and `props`
-are stubs). `world.zones` writes are yours alone; `lot.buildingId` is written by `buildings` and must be preserved,
-never invented.
+**Never** (the module-scoped half only; `BUILDER.md`'s "stay in your lane" and ARCHITECTURE §4 carry the generic
+prohibitions and are not restated here): call into `buildings`, `props`, `tools` or `simulation` — none is a
+dependency, and `tools` and `props` are stubs. `world.zones` writes are yours alone; `lot.buildingId` is written by
+`buildings` and must be preserved, never invented.
 
 ## 8. Showcase
 
 `showcase.description`: "Zoned district on generated terrain: avenue spine, street grid, a diagonal, a curved street,
 alleys, a cul-de-sac, a waterfront run and a hillside climb; all four zone types in both densities, plus unzoned
-buildable band, a highway with no frontage, and a live brush preview."
+buildable band and a highway with no frontage."
 
 **Staged content** (`showcase.setup`, using `world.roads.addNode/addEdge` then `ctx.modules.roads?.rebuild?.()`,
 then the band rebuild, then a single `bulk()` paint, then the overlay rebuild):
@@ -447,20 +540,26 @@ then the band rebuild, then a single `bulk()` paint, then the overlay rebuild):
    `addEdge(a, b, 'street', {ctrl:{x,z}})` — these two prove acceptance item 7.
 4. Two `alley` edges splitting deep blocks, and one **cul-de-sac** stub ending in the middle of a block.
 5. A **waterfront** street run following the river so the water exclusion (item 13) has a ragged edge to make.
-6. A **hillside** street climbing past `slope > 0.42 rad` so the slope exclusion cuts the band mid-block.
+   Place it from `world.terrain.features.river.zAt(x)` / `halfWidthAt(x)` — not by hand-picked coordinates.
+6. A **hillside** street climbing past `slope > 0.42 rad` so the slope exclusion cuts the band mid-block. Find it by
+   walking `world.terrain.getSlope` until it exceeds 0.42 rad; record the resulting coordinates in the build record
+   alongside the `zoneslope` target.
 7. One `highway` edge crossing the north of the district, proving item 14 (no lots on it).
 8. Painting, in **one** `bulk(fn({circle, rect, erase}))` call (§2): at least **three blocks of each of the eight
-   classes** and **at least 1 700 painted cells at `seed=1337`**. Both floors are needed — sixteen blocks of frontage
-   band at 8 m cells on 80 m blocks comes to roughly 1 250 cells, which would satisfy a per-class count and still
-   fail item 10's `cells ≥ 1500`, so the staging floor sits above item 10's floor, not level with it. State the
+   classes** and **at least 1 700 painted cells at `seed=1337`**. Both floors are needed — an 80 m block is 10×10
+   cells, and a 3-cell-deep frontage band around it is 10×10 − 4×4 = **84** cells, so sixteen such blocks come to
+   **1 344**, which would satisfy a per-class count and still fail item 10's `cells ≥ 1500`. The staging floor
+   therefore sits above item 10's floor, not level with it. State the
    achieved `stats().cells` in `docs/builds/zoning_r<round>.json`.
    Also: **at least two blocks left unpainted** inside the zonable band
    (item 18); **one block painted half residential-low / half commercial-high** so a region boundary with the
    animated outline runs through open ground, not only against a road.
-9. A live brush preview parked over an unzoned block (item 17), set via `api.setBrushPreview(...)`.
+9. *(removed — the brush preview is staged by `tools`, not here; item 17. The numbering is left as-is so item and
+   section references from other rounds do not shift.)*
 10. `api.probePoints()` returns the eight class-representative block centres (one per type × density) that items 1–3
-    measure at. Pick blocks on flat inland ground, ≥ 24 m from any water or slope exclusion boundary, so the
-    luminance-std ratio is not contaminated by terrain shading. List the eight world coordinates in the build record.
+    measure at, and `api.cropRects()` returns the four landmarks of §2 for items 18–19. Pick probe blocks on flat
+    inland ground, ≥ 24 m from any water or slope exclusion boundary, so the luminance-std ratio is not contaminated
+    by terrain shading. List the eight world coordinates in the build record.
 11. `world.zones.version` bumped and **one** `zones:changed` emitted at the end of staging — not one per block.
 
 **Declared camera presets** (`showcase.cameras`; copy these values so gauntlet and critic agree):
@@ -476,9 +575,11 @@ actual staged coordinates and state them in the build record.
 
 **What the build record must carry so the critic is not guessing** (`docs/builds/zoning_r<round>.json`): the
 `zoneslope` target coordinates; the eight `probePoints()` world coordinates (items 1–3); the count **N** of junctions
-where two zoned frontages meet, with their node ids (item 12); and the achieved `stats().cells` / `stats().lots` at
-`seed=1337` (items 10 and §8.8). Each of these is a number the spec deliberately leaves to the staging rather than
-inventing — the build record is where it becomes checkable.
+where two zoned frontages meet, with their node ids (item 12); the **first and last cell key of the river-frontage
+boundary run and of the hillside boundary run** (item 13 — without these the direction-change count has no defined
+subject); and the achieved `stats().cells` / `stats().lots` at `seed=1337` (items 10 and §8.8). Each of these is a
+number the spec deliberately leaves to the staging rather than inventing — the build record is where it becomes
+checkable.
 
 **How each frame of the §4 evidence set must read.** §4 fixes *which* frames exist and is the only place that does;
 what follows is the module-specific part — what to look for once you have them:

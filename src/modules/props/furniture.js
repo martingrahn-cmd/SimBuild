@@ -156,8 +156,8 @@ function busStop(lut) {
   for (const sx of [-W / 2 + 0.08, W / 2 - 0.08]) for (const sz of [-D / 2 + 0.08, D / 2 - 0.08]) {
     b.box(0.10, 2.52, 0.10, { pos: [sx, 1.26, sz], slot: SLOT.paintedMetal, color: frame, ao: { y0: 0, y1: 1.2, bottom: 0.55, top: 1 }, detail: 1.6 });
   }
-  b.box(W + 0.34, 0.10, D + 0.42, { pos: [0, 2.60, 0.02], slot: SLOT.paintedMetal, color: 0x4a5158, detail: 1.2 });
-  b.box(W + 0.34, 0.14, 0.10, { pos: [0, 2.50, -(D / 2 + 0.20)], slot: SLOT.paintedMetal, color: 0x2f7bbd, detail: 2 });
+  b.box(W + 0.34, 0.10, D + 0.42, { pos: [0, 2.60, 0.02], slot: SLOT.paintedMetal, color: 0x3f464c, detail: 1.2 });
+  b.box(W + 0.34, 0.14, 0.10, { pos: [0, 2.50, -(D / 2 + 0.20)], slot: SLOT.paintedMetal, color: 0x2c5a80, detail: 2 });
   // light strip under the roof
   b.box(W - 0.5, 0.05, 0.20, { pos: [0, 2.51, 0.18], slot: SLOT.lamp, color: 0xfff3d8 });
   // rear kerb rail + bench

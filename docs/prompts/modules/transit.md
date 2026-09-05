@@ -17,7 +17,9 @@ yet; §6 below is the list of traps the critics have already booked against `ter
   `terrain`). Declare `dependencies: ['roads', 'traffic', 'props', 'ui']`.
 - **`traffic` is a stub** (`src/modules/traffic/index.js`: `api: {}`). **`props` is shipped and it WILL populate
   this showcase** — do not plan around an empty scene. `props` declares `dependencies: ['terrain','roads']`,
-  budgets **400 draw calls / 2.2 M triangles** (`src/modules/props/index.js:143-144`) and subscribes to
+  declares `budget: { drawCalls: 400, triangles: 1_900_000 }` (`src/modules/props/index.js:143-144` — that is the
+  *declared* ceiling; the figure to plan the frame total against is props' **attributable** cost in a showcase
+  shot, ≤ 120 draws and ≤ 700 000 triangles, `props.md:527/530`) and subscribes to
   `roads:changed` (`index.js:190`). `world.roads`'s `_bump()` emits `roads:changed` on **every** `addNode` /
   `addEdge` (`src/modules/roads/network.js:88-91`), so the moment transit's `showcase.setup` stages its grid,
   props flips `S.pending` and rebuilds 0.12 s later (`index.js:199`) into **transit's** scene:
@@ -37,10 +39,10 @@ yet; §6 below is the list of traps the critics have already booked against `ter
   fleet until `traffic.spawnVehicle` exists; when it does, transit drives that record and renders no body of its
   own for that vehicle.
 - `zoning`, `buildings`, `simulation`, `services` and `tools` are **not** in the transit showcase at all.
-- **Transit may not add a light of any kind** (ARCHITECTURE §4: only `environment` may). Headlights, taillights,
-  interior glow, destination blinds and the shelter lamp are emissive geometry and projected decals, never
-  `PointLight` / `SpotLight`. Transit never touches `toneMapping`, `toneMappingExposure`, `scene.fog`, the shadow
-  map, or `renderer.render`, and never installs a composer.
+- **Lights: `BUILDER.md`'s lane rule applies** (ARCHITECTURE §4: only `environment` may add a light, touch
+  `toneMapping`, the shadow map, `renderer.render` or a composer). The transit-specific delta: headlights,
+  taillights, interior glow, destination blinds and the shelter lamp are **emissive geometry and projected
+  decals**, never `PointLight` / `SpotLight`.
 - Every graded shot runs on a **frozen clock**. `tools/screenshot.mjs` line 22 *defaults* `speed=0`
   (`speed: args.speed ?? '0'` — overridable with `--speed`), and `src/main.js:82` forces speed 0 whenever
   `--time` is given (`else if (params.time !== null) clock.setSpeed(0)`). Both paths are in play, and every
@@ -97,10 +99,18 @@ Field contract, enforced by probe:
 - `route` an ordered array of ids present in `world.roads.edges`; consecutive entries share a node
   (`edges.get(a).b === edges.get(b).a` up to direction). Closed: the last edge reconnects to the first.
 - `vehicles` integer 0…20 (the HUD stepper clamps to that range).
-- `ridership` passengers per game day, finite, ≥ 0, never `NaN`. `length` metres, `= Σ edge.length` over `route`
-  ± 2 %. `fare` integer ¢. `balance` ¢ per game month, may be negative. `headway` seconds of game time between
+- `ridership` **passengers per game day — a daily total, never an instantaneous rate**, finite, ≥ 0, never `NaN`,
+  and **constant across the hour** (`ridership` at 08:00 and at 02:00 are the same number; the hour-of-day demand
+  curve is observed through `stats().boardings`, item 10, which is where every rate claim in this spec is graded).
+  The HUD prints it as "N / day" and divides by `vehicles × 60 × 8` for utilisation (`hud.js`), so the panel reads
+  it as a daily total too. `length` metres, `= Σ edge.length` over `route`
+  ± 2 %. `fare` integer ¢. `balance` ¢ per game month, may be negative — `balance = 30 × (ridership × fare −
+  vehicles × 900)`, i.e. both terms are per game **day** (`900` ¢ is one vehicle's daily running cost) and the
+  whole expression is scaled by a 30-day month, which is the only reading under which a per-day `ridership`
+  produces a per-month figure. `headway` seconds of game time between
   consecutive vehicles on the loop, `= length / (meanSpeed · vehicles)`, `Infinity` when `vehicles === 0`.
-  **`meanSpeed`** (m/s of arc per second of game time, reported by `api.stats()`) is the *door-to-door* average
+  **`meanSpeed`** (m/s of arc per second of game time, reported by `api.stats()`, pinned to **[4, 13] m/s** by
+  item 8 so it cannot be a number the module invents about itself) is the *door-to-door* average
   over one full circuit and therefore **already includes the 6–12 s dwell at every stop** of item 7 — it is
   strictly less than the cruise speed. Every arc-rate claim in this spec is stated against `meanSpeed`; the
   per-vehicle `speed` in `vehicles()` is the instantaneous one and is `0` while `atStop`.
@@ -148,8 +158,26 @@ stats() -> {lines, stops, vehicles, source:'traffic'|'own', shelters:'props'|'ow
             ridership, boardings,    // boardings = cumulative since midnight, a pure function of hour (item 10)
             occupancy, meanSpeed,    // meanSpeed: m of arc per second of game time, dwell included (§2)
             draws, tris, stepMs, routeMs, overlay}
+cropRects({project, width, height, camera}) -> {bus, shelter, ribbon}   // pinned landmarks, see below
 serialize() -> {version, lines:[…], stops:[…], overlay} ; deserialize(data) -> bool
 ```
+
+**`api.cropRects` is mandatory** — it is the only sanctioned way to pin a pixel statistic to a thing rather than to
+a hand-guessed box (ARCHITECTURE §8, `src/core/debug.js:41`). `window.__sim.cropRects()` collects it from every
+ready module and `node tools/screenshot.mjs … --crops` writes the result to `<out>.crops.json` beside the PNG as
+`{png, width, height, camera, time, rects: {"transit.<name>": [x, y, w, h]}}`, in pixels of the **full-resolution**
+capture. Transit returns exactly three rects, each only when its landmark is on screen, each computed with the
+supplied `project(x, y, z)` and clamped to the frame:
+
+| Rect | What it encloses |
+|---|---|
+| `transit.bus` | the screen-space AABB of the bus nearest the camera (its 12 × 2.55 × 3.2 m box, all 8 corners projected), dilated by 8 px |
+| `transit.shelter` | the same AABB for the stop nearest the camera — the adopted props shelter if `propId !== null`, else transit's own — dilated by 8 px |
+| `transit.ribbon` | a 64 × 64 px box centred on the `#2f8ff5` line's ribbon at the midpoint of its longest straight edge |
+
+Every pinned statistic in §4 is measured **inside one of these rects on the full-resolution PNG, never on a
+downscaled copy** — a 480-px-wide copy of a 1920-px capture discards four pixels in every five across, and the
+percentiles below turn into resampling noise. A missing or empty `crops.json` is a builder defect (`CRITIC.md`, "Pinned landmarks"), not a reason to grade the item by eye.
 
 ## 3. Visual/behavioural target
 
@@ -204,13 +232,18 @@ a bus that glows all over at 22:00.
 
 ## 4. Acceptance criteria
 
-Graded exactly as written. Every item is checkable in a named screenshot, in a gauntlet `summary.json`, or in a
-page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
+Graded exactly as written. Every item is checkable with a named instrument: a named screenshot, a rect in that
+shot's `<out>.crops.json` (shoot with `--crops`; §2 lists the three rects transit pins), a field in the screenshot
+JSON or the gauntlet `summary.json`, or a `page.evaluate` probe against `window.__sim`. Statistics taken inside a
+crop are taken on the **full-resolution** PNG, never on a downscaled copy. Shot paths below are the gauntlet's
 (`shots/transit/r<n>/<camera>_<time>.png`, e.g. `closeup_12.png`, `street_22.png`) plus this module's own presets
 (§8). Ordered by how much each moves the score.
 
 1. **Hard gates.** `errors: []` in every screenshot JSON including `--showcase all`; `modules.transit.status ===
-   'ready'` in all 16 gauntlet shots plus every declared preset; **≤ 20 draw calls and ≤ 260 000 triangles
+   'ready'` in all **16** gauntlet shots — `node tools/gauntlet.mjs --module transit --round <n>` with its default
+   4 cameras × `6.5,12,17.5,22`; **do not pass `--times 12,22`**, which produces 8 — plus every declared preset
+   (§8), each shot with `node tools/screenshot.mjs --showcase transit --camera <preset> --time <h> --crops`;
+   **≤ 20 draw calls and ≤ 260 000 triangles
    attributable to transit**, measured by the group A/B in §5 (not by `stats()` self-report, and not by
    subtracting a baseline that omits `props`); and the role-file hard gates hold (no `Math.random`, blast radius
    per `BUILDER.md`).
@@ -219,20 +252,21 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
    of the listed type; `color` ∈ the 8-colour palette; `stops.length ≥ 2` with no duplicate id and
    `stops[0] !== stops.at(-1)`; every `route` id ∈ `world.roads.edges`; consecutive route edges share a node;
    `|length − Σ edge.length| / length ≤ 0.02`; `Number.isFinite(ridership|balance|headway||0)`; `vehicles ∈ [0,20]`;
-   stop `y` within `[roadY + 0.10, roadY + 0.30]` of `world.roads.sample(edgeId, t).y`. Every `api` function in §2
+   `stop.y − world.roads.sample(edgeId, t).y ∈ [0.10, 0.30]` m. Every `api` function in §2
    exists, is callable, and returns the documented shape; `version` strictly increases across any mutating call and
    `transit:changed` fires exactly once per batch (listener counts calls).
 
 3. **The bus is a modelled vehicle, not a box** (`$REF/cs2_5.jpg` bar; evidence `bus_12.png` at ≤ 12 m, and
-   `closeup_12.png`). At 4× crop the following are individually identifiable: separate near-black glasshouse with
+   `closeup_12.png`, both shot `--crops`). Inside `transit.bus` the following are individually identifiable:
+   separate near-black glasshouse with
    ≥ 2 pillars; ≥ 4 wheels with a tyre/hub tone split, tyre-to-ground gap ≤ 0.04 m; two door bays reading as
    recessed; a roof hump/vent cluster; a headlight pair and a red rear lamp cluster; a destination blind panel; a
    waistband in the line colour ≥ 0.25 m tall running the full length. Body roughness ∈ [0.25, 0.45] with a
-   clearcoat highlight that is a **stretched streak, not a sparkle**. Sparkle probe, at `aerial`: project
-   `api.vehicles()[0]`'s `(x, y, z)` to screen with `camera.project()`, crop the **200×200 px box centred on that
-   point**, and assert no isolated pixel exceeds its 8-neighbour mean by > 40/255. (Unlocated crops are not
-   gradable — the crop centre is the bus, every time.) ≥ 4 distinct body base colours across the fleet,
-   deterministic from `ctx.rng`.
+   clearcoat highlight that is a **stretched streak, not a sparkle**. Sparkle probe: on `bus_12.png` (the vehicle
+   fills a useful fraction of the frame at ~10 m; at `aerial` a 12 m bus is ~30 px and the test would fire on lane
+   markings and foliage instead), take the `transit.bus` rect from `bus_12.png.crops.json` and assert, on the
+   full-resolution PNG inside that rect, that no pixel exceeds its 8-neighbour mean by > 40/255. ≥ 4 distinct body
+   base colours across the fleet, deterministic from `ctx.rng`.
 
 4. **Stops are modelled and correctly seated** (evidence `stop_12.png`, `stop_22.png`, `street_12.png`). At ≤ 10 m
    the shelter shows: four posts, a cantilevered roof with visible thickness ≥ 0.06 m, a framed glass rear panel
@@ -244,25 +278,35 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
    `types[edge.type].asphaltHalf + 0.5 ≤ dist ≤ types[edge.type].asphaltHalf + types[edge.type].sidewalk`
    — i.e. the stop stands on the sidewalk, clear of the asphalt edge by ≥ 0.5 m and not out in the verge. With
    the shipped numbers (`network.js:6-10`) a `street` stop is 5.5–8.0 m from the centreline and an `avenue` stop
-   8.5–12.0 m. Also: not inside a crosswalk, and ≥ 3 m from any intersection centre in
-   `ctx.modules.roads.intersections()`. Do **not** grade this with `world.roads.isRoad(x, z)`: it exists
-   (`src/modules/roads/build.js:555`, installed by `buildCoverage()` at `build.js:121`, returning 0 none /
-   1 asphalt / 2 sidewalk — note ARCHITECTURE §3 line 99 advertises `0..1`, which the implementation does not
-   honour), but it is a **4 m** grid (`cell = terrain.cellSize`, `WORLD_SIZE 2048 / 512`), so a stop correctly
-   seated 1.35 m outside the asphalt edge routinely lands in a cell marked `1`. It is too coarse to grade a
-   sub-metre requirement. Use it only as a non-binding sanity check.
+   8.5–12.0 m. **This band grades the stop record, not the adopted shelter.** `props` puts its `bus_stop` at
+   `asphaltHalf + sidewalk + 1.35` (`place.js:290`) — 9.35 m on a `street`, 13.35 m on an `avenue` — i.e. 1.35 m
+   out in the verge, *outside* the legal band by construction. So a stop with `propId !== null` still sits on the
+   sidewalk inside the band and its adopted shelter stands ~1.35–2 m further out; that gap is well inside the 6 m
+   adoption radius. Do not co-locate the stop record with the shelter it adopts, and frame the `stop` preset for
+   two objects 1.35–2 m apart. The props shelter itself is never graded on this band.
+   Also: not inside a crosswalk, and ≥ 3 m from any intersection centre in
+   `ctx.modules.roads.intersections()`. Do **not** grade this with `world.roads.isRoad(x, z)` — it is a 4 m grid
+   and off-contract (§7), too coarse for a sub-metre requirement; a correctly seated stop routinely lands in a
+   cell marked `1`. Non-binding sanity check only.
 
 5. **The route overlay reads like `$REF/cs2_1.jpg` and never z-fights** (evidence `aerial_12.png`,
    `overlay_12.png`, `skyline_12.png`). Ribbon width 1.6–2.2 m, opacity 0.45–0.65, drawn at
    `renderOrder = RENDER_ORDER.MARKINGS + 1 (= 22)` with `depthWrite = false`, `polygonOffset = true`,
    `polygonOffsetFactor ≤ −4`, `polygonOffsetUnits ≤ −4`, and vertices generated from `world.roads.sample(edgeId,t)`
    at ≤ 4 m spacing with `y` offset +0.02 m. Directional chevrons every 20–28 m. A filled disc (r = 1.6–2.4 m) with
-   a white ring at each stop. Toggling `api.setOverlay(false)` changes ≥ 3 % of screen pixels at `aerial` and
-   `0` pixels outside the road network (pixel-diff probe). **No flicker**: two consecutive frames at the same
+   a white ring at each stop. Toggling `api.setOverlay(false)` changes ≥ 3 % of screen pixels at `aerial`
+   (one page session, group-visibility style: capture, `api.setOverlay(false)`, wait 2 rAFs, capture, diff).
+   **The ribbon stays on the carriageway** — graded in world space, not in pixels, because no road mask this repo
+   ships resolves it (`isRoad` is a 4 m grid — item 4): every generated ribbon centre-line vertex satisfies
+   `world.roads.nearestEdge(x, z, 40).dist ≤ types[edge.type].asphaltHalf − 1.25`, the 1.25 m being the widest
+   ribbon's half-width (2.2/2) plus its 0.15 m outline — so the whole ribbon lies on asphalt even on an `alley`,
+   whose `asphaltHalf` is 2.0 m and whose limit is therefore 0.75 m. Stop chips and discs are exempt.
+   **No flicker**: two consecutive frames at the same
    camera differ by < 0.1 % of pixels on the ribbon area.
 
 6. **Night is a lit vehicle in a dark scene, not a glowing one** (evidence `street_22.png`, `bus_22.png`,
-   `stop_22.png`, `night_stop_22.png`). At 22:00: the bus body's unlit panels have `p50 ≤ 60/255`; the lit window
+   `stop_22.png`, `night_stop_22.png`, all shot `--crops`; every percentile below is taken inside `transit.bus` or
+   `transit.shelter` on the full-resolution PNG). At 22:00: the bus body's unlit panels have `p50 ≤ 60/255`; the lit window
    band, destination blind and rear lamps each have `p99 ≥ 180/255`; the ratio of lit-element luminance to body
    luminance ≥ 3.0. Windows are individually lit with ≥ 2 warm/cool tints and ≥ 1 dark window per bus. Headlights
    throw a decal pool on the asphalt ≤ 14 m long that is elongated along the heading, not a round blob, and does
@@ -276,7 +320,9 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
    claims; `speed ≤ world.roads.types[edge.type].speed / 3.6` at all times; a vehicle's `t` advances monotonically
    along its route and wraps at the loop join with a positional jump < 0.5 m; each vehicle registers `atStop ===
    true`, `doorsOpen === true` and **`speed === 0`** for **6–12 s of game time** at every stop of its line, in
-   order, and for no other position; vehicles on the same line are spaced `headway ± 20 %` apart in arc length.
+   order, and for no other position; vehicles on the same line are spaced **`length / vehicles` metres ± 20 %**
+   apart in arc length (the same quantity as `headway × meanSpeed`, since §2 defines `headway = length /
+   (meanSpeed · vehicles)` — seconds and metres are not interchangeable, so the check is stated in metres).
    No vehicle is ever on an edge not in its `route`. Dwell is not optional and item 8 is written to expect it:
    the two items are consistent because item 8 measures against `stats().meanSpeed`, which is defined (§2) to
    include this dwell.
@@ -287,13 +333,23 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
    page at `speed=0` for 5 s changes no vehicle position by more than 0.01 m.
    **Pose is a pure function of the hour**: `pose(h)` for every vehicle, sampled via `__sim.setTime(h)`, is
    identical to ≤ 0.01 m on two separate page loads at the same seed, and revisiting an hour (12.0 → 12.25 → 12.0)
-   returns every vehicle to within 0.01 m of where it was. **Arc advance is graded against the dwell-inclusive
-   average**: `arcLength(pose(12.25)) − arcLength(pose(12.0))`, taken modulo the loop length, equals
-   `900 s × stats().meanSpeed` **± 5 %** for every vehicle. It is *not* graded against cruise speed or against
-   the per-vehicle `speed` field — 900 s of game time is 3–10 circuits of a 1.2–3.5 km loop and therefore
-   18–120 dwell events, which is exactly why `meanSpeed` (§2) is the only rate that can close here. A fleet built
-   with no dwell fails item 7; a fleet graded against cruise speed fails nothing, which is why this item names
-   `meanSpeed` explicitly. Any `dt`-integrated vehicle position fails this item outright.
+   returns every vehicle to within 0.01 m of where it was.
+   **`meanSpeed` is pinned before it is used as a yardstick**: `stats().meanSpeed ∈ [4, 13] m/s`. Derivation, so
+   the corners can be checked: the slowest legal fleet is the shortest staged loop, 1400 m (§8), cruising at
+   8 m/s with 12 stops × 12 s dwell (item 7) — `1400 / (1400/8 + 144) = 4.4 m/s`; the fastest is bounded above by
+   a `street`'s 50 km/h = 13.9 m/s with dwell subtracted, hence 13. Without this bound the identity below is
+   self-referential — the module reports whatever its fleet does as `meanSpeed` and the identity holds for a bus
+   crawling at 0.4 m/s.
+   **Arc advance is then a consistency check on a pinned number**, graded against the dwell-inclusive average:
+   with `L` the line's loop length, `((arcLength(pose(12.25)) − arcLength(pose(12.0))) mod L)` equals
+   `((900 s × stats().meanSpeed) mod L)` to within **5 % of `L`** for every vehicle. Both sides are reduced mod
+   `L` because 900 s of game time is more than one circuit — at the pinned floor, `900 × 4 = 3600 m ≥ 3500 m`,
+   the longest staged loop — so the raw difference and the raw product are not comparable. That also gives the
+   derived check: **every vehicle completes ≥ 1 full circuit between hour 12.0 and 12.25** — count `t` wraps
+   while walking `__sim.setTime` from 12.0 to 12.25 in 0.01 h (36 s) steps. It is *not* graded
+   against cruise speed or against the per-vehicle `speed` field; a fleet built with no dwell fails item 7, and a
+   fleet graded against cruise speed fails nothing, which is why this item names `meanSpeed` explicitly. Any
+   `dt`-integrated vehicle position fails this item outright.
 
 9. **Routing is a real graph search over `world.roads`.** Probe: `api.createLine('bus', [s1, s2, s3])` on the
    staged network returns a route whose length is within **15 %** of the shortest connected walk through those
@@ -306,8 +362,12 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
 10. **Ridership is modelled, bounded and legible.** `ridership` per line is derived from stop catchment — the
     number of `world.buildings.items` within **400 m road distance** of each stop, scaled by an hour-of-day
     activity curve with peaks at 07–09 and 16–19 — and, when `buildings` is absent (the transit showcase), from
-    the staged catchment the showcase declares. Probe: every line's `ridership ∈ (0, 40_000)`, `occupancy ∈ [0,1]`,
-    and `ridership` at 08:00 is ≥ 2× `ridership` at 02:00.
+    the staged catchment the showcase declares. Probe: every line's `ridership ∈ (0, 40_000)` passengers per game
+    day and `occupancy ∈ [0,1]`.
+    **The hour-of-day curve is graded on `boardings`, not on `ridership`** — `ridership` is a daily total (§2) and
+    is the same number at every hour, so an "08:00 vs 02:00 ridership" test is not a test of anything. Instead:
+    `boardings(9) − boardings(7) ≥ 2 × (boardings(3) − boardings(1))`, read off the same `__sim.setTime` walk
+    below. That is the morning peak against the small hours, in the one field that varies with the clock.
     **How the day is integrated, since the clock is frozen** (there is no wall-clock day to accumulate over, and
     item 8 forbids anything driven by `dt`): the probe walks `__sim.setTime(h)` in **0.25 h steps from 0 to 24**
     and reads `api.stats().boardings` at each step. `boardings` is therefore, like vehicle pose, a **pure
@@ -315,7 +375,8 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
     accumulator that advances when nobody calls `setTime`. `boardings(0) === 0`, the sequence is
     non-decreasing, and `boardings(24) === Σ ridership` over all active lines **± 5 %**. `occupancy` (items 6
     and 15) is read the same way: a pure function of the hour, at the same 0.25 h grid.
-    `balance = ridership × fare − vehicles × 900` (¢/month), finite, and reproduces exactly on reload.
+    `balance = 30 × (ridership × fare − vehicles × 900)` (¢/month — both bracketed terms are per game day, ×30
+    for a game month; §2), finite, and reproduces exactly on reload.
 
 11. **The HUD line panel is populated and correct** (evidence `lines_12.png`, plus the same shot at
     `--w 1280 --h 720`). `lines` is the **sixth declared preset** (§8) precisely so this item has a frame a
@@ -345,18 +406,12 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
     The draft flow is graded too, but **called directly, not through `tools`**: the probe calls
     `ctx.modules.transit.beginLine({mode:'line', kind:'bus'})` to put the module in draft mode; three
     `addStopToDraft` calls plus `commitLine()` create a working line; `cancelLine()` leaves `world.transit`
-    byte-identical to before the draft. **The `tools` route is deferred** — `tools` is a stub today
-    (`api: {}`), so nothing about it is gradable in round 1, and when it ships it still will not reach transit
-    through the HUD: `hud.js:458` calls `tools?.api?.select?.(name, opts)`, and since `ctx.modules.tools`
-    **is** the api object (`registry.js:15`) that `.api` is `undefined` and the call silently never fires.
-    (`tools.md:95` gets the convention right — it forwards as `ctx.modules.transit?.beginLine?.(opts)`, "**no
-    `.api`**" — so the defect is in the shipped HUD, not the tools spec.) Transit must not paper over this with
-    a self-referential `api.api = api`; file it in `docs/core-requests/transit.md` as a one-line `ui` fix and
-    move on.
+    byte-identical to before the draft. **The `tools` route is deferred and is not graded** — `tools` is a stub
+    today (`api: {}`) and the shipped HUD cannot reach it anyway; §7 "Known broken link" has the detail and the
+    instruction (file it, do not work around it).
 
-13. **No duplicate shelters — graded against shipped `props`, today.** This is not a future-shim item. `props`
-    is live in this showcase and scatters its own `bus_stop` shelters (standing assumptions), so the duplication
-    is on screen in round 1 or it is not.
+13. **No duplicate shelters — graded against shipped `props`, today**, not as a future shim: `props` is live in
+    this showcase and scatters its own `bus_stop` shelters (standing assumptions).
     - **Adoption:** probe asserts `stats().adoptedStops ≥ 1` and that `adoptedStops` equals the number of stops
       whose `propId !== null`. For **every** stop with `propId !== null`, transit's own group contains **no**
       shelter geometry within 6 m of that stop (probe walks
@@ -392,25 +447,38 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
     HUD palette — named here because the palette also contains near neighbours (`#2f8ff5` against `#34c3c7` is a
     legal palette choice that would fail this item), and a colour test is not gradable if the builder picks the
     colours. Pairwise **CIE ΔE ≥ 25**, measured on the **composited ribbon pixels as rendered** — i.e. the
-    line colour at its 0.45–0.65 opacity over the asphalt beneath, sampled at `aerial_12.png`, not on the raw
-    palette hex. Each bus's waistband matches its own line's composited ribbon colour to ΔE ≤ 8.
-    **Stop discs at `skyline` (900 m) occupy ≥ 12 connected pixels each** — area, not extent: at fov 45° and
-    pitch 0.16 a 3.2–4.8 m ground disc subtends roughly 6 px horizontally but under 1 px vertically, so any
-    "≥ N px feature" phrased as a linear size passes or fails depending on which axis the grader measures.
-    Count the connected component. Where two lines share a road they run as **parallel offset ribbons**
+    line colour at its 0.45–0.65 opacity over the asphalt beneath, sampled inside `transit.ribbon` (§2) on the
+    full-resolution `aerial_12.png` shot with `--crops`, not on the raw palette hex. `transit.ribbon` is pinned to
+    the blue line; the red and green ribbons are sampled from the same PNG in a 64 × 64 px box centred on
+    `__sim.project(x, y, z)` of a `world.roads.sample()` point on each of their routes (`debug.js:30`). Each bus's
+    waistband matches its own line's composited ribbon colour to ΔE ≤ 8, measured inside `transit.bus`.
+    **Stop discs at `aerial` (520 m) occupy ≥ 12 connected pixels each** — area, not extent, because a ground
+    disc is an ellipse and any "≥ N px" phrased as a linear size passes or fails depending on which axis the
+    grader measures. Count the connected component. The threshold is derived, not guessed: at fov 45° over
+    1080 px the plate scale at 520 m is `1080 / (2 × 520 × tan 22.5°) = 2.5 px/m`, and `aerial`'s pitch 0.85 rad
+    foreshortens the vertical axis by `sin 0.85 = 0.75`, so item 5's *smallest* legal disc (r = 1.6 m, 3.2 m
+    across) covers `π/4 × 8.0 × 6.0 ≈ 38 px`. **Discs are not graded at `skyline`**: at 900 m and pitch 0.16 the
+    same disc is 4.6 × 0.7 px ≈ 3 px of area, so no achievable disc could pass there — at `skyline` the graded
+    thing is the ribbon. Where two lines share a road they run as **parallel offset ribbons**
     0.3–0.6 m apart, not overlapping into a third colour.
 
-16. **Instanced, chunked, LOD'd.** Probe `stats()`: buses, shelters, poles, discs and chevrons are `InstancedMesh`
+16. **Instanced, culled, LOD'd.** Probe `stats()`: buses, shelters, poles, discs and chevrons are `InstancedMesh`
     or merged geometry — `ctx.group.traverse` finds **zero** plain `Mesh` whose geometry is shared by another
     plain `Mesh`, and ≤ 12 plain `Mesh` nodes total. Route ribbons for all lines merge into ≤ 2 draw calls.
-    Instanced content is chunked to `TILE_SIZE = 128 m` groups. **Culling is graded directly, not by orbiting**:
-    a 180° yaw at `aerial` cannot drop draws, because §8 requires the whole ±350 m network to sit inside a 700 m
-    box and the `aerial` frustum (fov 45°, distance 520, pitch 0.85) is ~860 m wide at the target plane — it
-    holds everything at every yaw, and by symmetry whatever leaves the frame at one yaw enters at the other.
-    Instead:
-    - every instanced chunk has `frustumCulled === true` and a finite `geometry.boundingSphere` whose radius is
-      **≤ 1.5 × TILE_SIZE (192 m)** — probe walks `__sim.registry.modules.get('transit').group`, calling
-      `computeBoundingSphere()` where it is null, and fails on any `NaN`/`Infinity` radius;
+    **There is no 128 m chunking requirement here, deliberately.** The whole network fits in a 700 m box (§8) and
+    the budget is 20 draws; splitting shelters, ribbons, chips and discs into ~30 tile-sized batches would cost
+    more draw calls than item 1 allows, and the indicative split in §5 (shelter frame 1, shelter glass 1, ribbons
+    1–2) is written for single merged batches. Chunk nothing; batch per surface.
+    **Culling is graded directly, not by orbiting**:
+    a 180° yaw at `aerial` cannot drop draws. The `aerial` frustum (fov 45°, distance 520, pitch 0.85) covers a
+    ground patch about `2 × 520 × tan 22.5° = 431 m` high in the frame, i.e. ~766 m across at 16:9 and
+    `431 / sin 0.85 ≈ 573 m` deep, against §8's 700 m network box — so a 180° yaw only swaps *which* corners of
+    the network fall outside, and whatever leaves the frame at one yaw enters at the other. Instead:
+    - every batch has `frustumCulled === true` and a **finite** bounding sphere — probe walks
+      `__sim.registry.modules.get('transit').group`, calls `mesh.computeBoundingSphere()` on each `InstancedMesh`
+      or `Mesh` and reads **`mesh.boundingSphere`**, and fails on any `NaN`/`Infinity` radius. Read the mesh's
+      sphere, not `geometry.boundingSphere`: for an `InstancedMesh` the geometry's sphere is the single source
+      bus (~6 m) however far the instance cloud is spread, so it tests nothing;
     - **point the camera away and the draws go:** `__sim.camera.apply({position:[1200,200,1200],
       target:[1200,0,1200]})` puts the whole network off-screen. Those coordinates are chosen to survive
       `_clamp()`, which limits target `x` and `z` **per axis** to `WORLD_SIZE/2 + 200 = 1224 m`
@@ -419,8 +487,8 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
       transit's attributable draw calls must be **≤ 2**. Restore the camera afterwards.
 
     Buses have ≥ 2 LOD levels with a
-    switch distance ≥ 140 m, and the switch is invisible: a pixel diff across the threshold (camera nudged 2 m)
-    changes < 1.5 % of the vehicle's pixels.
+    switch distance ≥ 140 m, and the switch is invisible: two shots with the camera nudged 2 m across the
+    threshold differ by < 1.5 % of the pixels inside `transit.bus` (§2), both shot `--crops`.
 
 17. **Shadows and contact** (evidence `closeup_6p5.png`, `street_12.png`). Every bus, shelter, pole and rail vehicle
     sets `castShadow = true` and `receiveShadow = true` (instanced meshes included; probe asserts it on every
@@ -429,22 +497,27 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
     lit-ground p50 in a 40 px sample either side of the shadow edge). No shadow acne on the bus roof or the
     shelter glass.
 
-18. **No tiling, no washout, no crushed blacks** — the standing traps. Probe over `aerial_12.png` and
-    `street_12.png` restricted to transit pixels: `p1 ≥ 4/255` and `p99 ≤ 250/255`; no periodic repeat in a 2D
-    autocorrelation of any bus or shelter material at a period < 64 px; the shelter glass, the bus glass and the
+18. **No tiling, no washout, no crushed blacks** — the standing traps. "Transit pixels" is not a thing a PNG
+    knows; get them from the §5 group toggle in **one** page session — capture, `group.visible = false`, await two
+    rAFs, capture, and take every pixel with `|ΔL| > 6`. Over that region in `aerial_12.png` and `street_12.png`:
+    `p1 ≥ 4/255` and `p99 ≤ 250/255`; no periodic repeat in a 2D
+    autocorrelation of any bus or shelter material at a period < 64 px (measured inside `transit.bus` and
+    `transit.shelter`, full resolution); the shelter glass, the bus glass and the
     asphalt under the ribbon each keep distinguishable tone (Δp50 ≥ 12/255 pairwise). Albedo textures are tagged
     `SRGBColorSpace`, normal/roughness/AO linear; any texture transit creates is listed in
     `public/assets/manifest.json` with `"license": "CC0"` or generated through `ctx.assets.procedural.*`.
 
-19. **The 3D chips and labels survive 720p** (evidence `overlay_12.png` at `--w 1280 --h 720`). Stop-name chips are
-    ≥ 11 px tall and ≤ 190 px wide at 1280×720, never overlap each other (probe: no two chip screen-rects intersect
-    by > 10 % of area), never overlap the HUD's bottom toolbar band (bottom 96 px) or the left panel (left 340 px),
+19. **The 3D chips and labels survive 720p** (evidence `overlay_12.png` at `--w 1280 --h 720`). Chip screen-rects
+    are computed in the probe, not guessed: name each chip object `chip:<stopId>` in `ctx.group` and project its
+    world AABB corners with `__sim.project(x, y, z)` (`debug.js:30`) to get its rect at the shot's resolution.
+    Chips are ≥ 11 px tall and ≤ 190 px wide at 1280×720, no two rects intersect
+    by > 10 % of area, none overlaps the HUD's bottom toolbar band (bottom 96 px) or the left panel (left 340 px),
     are culled beyond 260 m, and cap at 16 on screen (the nearest 16 win). Names longer than 18 characters ellipsis
     rather than overflow. Nothing in transit's own DOM output — it should produce none; the line panel is `ui`'s.
 
-20. **Determinism.** Two loads at `?seed=1337` produce byte-identical `api.serialize()` output; `?seed=99` produces
-    a *different* stop set (≥ 30 % of stop positions differ by > 5 m) but the same record count and no error.
-    All randomness through `ctx.rng` / `ctx.rng.fork(label)`; no `Date.now()`/`performance.now()` outside profiling.
+20. **Determinism.** `BUILDER.md`'s determinism rules apply unchanged. Transit-specific: two loads at `?seed=1337`
+    produce byte-identical `api.serialize()` output; `?seed=99` produces a *different* stop set (≥ 30 % of stop
+    positions differ by > 5 m) but the same record count and no error.
 
 21. **`--showcase all` is unharmed.** `node tools/screenshot.mjs --showcase all --camera aerial --time 12` reports
     `errors: []`, `modules.transit.status === 'ready'`, and total `drawCalls ≤ 1500`. In `--showcase all`,
@@ -454,10 +527,19 @@ page-evaluate probe against `window.__sim`. Shot paths below are the gauntlet's
 22. **Tram line (ARCHITECTURE §15 stretch; `$REF/cs2_6.jpg`).** *Lowest weight on this list — a miss here costs at
     most 0.3, so build items 1–21 first and add this in round 3+.* One `mode:'tram'` line, 400–900 m, on a reserved
     alignment beside or in the median of a staged avenue: twin rails whose railhead catches a specular highlight
-    and stays ≥ 1 px wide at `aerial`, sleepers on a darker ballast bed, catenary masts every 22–30 m carrying a
+    and reads as a thin bright line at `street` (60 m, where the plate scale is `1080 / (2 × 60 × tan 22.5°) =
+    21.7 px/m` and a 0.15 m railhead is ~3 px; at `aerial` it is 0.4 px, so it is not graded there),
+    sleepers on a darker ballast bed, catenary masts every 22–30 m carrying a
     visible wire, and a two-section articulated vehicle with a livery in the line colour. It obeys items 2, 6, 7,
     8, 14, 16 and 17 exactly as the bus does, on `world.transit.lines` with `mode === 'tram'`, and adds ≤ 5 draw
     calls and ≤ 60 k triangles. Platform edges are concrete with a striped warning strip, seated per item 4.
+
+**What round 1 must clear.** Twenty-two items on top of an 11-line stub is more than one round; spreading thin
+across all of them scores worse than clearing the first list cleanly. **Round 1: items 1, 2, 4, 5, 7, 8, 11, 13,
+14, 20, 21** — the contract, the seating, the overlay, repeatability, the HUD, adoption, save/load and the gates.
+**Round 2 is the quality pass: 3, 6, 9, 10, 12, 15, 16, 17, 18, 19.** **Item 22 is round 3+.** A round-1 build that
+ships a box on wheels but a correct, seated, adopted, save/loading network is on track; one that ships twenty-two
+half-items is not.
 
 ## 5. Budget
 
@@ -469,20 +551,30 @@ budget: { drawCalls: 20, triangles: 260_000 }
 
 **How transit's own draw calls are measured — the group A/B.** Do **not** subtract an
 "environment+terrain+roads baseline" from `summary.json.maxDrawCalls`: this showcase also loads **`props`**
-(budgeted 400 draws, `props/index.js:143`) and **`ui`** (`BUDGET.perModuleDrawCalls.ui = 5`,
+(declared 400 draws, `props/index.js:143`) and **`ui`** (`BUDGET.perModuleDrawCalls.ui = 5`,
 `src/core/constants.js:23`), so that subtraction overshoots by hundreds and would fail a compliant module. And
 do not fall back to `stats().draws`, which is transit reporting its own compliance — unfalsifiable.
 
-Measure it with the renderer, by toggling transit's group:
+Measure it with the renderer, by toggling transit's group. **The probe must be `async` and must await real frames.**
+`__sim` exposes no `render()` / `step()`; `engine.render` writes `stats` at the end of each rAF render
+(`engine.js:64`, `info.autoReset = true`), so two synchronous reads around `g.visible = false` return the *same*
+number and `transitDraws` comes out 0 — the module would pass its primary budget gate unconditionally. Run it in
+`page.evaluate` against a page loaded with `headless=1`, where `main.js`'s rAF loop keeps rendering even at
+`speed=0` (`main.js:118-136`):
 
 ```js
+const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 const g = __sim.registry.modules.get('transit').group;
-// render one frame with the group on, read renderer.info.render.calls
+await frame();                            // two rAFs: the read is never taken on a frame rendered before the toggle
 const on  = __sim.stats().drawCalls;      // engine.js:64 — this is renderer.info.render.calls
-g.visible = false;                        // render one more frame
-const off = __sim.stats().drawCalls;
-g.visible = true;                         // restore
-const transitDraws = on - off;            // ≤ 20 ; same A/B on .triangles for ≤ 260 000
+const onTris = __sim.stats().triangles;
+g.visible = false;
+await frame();
+const off = __sim.stats().drawCalls, offTris = __sim.stats().triangles;
+g.visible = true;
+await frame();                            // restore, and leave the scene rendering as it was
+const transitDraws = on - off;            // ≤ 20
+const transitTris  = onTris - offTris;    // ≤ 260 000
 ```
 
 That delta is attributable to transit by construction, is independent of every other module in the frame, and
@@ -497,14 +589,16 @@ means the module is miscounting its own cost.
 | Route solve | **≤ 40 ms** for a 24-stop line, **≤ 120 ms** to re-route every line on `roads:changed` | `stats().routeMs` |
 | Texture memory | **≤ 24 MB** (atlases ≤ 1024², one 2048² hero atlas allowed) | count uploaded textures × footprint |
 | Init | **≤ 2.5 s** on a warm cache, staging included | `app:ready` timing in the screenshot JSON |
-| Per-frame allocation | **zero** in `update()` — reuse vectors/matrices/arrays allocated in `init()` | heap probe: < 0.5 MB growth over 600 frames |
+| Per-frame allocation | **zero** in `update()` (`BUILDER.md`) | heap probe: < 0.5 MB growth over 600 frames |
 
 Indicative draw-call split (the builder may redistribute, not exceed): bus bodies 1, bus glass 1, bus emissives 1,
 shelter frame 1, shelter glass 1, poles + flag discs 1, route ribbons 1–2, stop discs + chevrons 1, chips 1,
 tram rails 1, sleepers/ballast 1, catenary 1, tram body + glass 2 = **≤ 15**, leaving 5 of headroom.
 
 **Frame total, with `props` in the frame.** `props` scatters up to 16 000 trees into this showcase (standing
-assumptions) and its own spec caps it at 700 k triangles and 400 draws in a showcase shot. Transit's 20 / 260 k
+assumptions). It *declares* `{drawCalls: 400, triangles: 1_900_000}` (`props/index.js:143-144`), but the figure to
+plan the frame total against is what its own spec holds it to in a showcase shot: **≤ 120 attributable draws and
+≤ 700 000 attributable triangles** (`props.md:527/530`). Transit's 20 / 260 k
 sit on top of that, plus terrain, roads, environment and ui. The whole-frame ceilings still apply — **≤ 1500 draw
 calls and ≤ 3 M triangles** (ARCHITECTURE §9) — and item 21 grades them. If the staged grid pushes the frame over,
 the fix is transit's own staging (fewer/shorter staged edges in §8), **never** reaching into `props` to turn its
@@ -553,15 +647,12 @@ Transit-specific traps:
 - **The HUD panel says "No transit lines yet"** because `world.transit.lines` was replaced with a plain object
   rather than mutated in place, or because ids are strings on one side and numbers on the other.
 - **`NaN` in the panel** from a division by `vehicles === 0` when computing `headway` or `occupancy`.
-- **Double shelters at every stop — the most likely visual blocker in round 1.** Not a future risk: `props` is
-  shipped, subscribes to `roads:changed`, and drops its own modelled `bus_stop` (roof, glass, bench, timetable)
-  on ~38 % of street/avenue edges over 66 m the instant `showcase.setup` stages the grid. A builder who read the
-  old "props is a stub" assumption renders a fallback shelter at every stop and gets two roofs, two benches and
-  two glass panels in the `stop` frame. Adopt within 6 m and render nothing of your own there (item 13).
-- **Building the showcase for an empty scene.** The same false premise ruins framing and budget: `props` also
-  scatters up to 16 000 trees at `minRoadDist: 24 m`, plus lamps, benches, bins, hydrants and signs. A `stop` or
-  `bus` preset framed as if the sidewalk were bare ends up looking through a tree. Frame against the populated
-  scene, and check the frame triangle total (§5), not just transit's own.
+- **Double shelters at every stop — the most likely visual blocker in round 1.** A builder who assumes `props` is
+  a stub renders a fallback shelter at every stop and gets two roofs, two benches and two glass panels in the
+  `stop` frame. Adopt within 6 m and render nothing of your own there (standing assumptions; item 13).
+- **Building the showcase for an empty scene.** The same false premise ruins framing and budget: a `stop` or
+  `bus` preset framed as if the sidewalk were bare ends up looking through one of props' trees. Frame against the
+  populated scene, and check the frame triangle total (§5), not just transit's own.
 - **Waiting for `props.place()` / `props.stops()`.** Neither exists (§7). Code that gates shelter adoption on
   them adopts nothing, and item 13 fails while `stats().shelters` cheerfully reports `'own'`.
 - **Cross-module writes**: pushing bus records into `world.traffic.vehicles` or shelters into `world.props.items`.
@@ -727,19 +818,21 @@ module and not a grey plane:
 - A road network centred on the origin: a 4×4 `street` grid on ~90 m spacing, one east–west `avenue` through
   `z ≈ 40` for the tram, one gently curved `street` on the east side, and one `alley` — roughly the shape of
   `src/modules/roads/showcase.js`'s grid, re-staged by transit so it owns its own scene.
-- **≥ 18 stops** across the network, spaced 220–320 m along each line, always on the sidewalk, never within 3 m of
+- **≥ 18 stops** across the network, spaced 220–320 m along each **bus** line (tram platforms sit 100–225 m apart,
+  being ≥ 4 on a 400–900 m alignment, item 22), always on the sidewalk, never within 3 m of
   an intersection centre, at least two of them **shared by two lines** (an interchange) and at least one pair
   facing each other across the same street.
 - **3 bus lines** in **`#2f8ff5`, `#e5484d` and `#4cc25a`** (the three item 15 grades ΔE on — not builder's
-  choice, since the palette also holds near neighbours), 1.2–3.5 km each, 6–12 stops each, and **≥ 10 buses
+  choice, since the palette also holds near neighbours), **1.4–3.5 km** each, 6–12 stops each (1.4 km, not 1.2:
+  the 6-stop minimum at the 220 m minimum spacing above is already 1320 m, so a shorter loop cannot satisfy both
+  bounds), and **≥ 10 buses
   total** spread across them by `headway`, so no camera at any standard time sees fewer than **2** buses.
 - **1 tram line** on the avenue alignment (item 22), 400–900 m, ≥ 4 platform stops.
 - A staged catchment for ridership when `buildings` is absent: a declared array of pseudo-building weights per stop
   so item 10's numbers are real and reproducible, not constants.
-- **Staged against a populated scene, not a bare one.** Every `addNode`/`addEdge` here fires `roads:changed`
-  (`network.js:88-91`), so `props` rebuilds ~0.12 s later and fills this scene with trees (`minRoadDist: 24 m`),
-  lamps, benches, signs and its own `bus_stop` shelters on ~38 % of the street/avenue edges over 66 m — which the
-  90 m grid spacing means most of them. Consequences the setup must handle: **(a)** the interchange and the
+- **Staged against a populated scene, not a bare one.** Every `addNode`/`addEdge` here fires `roads:changed`, so
+  `props` rebuilds ~0.12 s later and fills this scene with trees, lamps, benches, signs and its own `bus_stop`
+  shelters (standing assumptions). Consequences the setup must handle: **(a)** the interchange and the
   `stop` / `bus` framings must still read with furniture and trees around them, not through a trunk; **(b)** stops
   placed within 6 m of a props shelter are adoption sites, and the showcase should deliberately create **at least
   three** of them so item 13 has something to grade (`stats().adoptedStops ≥ 3`); **(c)** the frame total, not
@@ -775,7 +868,7 @@ default plus golden hour **06.5**, and `17.5` is in the standard matrix):
 |---|---|---|---|---|
 | `aerial` (520 m) | long bus shadows across the grid, warm rim on roofs; ribbons still saturated against low-sun asphalt | all 4 ribbons traceable, ≥ 2 buses per line, stop discs crisp, no tiling in the asphalt or liveries | warm side light, ribbon colours hold, no bloom smear over the overlay | ribbons dim but readable, buses are dark bodies with lit window bands, shelter lamps make small warm pools; no ribbon glow |
 | `street` (60 m) | shelter and bus rim-lit, contact shadow under tyres and shelter roof | glass reads through, bench and timetable visible, kerb–shelter seating clean | shadows lengthen east, glass picks up sky reflection | headlight pool on asphalt, lit blind readable, body clearly darker than its lights |
-| `skyline` (900 m) | overlay reads across the whole city silhouette | 3 colours distinguishable, stop discs ≥ 12 connected px | haze between camera and far ribbons, no colour banding | ribbons and bus windows are the only transit light; nothing blooms |
+| `skyline` (900 m) | overlay reads across the whole city silhouette | 3 colours distinguishable, ribbons unbroken (discs are sub-pixel here and are graded at `aerial`, item 15) | haze between camera and far ribbons, no colour banding | ribbons and bus windows are the only transit light; nothing blooms |
 | `closeup` (110 m) | wheel/hub split, panel shut-lines, roof hump visible | glasshouse separate from body, door bays recessed, waistband colour = ribbon colour | clearcoat streak along the shoulder, not a sparkle | ≥ 2 window tints per bus, ≥ 1 dark window, red rear cluster |
 
 `--showcase all` must stage **nothing** from transit (item 21): `showcase.setup` is the only place scene content is
