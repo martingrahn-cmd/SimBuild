@@ -119,6 +119,7 @@ async function boot() {
   const banner = document.getElementById('errbanner');
   function frame(now) {
     requestAnimationFrame(frame);
+    if (sim.frozen) { last = now; return; } // capture in progress: leave the main thread to the compositor
     let dt = (now - last) / 1000; last = now;
     if (dt > 0.1) dt = 0.1;
     if (dt <= 0) dt = 1 / 60;

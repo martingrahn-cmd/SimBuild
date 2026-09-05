@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=traffic&time=12&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "traffic",
+  "time": 12,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1280,
+  "height": 720,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: TypeError: Cannot read properties of undefined (reading 'errors')\n    at eval (eval at evaluate (:311:30), <anonymous>:1:20)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+  "errors": [],
+  "warnings": [],
+  "png": "shots/traffic/r1/street720_12.png"
+}

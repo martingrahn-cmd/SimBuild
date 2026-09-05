@@ -50,6 +50,15 @@ export function installDebug(core, registry) {
       }
       return out;
     },
+    /**
+     * Stop/start the render loop. Under software GL a dense 1080p frame occupies the main thread for tens of
+     * seconds, and the compositor never gets a turn — so `page.screenshot` times out even though the frame is
+     * finished and the canvas holds it (headless renders with preserveDrawingBuffer). A capture tool freezes
+     * after `ready`, takes the shot from the retained buffer, and unfreezes if it still needs to measure.
+     */
+    freeze() { sim.frozen = true; return true; },
+    unfreeze() { sim.frozen = false; return true; },
+    frozen: false,
     setTime(h) { core.clock.set(h); },
     setCamera(p) { return core.camera.apply(p); },
     setSpeed(n) { core.clock.setSpeed(n); },

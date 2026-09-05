@@ -90,7 +90,12 @@ try {
     await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
     await page.waitForTimeout(600);
   }
+  // Freeze the render loop so the compositor can hand over the finished frame; a busy main thread makes
+  // page.screenshot time out on heavy scenes even though the canvas already holds the image.
+  await page.evaluate(() => window.__sim?.freeze?.()).catch(() => {});
+  await page.waitForTimeout(250);
   await page.screenshot({ path: out, type: 'png', timeout: Math.max(timeout, 180000) });
+  await page.evaluate(() => window.__sim?.unfreeze?.()).catch(() => {});
   if (args.crops) {
     // Named landmark rects for pinned measurements (see src/core/debug.js cropRects).
     const crops = await page.evaluate(() => (window.__sim?.cropRects ? window.__sim.cropRects() : {})).catch(() => ({}));
