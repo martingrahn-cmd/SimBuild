@@ -18,3 +18,21 @@
 Useful three.js modules available (r185): `three/examples/jsm/csm/CSM.js`, `objects/Sky.js`, `objects/Water.js`, `objects/Reflector.js`,
 `postprocessing/{EffectComposer,RenderPass,UnrealBloomPass,GTAOPass,SSAOPass,SMAAPass,FXAAPass,OutputPass,BokehPass,LUTPass}.js`,
 `utils/BufferGeometryUtils.js` (mergeGeometries), `loaders/GLTFLoader.js`, `math/SimplexNoise.js`, `math/ImprovedNoise.js`.
+
+## Running the verification loop on a real GPU (Apple Silicon / discrete)
+
+This CI box has no GPU: WebGL runs on SwiftShader (software), so `fps` in the JSON logs is a *relative* number only
+and the ≥ 50 fps @ 1080p budget cannot be verified here — `fpsGpu` stays null in STATUS.json until someone measures it
+on real hardware. On a machine with a GPU:
+
+```bash
+# macOS (Apple Silicon)
+SIM_GL=metal npm run shot -- --showcase democity --camera skyline --time 17.5 --measure 5
+SIM_GL=metal SIM_HEADED=1 node tools/gauntlet.mjs --module democity --round gpu   # if headless falls back to software
+# Linux/Windows with a discrete GPU
+SIM_GL=gl    node tools/screenshot.mjs --showcase democity --camera aerial --time 12 --measure 5
+```
+
+`gpuRenderer` in the JSON says which backend actually served the frame — check it says Metal/ANGLE-GPU and not
+SwiftShader before trusting an fps number. Headless Chromium sometimes falls back to software even with the flag;
+`SIM_HEADED=1` opens a real window, which always gets the GPU.

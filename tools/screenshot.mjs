@@ -26,12 +26,20 @@ const url = `${base}/?${q.toString()}`;
 
 const t0 = Date.now();
 const executablePath = process.env.SIM_CHROME || ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome', '/opt/pw-browsers/chromium/chrome-linux/chrome'].find((p) => fs.existsSync(p));
+// GL backend: software by default (this CI box has no GPU). On a real GPU (e.g. Apple Silicon) set
+// SIM_GL=metal (or =gl / =d3d11) to measure true fps; headless Chromium needs the new headless mode for that.
+const GL = process.env.SIM_GL || 'swiftshader';
+const software = GL === 'swiftshader';
 const browser = await chromium.launch({
   executablePath,
-  headless: true,
+  headless: software ? true : (process.env.SIM_HEADED === '1' ? false : true),
+  channel: !software && process.env.SIM_CHANNEL ? process.env.SIM_CHANNEL : undefined,
   args: [
-    '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl',
-    '--disable-gpu-sandbox', '--no-sandbox', '--disable-dev-shm-usage', '--enable-features=Vulkan,UseSkiaRenderer',
+    `--use-angle=${GL}`, '--ignore-gpu-blocklist', '--enable-webgl',
+    ...(software
+      ? ['--enable-unsafe-swiftshader', '--disable-gpu-sandbox', '--enable-features=Vulkan,UseSkiaRenderer']
+      : ['--enable-gpu', '--enable-gpu-rasterization', '--use-gl=angle']),
+    '--no-sandbox', '--disable-dev-shm-usage',
     `--window-size=${W},${H}`,
   ],
 });
@@ -47,7 +55,7 @@ page.on('console', (m) => {
 page.on('pageerror', (e) => pageErrors.push(String(e?.stack || e).slice(0, 1500)));
 page.on('requestfailed', (r) => consoleWarnings.push(`requestfailed: ${r.url()} ${r.failure()?.errorText || ''}`));
 
-let result = { url, showcase, time, camera, seed, width: W, height: H, quality, gpu: 'swiftshader', ok: false };
+let result = { url, showcase, time, camera, seed, width: W, height: H, quality, gpu: GL, ok: false };
 try {
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout });
   await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
