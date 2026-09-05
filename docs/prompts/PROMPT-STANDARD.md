@@ -42,6 +42,40 @@ any new prompt added later.
 
 Pass = **≥ 8.5**, same as the modules themselves.
 
+## Two more properties, learned the hard way
+
+11. **Specify only what the toolchain can measure.** An acceptance item that needs an instrument nobody has
+    fails by construction, and the builder cannot fix it because the tooling is not theirs to write. Before writing
+    a threshold, name the command that reads it: a screenshot, a field in the screenshot JSON, a rect in
+    `<shot>.crops.json` (`--crops`), or a `page.evaluate` probe. If none exists, either request the tool in
+    `docs/core-requests/`, or write the item at a precision the existing tools can actually resolve. Precision you
+    cannot measure is not rigour; it is a round spent arguing.
+12. **Self-consistent numbers.** Every figure must survive its own arithmetic. Ratios, ranges and worked examples get
+    checked against each other before the spec ships: a range whose corners fail the test it claims to satisfy, or a
+    ratio contradicted by the justification two sentences later, is worse than no number at all — the builder chases
+    it into a wall and the critic fails them for arriving there.
+
+## How to review a prompt — the finder and the scorer are different agents
+
+An adversarial reviewer is excellent at finding defects and unfit to award the score. Measured on this project:
+the same specs scored **8.0 with "buildable without guessing: false" 16 times out of 16** from an adversarial
+reviewer, and **9.0–9.3 with "buildable: true"** from a blind, calibrated one — while a deliberately weak control
+scored 4.0. The adversarial framing ("be hard", "never inflate", "this governs four rounds") produces true findings
+and a depressed, non-discriminating number. Conflating the two roles produces a gate nothing can ever pass.
+
+So run them separately:
+
+- **Finder** — adversarial, unbounded, *no score authority*. Returns ranked defects with the property each violates
+  and a concrete fix. Its job is to be unfair.
+- **Scorer** — blind to the document's origin, told explicitly to use the full range, and given the calibration
+  fixture `docs/prompts/_calibration/weak-props.md` unlabelled in the same batch. Its score counts only if the
+  control lands at or below 5. This is the gate.
+
+The same split applies to the module critics, and the project already has it by accident: the critic's *ranked issue
+list* is the finder's output and is always acted on, while the *score* decides the gate. Where a critic's score and
+its issue list disagree — a 6 whose issues are all cosmetic, or an 8.5 whose top issue is a blocker — the issue list
+is the more reliable of the two.
+
 ## Rules for module specs specifically
 
 A module spec (`docs/prompts/modules/<name>.md`) must contain, in this order:
