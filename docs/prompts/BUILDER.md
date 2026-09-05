@@ -29,8 +29,10 @@ Read, in this order, completely:
 
 **You may not** touch `src/core/`, `src/main.js`, `index.html`, `tools/`, `docs/STATUS.json`, or another module's
 folder — not even to fix an obvious bug in it. Write the core request instead and work around it meanwhile.
-You may not run `git commit`, `git push`, or start/stop the dev server. If the dev server is down, say so in your
-report rather than starting one — the orchestrator owns it and other agents are screenshotting through it.
+You may not run `git commit` or `git push`. The dev server at http://127.0.0.1:5173 is shared — never stop or
+restart it while others are screenshotting through it. If it is genuinely unreachable (the container restarts
+occasionally), run `./tools/devserver.sh`, which is idempotent and returns immediately when the server is already
+up, and note it in your report.
 
 ## Engineering rules
 

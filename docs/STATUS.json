@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-05T09:32:21.591Z",
+  "updatedAt": "2026-09-05T22:44:31.492Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -318,15 +318,52 @@
     },
     "zoning": {
       "wave": 2,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6.5,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] Zone fill is an opaque colour sheet, not a CS2 translucent tint: uFill = 0.63 alpha of an unlit constant colour, further darkened by the grid term, leaves the terrain reading at under a quarter of its own value. At street and closeup zoom the block is flat blue plastic with no ground textu",
+        "[blocker] Overlay floats 0.16-0.26 m above the ground and spills onto roads and crosswalks: Measured in-engine: every overlay vertex sits exactly 0.16 m (cells) / 0.26 m (lot ribbons) above terrain.getHeight. At 26-60 m camera height the parallax is plainly visible — the sheet edge overhangs the ker",
+        "[major] Overlay ignores time of day — unlit at night and golden hour: Sampling identical pixels at 12:00 vs 22:00 in the zones preset: bare terrain falls to 0.64x its noon luminance, the zone patch only to 0.91x (and that 9% is just ground showing through). At night and at 6.5 the overlay is the bri",
+        "[major] 8 m cell grid vanishes at aerial zoom and has inverted polarity: Grid lines are 0.038 UV (~0.3 m) wide and DARKER than the fill (col *= mix(1.0, 0.52, grid)). At the aerial preset an 8 m cell is ~14 px, so the line is under half a pixel and smears into a flat wash; CS2's zone grid is light a",
+        "[major] 25% of lots are unbuildable slivers and 12 road frontages get no lots at all: Over the showcase's 140 lots: widths 8/11/16/19/24/27/35/43 m, median 19 m; 35 of 140 (25%) are under 14 m and 24 are a single 8 m cell wide (14x 8x24 m, 10x 8x16 m). Meanwhile 12 of 64 road edges — eleven 80 m str",
+        "[major] 'Corner fit' +3 m extension fires on 55% of lots, pushing outlines onto the pavement: _splitRun adds extA = 3 when cursor === 0 and extB = 3 when b === n, i.e. to the first and last lot of EVERY frontage side; with typically two lots per side that is nearly every lot — 77 of 140 (55%) come o",
+        "[major] Region boundaries are ragged: amoeba holes, staircased junction corners, 1-cell nubs: Cells rejected for relief / slope / road coverage are silently omitted, so blocks have bites out of their middles (bare eroded ground showing through), staircase edges against every rounded junction, and is",
+        "[major] Palette washes out; low vs high density does not read: Blending at 0.63 over lit grass turns residential-high 0x0d8f3c into pale mint and office-high 0x6a1cb8 into lilac; at aerial zoom residential low/high and office low/high are nearly the same swatch, and the 45 deg hatch meant to separat",
+        "[minor] High-density 45 deg hatch reads as broad repeating smears at close range: The 3 m-period band seen at 26-60 m camera height becomes wide diagonal creases across the sheet rather than a fine hatch, and its repetition is obvious. Fix: drive the hatch period from screen-space derivatives with a",
+        "[minor] Empty zonable band reads as a dirty khaki stain over grass: fill: 0.10 of near-white desaturates the ground to khaki at street level and forms disconnected pale squares around the city fringe at aerial zoom. Fix: draw the band as grid lines only, no area fill, slightly additive, so it reads ",
+        "[minor] Per-frame allocations in update (syncFog): ZoneOverlay.syncFog runs every frame and builds two arrays each time ([...this.meshes.values()].map(...).concat([...])). ARCHITECTURE section 9 forbids per-frame allocations in update. Fix: build the material list once in the constructor.",
+        "[minor] Per-cell tint jitter depends on paint order rather than position: _cellGeometry pulls aRnd from ctx.rng.fork('overlay') in Map-iteration order, so a cell's brightness depends on when it was painted relative to its neighbours; the same final zoning reached by a different stroke sequence rende",
+        "[minor] Dead code: unused edges Set in _brush: ZoneGrid._brush builds and fills an `edges` Set that is never read afterwards. Remove it or use it to scope the lot regeneration."
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6.5,
+          "pass": false,
+          "errors": 0,
+          "draws": 6,
+          "report": "docs/critic/zoning_r1.md"
+        }
+      ],
       "next": {
         "phase": "build",
-        "round": 1
-      }
+        "round": 2
+      },
+      "pass": false,
+      "strengths": [
+        "Data model is deterministic and durable: 140 lots regenerate byte-identically across repeated refresh() calls, serialize()/deserialize() round-trips to the identical cell set, and all 140 lot ids and their buildingId survive a rebuild.",
+        "Lots are anchored to real world.roads.frontage: 0/140 lots off their edge, lateral offsets 13.6-29.6 m against the true roads.sample centreline, and 140/140 headings correct to the ARCHITECTURE section 2 convention.",
+        "Validity rules genuinely hold: of 1,214 zoned cells, 0 over water, 0 above 24 deg slope, 0 on asphalt; painting far from a road or with a bogus type is refused and returns 0.",
+        "Very cheap: 6 draw calls and 21,872 triangles against a self-declared 10 / 120,000 budget, with the whole overlay rebuilding in ~10 ms for 1,214 cells.",
+        "Zero console errors, module status 'ready' and a valid frame in all 16 captures, at 1920x1080 and 1280x720.",
+        "Solid engineering hygiene: batched bulk() with one lot regeneration and one event, a 60 ms settle that coalesces bursts, tool-driven fade, fog wired into the custom shaders, and three sensible showcase camera presets.",
+        "The wide/aerial composition is close to the mark: at zoneswide and aerial the plan is legible, four types plus the empty zonable band separate cleanly, and the mesh conforms to terrain and distance fog."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 6,
+      "apiContractOk": true,
+      "builtRound": 1
     },
     "buildings": {
       "wave": 2,
@@ -336,9 +373,10 @@
       "openIssues": [],
       "history": [],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 1
-      }
+      },
+      "builtRound": 1
     },
     "props": {
       "wave": 2,
@@ -348,9 +386,10 @@
       "openIssues": [],
       "history": [],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 1
-      }
+      },
+      "builtRound": 1
     },
     "traffic": {
       "wave": 2,
@@ -360,9 +399,10 @@
       "openIssues": [],
       "history": [],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 1
-      }
+      },
+      "builtRound": 1
     },
     "tools": {
       "wave": 2,
@@ -372,9 +412,10 @@
       "openIssues": [],
       "history": [],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 1
-      }
+      },
+      "builtRound": 1
     },
     "democity": {
       "wave": 3,
@@ -463,7 +504,7 @@
         "screenshot retry"
       ],
       "deferred": [
-        "world.terrain.writeHeights/flattenStrip \u2014 terrain-module API, requested in ARCHITECTURE \u00a73"
+        "world.terrain.writeHeights/flattenStrip — terrain-module API, requested in ARCHITECTURE §3"
       ]
     },
     {
@@ -477,7 +518,6 @@
     "passed": [],
     "needsWork": [
       "audio:unscored:r0",
-      "zoning:unscored:r0",
       "buildings:unscored:r0",
       "props:unscored:r0",
       "traffic:unscored:r0",
@@ -490,31 +530,32 @@
       "roads:6:r1",
       "effects:6:r1",
       "simulation:6.5:r1",
+      "zoning:6.5:r1",
       "environment:7:r2",
       "ui:7:r1"
     ],
     "weakest": "audio"
   },
   "promptQuality": {
-    "library": "docs/prompts/ \u2014 PROMPT-STANDARD.md (12 properties, 0-10, pass 8.5), BUILDER/CRITIC/INTEGRATOR/WHOLE-GAME-CRITIC/BLIND-JUDGE role prompts, modules/<name>.md specs",
+    "library": "docs/prompts/ — PROMPT-STANDARD.md (12 properties, 0-10, pass 8.5), BUILDER/CRITIC/INTEGRATOR/WHOLE-GAME-CRITIC/BLIND-JUDGE role prompts, modules/<name>.md specs",
     "calibrationExperiment": {
       "date": "2026-09-05",
       "question": "does the spec reviewer discriminate quality, or anchor at 8 regardless of content?",
       "method": "same rubric, blind, 2 replicas each over a deliberately weak control spec and 2 real specs",
       "weakControl": [
-        4.0,
-        4.0
+        4,
+        4
       ],
       "realSpecs": [
         9.3,
         9.3,
         9.3,
-        9.0
+        9
       ],
       "discriminationGap": 5.2,
       "finding": "the blind calibrated reviewer discriminates (5.2-point gap). The ADVERSARIAL reviewer used in the spec workflow returned 8.0 and buildableWithoutGuessing=false for 16 of 16 specs - true defect lists, non-discriminating scores. Finder and scorer are now separate roles; every scoring batch carries the unlabelled control and is void if the control scores above 5."
     },
-    "defectsPreserved": "docs/prompts/_review/*.json \u2014 169 finder defects across 16 specs, being repaired in a reduction pass",
+    "defectsPreserved": "docs/prompts/_review/*.json — 169 finder defects across 16 specs, being repaired in a reduction pass",
     "toolingGapClosed": "pinned-crop measurement (--crops / window.__sim.cropRects) did not exist, so several specs' acceptance items failed by construction; added to core and both role prompts",
     "repairPass": {
       "date": "2026-09-05",
@@ -685,7 +726,7 @@
           "contradictions": 5
         }
       },
-      "residual": "125 tracked defects in docs/prompts/_review/residual.json \u2014 every spec passed while still carrying 3-6 unmeasurable items and 0-5 arithmetic nits. Not repaired further: diminishing returns against the game itself, which is the deliverable."
+      "residual": "125 tracked defects in docs/prompts/_review/residual.json — every spec passed while still carrying 3-6 unmeasurable items and 0-5 arithmetic nits. Not repaired further: diminishing returns against the game itself, which is the deliverable."
     }
   }
 }

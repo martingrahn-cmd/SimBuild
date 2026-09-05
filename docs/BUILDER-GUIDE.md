@@ -3,6 +3,8 @@
 1. Read `ARCHITECTURE.md` (the contract) and `docs/reference/CS2-LOOK.md` (the bar).
 2. You own exactly `src/modules/<yours>/`. Nothing else. Assets go through `public/assets/manifest.json` + `node tools/fetch-assets.mjs` (CC0 only: Poly Haven, ambientCG, procedural).
 3. The dev server is already running at http://127.0.0.1:5173 — never start/stop it. Vite hot-reloads your files.
+   If it is genuinely down (the container restarts occasionally), `./tools/devserver.sh` brings it back idempotently;
+   it is the one exception to "never start the server", and it is safe to run when the server is already up.
 4. Verify with screenshots, every time, before claiming anything:
    `node tools/screenshot.mjs --showcase <yours> --time 12 --camera aerial --out shots/<yours>/dev_aerial_12.png`
    then READ the PNG with the image reader and READ the JSON next to it (errors must be `[]`).

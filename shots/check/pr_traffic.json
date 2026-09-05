@@ -1,0 +1,15 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=traffic&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "traffic",
+  "time": 12,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.waitForFunction: Target page, context or browser has been closed",
+  "errors": [],
+  "warnings": []
+}
