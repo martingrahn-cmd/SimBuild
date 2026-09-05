@@ -1,0 +1,184 @@
+{
+  "module": "props",
+  "round": 1,
+  "score": 5.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 160,
+  "apiContractOk": false,
+  "acceptanceFailed": [
+    "1. Trees are trees, not lollipops",
+    "2. Species, silhouette and colour variety",
+    "3. Nothing floats, nothing sinks, nothing stands in the road",
+    "4. Streetlamps are modelled objects on the roads' own anchors",
+    "5. Night is lamplight, not dimmed noon or self-lit foliage",
+    "6. The lamp actually lights the ground",
+    "7. Noon albedo and contrast — not washed out, not crushed",
+    "8. Tree shadows are dappled, not blobs",
+    "9. No card halos, no sprite glow, no sparkle",
+    "10. Traffic signals at every signalised node, and they work — under props' clock and under traffic's",
+    "11. Hedges and fences are volumes, not green static",
+    "12. Twelve kinds, all present, all identifiable",
+    "13. Placement is rule-driven and reads as designed, not scattered",
+    "14. LOD without popping or a visible switch line",
+    "16. Wind sway, deterministic and gentle",
+    "17. Golden hour reads",
+    "18. Aerial and skyline coherence",
+    "19. Determinism and idempotence",
+    "20. Budget",
+    "21. The whole shot matrix exists — 34 shots",
+    "22. Stay in lane — the props-specific half",
+    "23. Edits are responsive — measured as CPU work"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "props adds four real THREE.PointLights",
+      "detail": "src/modules/props/render.js:266 constructs new THREE.PointLight(0xffc987, 0, 34, 2) four times and parents them into the props group, steering them to follow the nearest lamps within 80 m. The probe confirms them live by traversing __sim.registry.get('props').group: lights 4, all PointLight. ARCHITECTURE §4, the props preamble and item 22 all forbid any THREE.Light in this module, and no docs/core-requests/props.md was filed. Delete them; night lamp light must come from the emissive luminaire head, the camera-facing halo billboard and the additive ground pool decal, all three of which already exist and already measure well (issue 8).",
+      "evidence": "shots/props/r1/probe.mjs output; src/modules/props/render.js:263-271"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "api is still the pre-spec one — 10 of §2's 15 members missing",
+      "detail": "Shipped api is {rebuild, stats, lamps, signalState, count, serialize, deserialize}. Missing: place, remove, at, lampsFor, signals, signalFor, stops, setDensity, cropRects, debug{setKindVisible,setLod,setSway,setPools,lodHistogram}. count() ignores its kind argument and returns items.size. stats() returns {trees, props, forest, lamps, signals, ms, draws, tris} — none of items/byKind/instances/chunks/species/radii that items 2, 3d, 20 and 23 read. serialize() returns {version, seed}, not the item list. signalState(nodeId) is the exact export §2 says to replace with signals()/signalFor(). transit has no stops() to read, traffic has no signals() to hand over to, and the critic has no debug layer isolation or cropRects, which is why items 1, 5a, 6b-6f, 7, 9a, 11a-11b have no defined region this round.",
+      "evidence": "shots/props/r1/probe.mjs (apiKeys, missing, cropRects: {}); src/modules/props/index.js:246-268"
+    },
+    {
+      "rank": 3,
+      "severity": "blocker",
+      "title": "frozen world.props.kinds is mutated; three illegal kinds ship and no item carries species",
+      "detail": "index.js:191 pushes 'tree_birch', 'hedge' and 'flowers' onto world.props.kinds, making it 15 strings instead of the frozen 12. items holds 6916 of kind tree_birch (must be {kind:'tree_oak', species:'birch'}), 401 hedge (must be {kind:'fence', variant:'hedge'}) and 226 flowers (no legal kind at all). No item in the map carries a species field, so api.stats().species and item 2's entire species test have no data source. Sub-types belong in additive fields; the 12 kinds strings must not be reordered, extended or renamed.",
+      "evidence": "shots/props/r1/probe.mjs (kinds, byKind, species ['(none)']); src/modules/props/index.js:191"
+    },
+    {
+      "rank": 4,
+      "severity": "blocker",
+      "title": "1.92 M props triangles against a 700 k cap; 2.18 M whole-frame against 1.8 M; per-species meshes and no 256 m chunks",
+      "detail": "group.visible diff at aerial_12: draws 160 -> 38, so props costs 122 draws (cap 120); triangles 2 175 798 -> 257 031, so props costs 1 918 767 (cap 700 000, 2.7x). Whole-frame triangles 2 175 798 exceed the 1 800 000 cap (also 2 101 985 at street_22, 1 956 595 at crossing_12). index.js:144 still declares budget {drawCalls:400, triangles:1_900_000} where §5 requires 900 000. Root cause is the geometry rule: render.js:52-53 builds a separate bark mesh and leaf mesh per species per LOD (15 tree meshes) — §5 forbids splitting trees by species because it multiplies the cascade count — and there is no 256 m chunking at all, only a 72 m LOD/cull bucket (render.js:8) over global meshes, so nothing is chunk-culled out of the shadow passes. docs/core-requests/props.md, which §5 requires to record the 256 m deviation, does not exist.",
+      "evidence": "shots/props/r1/probe.mjs (budgetOn/budgetOff); shots/props/r1/aerial_12.json; src/modules/props/render.js:8,52-53; src/modules/props/index.js:144"
+    },
+    {
+      "rank": 5,
+      "severity": "blocker",
+      "title": "the forest is speckle, not woodland, from 300 m out",
+      "detail": "Pixels differing from their 3x3 median by >= 35 L, full-res, cap 0.05 %: aerial_12 woodland crop [1300,60,400,300] = 6.103 % (122x over); skyline_12 woodland crop [600,430,400,200] = 4.400 % (88x). Whole-frame: aerial_12 3.361 %, skyline_12 2.474 %, skyline_17p5 2.264 %. Beside cs2_1 and cs2_7, where crowns stay individually resolvable with shadow gaps at 300 m and conifer silhouettes stay distinguishable at 1 km, this reads as a dark mottled mat dotted with red-brown speckle and thin impostor trunk sticks. Fix the impostor/leaf atlases (dilate RGB under the alpha, mip them, set anisotropy = ctx.assets.anisotropy on every props texture), raise foliage roughness to >= 0.70, drop any normal map beyond 60 m, and stop LOD1 leaf cards aliasing at sub-pixel size.",
+      "evidence": "shots/props/r1/crop_forest_aerial12.png; shots/props/r1/imgstats.mjs speckle output"
+    },
+    {
+      "rank": 6,
+      "severity": "blocker",
+      "title": "17 051 footprint overlaps, 43 props on asphalt, 31 props off the ground",
+      "detail": "Probe over all 18 938 items using item 3d's own radii table, with fence-fence and same-bus_stop pairs exempted: 17 051 pairwise footprint-circle violations. Examples: bench/hydrant 0.81 m apart where 1.15 m is required at (77.4, 206.7); hydrant/planter 0.54 m where 0.83 m is required at (76.4, 24.0); bus_stop/fence 1.06 m where 2.40 m is required at (190.7, 73.6). 43 props of kinds forbidden on asphalt (tree_oak, tree_pine, bush, fence, planter, bench, bin) sit where world.roads.isRoad(x,z) === 1. 31 non-road props miss world.terrain.getHeight(x,z) by more than 0.05 m, worst 0.52 m, against item 3a's 100 % requirement. Zero props in water (pass). This is the 'floating and sunk props' hard-fail and it is also what makes crossing_12 read as scattered rather than designed.",
+      "evidence": "shots/props/r1/probe.mjs (ground, overlaps, overlapEx)"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "title": "night foliage is a dimmed noon, not moonlight",
+      "detail": "Same rect, same camera: the aerial woodland rect [1300,60,400,300] has p50 89 at 12:00 and 55 at 22:00, a ratio of 0.62x against item 5a's <= 0.35x. At street range it is worse: the street_22 near crown [830,300,180,180] has mean L 60.6 while the grass beside it [1180,760,200,120] has 62.4 — foliage and lawn are the same brightness at night — and the crown's cast is warm, mean(B) - mean(R) = -6.7 where item 5c requires >= +4 (the grass is -15.1). This repeats simulation_r1 issue 2 and terrain_r1 issue 4 verbatim. Read world.weather.night per frame and drive the foliage albedo and any ambient floor term down with it rather than leaving foliage on its daylight response.",
+      "evidence": "shots/props/r1/crop_tree_street22.png; shots/props/r1/imgstats.mjs crown/grass crops on street_22.png and aerial_12/22.png"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "title": "the lamp ground pool has a hard straight rim and is clipped by the kerb",
+      "detail": "1-px scanline across the pool boundary in street_22 at y = 660, x 1150->1190: 180, 180, 155.9, 155.7, 107.5, 83.4 — a single adjacent step of 48.2 L and a 96.6 L drop across 4 px, against item 6d's 6 L cap, and crop_pool_street22.png shows it as a straight diagonal edge slicing the sidewalk. Causes: the pool is one flat PlaneGeometry quad scaled uniformly by 23.0 in NightRig.setLamps, so its world major axis is 23 m for an 8.4 m column where item 6a wants 10-16 m; it is clipped by the sidewalk mesh instead of being projected onto it; and its renderOrder is RENDER_ORDER.MARKINGS + 4 = 25 instead of RENDER_ORDER.TRANSPARENT (100). Brightness and warmth already pass — pool mean L 166.8 vs 74.9 on road 12 m off-lamp = 2.23x, and R - B = +17.5 — so only the shape, the falloff and the render order need work.",
+      "evidence": "shots/props/r1/crop_pool_street22.png; shots/props/r1/scanline.mjs on street_22.png; src/modules/props/render.js setLamps"
+    },
+    {
+      "rank": 9,
+      "severity": "major",
+      "title": "three species, no species attribute, and scale is an absolute height in metres",
+      "detail": "trees.js:17 declares SPECIES = ['oak','pine','birch']. §3's table needs five silhouette classes (conifer spire, broad round crown, tall narrow, wide low spreading, small ornamental) across eight species strings, and item 2 needs api.stats().species >= 5. No item carries a species field at all. scale is being used as an absolute height: over the 200 trees nearest (40,40) it runs min 5.00, max 18.08, mean 9.25, std 2.73, where item 2 requires scale in [0.75, 1.35] multiplying that instance's silhouette-class base height. The height ranges in place.js:129 (oak 8.5-15.5, pine 12-24, birch 8-15) also miss §3's table. Heading is properly uniform (largest of 12 buckets 13.5 % <= 15 %) and no two neighbours within 12 m share (species, scale, heading) — those halves pass and should be kept.",
+      "evidence": "shots/props/r1/probe.mjs (species, scale, heading, dupPairs); src/modules/props/trees.js:17; src/modules/props/place.js:129"
+    },
+    {
+      "rank": 10,
+      "severity": "major",
+      "title": "trees stop casting shadows at ~92 m, so aerial and golden hour have no shadows at all",
+      "detail": "render.js:53 sets { cast: false } on the whole LOD1 tier, so tree shadows end at the LOD0 range. In aerial_12, aerial_6p5 and skyline_12 there is not one tree or lamp shadow anywhere in frame, and aerial_6p5 under a low sun has frame std 18.5 and reads as flat light. Item 8 requires castShadow = true on LOD0 and LOD1 instanced meshes; item 17 requires long prop shadows at 06.5/17.5; item 18 requires lamp columns visible as >= 1 px verticals with shadows. cs2_4 is the reference: every column throws a needle across the carriageway and the big fir throws a readable dappled shadow. The near-camera dapple at crossing_12 is genuinely good — extend it outward, do not rebuild it.",
+      "evidence": "shots/props/r1/aerial_6p5.png; shots/props/r1/aerial_12.png; src/modules/props/render.js:53"
+    },
+    {
+      "rank": 11,
+      "severity": "major",
+      "title": "the signal clock is a dt accumulator that ignores world.time and never reads traffic",
+      "detail": "index.js:107 advances S.lensT += dt, and src/main.js:121 derives dt from performance.now() without scaling by clock.speed, so ?speed=0 does not freeze it and __sim.setTime() does not move it. The probe stepped the clock 12 -> 18 -> 12 and the lens colours never varied as a function of the hour, so item 10a's 'same hour twice gives the same phase, half a cycle flips it' cannot hold. Item 10b's handover cannot even be attempted: nothing in src/modules/props/ ever reads ctx.modules.traffic, so assigning registry.get('props').ctx.modules.traffic = {signalState: ...} changes nothing, and there is no signals()/signalFor() with source/armStates/greenArms to mirror traffic into. Drive the phase from world.time.day/hour, add signals() as a superset of traffic's shape, and make signalFor a read-through when ctx.modules.traffic?.signalState exists.",
+      "evidence": "shots/props/r1/probe.mjs (signals, det); src/modules/props/index.js:105-140"
+    },
+    {
+      "rank": 12,
+      "severity": "major",
+      "title": "wind sway is a dt accumulator, so no two captures at the same ?time= match",
+      "detail": "index.js:213 advances S.wind.uTime.value += dt with the same real wall-clock dt as issue 11. Items 14 and 16 are both built on pixel diffs between two loads or two clock settings at the same ?time=, and an accumulator makes every such diff meaningless; item 19 forbids 'phase += dt' anywhere in the module for exactly this reason. Derive the sway phase from world.time.day/hour, scale amplitude with world.weather.wind.speed, and make wind.speed = 0 produce byte-identical frames. debug.setSway is also required so the pair can be shot.",
+      "evidence": "src/modules/props/index.js:207-215"
+    },
+    {
+      "rank": 13,
+      "severity": "major",
+      "title": "forest scatter is a jittered lattice and there is no street-tree rhythm",
+      "detail": "place.js:85,91-96 scatters on a 6.1 m grid with +/-0.46 x spacing jitter — the grid-scatter failure §6 names explicitly, and item 13d requires a nearest-neighbour histogram with no bin over 35 % and a mean NN distance in [4,9] m. Item 13e's confirming top-down shot (canopy_12) could not be captured under load, but the generator settles it. Separately, item 13a's 12-18 m street-tree spacing does not exist: place.js:217,242 offsets verge trees by asphaltHalf + sidewalk + 2.6 m with +/-0.8/1.6 m jitter and no along-edge rule, and aerial_12/aerial_6p5 show the avenue with no double line of trees at all, so §8.2's tree-lined avenue is not staged.",
+      "evidence": "shots/props/r1/aerial_12.png; shots/props/r1/aerial_6p5.png; src/modules/props/place.js:85-96,217-243"
+    },
+    {
+      "rank": 14,
+      "severity": "major",
+      "title": "five presets instead of §8's eight, and no park, so a third of the acceptance set is unshootable",
+      "detail": "showcase.js declares lamps_night, forest, crossing, bench, canopy. §8 requires forest, avenue, signal, lamp, park, treecloseup, busstop, canopy. CityCamera.apply() returns false for an unknown preset name and tools/screenshot.mjs does not check the return value, so --camera park silently captures the default aerial framing — a missing preset therefore produces a wrong shot rather than an error. §8's staged scene is also missing the >= 80x80 m park/plaza (§8.3) and the empty lot boundary with hedge + fence + gate gap (§8.5), so items 11 and 12's park kit have nowhere to appear. Rename/replace to §8's eight and stage the park; item 21's 34-shot matrix is unreachable until then.",
+      "evidence": "src/modules/props/showcase.js:6-15; src/core/camera.js:37-40"
+    },
+    {
+      "rank": 15,
+      "severity": "minor",
+      "title": "hedges are 1.1 m card blobs and there is exactly one fence type",
+      "detail": "furniture.js:267 builds hedge as cardBlob({cards:20, radius:0.62, height:1.1}) — below item 11a's 1.2-1.8 m, with no modelled undulating top of >= 0.08 m amplitude and no darker interior (top-to-side dL >= 15), i.e. simulation_r1's 'green static' again. furniture.js:188 builds one 2 m picket section; item 11c needs at least two built variants in frame (variant 'slat' picket and variant 'railing' metal with posts at <= 2.5 m pitch), each with a visible post rhythm in silhouette and a bottom rail clearing undulating ground by <= 0.12 m. cs2_4's boundaries — long clipped hedge volumes with irregular tops, white slat fence, dark metal picket, rendered wall panels — are the target.",
+      "evidence": "src/modules/props/furniture.js:187-188,267"
+    },
+    {
+      "rank": 16,
+      "severity": "minor",
+      "title": "lamp column geometry is out of spec and there is no ornamental lantern variant",
+      "detail": "furniture.js:22,38-40: the column is a 8.0 m cylinder with the luminaire at 8.365 m where item 4c wants 8.5-9.5 m; it tapers 0.25 m to 0.17 m diameter where the spec wants ~0.16 m to ~0.10 m; the mast arm reaches 2.62 m where the spec wants 1.2-2.0 m; the luminaire body is 0.24 x 0.055 x 0.86 m against ~0.55 x 0.25 x 0.10 m. No {kind:'streetlamp', variant:'lantern'} ornamental type at 4.5-5.5 m exists anywhere in the module (item 4d), and cs2_4 lines every driveway and garden with them. Preserve the part that is already right: all 98 anchors from roads.lampPositions across 40 sampled edges have a matching lamp within 0.05 m in x, y and z, and no lamp centre lies within 8 m of an intersection.",
+      "evidence": "shots/props/r1/probe.mjs (lampMatch, lampNearInt); src/modules/props/furniture.js:17-41"
+    },
+    {
+      "rank": 17,
+      "severity": "minor",
+      "title": "furniture has no albedo texture and trunks read as flat untextured grey",
+      "detail": "index.js:167-172 gives every opaque piece one shared MeshStandardMaterial with vertexColors: true and no map, so bench slats, bins, hydrants, signal housings and lamp columns are flat colour fields broken only by a shared scuff normal; at crossing_12 the tree trunks are untextured grey cylinders. This is the 'untextured flat surfaces' hard-fail, and item 1d wants bark with std >= 8 inside the trunk rect. §5 allows up to two further PBR sets — a bark and a painted/galvanised metal — which is exactly what is needed. cs2_5 shows how much of CS2's close-range read comes from material identity.",
+      "evidence": "shots/props/r1/crop_tree_crossing12.png; src/modules/props/index.js:167-172"
+    },
+    {
+      "rank": 18,
+      "severity": "minor",
+      "title": "detached leaf cards float in mid-air over the carriageway",
+      "detail": "In crossing_12, crop [380,480,520,400], several elongated green leaf cards hang above the asphalt near the signal mast with no trunk or branch beneath them. Either LOD1 canopy cards are being placed off their instance origin, or a trunk is being culled while its canopy instance is left drawn. It reads as a rendering bug at street distance and it is the first thing the eye finds in the frame after the signal heads.",
+      "evidence": "shots/props/r1/crop_tree_crossing12.png"
+    }
+  ],
+  "strengths": [
+    "Lamp anchoring is exactly right: 98/98 roads.lampPositions anchors matched within 0.05 m in x, y and z across 40 sampled edges, and zero lamps within 8 m of an intersection. Keep taking each anchor's own y rather than re-deriving it.",
+    "The night rig genuinely lights the ground: the pool is 2.23x the luminance of road 12 m off-lamp and warm at R - B = +17.5, both clearing item 6. Only the pool's shape, falloff and render order need fixing.",
+    "Near-camera dappled tree shadows at crossing_12 show real branch structure rather than an ellipse — item 8's hard half. Extend it to the LOD1 tier instead of rebuilding it.",
+    "Exposure discipline is the one thing right in every frame: blackPct <= 0.01 %, whitePct <= 0.002 %, p1 >= 27 everywhere. Do not fix night foliage by lifting exposure.",
+    "Zero console errors in every capture and every probe, module status ready in every valid shot, and every texture procedural with no manifest additions — the asset policy is clean.",
+    "The trunk is a real swept tube with branching (trees.js), not a cylinder-plus-sphere. Keep the skeleton and hang a better canopy on it.",
+    "Foliage uses alphaTest 0.42 and never transparent:true (trees.js:310), and no props shader reads cameraPosition, so the terrain_r1 reflection-confetti trap is avoided by construction."
+  ],
+  "summary": "The tree still holds the pre-spec props build the module spec's header describes, unchanged: api {rebuild, stats, lamps, signalState, count, serialize, deserialize} against §2's fifteen members, budget.triangles 1_900_000 at index.js:144, five presets instead of §8's eight, and four real THREE.PointLights in render.js:266 that ARCHITECTURE §4 forbids outright. Measured: props costs 122 draw calls (cap 120) and 1 918 767 triangles (cap 700 000) with a 2 175 798-triangle frame (cap 1 800 000); woodland speckle is 6.10 % at aerial and 4.40 % at skyline against a 0.05 % cap; foliage at 22:00 is 0.62x its noon luminance (cap 0.35x) and casts warm, not cool; the lamp pool has a 48 L one-pixel rim (cap 6 L); 17 051 footprint overlaps, 43 props on asphalt and 31 off the ground. What works and must survive the next round: lamp anchoring, pool brightness and warmth, near-camera dappled shadows, clean exposure, zero console errors. 22 of 24 acceptance items fail and 2 could not be verified; the score is 5.0 and the round does not pass.",
+  "shots": [
+    "shots/props/r1/aerial_12.png",
+    "shots/props/r1/aerial_22.png",
+    "shots/props/r1/aerial_6p5.png",
+    "shots/props/r1/crossing_12.png",
+    "shots/props/r1/street_22.png",
+    "shots/props/r1/skyline_12.png",
+    "shots/props/r1/skyline_17p5.png",
+    "shots/props/r1/crop_tree_crossing12.png",
+    "shots/props/r1/crop_tree_street22.png",
+    "shots/props/r1/crop_forest_aerial12.png",
+    "shots/props/r1/crop_pool_street22.png"
+  ]
+}

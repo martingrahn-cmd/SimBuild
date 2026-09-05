@@ -1,7 +1,7 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5173/?showcase=props&time=6.5&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "props",
-  "time": 12,
+  "time": 6.5,
   "camera": "aerial",
   "seed": 1337,
   "width": 1920,
@@ -10,23 +10,23 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 854376,
+  "elapsedMs": 807072,
   "fps": 11.6,
-  "measuredFrames": 2,
-  "frameMs": 28855,
-  "drawCalls": 115,
-  "triangles": 1567363,
+  "measuredFrames": 1,
+  "frameMs": 50958.8,
+  "drawCalls": 160,
+  "triangles": 2175798,
   "programs": 50,
   "textures": 49,
   "geometries": 65,
-  "heapMB": 60.8,
+  "heapMB": 60.5,
   "moduleMs": {
-    "environment": 0.8999999985098839,
-    "props": 4.5,
-    "terrain": 0.10000000149011612,
+    "environment": 0.30000000447034836,
+    "props": 0,
+    "terrain": 0.19999999552965164,
     "roads": 0
   },
-  "hour": 12,
+  "hour": 6.5,
   "cameraState": {
     "position": [
       193.8,
@@ -44,29 +44,29 @@
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.9,
-      "initMs": 2273
+      "ms": 0.3,
+      "initMs": 843
     },
     "props": {
       "status": "ready",
       "errors": 0,
-      "ms": 4.5,
-      "initMs": 2014
+      "ms": 0,
+      "initMs": 1061
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.1,
-      "initMs": 15020
+      "ms": 0.2,
+      "initMs": 9294
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 144
+      "initMs": 586
     }
   },
   "errors": [],
   "warnings": [],
-  "png": "shots/props/r1/aerial_12.png"
+  "png": "shots/props/r1/aerial_6p5.png"
 }

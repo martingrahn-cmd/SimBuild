@@ -14,7 +14,7 @@ const camera = args.camera || 'aerial';
 const seed = args.seed !== undefined ? +args.seed : 1337;
 const W = +(args.w || 1920), H = +(args.h || 1080);
 const measure = +(args.measure ?? 2);
-const timeout = +(args.timeout || 90) * 1000;
+const timeout = +(args.timeout || 300) * 1000; // software GL: a dense 1080p frame can take 30-60 s under load
 const quality = args.quality || 'high';
 const out = args.out || `shots/${showcase}_${camera}_${String(time).replace('.', 'p')}.png`;
 fs.mkdirSync(path.dirname(out), { recursive: true });

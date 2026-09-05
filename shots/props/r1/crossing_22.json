@@ -1,8 +1,8 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=buildings&time=12&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
-  "showcase": "buildings",
-  "time": 12,
-  "camera": "closeup",
+  "url": "http://127.0.0.1:5173/?showcase=props&time=22&camera=crossing&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 22,
+  "camera": "crossing",
   "seed": 1337,
   "width": 1920,
   "height": 1080,

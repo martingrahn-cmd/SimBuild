@@ -20,7 +20,7 @@ for (const cam of cameras) for (const t of times) {
   if (args.w) extra.push('--w', args.w); if (args.h) extra.push('--h', args.h);
   if (args.seed) extra.push('--seed', args.seed); if (args.weather) extra.push('--weather', args.weather);
   if (args.quality) extra.push('--quality', args.quality);
-  extra.push('--timeout', args.timeout || '240');
+  extra.push('--timeout', args.timeout || '300');
   const r = spawnSync('node', ['tools/screenshot.mjs', '--showcase', mod, '--camera', cam, '--time', String(t), '--out', out, '--measure', args.measure || '1.5', ...extra], { encoding: 'utf8' });
   process.stdout.write(r.stdout);
   if (r.stderr) process.stderr.write(r.stderr);

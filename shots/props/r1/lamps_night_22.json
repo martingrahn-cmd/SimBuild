@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=22&camera=lamps_night&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 22,
+  "camera": "lamps_night",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 684601,
+  "fps": 11.6,
+  "measuredFrames": 1,
+  "frameMs": 54636.4,
+  "drawCalls": 182,
+  "triangles": 2543664,
+  "programs": 56,
+  "textures": 50,
+  "geometries": 67,
+  "heapMB": 60.4,
+  "moduleMs": {
+    "environment": 0.30000000447034836,
+    "props": 0.10000000149011612,
+    "terrain": 0.19999999552965164,
+    "roads": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      -103.3,
+      37.6,
+      47
+    ],
+    "target": [
+      140,
+      4,
+      41
+    ],
+    "distance": 244.1
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 885
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 2185
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 10011
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 147
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/props/r1/lamps_night_22.png"
+}

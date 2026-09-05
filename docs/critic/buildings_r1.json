@@ -1,0 +1,158 @@
+{
+  "module": "buildings",
+  "round": 1,
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 215,
+  "apiContractOk": false,
+  "acceptanceFailed": [
+    "1. Geometric facade relief, not painted windows",
+    "2. Silhouette variety downtown",
+    "3. Night windows are per-window, baked, and dark between",
+    "4. Lit ground floor",
+    "5. Zone x density x level are visually distinct",
+    "6. Roofscape",
+    "7. Lot surface and lot boundary, owned by this module",
+    "9. Contact darkening at the base",
+    "10. No facade tiling repetition",
+    "11. Non-box massing",
+    "12. Corner lots",
+    "13. Balconies on residential",
+    "15. No specular sparkle, no wet-plastic facades",
+    "16. LOD parity and no popping",
+    "17. Budget",
+    "19. API contract and events",
+    "21. Info view tint honoured",
+    "22. `lit` is live",
+    "23. Growth reads as growth"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "Five required api entries do not exist (styleCounts, features, forceLod, lotSurface, cropRects) and stats() is missing 5 of 12 fields",
+      "detail": "typeof api.styleCounts/features/forceLod/lotSurface/cropRects === 'undefined'. stats() returns only {chunks, tris0, tris1, visible, buildMs, buildings, tiles} - missing buildingsL3NonIndustrial, draws, chunksBuiltThisFrame, lodSwitch, setupMs - and takes no (x, z, r) selection. Items 1, 2, 3, 4, 6, 11, 12, 13 and 16 are defined as arithmetic over these calls, so nine acceptance items have no implementation to grade against, and `screenshot.mjs --crops` can only ever write rects:{}. buildMs also reads 1381 because chunks.js:85 accumulates and nothing resets it per frame. Implement section 2 exactly, including the selection arguments and the per-frame reset of buildMs/chunksBuiltThisFrame.",
+      "evidence": "shots/buildings/r1/apicheck.mjs"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "Pastel night: facade only 2.6-3.3x darker than its windows, and no lit ground floor anywhere",
+      "detail": "Median of the brightest 10% over the median of the darkest 50% of a 200x200 facade patch on the full-res night_downtown_22.png: 3.33 at (1000,150), 2.75 at (1450,100), 2.64 at (250,50); 2.90 at (420,60) in closeup_22.png. Spec requires >= 6. The unlit facade sits at L 63-78 where cs2_8 puts it near black, and material.js:52 adds a constant 0.03*uNight interior term to every window cell that lifts the whole facade. Separately no building has a distinct ground storey: commercialOrMixed in the 120 m night selection is 7 and none carries double-height glazing, a lit interior volume or an illuminated fascia/blade sign; features().mixedUse would be 0 (no item sets mixedUse). Kill the uniform glow, drop unlit spandrel and mullions to near black, and build the ground-floor programme with the mixedUse flag.",
+      "evidence": "shots/buildings/r1/night_downtown_22.png"
+    },
+    {
+      "rank": 3,
+      "severity": "blocker",
+      "title": "Per-fragment window static: fract(sin(dot(...))) hashed from an interpolated varying",
+      "detail": "material.js:39 contains fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123), fed by the interpolated varying vWinCell, so adjacent pixels inside one window cell hash to different states at range - the exact bug that cost environment a round. Measured fraction of pixels differing from BOTH horizontal neighbours by > 40/255 on distant facades: 1.06% at (1180,760), 2.34% at (300,520), 3.27% at (960,420) in aerial_22.png and 1.84% at (700,500) in skyline_22.png, against a 0.2% ceiling. Bake on/off, tint and brightness tier per window quad into a vertex attribute from ctx.rng and expose features().litCells {total, lit, tiers, warm, cool}.",
+      "evidence": "shots/buildings/r1/aerial_22.png"
+    },
+    {
+      "rank": 4,
+      "severity": "blocker",
+      "title": "`lit` is never updated: 0 of 307 buildings are lit at 22:00",
+      "detail": "spawn() writes lit:false and nothing in update() ever writes it again, although world.weather.night === 1 at ?time=22 and the windows are visibly emitting. Section 2 requires lit kept current every frame; item 22 requires >= 90% true at 22:00 and 0% at noon (noon is correct today). One line in update() over world.buildings.items.",
+      "evidence": "shots/buildings/r1/apicheck.mjs"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "Downtown is one archetype in six colours: no crown variety, 24 of 30 towers share a styleId",
+      "detail": "Within 250 m of presets.downtown.target the 30 buildings above 60 m carry only 6 distinct styleId (office_glass_blue x8, office_stone x6, office_glass_sky x6, office_glass_dark x4, office_glass_green x4, comm_upper x2), so 24 of 30 share a style with another - item 10 allows zero above 60 m. 17 pairs sit within 45 m sharing both footprint width (+-1 m) and style; item 2 requires adjacentTwins === 0. generate.js emits no chamfer, spire, terrace or barrel-vault crown at all, only setback, an optional flat crown box and a mast, so byCrown could not reach the required 6 keys. Heights themselves are fine: 19 distinct roof heights >= 4 m apart, tallest/median 146.2/26.1 = 5.6x.",
+      "evidence": "shots/buildings/r1/downtown_12.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "Facades are painted, not built, on the towers the closeup and street presets frame",
+      "detail": "The officelow/apt archetypes do carry a projecting floor band with a shadow line and a parapet cap with visible thickness - keep that. But every tower:* is a single flat prism whose windows, mullions and reflections are all atlas paint: at 06.5 the low sun picks out nothing and at noon there is no head or jamb shadow anywhere on them, and the brick apt variant is equally flat with painted sills. Item 1 needs reliefDepths.reveal >= 0.10 m, band >= 0.04 m, cornice >= 0.15 m read off the generated geometry and tris0/buildingsL3NonIndustrial >= 900 inside a 60 m selection at both the block and closeup targets - none of which is measurable today. Sample set for the next round, by id: block target #77, #109, #71, #105, #75; closeup target #121, #124, #123, #122, #156.",
+      "evidence": "shots/buildings/r1/street_6p5.png"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "title": "Buildings are pasted onto the ground: no contact darkening, bare grass from lot edge to kerb, tufts through the plate",
+      "detail": "block_12.png row y=950, scanning x 600->760 across the asphalt toward the pale office wall gives L = 93, 90, 91, 108, 94, 95, 94, 93, 92, 94, 93, 92, 94, 91, 93 - flat 93 +- 2 right up to the wall face, with no darkening over the last metre and no darkening of the bottom 1.5 m of the wall (item 9 wants >= 25%). 0/5 buildings pass in block_12. Separately, lots are inset 8.9 m from the block line so every downtown tower stands on a bare green verge with no forecourt, plinth or entrance (street_12.png), and terrain grass tufts render through the asphalt lot plate. Raise the plate 0.03-0.06 m and publish the claimed surface through lotSurface(id); do not touch terrain.",
+      "evidence": "shots/buildings/r1/block_12.png"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "title": "Triangle budget blown, LOD1 barely cheaper than LOD0, declared budget still wrong",
+      "detail": "closeup_22 renders 2 052 752 triangles against a 2 000 000 cap and aerial_12 renders 1 817 528 against the 1 400 000 aerial cap. stats() gives tris1/tris0 = 242 564 / 405 204 = 0.599 against a <= 0.35 ceiling, and forceLod does not exist so LOD parity (meanAbs < 4/255, no silhouette edge moving > 2 px) cannot be proved at all. index.js:175 still declares { drawCalls: 320, triangles: 2_500_000 } and item 17 requires { drawCalls: 400, triangles: 2_000_000 }. Scene draw calls are healthy: max 215 at aerial_12, module chunk meshes 40.",
+      "evidence": "shots/buildings/r1/closeup_22.json"
+    },
+    {
+      "rank": 9,
+      "severity": "major",
+      "title": "The catalog preset stages no catalog, the block preset frames no mixed-use corner, and staging misses its section 8 floors",
+      "detail": "showcase.js:12 points catalog at (40,0,40) - the downtown core - and stage() never builds the 8x5 grid at >= 50 m pitch, so item 5's 'one of each of the 40 classes, one per cell' cannot be read from catalog_12 (the shot is a top-down of downtown). block at (-120,5,300) frames five residential buildings with no shopfront in sight where the preset table says '90 m street-level at a mixed-use corner'. Staging also lands short of section 8: 307 buildings (needs >= 320), 0 items with mixedUse === true (needs >= 12), 0 lots with corner === true (needs >= 6, and item 12 needs features().corner >= 6). All 40 byClass keys are present and the downtown core is fine (30 above 60 m, tallest 146.2 m).",
+      "evidence": "shots/buildings/r1/catalog_12.png"
+    },
+    {
+      "rank": 10,
+      "severity": "major",
+      "title": "Growth does not read as growth, and industrial ignores level entirely",
+      "detail": "setLevel(id, 1..5) on one commercial/low lot gives heights 9.19, 9.19, 12.59, 12.59, 15.99 m and floors 1, 1, 2, 2, 3 - height is flat across two of the four steps where item 23 requires a strict increase at every step. industrial/high is 3 floors at every level and industrial/low is 2 floors at every level (0 of 4 required steps), and each carries only 2 distinct styleId across all five levels, so levels 1-5 are indistinguishable in the industrial park. Only 3 of 8 classes reach item 5's >= 3 distinct styleId across their levels: commercial/low has 1, commercial/high has 1, office/low 2, industrial/low 2, industrial/high 2.",
+      "evidence": "shots/buildings/r1/industry_12.png"
+    },
+    {
+      "rank": 11,
+      "severity": "minor",
+      "title": "No infoview tint support",
+      "detail": "With world.infoview.active set and buildingTint(id) returning a colour, the frame diff is meanAbs 0.000/255 (item 21 wants > 20/255 with a tint applied, 0 with it removed, tint weight >= 0.7 and emissive suppressed). The material has no infoview path at all. ARCHITECTURE section 15.",
+      "evidence": "shots/buildings/r1/apicheck.mjs"
+    },
+    {
+      "rank": 12,
+      "severity": "minor",
+      "title": "serialize/deserialize is not a round trip, ids restart, and demolish never frees a staged lot",
+      "detail": "stats().tris0 goes 405 204 -> 405 260 across serialize() -> deserialize() (the lot w/d fallback in deserialize differs from the staged lot), where item 19 requires an identical tris0 and an identical styleCounts. deserialize also resets S.nextId = 1, breaking section 2's 'id unique for the life of the session'. demolish() frees the lot only via world.zones.lots.get(b.lotId), but showcase.js builds its lots in a local array and never inserts them into world.zones.lots, so lot.buildingId is never cleared for any staged building (probe: still 308 after demolish).",
+      "evidence": "shots/buildings/r1/apicheck.mjs"
+    },
+    {
+      "rank": 13,
+      "severity": "minor",
+      "title": "normalScale 1.0 with no distance fade, and a raw black skirt wall on sloped lots",
+      "detail": "material.normalScale is 1.0 against item 15's <= 0.6 ceiling, with no fade to <= 0.25 beyond 150 m. The pixel half of item 15 passes (0.000% of building-surface pixels above luma 245 in the skyline_12 and skyline_17p5 city box x 580-1100, y 360-660), and nothing in the module sets toneMapping, toneMappingExposure, scene.fog or adds a light. Separately the base skirt shows as an unlit near-black wall along the downhill lot edges of the industrial sheds; give it the ground material and an AO gradient.",
+      "evidence": "shots/buildings/r1/industry_12.png"
+    },
+    {
+      "rank": 14,
+      "severity": "minor",
+      "title": "Suburb reads as one house repeated",
+      "detail": "In block_12 every house has the same ridge direction, the same roof pitch and the same grey shingle; only the wall colour changes, where cs2_4 gets its life from ridge direction, plan shape and roof colour changing house to house. The shingle texture also shows large-scale blotch repetition across a single roof plane. Graded on block_12 alone: suburb_12 and suburb_6p5 could not be captured this round because the host was saturated by another agent's gauntlet (load average 22-29 on 4 CPUs), so items 6's chimney/dormer share and item 7's suburb lot checks are unverified rather than failed on those two shots.",
+      "evidence": "shots/buildings/r1/block_12.png"
+    }
+  ],
+  "strengths": [
+    "Seating is exact: 307 buildings x 8 perimeter samples give a worst |base - terrain| of 0.05 m, 0 buildings with terrain above the ground-floor slab and 0 floating, with the skirt driven by the minimum perimeter sample. Item 8 is the only fully clean pass in the checklist.",
+    "Zero console errors and modules.buildings.status === 'ready' in all 17 captured shots including 1280x720, and in all three probes.",
+    "Determinism is clean: no Math.random anywhere in the module, seed 1337 gives byte-identical tris0 (405 204) across two runs, and seed 7 differs in 29 of 40 byClass counts (72%).",
+    "The chunked merged-geometry architecture works: 40 chunks = 40 draw calls for a 307-building city, one shared material, four atlas textures (2048 albedo/normal/ORM + 1024 emissive), initMs ~105 ms, moduleMs 0.0. The substrate is right; the content is what is thin.",
+    "The officelow and apt archetypes already carry real geometric relief - projecting floor bands with a shadow line under them and a parapet cap with visible cap thickness. That is the standard to bring the towers and the brick variants up to, not something to trade away.",
+    "Houses have real content: pitched roofs with fascia and soffit, chimneys, dormers, solar panels, garages with doors, porches, driveways, paths, lawn plates and hedges.",
+    "The industrial sheds are genuinely a different silhouette family - ribbed cladding, roller-door loading docks, dock canopies, silos - and aerial_22 is a convincing night city at 520 m."
+  ],
+  "summary": "6.0, fail. The substrate is sound - 307 buildings in 40 chunks at 40 draw calls, 0 console errors, ready everywhere including 720p, exact terrain seating (worst 0.05 m), clean determinism - but the module is still the spec's own definition of a 6 at the two zooms that matter. Five of the twenty required api entries (styleCounts, features, forceLod, lotSurface, cropRects) do not exist and stats() is missing 5 of 12 fields with no (x,z,r) selection, so nine acceptance items have no implementation to measure; 19 of 23 items fail. Night facades are only 2.6-3.3x darker than their windows against a 6x floor, there is no lit ground floor or shopfront sign anywhere, material.js:39 still hashes windows per fragment with fract(sin(dot(...))) from an interpolated varying (1.1-3.3% neighbour static vs a 0.2% ceiling), and `lit` is false on all 307 items at 22:00. Downtown's 30 towers share 6 styleIds with 17 adjacent twin pairs and no crown variety beyond a setback and a mast; walls meet the ground with no contact darkening (asphalt flat at L 93 +- 2 to the wall face) on a bare 8.9 m grass verge; triangles exceed budget at closeup (2.05 M) and aerial (1.82 M) with tris1/tris0 = 0.599; and the declared budget is still 320/2.5 M.",
+  "shots": [
+    "shots/buildings/r1/aerial_12.png",
+    "shots/buildings/r1/aerial_22.png",
+    "shots/buildings/r1/street_6p5.png",
+    "shots/buildings/r1/street_12.png",
+    "shots/buildings/r1/street_22.png",
+    "shots/buildings/r1/skyline_12.png",
+    "shots/buildings/r1/skyline_17p5.png",
+    "shots/buildings/r1/skyline_22.png",
+    "shots/buildings/r1/closeup_22.png",
+    "shots/buildings/r1/downtown_12.png",
+    "shots/buildings/r1/downtown_12_720p.png",
+    "shots/buildings/r1/night_downtown_22.png",
+    "shots/buildings/r1/industry_12.png",
+    "shots/buildings/r1/catalog_12.png",
+    "shots/buildings/r1/block_12.png",
+    "shots/buildings/r1/apicheck.mjs"
+  ]
+}

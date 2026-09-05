@@ -1,0 +1,15 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=forest&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 12,
+  "camera": "forest",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.waitForFunction: Timeout 300000ms exceeded.",
+  "errors": [],
+  "warnings": []
+}

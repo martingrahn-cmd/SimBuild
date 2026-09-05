@@ -115,6 +115,7 @@ async function boot() {
   // frame loop
   let last = performance.now();
   let readyFrames = 0;
+  let readyFirstAt = 0;
   const banner = document.getElementById('errbanner');
   function frame(now) {
     requestAnimationFrame(frame);
@@ -127,7 +128,15 @@ async function boot() {
     registry.update(dt);
     engine.stats.updateMs = performance.now() - t0;
     engine.render(camera.camera, dt);
-    if (!sim.ready) { readyFrames++; if (readyFrames >= 5) { sim.ready = true; sim.readyAt = performance.now(); } }
+    if (!sim.ready) {
+      // Five rendered frames let shadows, LOD and reflections settle. Under software GL a dense 1080p frame can
+      // take 30-60 s, so in headless we also accept three frames once the scene has had time to settle — five
+      // frames of a heavy showcase otherwise exceeds any sane capture timeout and the shot is lost.
+      readyFrames++;
+      if (readyFirstAt === 0) readyFirstAt = now;
+      const settled = readyFrames >= 3 && now - readyFirstAt > 5000;
+      if (readyFrames >= 5 || (params.headless && settled)) { sim.ready = true; sim.readyAt = performance.now(); sim.readyFrames = readyFrames; }
+    }
     if (banner && !params.headless && sim.errors.length && engine.stats.frames % 30 === 0) {
       banner.style.display = 'block';
       banner.textContent = `${sim.errors.length} error(s) — ` + sim.errors[sim.errors.length - 1].split('\n')[0];
