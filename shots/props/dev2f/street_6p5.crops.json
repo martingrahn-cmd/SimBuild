@@ -1,33 +1,39 @@
 {
-  "png": "shots/props/dev2f/closeup_6p5.png",
+  "png": "shots/props/dev2f/street_6p5.png",
   "width": 1280,
   "height": 720,
-  "camera": "closeup",
+  "camera": "street",
   "time": 6.5,
   "rects": {
     "props.canopy_broad": [
-      1151,
-      459,
+      1181,
+      223,
       85,
       85
     ],
     "props.crown": [
-      1127,
-      416,
+      679,
+      70,
       133,
       133
     ],
     "props.pool": [
-      424,
-      468,
-      252,
-      252
+      629,
+      306,
+      307,
+      307
     ],
     "props.lamp_head": [
-      503,
-      486,
+      803,
+      215,
       32,
       32
+    ],
+    "props.hedge": [
+      1109,
+      561,
+      171,
+      43
     ]
   }
 }

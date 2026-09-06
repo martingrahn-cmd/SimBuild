@@ -171,7 +171,7 @@ function skeleton(rng, acc, lod) {
 /** Leaf cards distributed through the canonical crown (unit direction x radial fraction, height t). */
 function canopy(rng, acc, lod) {
   const crossed = lod === 0;
-  const cards = lod === 0 ? 110 : 34;
+  const cards = lod === 0 ? 150 : 46;
   for (let i = 0; i < cards; i++) {
     const t = 0.03 + 0.97 * Math.pow(rng.float(), 0.80);
     const rn = 0.40 + 0.60 * Math.pow(rng.float(), 0.38);
@@ -189,7 +189,7 @@ function canopy(rng, acc, lod) {
     _m.lookAt(_v.set(0, 0, 0), face, UP);
     _q.setFromRotationMatrix(_m);
     _q.multiply(new THREE.Quaternion().setFromAxisAngle(ZP, rng.range(-0.42, 0.42)));
-    const sz = (lod === 0 ? 1.10 : 2.30) * rng.range(0.88, 1.18);
+    const sz = (lod === 0 ? 1.10 : 2.00) * rng.range(0.88, 1.18);
     const hw = 0.5 * sz, hh = 0.5 * sz * rng.range(0.90, 1.08);
     const corners = [
       new THREE.Vector3(-hw, -hh, 0), new THREE.Vector3(hw, -hh, 0),

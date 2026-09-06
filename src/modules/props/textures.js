@@ -164,7 +164,7 @@ function broadCluster(g, x0, y0, S, rnd, opt) {
       const h = hue + (rnd() - 0.5) * 22;
       const sa = sat * (0.80 + rnd() * 0.44);
       blade(g, len * (pass === 0 ? 1.18 : 1), wide * (pass === 0 ? 1.18 : 1),
-        hsl(h, sa, Math.min(0.64, l)), hsl(h - 4, sa * 0.95, Math.max(0.10, l * 0.74)), lobes);
+        hsl(h, sa, Math.min(0.68, l)), hsl(h - 4, sa * 0.95, Math.max(0.10, l * 0.74)), lobes);
       g.restore();
     }
   }
@@ -280,12 +280,12 @@ export function makeLeafAtlas(rng, size = 1024) {
   const R = () => rng.float();
   const at = (i) => [(i % LEAF_GRID) * S, Math.floor(i / LEAF_GRID) * S];
   let p;
-  p = at(LEAF_CELL.oak); broadCluster(g, p[0], p[1], S, R, { hue: 92, sat: 0.66, light: 0.50, n: 300, lobes: true, spread: 0.50, size: 0.078 });
-  p = at(LEAF_CELL.maple); broadCluster(g, p[0], p[1], S, R, { hue: 40, sat: 0.78, light: 0.50, n: 290, lobes: true, spread: 0.50, size: 0.084 });
-  p = at(LEAF_CELL.birch); broadCluster(g, p[0], p[1], S, R, { hue: 62, sat: 0.70, light: 0.54, n: 320, lobes: false, spread: 0.50, size: 0.058, droop: 0.6 });
-  p = at(LEAF_CELL.poplar); broadCluster(g, p[0], p[1], S, R, { hue: 84, sat: 0.64, light: 0.52, n: 310, lobes: false, spread: 0.48, size: 0.060, droop: 0.3 });
-  p = at(LEAF_CELL.willow); broadCluster(g, p[0], p[1], S, R, { hue: 96, sat: 0.60, light: 0.48, n: 330, lobes: false, spread: 0.52, size: 0.050, droop: 1.2 });
-  p = at(LEAF_CELL.blossom); broadCluster(g, p[0], p[1], S, R, { hue: 104, sat: 0.54, light: 0.56, n: 240, lobes: false, spread: 0.48, size: 0.064 });
+  p = at(LEAF_CELL.oak); broadCluster(g, p[0], p[1], S, R, { hue: 92, sat: 0.66, light: 0.55, n: 300, lobes: true, spread: 0.50, size: 0.078 });
+  p = at(LEAF_CELL.maple); broadCluster(g, p[0], p[1], S, R, { hue: 40, sat: 0.78, light: 0.55, n: 290, lobes: true, spread: 0.50, size: 0.084 });
+  p = at(LEAF_CELL.birch); broadCluster(g, p[0], p[1], S, R, { hue: 62, sat: 0.70, light: 0.59, n: 320, lobes: false, spread: 0.50, size: 0.058, droop: 0.6 });
+  p = at(LEAF_CELL.poplar); broadCluster(g, p[0], p[1], S, R, { hue: 84, sat: 0.64, light: 0.57, n: 310, lobes: false, spread: 0.48, size: 0.060, droop: 0.3 });
+  p = at(LEAF_CELL.willow); broadCluster(g, p[0], p[1], S, R, { hue: 96, sat: 0.60, light: 0.53, n: 330, lobes: false, spread: 0.52, size: 0.050, droop: 1.2 });
+  p = at(LEAF_CELL.blossom); broadCluster(g, p[0], p[1], S, R, { hue: 104, sat: 0.54, light: 0.61, n: 240, lobes: false, spread: 0.48, size: 0.064 });
   {
     // blossom gets pale petals over the leaves
     const [bx, by] = at(LEAF_CELL.blossom);
@@ -397,7 +397,7 @@ function impSide(g, x0, y0, S, rnd, kind) {
       const a = rnd() * TAU, rr = Math.pow(rnd(), 0.52) * r;
       const x = bx + Math.cos(a) * rr, y = by + Math.sin(a) * rr * flat;
       const k = 1 - (y - (by - r * flat)) / (r * flat * 2);
-      const l = light * (0.52 + k * 0.88) * (0.82 + rnd() * 0.34);
+      const l = light * (0.72 + k * 0.98) * (0.86 + rnd() * 0.30);
       const s = r * sizeK * (0.55 + rnd() * 0.6);
       g.save(); g.translate(x, y); g.rotate(rnd() * TAU);
       blade(g, s * 1.6, s * 0.55, hsl(hue + (rnd() - 0.5) * 18, sat, Math.min(0.58, l)), hsl(hue - 10, sat, Math.max(0.05, l * 0.5)), lobes);
@@ -414,7 +414,7 @@ function impSide(g, x0, y0, S, rnd, kind) {
       for (let i = 0; i < 46; i++) {
         const x = cx + (rnd() * 2 - 1) * rad;
         const yy = y + (rnd() - 0.45) * treeH * 0.030;
-        const l = 0.30 * (0.55 + (0.35 + t * 0.55) * 0.9) * (0.75 + rnd() * 0.5);
+        const l = 0.40 * (0.60 + (0.35 + t * 0.55) * 0.95) * (0.78 + rnd() * 0.46);
         g.strokeStyle = hsl(136 + (rnd() - 0.5) * 16, 0.30, Math.min(0.44, l));
         g.lineWidth = treeH * 0.013;
         g.beginPath(); g.moveTo(x, yy); g.lineTo(x + (x > cx ? 1 : -1) * treeH * 0.035, yy + treeH * 0.028); g.stroke();
@@ -447,7 +447,7 @@ function impTop(g, x0, y0, S, rnd, kind) {
     for (let i = 0; i < 460; i++) {
       const a = rnd() * TAU, rr = Math.pow(rnd(), 0.5) * R;
       const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
-      const l = 0.30 * (1.25 - rr / (R * 1.1)) * (0.8 + rnd() * 0.5);
+      const l = 0.40 * (1.25 - rr / (R * 1.1)) * (0.82 + rnd() * 0.46);
       g.strokeStyle = hsl(136, 0.30, Math.min(0.44, l)); g.lineWidth = S * 0.014;
       g.beginPath(); g.moveTo(x, y); g.lineTo(cx + Math.cos(a) * (rr - S * 0.06), cy + Math.sin(a) * (rr - S * 0.06)); g.stroke();
     }
@@ -456,7 +456,7 @@ function impTop(g, x0, y0, S, rnd, kind) {
     for (let i = 0; i < 460; i++) {
       const a = rnd() * TAU, rr = Math.pow(rnd(), 0.52) * R;
       const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
-      const l = 0.38 * (1.15 - rr / (R * 1.3)) * (0.82 + rnd() * 0.4);
+      const l = 0.50 * (1.15 - rr / (R * 1.3)) * (0.84 + rnd() * 0.38);
       const s = S * 0.045 * (0.6 + rnd() * 0.6);
       g.save(); g.translate(x, y); g.rotate(rnd() * TAU);
       blade(g, s * 1.6, s * 0.55, hsl(hue + (rnd() - 0.5) * 16, 0.44, Math.min(0.56, l)), hsl(hue - 10, 0.42, Math.max(0.05, l * 0.5)), kind === IMP_CELL.broad);

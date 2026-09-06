@@ -103,7 +103,7 @@ function makeMaterials(ctx, tex) {
   });
 
   const pool = new THREE.ShaderMaterial({
-    uniforms: { uOpacity: { value: 0 }, uColor: { value: new THREE.Color(1.0, 0.80, 0.52) } },
+    uniforms: { uOpacity: { value: 0 }, uColor: { value: new THREE.Color(1.0, 0.74, 0.42) } },
     vertexShader: `attribute float aR; varying float vR;
       void main() { vR = aR; vec4 mv = modelViewMatrix * instanceMatrix * vec4( position, 1.0 ); gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `uniform float uOpacity; uniform vec3 uColor; varying float vR;
@@ -551,10 +551,10 @@ export default {
     S.night = night;
     // night is moonlight, not a dimmed noon: albedo down and cool, driven by world.weather.night
     const k = 1 - night;
-    S.mats.treeMat.color.setRGB(k + night * 0.175, k + night * 0.215, k + night * 0.340);
+    S.mats.treeMat.color.setRGB(k + night * 0.062, k + night * 0.078, k + night * 0.128);
     S.mats.impMat.color.copy(S.mats.treeMat.color);
-    S.mats.foliage.color.setRGB(k + night * 0.160, k + night * 0.200, k + night * 0.320);
-    S.mats.furniture.color.setRGB(k + night * 0.44, k + night * 0.50, k + night * 0.66);
+    S.mats.foliage.color.setRGB(k + night * 0.070, k + night * 0.086, k + night * 0.140);
+    S.mats.furniture.color.setRGB(k + night * 0.30, k + night * 0.35, k + night * 0.48);
     S.mats.furniture.emissiveIntensity = 0.02 + night * 1.95;
     const on = night > 0.5;
     S.field.pool.visible = on && S.field.poolsOn;
@@ -734,7 +734,7 @@ function registerPresets(ctx) {
   }
   const X = scene ? scene.cross.x : 40, Z = scene ? scene.cross.z : 40;
   reg('avenue', { yaw: -Math.PI / 2, pitch: 0.20, distance: 45, target: [X + 40, T.getHeight(X + 40, Z) + 3.0, Z] });
-  reg('signal', { yaw: 0.85, pitch: 0.22, distance: 25, target: [X, T.getHeight(X, Z) + 4.2, Z] });
+  reg('signal', { yaw: 0.85, pitch: 0.22, distance: 19, target: [X + 4, T.getHeight(X, Z) + 4.0, Z + 4] });
   reg('canopy', { yaw: 0.3, pitch: 0.95, distance: 90, target: [X + 10, T.getHeight(X + 10, Z) + 6, Z] });
 
   // lamp: 12 m from a real lamp base, looking up the avenue

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-06T07:51:30.723Z",
+  "updatedAt": "2026-09-06T09:21:44.622Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -323,11 +323,11 @@
       "status": "needs-work",
       "openIssues": [
         "[blocker] Zone fill is an opaque colour sheet, not a CS2 translucent tint: uFill = 0.63 alpha of an unlit constant colour, further darkened by the grid term, leaves the terrain reading at under a quarter of its own value. At street and closeup zoom the block is flat blue plastic with no ground textu",
-        "[blocker] Overlay floats 0.16-0.26 m above the ground and spills onto roads and crosswalks: Measured in-engine: every overlay vertex sits exactly 0.16 m (cells) / 0.26 m (lot ribbons) above terrain.getHeight. At 26-60 m camera height the parallax is plainly visible — the sheet edge overhangs the ker",
-        "[major] Overlay ignores time of day — unlit at night and golden hour: Sampling identical pixels at 12:00 vs 22:00 in the zones preset: bare terrain falls to 0.64x its noon luminance, the zone patch only to 0.91x (and that 9% is just ground showing through). At night and at 6.5 the overlay is the bri",
+        "[blocker] Overlay floats 0.16-0.26 m above the ground and spills onto roads and crosswalks: Measured in-engine: every overlay vertex sits exactly 0.16 m (cells) / 0.26 m (lot ribbons) above terrain.getHeight. At 26-60 m camera height the parallax is plainly visible \u2014 the sheet edge overhangs the ker",
+        "[major] Overlay ignores time of day \u2014 unlit at night and golden hour: Sampling identical pixels at 12:00 vs 22:00 in the zones preset: bare terrain falls to 0.64x its noon luminance, the zone patch only to 0.91x (and that 9% is just ground showing through). At night and at 6.5 the overlay is the bri",
         "[major] 8 m cell grid vanishes at aerial zoom and has inverted polarity: Grid lines are 0.038 UV (~0.3 m) wide and DARKER than the fill (col *= mix(1.0, 0.52, grid)). At the aerial preset an 8 m cell is ~14 px, so the line is under half a pixel and smears into a flat wash; CS2's zone grid is light a",
-        "[major] 25% of lots are unbuildable slivers and 12 road frontages get no lots at all: Over the showcase's 140 lots: widths 8/11/16/19/24/27/35/43 m, median 19 m; 35 of 140 (25%) are under 14 m and 24 are a single 8 m cell wide (14x 8x24 m, 10x 8x16 m). Meanwhile 12 of 64 road edges — eleven 80 m str",
-        "[major] 'Corner fit' +3 m extension fires on 55% of lots, pushing outlines onto the pavement: _splitRun adds extA = 3 when cursor === 0 and extB = 3 when b === n, i.e. to the first and last lot of EVERY frontage side; with typically two lots per side that is nearly every lot — 77 of 140 (55%) come o",
+        "[major] 25% of lots are unbuildable slivers and 12 road frontages get no lots at all: Over the showcase's 140 lots: widths 8/11/16/19/24/27/35/43 m, median 19 m; 35 of 140 (25%) are under 14 m and 24 are a single 8 m cell wide (14x 8x24 m, 10x 8x16 m). Meanwhile 12 of 64 road edges \u2014 eleven 80 m str",
+        "[major] 'Corner fit' +3 m extension fires on 55% of lots, pushing outlines onto the pavement: _splitRun adds extA = 3 when cursor === 0 and extB = 3 when b === n, i.e. to the first and last lot of EVERY frontage side; with typically two lots per side that is nearly every lot \u2014 77 of 140 (55%) come o",
         "[major] Region boundaries are ragged: amoeba holes, staircased junction corners, 1-cell nubs: Cells rejected for relief / slope / road coverage are silently omitted, so blocks have bites out of their middles (bare eroded ground showing through), staircase edges against every rounded junction, and is",
         "[major] Palette washes out; low vs high density does not read: Blending at 0.63 over lit grass turns residential-high 0x0d8f3c into pale mint and office-high 0x6a1cb8 into lilac; at aerial zoom residential low/high and office low/high are nearly the same swatch, and the 45 deg hatch meant to separat",
         "[minor] High-density 45 deg hatch reads as broad repeating smears at close range: The 3 m-period band seen at 26-60 m camera height becomes wide diagonal creases across the sheet rather than a fine hatch, and its repetition is obvious. Fix: drive the hatch period from screen-space derivatives with a",
@@ -422,20 +422,20 @@
       "status": "needs-work",
       "openIssues": [
         "[blocker] props adds four real THREE.PointLights: src/modules/props/render.js:266 constructs new THREE.PointLight(0xffc987, 0, 34, 2) four times and parents them into the props group, steering them to follow the nearest lamps within 80 m. The probe confirms them live by traversing __sim.registry.get",
-        "[blocker] api is still the pre-spec one — 10 of §2's 15 members missing: Shipped api is {rebuild, stats, lamps, signalState, count, serialize, deserialize}. Missing: place, remove, at, lampsFor, signals, signalFor, stops, setDensity, cropRects, debug{setKindVisible,setLod,setSway,setPools,lodHistogr",
+        "[blocker] api is still the pre-spec one \u2014 10 of \u00a72's 15 members missing: Shipped api is {rebuild, stats, lamps, signalState, count, serialize, deserialize}. Missing: place, remove, at, lampsFor, signals, signalFor, stops, setDensity, cropRects, debug{setKindVisible,setLod,setSway,setPools,lodHistogr",
         "[blocker] frozen world.props.kinds is mutated; three illegal kinds ship and no item carries species: index.js:191 pushes 'tree_birch', 'hedge' and 'flowers' onto world.props.kinds, making it 15 strings instead of the frozen 12. items holds 6916 of kind tree_birch (must be {kind:'tree_oak', species:'",
         "[blocker] 1.92 M props triangles against a 700 k cap; 2.18 M whole-frame against 1.8 M; per-species meshes and no 256 m chunks: group.visible diff at aerial_12: draws 160 -> 38, so props costs 122 draws (cap 120); triangles 2 175 798 -> 257 031, so props costs 1 918 767 (cap 700 000, 2.7x). Whole-fr",
         "[blocker] the forest is speckle, not woodland, from 300 m out: Pixels differing from their 3x3 median by >= 35 L, full-res, cap 0.05 %: aerial_12 woodland crop [1300,60,400,300] = 6.103 % (122x over); skyline_12 woodland crop [600,430,400,200] = 4.400 % (88x). Whole-frame: aerial_12 3.361 %, skyline",
         "[blocker] 17 051 footprint overlaps, 43 props on asphalt, 31 props off the ground: Probe over all 18 938 items using item 3d's own radii table, with fence-fence and same-bus_stop pairs exempted: 17 051 pairwise footprint-circle violations. Examples: bench/hydrant 0.81 m apart where 1.15 m is require",
         "[major] night foliage is a dimmed noon, not moonlight: Same rect, same camera: the aerial woodland rect [1300,60,400,300] has p50 89 at 12:00 and 55 at 22:00, a ratio of 0.62x against item 5a's <= 0.35x. At street range it is worse: the street_22 near crown [830,300,180,180] has mean L 60.6 while th",
-        "[major] the lamp ground pool has a hard straight rim and is clipped by the kerb: 1-px scanline across the pool boundary in street_22 at y = 660, x 1150->1190: 180, 180, 155.9, 155.7, 107.5, 83.4 — a single adjacent step of 48.2 L and a 96.6 L drop across 4 px, against item 6d's 6 L cap, and crop_poo",
-        "[major] three species, no species attribute, and scale is an absolute height in metres: trees.js:17 declares SPECIES = ['oak','pine','birch']. §3's table needs five silhouette classes (conifer spire, broad round crown, tall narrow, wide low spreading, small ornamental) across eight species strings, ",
+        "[major] the lamp ground pool has a hard straight rim and is clipped by the kerb: 1-px scanline across the pool boundary in street_22 at y = 660, x 1150->1190: 180, 180, 155.9, 155.7, 107.5, 83.4 \u2014 a single adjacent step of 48.2 L and a 96.6 L drop across 4 px, against item 6d's 6 L cap, and crop_poo",
+        "[major] three species, no species attribute, and scale is an absolute height in metres: trees.js:17 declares SPECIES = ['oak','pine','birch']. \u00a73's table needs five silhouette classes (conifer spire, broad round crown, tall narrow, wide low spreading, small ornamental) across eight species strings, ",
         "[major] trees stop casting shadows at ~92 m, so aerial and golden hour have no shadows at all: render.js:53 sets { cast: false } on the whole LOD1 tier, so tree shadows end at the LOD0 range. In aerial_12, aerial_6p5 and skyline_12 there is not one tree or lamp shadow anywhere in frame, and aerial_6",
         "[major] the signal clock is a dt accumulator that ignores world.time and never reads traffic: index.js:107 advances S.lensT += dt, and src/main.js:121 derives dt from performance.now() without scaling by clock.speed, so ?speed=0 does not freeze it and __sim.setTime() does not move it. The probe step",
         "[major] wind sway is a dt accumulator, so no two captures at the same ?time= match: index.js:213 advances S.wind.uTime.value += dt with the same real wall-clock dt as issue 11. Items 14 and 16 are both built on pixel diffs between two loads or two clock settings at the same ?time=, and an accumulato",
-        "[major] forest scatter is a jittered lattice and there is no street-tree rhythm: place.js:85,91-96 scatters on a 6.1 m grid with +/-0.46 x spacing jitter — the grid-scatter failure §6 names explicitly, and item 13d requires a nearest-neighbour histogram with no bin over 35 % and a mean NN distance i",
-        "[major] five presets instead of §8's eight, and no park, so a third of the acceptance set is unshootable: showcase.js declares lamps_night, forest, crossing, bench, canopy. §8 requires forest, avenue, signal, lamp, park, treecloseup, busstop, canopy. CityCamera.apply() returns false for an unknown p",
-        "[minor] hedges are 1.1 m card blobs and there is exactly one fence type: furniture.js:267 builds hedge as cardBlob({cards:20, radius:0.62, height:1.1}) — below item 11a's 1.2-1.8 m, with no modelled undulating top of >= 0.08 m amplitude and no darker interior (top-to-side dL >= 15), i.e. simulation_",
+        "[major] forest scatter is a jittered lattice and there is no street-tree rhythm: place.js:85,91-96 scatters on a 6.1 m grid with +/-0.46 x spacing jitter \u2014 the grid-scatter failure \u00a76 names explicitly, and item 13d requires a nearest-neighbour histogram with no bin over 35 % and a mean NN distance i",
+        "[major] five presets instead of \u00a78's eight, and no park, so a third of the acceptance set is unshootable: showcase.js declares lamps_night, forest, crossing, bench, canopy. \u00a78 requires forest, avenue, signal, lamp, park, treecloseup, busstop, canopy. CityCamera.apply() returns false for an unknown p",
+        "[minor] hedges are 1.1 m card blobs and there is exactly one fence type: furniture.js:267 builds hedge as cardBlob({cards:20, radius:0.62, height:1.1}) \u2014 below item 11a's 1.2-1.8 m, with no modelled undulating top of >= 0.08 m amplitude and no darker interior (top-to-side dL >= 15), i.e. simulation_",
         "[minor] lamp column geometry is out of spec and there is no ornamental lantern variant: furniture.js:22,38-40: the column is a 8.0 m cylinder with the luminaire at 8.365 m where item 4c wants 8.5-9.5 m; it tapers 0.25 m to 0.17 m diameter where the spec wants ~0.16 m to ~0.10 m; the mast arm reaches",
         "[minor] furniture has no albedo texture and trunks read as flat untextured grey: index.js:167-172 gives every opaque piece one shared MeshStandardMaterial with vertexColors: true and no map, so bench slats, bins, hydrants, signal housings and lamp columns are flat colour fields broken only by a shar",
         "[minor] detached leaf cards float in mid-air over the carriageway: In crossing_12, crop [380,480,520,400], several elongated green leaf cards hang above the asphalt near the signal mast with no trunk or branch beneath them. Either LOD1 canopy cards are being placed off their instance origin, or a tr"
@@ -459,9 +459,9 @@
       "strengths": [
         "Lamp anchoring is exactly right: 98/98 roads.lampPositions anchors matched within 0.05 m in x, y and z across 40 sampled edges, and zero lamps within 8 m of an intersection. Keep taking each anchor's own y rather than re-deriving it.",
         "The night rig genuinely lights the ground: the pool is 2.23x the luminance of road 12 m off-lamp and warm at R - B = +17.5, both clearing item 6. Only the pool's shape, falloff and render order need fixing.",
-        "Near-camera dappled tree shadows at crossing_12 show real branch structure rather than an ellipse — item 8's hard half. Extend it to the LOD1 tier instead of rebuilding it.",
+        "Near-camera dappled tree shadows at crossing_12 show real branch structure rather than an ellipse \u2014 item 8's hard half. Extend it to the LOD1 tier instead of rebuilding it.",
         "Exposure discipline is the one thing right in every frame: blackPct <= 0.01 %, whitePct <= 0.002 %, p1 >= 27 everywhere. Do not fix night foliage by lifting exposure.",
-        "Zero console errors in every capture and every probe, module status ready in every valid shot, and every texture procedural with no manifest additions — the asset policy is clean.",
+        "Zero console errors in every capture and every probe, module status ready in every valid shot, and every texture procedural with no manifest additions \u2014 the asset policy is clean.",
         "The trunk is a real swept tube with branching (trees.js), not a cylinder-plus-sphere. Keep the skeleton and hang a better canopy on it.",
         "Foliage uses alphaTest 0.42 and never transparent:true (trees.js:310), and no props shader reads cameraPosition, so the terrain_r1 reflection-confetti trap is avoided by construction."
       ],
@@ -660,7 +660,7 @@
         "screenshot retry"
       ],
       "deferred": [
-        "world.terrain.writeHeights/flattenStrip — terrain-module API, requested in ARCHITECTURE §3"
+        "world.terrain.writeHeights/flattenStrip \u2014 terrain-module API, requested in ARCHITECTURE \u00a73"
       ]
     },
     {
@@ -693,7 +693,7 @@
     "weakest": "audio"
   },
   "promptQuality": {
-    "library": "docs/prompts/ — PROMPT-STANDARD.md (12 properties, 0-10, pass 8.5), BUILDER/CRITIC/INTEGRATOR/WHOLE-GAME-CRITIC/BLIND-JUDGE role prompts, modules/<name>.md specs",
+    "library": "docs/prompts/ \u2014 PROMPT-STANDARD.md (12 properties, 0-10, pass 8.5), BUILDER/CRITIC/INTEGRATOR/WHOLE-GAME-CRITIC/BLIND-JUDGE role prompts, modules/<name>.md specs",
     "calibrationExperiment": {
       "date": "2026-09-05",
       "question": "does the spec reviewer discriminate quality, or anchor at 8 regardless of content?",
@@ -711,7 +711,7 @@
       "discriminationGap": 5.2,
       "finding": "the blind calibrated reviewer discriminates (5.2-point gap). The ADVERSARIAL reviewer used in the spec workflow returned 8.0 and buildableWithoutGuessing=false for 16 of 16 specs - true defect lists, non-discriminating scores. Finder and scorer are now separate roles; every scoring batch carries the unlabelled control and is void if the control scores above 5."
     },
-    "defectsPreserved": "docs/prompts/_review/*.json — 169 finder defects across 16 specs, being repaired in a reduction pass",
+    "defectsPreserved": "docs/prompts/_review/*.json \u2014 169 finder defects across 16 specs, being repaired in a reduction pass",
     "toolingGapClosed": "pinned-crop measurement (--crops / window.__sim.cropRects) did not exist, so several specs' acceptance items failed by construction; added to core and both role prompts",
     "repairPass": {
       "date": "2026-09-05",
@@ -882,7 +882,15 @@
           "contradictions": 5
         }
       },
-      "residual": "125 tracked defects in docs/prompts/_review/residual.json — every spec passed while still carrying 3-6 unmeasurable items and 0-5 arithmetic nits. Not repaired further: diminishing returns against the game itself, which is the deliverable."
+      "residual": "125 tracked defects in docs/prompts/_review/residual.json \u2014 every spec passed while still carrying 3-6 unmeasurable items and 0-5 arithmetic nits. Not repaired further: diminishing returns against the game itself, which is the deliverable."
     }
+  },
+  "handoff": {
+    "document": "docs/HANDOFF.md",
+    "sessionEnded": "2026-09-06",
+    "state": "core + verification loop + prompt library complete; wave 1 and wave 2 have had rounds; wave 2b (services, infoviews) and wave 3 (democity, transit) not started; no module has passed the 8.5 gate",
+    "resumeWith": "Workflow({scriptPath:'tools/workflows/wave.js', args:{wave, integrate:true, roundsPerRun:2, modules:[...from modules[].next...]}})",
+    "neverVerified": "the >=50 fps @1080p budget \u2014 this box has no GPU, so fps figures are relative only and fpsGpu is null",
+    "notRun": "the whole-game critic and the blind A/B judging (both built: docs/prompts/WHOLE-GAME-CRITIC.md, BLIND-JUDGE.md, tools/blindpairs.mjs)"
   }
 }

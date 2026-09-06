@@ -1,0 +1,39 @@
+{
+  "png": "shots/tools/rdev2/roadtool_12.png",
+  "width": 1920,
+  "height": 1080,
+  "camera": "roadtool",
+  "time": 12,
+  "rects": {
+    "tools.ribbon": [
+      658,
+      529,
+      64,
+      64
+    ],
+    "tools.ground": [
+      261,
+      647,
+      64,
+      64
+    ],
+    "tools.wash": [
+      468,
+      337,
+      32,
+      32
+    ],
+    "props.canopy_broad": [
+      763,
+      571,
+      128,
+      128
+    ],
+    "props.crown": [
+      1543,
+      519,
+      200,
+      200
+    ]
+  }
+}

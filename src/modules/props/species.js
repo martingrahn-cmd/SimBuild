@@ -26,46 +26,46 @@ export const SPECIES = {
   // --- conifer spire (tree_pine)
   spruce: {
     name: 'spruce', kind: 'tree_pine', cls: 'conifer', base: 15.0, trunkD: 0.36,
-    crownW: 0.38, profA: 1.35, profB: 0.16, crownBot: 0.12, spread: 0.30, leafK: 0.115,
+    crownW: 0.38, profA: 1.35, profB: 0.16, crownBot: 0.12, spread: 0.30, leafK: 0.098,
     leafCell: 6, impCell: 0, tints: [[0.80, 0.94, 0.86], [0.70, 0.88, 0.82], [0.88, 0.98, 0.90]],
   },
   fir: {
     name: 'fir', kind: 'tree_pine', cls: 'conifer', base: 16.5, trunkD: 0.40,
-    crownW: 0.43, profA: 1.15, profB: 0.20, crownBot: 0.10, spread: 0.32, leafK: 0.125,
+    crownW: 0.43, profA: 1.15, profB: 0.20, crownBot: 0.10, spread: 0.32, leafK: 0.106,
     leafCell: 7, impCell: 0, tints: [[0.74, 0.90, 0.90], [0.66, 0.84, 0.86], [0.82, 0.94, 0.92]],
   },
   // --- broad round crown (tree_oak)
   oak: {
     name: 'oak', kind: 'tree_oak', cls: 'broad', base: 12.0, trunkD: 0.55,
-    crownW: 0.96, profA: 0.55, profB: 0.45, crownBot: 0.30, spread: 1.00, leafK: 0.155,
+    crownW: 0.96, profA: 0.55, profB: 0.45, crownBot: 0.30, spread: 1.00, leafK: 0.124,
     leafCell: 0, impCell: 1, tints: [[0.92, 1.00, 0.80], [1.06, 1.00, 0.74], [0.98, 1.02, 0.90], [1.10, 0.98, 0.68]],
   },
   maple: {
     name: 'maple', kind: 'tree_oak', cls: 'broad', base: 10.5, trunkD: 0.50,
-    crownW: 1.06, profA: 0.48, profB: 0.52, crownBot: 0.28, spread: 1.05, leafK: 0.160,
+    crownW: 1.06, profA: 0.48, profB: 0.52, crownBot: 0.28, spread: 1.05, leafK: 0.128,
     leafCell: 1, impCell: 1, tints: [[1.08, 0.98, 0.78], [1.02, 1.00, 0.86], [0.96, 1.00, 0.92], [1.12, 0.94, 0.70]],
   },
   // --- tall narrow (tree_oak)
   birch: {
     name: 'birch', kind: 'tree_oak', cls: 'narrow', base: 13.0, trunkD: 0.30,
-    crownW: 0.44, profA: 0.62, profB: 0.40, crownBot: 0.34, spread: 0.52, leafK: 0.120,
+    crownW: 0.44, profA: 0.62, profB: 0.40, crownBot: 0.34, spread: 0.52, leafK: 0.098,
     leafCell: 2, impCell: 2, tints: [[1.08, 1.04, 0.76], [1.02, 1.04, 0.86], [0.98, 1.02, 0.94]],
   },
   poplar: {
     name: 'poplar', kind: 'tree_oak', cls: 'narrow', base: 13.5, trunkD: 0.32,
-    crownW: 0.36, profA: 0.72, profB: 0.34, crownBot: 0.22, spread: 0.42, leafK: 0.108,
+    crownW: 0.36, profA: 0.72, profB: 0.34, crownBot: 0.22, spread: 0.42, leafK: 0.088,
     leafCell: 3, impCell: 2, tints: [[1.02, 1.02, 0.84], [1.08, 1.00, 0.76], [0.96, 1.02, 0.92]],
   },
   // --- wide low spreading (tree_oak)
   willow: {
     name: 'willow', kind: 'tree_oak', cls: 'wide', base: 7.5, trunkD: 0.48,
-    crownW: 1.44, profA: 0.34, profB: 0.74, crownBot: 0.26, spread: 1.20, leafK: 0.165,
+    crownW: 1.44, profA: 0.34, profB: 0.74, crownBot: 0.26, spread: 1.20, leafK: 0.132,
     leafCell: 4, impCell: 3, tints: [[0.94, 1.04, 0.86], [0.88, 1.00, 0.92], [1.00, 1.02, 0.80]],
   },
   // --- small ornamental (tree_oak)
   blossom: {
     name: 'blossom', kind: 'tree_oak', cls: 'ornamental', base: 5.0, trunkD: 0.20,
-    crownW: 0.98, profA: 0.50, profB: 0.46, crownBot: 0.36, spread: 0.92, leafK: 0.135,
+    crownW: 0.98, profA: 0.50, profB: 0.46, crownBot: 0.36, spread: 0.92, leafK: 0.110,
     leafCell: 5, impCell: 4, tints: [[1.14, 0.94, 0.96], [1.08, 1.00, 0.88], [1.02, 1.00, 0.94]],
   },
 };

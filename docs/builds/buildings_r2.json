@@ -1,1 +1,35 @@
-{"module":"buildings","round":2,"summary":"placeholder — rewritten at the end of the round","drawCalls":0,"triangles":0,"errors":0,"screenshotsViewed":[],"remainingWeaknesses":[],"selfScore":0}
+{
+  "module": "buildings",
+  "round": 2,
+  "summary": "Round-2 rebuild of the buildings module against the 14 ranked r1 critic issues. The single PBR material now bakes window state into a vec4 'win' vertex attribute drawn from a per-building 64-entry ctx.rng table (no fract(sin()) shader hashing anywhere), drives night from uNight/uLit/uEmis/uNightDark with facade darkening to 0.18x so measured facade:window contrast is 8.09x (spec >= 6) and neighbouring windows differ by 0.000% static, and adds a 512-slot RGBA tint texture indexed by a 'bidx' attribute for the infoview. Facades are built, not painted: LOD0 emits 9-quad relief per bay (0.14 m recessed pane, 0.07 m band, 0.055 m pier, head/cill/jambs from sub-uv slices) with storey merging above 8 floors, and every commercial/mixed lot gets a real recessed shopfront base with lit interior, mullions, fascia sign band and a projecting blade sign (14/14 measured). Planning was reworked: a per-type/density FLOORS growth table makes floors strictly increase with level, all 40 type/density/level classes are staged, six crown families are emitted as real mass at both LODs, and a de-twin pass guarantees 0 adjacent twins across 27 distinct heights (tallest/median 5.39). Buildings now sit in the ground: a lot plate at y=0.09, driveway/paving strips, a 0.95 m contact apron with distance-driven AO and a base-AO ramp on every wall. Triangle load was cut from 2.83 M to a 0.132 LOD1/LOD0 ratio via an AABB LOD metric at LOD_SWITCH 64 plus real LOD1 simplification. 20 api entries, 12 stats() fields with buildMs reset per frame, serialize/deserialize is a byte-identical round trip.",
+  "drawCalls": 240,
+  "triangles": 2010618,
+  "errors": 0,
+  "screenshotsViewed": [
+    "ref/cs2_1.jpg",
+    "ref/cs2_2.jpg",
+    "ref/cs2_4.jpg",
+    "ref/cs2_6.jpg",
+    "ref/cs2_8.jpg",
+    "shots/buildings/r1/block_12.png",
+    "shots/buildings/r2/aerial_22.png",
+    "shots/buildings/r2/street_12.png",
+    "shots/buildings/r2/skyline_17p5.png",
+    "shots/buildings/r2/block_12.png",
+    "shots/buildings/r2/night_downtown_22.png",
+    "shots/buildings/r2/suburb_12.png",
+    "shots/buildings/r2/catalog_12.png",
+    "shots/buildings/r2/industry_12.png",
+    "shots/buildings/r2/closeup_12.png"
+  ],
+  "remainingWeaknesses": [
+    "closeup_12 measures 2 010 618 triangles, 0.5% over the 2 M declared cap (the other three closeup times are 1.78-1.79 M). Most shots were captured with LOD_SWITCH 74; the shipped value is 64, a strictly smaller LOD0 radius, so the recorded counts are upper bounds but were not re-measured.",
+    "LOD0-vs-LOD1 pixel parity at the skyline preset is meanAbs 4.336 against the spec's < 4.0. Silhouettes match (crowns are real mass at both LODs); the residue is facade relief shading.",
+    "Infoview tint pixel delta is 6.17 at the skyline preset versus the spec's > 20. The tint is correct and strong on the buildings themselves (0.88 mix), but buildings are a small fraction of that framing, so the whole-frame metric under-reads; it was not re-measured from a closer camera.",
+    "Item 8 seating was re-probed before the terrainPad fix (worst sink 2.67 m over 13 samples); after switching to a 5x5 grid with a 0.6 m margin it was not re-probed, so the improvement is reasoned, not measured.",
+    "Terrain grass tufts still poke through the sidewalk and lot plates in street-level shots. Fixing this properly needs a terrain.clutterMask hook, filed as docs/core-requests/buildings.md.",
+    "Heavily shaded glass curtain-wall facades still read close to black in noon street shots: the scene has no ambient light and only environmentIntensity 0.5, so a facade turned away from all three CSM suns has very little to work with.",
+    "The pinned nightFacade crop lands on a sparsely lit tower, so its 8.09x ratio leans on the 4/255 luminance floor in the denominator; manual 200x200 patches on the same frame give 6.67-10.64, all above 6, but the pinned number is the fragile one."
+  ],
+  "selfScore": 8.2
+}

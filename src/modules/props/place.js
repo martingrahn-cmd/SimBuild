@@ -192,7 +192,7 @@ export function scatterForest(ctx, placer, region, opts = {}) {
     dens *= 1 - Math.min(0.9, Math.max(0, (slope - 0.30) / 0.30));
     // feather the region border so the stand does not end on a straight line
     const fx = Math.min(x - x0, x1 - x), fz = Math.min(z - z0, z1 - z);
-    dens *= Math.min(1, Math.min(fx, fz) / 70);
+    dens *= Math.min(1, Math.min(fx, fz) / 150);
     dens = Math.max(0, Math.min(1, dens));
     if (dens < (opts.standMin ?? 0.30)) continue;   // hard stand boundary: woodland, not parkland
     const rmin = (2.2 + 4.6 * (1 - dens)) * r.range(0.72, 1.40);

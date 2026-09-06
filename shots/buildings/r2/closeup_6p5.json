@@ -10,20 +10,20 @@
   "gpu": "swiftshader",
   "ok": true,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 180177,
+  "elapsedMs": 276994,
   "fps": 11.6,
   "measuredFrames": 1,
-  "frameMs": 18998.6,
+  "frameMs": 24639.4,
   "drawCalls": 160,
   "triangles": 1786458,
   "programs": 25,
   "textures": 45,
   "geometries": 83,
-  "heapMB": 186.9,
+  "heapMB": 187.4,
   "moduleMs": {
     "environment": 0.19999998807907104,
-    "buildings": 0,
-    "terrain": 0.10000000894069672,
+    "buildings": 0.10000000894069672,
+    "terrain": 0,
     "roads": 0,
     "zoning": 0
   },
@@ -46,25 +46,25 @@
       "status": "ready",
       "errors": 0,
       "ms": 0.2,
-      "initMs": 231
+      "initMs": 802
     },
     "buildings": {
       "status": "ready",
       "errors": 0,
-      "ms": 0,
-      "initMs": 77
+      "ms": 0.1,
+      "initMs": 97
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.1,
-      "initMs": 4908
+      "ms": 0,
+      "initMs": 5315
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 60
+      "initMs": 87
     },
     "zoning": {
       "status": "ready",

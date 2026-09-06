@@ -1,200 +1,215 @@
-// Showcase staging for the tools module: a small CS2-style street grid with four zoned blocks, and
-// then every tool preview held open at once so a still frame shows what the tools actually look like:
-//   · a curved avenue being drawn from an intersection, with node handles, the alignment guide and
-//     live length / angle / grade / price chips (red when the segment is invalid),
-//   · the zoning brush over a block: the affected 8 m cells lit in the zone colour inside a dashed circle,
-//   · a service ghost (footprint volume + road-frontage tie line) with its coverage circle,
-//   · a road segment selected, highlighted with the blue selection ribbon.
-// The composite draw is only used in the showcase; in the game one tool draws at a time.
-import { ICON } from './chips.js';
-import { serviceDef, money } from './costs.js';
+// Showcase staging for the tools module.
+//
+// The district is BUILT BY THE TOOLS (module spec §4 item 1): every road, zone, terrain edit and
+// demolition below goes through api.select / pointer / click / commit. There is not one direct call
+// to world.roads.addEdge, world.zones.paint or world.terrain.modify in this file — grep it.
+//
+// Then six poses are pinned at once through api._showcasePoses(true) — the showcase-only multi
+// preview mode select() can never reach — so a single still frame shows the road drag, the zone
+// brush, the terrain brush, the bulldoze marquee, the service footprint with its coverage annulus
+// and the red invalid ghost.
+import { serviceDef } from './costs.js';
+
+export const DESCRIPTION =
+  'Rivermouth Fields: a tool-built district of an avenue spine, four cross streets, a curved '
+  + 'east street and four zoned blocks with 30+ buildings, holding six tool poses at once — an '
+  + 'avenue mid-drag with live length / angle / grade / price chips, the residential zone brush, '
+  + 'the terrain sculpt brush on a raised knoll, a bulldoze marquee over four doomed houses, a '
+  + 'clinic footprint with its coverage annulus, and the red invalid ghost up the knoll.';
 
 export const CAMERAS = {
-  tools: { yaw: 0.78, pitch: 0.54, distance: 240, target: [56, 2, 50] },
-  toolsclose: { yaw: 1.08, pitch: 0.30, distance: 84, target: [24, 2, 68] },
-  toolswide: { yaw: 0.42, pitch: 1.00, distance: 520, target: [40, 0, 30] },
+  roadtool: { position: [74, 44, 96], target: [52, 2, 22] },
+  zonetool: { position: [-52, 40, 104], target: [-90, 1, 60] },
+  sculpt: { position: [210, 58, -48], target: [150, 10, -120] },
+  bulldoze: { position: [-72, 52, -12], target: [-140, 4, -84] },
+  service: { position: [176, 66, 190], target: [120, 4, 110] },
+  invalid: { position: [214, 40, -96], target: [152, 10, -96] },
 };
 
-// scene constants (metres)
-const AVE_Z = 20;
-const XS = [-240, -160, -80, 0, 80, 160, 240];
-const ZS = [-140, -60, 20, 100, 180];
+// ---------------------------------------------------------------------------------- the district
+//
+// Site: the flat shelf north of the river at seed 1337 (see the height map in the round-2 probe —
+// z ≥ −100 runs 12–20 m, z ≤ −120 falls into the river). The tools LEVEL that shelf to a 15 m plane
+// first, exactly as a player grades a site before laying roads, and every road then sits on ≤ 2 %
+// ground. Two deviations from the spec's §8 sketch, forced by the map and stated rather than asked:
+// the N–S streets run z ∈ [−100, 180] instead of ±180, and the E–W streets sit at z = −60 / +120
+// instead of ±120, because z = −120 crosses open water at x ∈ [−180, 20].
+const AVE_Z = 0;
+const AVE_X = [-240, -160, -80, 0, 80, 160, 240];
+const NS_X = [-160, -80, 80, 160];
+const NS_Z = [-100, -60, 0, 60, 120, 180];
+const EW_Z = [-60, 120];
+const EW_X = [-240, -160, -80, 0, 80, 160, 240];
 
-const GHOST = { a: [0, 100], ctrl: [30, 70], b: [96, 6] };
-const BRUSH = { x: -62, z: 62, r: 22, type: 'residential', density: 'low' };
-const SERVICE = { kind: 'park_small', x: 148, z: 88 };
-let REJECT = null;   // a genuinely invalid segment found on the map, shown red next to the valid ghost
+const SITE = { x0: -250, x1: 250, z0: -100, z1: 200, level: 15, step: 70, brush: 200 };
+const KNOLL = { x: 150, z: -120, size: 120, peak: 30 };
+const PAD = { x: 0, z: 0, size: 120 };
 
-const ZONE_RGB = {
-  residential: { low: [0.37, 0.84, 0.20], high: [0.05, 0.56, 0.24] },
-  commercial: { low: [0.18, 0.71, 0.96], high: [0.07, 0.25, 0.79] },
-  industrial: { low: [0.97, 0.71, 0.08], high: [0.82, 0.33, 0.06] },
-  office: { low: [0.78, 0.37, 0.96], high: [0.42, 0.11, 0.72] },
-};
-
-function buildRoads(ctx) {
-  const R = ctx.world.roads;
-  const node = (x, z) => R.addNode(x, z);
-  const edge = (a, b, type = 'street', opts) => R.addEdge(a, b, type, opts);
-  const chain = (pts, type, opts) => {
-    const ids = pts.map(([x, z]) => node(x, z));
-    for (let i = 1; i < ids.length; i++) edge(ids[i - 1], ids[i], type, opts);
-    return ids;
-  };
-  // the avenue the player will select, running the width of the grid
-  chain([[-330, AVE_Z], ...XS.map((x) => [x, AVE_Z]), [330, AVE_Z]], 'avenue');
-  // north-south streets
-  for (const x of XS) chain(ZS.map((z) => [x, z]), 'street');
-  // east-west streets
-  for (const z of ZS) { if (z === AVE_Z) continue; chain(XS.map((x) => [x, z]), 'street'); }
-  // an alley splitting a deep block, and a curved street off the east side (variety in the backdrop)
-  chain([[-200, 100], [-200, 180]], 'alley');
-  edge(node(240, -60), node(320, 30), 'street', { ctrl: { x: 322, z: -54 } });
+/** Drive the road tool over a polyline: select, click every point, commit. */
+function drawRoad(ctx, api, type, mode, pts, opts = {}) {
+  const { ctrl, ...rest } = opts;
+  api.select('road', { type, mode, elevation: 0, oneWay: false, snap: ['magnet'], ...rest });
+  // In curve mode the second click places the control point, so a curve is start → ctrl → end.
+  const clicks = mode === 'curve' && ctrl ? [pts[0], [ctrl.x, ctrl.z], pts[pts.length - 1]] : pts;
+  for (const [x, z] of clicks) { api.pointer(x, z); api.click(0); }
+  const r = api.commit();
+  if (!r || !r.ok) ctx.log.warn(`road ${type} ${pts[0]}→${pts[pts.length - 1]} rejected: ${r?.reason}`);
+  api.cancel();
+  return r;
 }
 
-function paintZones(ctx) {
-  const z = ctx.modules.zoning;
-  if (!z?.bulk) return;
-  z.refresh?.();
-  z.bulk(({ rect }) => {
-    rect(-238, -138, -162, -62, 'residential', 'low');
-    rect(-158, -138, -82, -62, 'residential', 'high');
-    rect(2, -138, 78, -62, 'commercial', 'low');
-    rect(82, -138, 158, -62, 'office', 'high');
-    rect(-238, 102, -162, 178, 'residential', 'low');
-    rect(82, 102, 158, 178, 'industrial', 'low');
+function paintZone(ctx, api, type, density, x0, z0, x1, z1) {
+  api.select('zone', { type, density, brush: 'marquee', size: 24 });
+  api.pointer(x0, z0); api.click(0);
+  api.pointer(x1, z1);
+  const r = api.commit();
+  if (!r || !r.ok) ctx.log.warn(`zone ${type}/${density} rejected: ${r?.reason}`);
+  api.cancel();
+  return r;
+}
+
+function sculpt(ctx, api, mode, x, z, size, strength, dabs, target) {
+  api.select('terrain', { mode, size, strength });
+  api.pointer(x, z);
+  const r = api.click(0, dabs, target);
+  if (!r || !r.ok) ctx.log.warn(`terrain ${mode} at ${x},${z} rejected: ${r?.reason}`);
+  api.cancel();
+  return r;
+}
+
+/** Grade the whole building shelf to one plane with the flatten brush — one undo entry. */
+function levelSite(ctx, api) {
+  api._undoGroup('terrain:level site', () => {
+    api.select('terrain', { mode: 'flatten', size: SITE.brush, strength: 100 });
+    for (let z = SITE.z0; z <= SITE.z1; z += SITE.step) {
+      for (let x = SITE.x0; x <= SITE.x1; x += SITE.step) {
+        api.pointer(x, z);
+        api.click(0, 3, SITE.level);
+      }
+    }
+    api.cancel();
   });
-  z.setOverlayVisible?.(true);
 }
+
+// ------------------------------------------------------------------------------------- the poses
 
 /**
- * Find a real reason to show the red ghost: the nearest water to the town, and a 110 m segment
- * running off the shore into it. `evaluate()` rejects it with "Cannot end in water" — no faking.
+ * Six drafts, drawn simultaneously by api._showcasePoses(true). Each is exactly the descriptor the
+ * matching tool's draw() takes, so nothing here is a special rendering path — the poses go through
+ * the same code the live tool does.
  */
-function findRejected(ctx) {
-  const T = ctx.world.terrain;
-  let best = null, bd = Infinity;
-  for (let z = -430; z <= 430; z += 12) {
-    for (let x = -430; x <= 430; x += 12) {
-      if (!T.isWater(x, z)) continue;
-      const d = Math.hypot(x - 60, z - 30);
-      if (d < bd) { bd = d; best = { x, z }; }
-    }
-  }
-  if (!best) return null;
-  let dir = null, hi = -Infinity;
-  for (let i = 0; i < 24; i++) {
-    const a = (i / 24) * Math.PI * 2;
-    const px = best.x + Math.cos(a) * 115, pz = best.z + Math.sin(a) * 115;
-    if (T.isWater(px, pz)) continue;
-    const h = T.getHeight(px, pz);
-    if (h > hi) { hi = h; dir = a; }
-  }
-  if (dir === null) return null;
-  return { a: { x: best.x + Math.cos(dir) * 115, z: best.z + Math.sin(dir) * 115 }, b: { x: best.x, z: best.z } };
-}
-
-/** The segment of the avenue between x = 0 and x = 80 — the one the showcase leaves selected. */
-function findAvenueEdge(ctx) {
-  const R = ctx.world.roads;
-  let best = null, bd = Infinity;
-  for (const e of R.edges.values()) {
-    if (e.type !== 'avenue') continue;
-    const a = R.nodes.get(e.a), b = R.nodes.get(e.b);
-    if (!a || !b) continue;
-    const mx = (a.x + b.x) / 2, mz = (a.z + b.z) / 2;
-    const d = Math.hypot(mx - 40, mz - AVE_Z);
-    if (d < bd) { bd = d; best = e; }
-  }
-  return best;
-}
-
-// -------------------------------------------------------------------------------- composite preview
-
-function zoneCells(ctx, cx, cz, r) {
-  const zon = ctx.modules.zoning;
-  const cell = ctx.world.zones.cellSize || 8;
-  const half = ctx.world.size / 2;
-  const idx = (v) => Math.floor((v + half) / cell);
-  const ctr = (i) => i * cell - half + cell * 0.5;
+export function POSES(ctx, S, api) {
+  const road = S.tools.road;
+  const snap = (x, z, from, o) => road.snapAt(x, z, from, o || { snap: ['magnet'] });
   const out = [];
-  const r2 = r * r;
-  for (let iz = idx(cz - r); iz <= idx(cz + r); iz++) {
-    for (let ix = idx(cx - r); ix <= idx(cx + r); ix++) {
-      const x = ctr(ix), z = ctr(iz);
-      if ((x - cx) ** 2 + (z - cz) ** 2 > r2) continue;
-      if (zon?.zonableAt && !zon.zonableAt(x, z)) continue;
-      out.push(x, z);
-    }
-  }
+
+  // 1 — roadtool: an avenue mid-drag off the spine node at (0,0), curving away to the cursor
+  // It leaves the spine node at ~40°, not along it: two roads meeting at under 25° is exactly what
+  // the shared-node rule rejects, so the spec's literal (0,0)→(60,0) would pose the *invalid* ghost.
+  const a0 = snap(0, 0, null);
+  const a1 = snap(48, 40, a0, { snap: [] });
+  const cur = snap(96, 34, a1, { snap: [] });
+  out.push({
+    tool: 'road', type: 'avenue', mode: 'curve', elevation: 0, oneWay: false,
+    points: [{ x: a0.x, z: a0.z, node: a0.node, edge: a0.edge }, { x: a1.x, z: a1.z, node: a1.node, edge: a1.edge }],
+    cursor: cur, ctrl: { x: 80, z: 48 }, wash: true,
+  });
+
+  // 2 — zonetool: the residential/high brush over the western block
+  out.push({ tool: 'zone', type: 'residential', density: 'high', brush: 'paint', size: 24, cursor: { x: -90, z: 60 }, marquee: null, erasing: false });
+
+  // 3 — sculpt: the raise brush on the knoll it built
+  out.push({ tool: 'terrain', mode: 'raise', size: 60, strength: 70, cursor: { x: KNOLL.x, z: KNOLL.z } });
+
+  // 4 — bulldoze: a marquee over the north-west block
+  out.push({ tool: 'bulldoze', mode: 'marquee', marquee: { x0: -176, z0: -116, x1: -104, z1: -52 }, cursor: { x: -140, z: -84 } });
+
+  // 5 — service: a clinic ghost with its coverage annulus
+  const kind = 'clinic';
+  const ne = ctx.world.roads.nearestEdge?.(120, 110, 160);
+  const heading = ne ? Math.atan2(ne.point.z - 110, ne.point.x - 120) + Math.PI / 2 : 0;
+  out.push({ tool: 'service', kind, def: serviceDef(kind, ctx.modules), cursor: { x: 120, z: 110 }, heading });
+
+  // 6 — invalid: a street straight up the knoll, rejected on grade by the real evaluator
+  const b0 = snap(150, -60, null, { snap: [] });
+  const b1 = snap(150, -120, b0, { snap: [] });
+  out.push({
+    tool: 'road', type: 'street', mode: 'straight', elevation: 0, oneWay: false,
+    points: [{ x: b0.x, z: b0.z, node: b0.node, edge: b0.edge }],
+    cursor: { ...b1, kind: null, id: null }, ctrl: null, slot: 'alt', wash: false,
+  });
   return out;
 }
 
-function composite(ctx, S) {
-  const g = S.giz, T = ctx.world.terrain;
-
-  // 1. the road ghost, its handles, guide line and chips (the road tool's own draw)
-  S.tools.road.draw();
-
-  // 2. zoning brush — cells + dashed circle (appended to the same flat batch)
-  const col = ZONE_RGB[BRUSH.type][BRUSH.density];
-  const cells = zoneCells(ctx, BRUSH.x, BRUSH.z, BRUSH.r);
-  for (let i = 0; i < cells.length; i += 2) g.cell(cells[i], cells[i + 1], 7.3, col, 0.44);
-  g.showBrush(BRUSH.x, BRUSH.z, BRUSH.r, 'flatten', { fill: 0.10, grid: 0, rimIn: 0.93 });
-  g.brush.mesh.material.uniforms.uColor.value.setRGB(col[0], col[1], col[2]);
-  g.brush.mesh.material.uniforms.uRim.value.setRGB(Math.min(1, col[0] + 0.4), Math.min(1, col[1] + 0.4), Math.min(1, col[2] + 0.4));
-  const by = T.getHeight(BRUSH.x, BRUSH.z);
-  S.chips.add(BRUSH.x, by + 2, BRUSH.z, ICON.cells, 'Residential · low', '', 0, -44);
-  S.chips.add(BRUSH.x, by + 2, BRUSH.z, ICON.area, `${cells.length / 2} cells`, '', 0, -24, `${((cells.length / 2) * 64 / 1000).toFixed(1)} k m²`);
-
-  // 3. service ghost + coverage circle + road frontage tie
-  const d = serviceDef(SERVICE.kind);
-  const ne = ctx.world.roads.nearestEdge?.(SERVICE.x, SERVICE.z, 120);
-  const heading = ne ? Math.atan2(ne.point.z - SERVICE.z, ne.point.x - SERVICE.x) + Math.PI / 2 : 0;
-  g.footprint(SERVICE.x, SERVICE.z, d.w, d.d, heading, d.h, [0.55, 0.82, 1.0], 0.18);
-  if (ne) {
-    g.groundLine(SERVICE.x, SERVICE.z, ne.point.x, ne.point.z, 1.2, [0.4, 1, 0.55], 0.8, true);
-    g.marker(ne.point.x, ne.point.z, 1.8, [0.45, 1, 0.6]);
-  }
-  g.showCoverage(SERVICE.x, SERVICE.z, d.coverage, [0.35, 0.85, 1.0]);
-
-  // 4. the rejected segment: same tool, same evaluation, red because it ends in the water
-  if (REJECT) {
-    const ev = S.tools.road._eval(REJECT.a, REJECT.b);
-    g.setGhostAlt(ev.path, ctx.world.roads.types.street.width, ev.ok ? 'valid' : 'invalid');
-    g.marker(REJECT.a.x, REJECT.a.z, 2.4, ev.ok ? [1, 1, 1] : [1, 0.55, 0.48]);
-    g.marker(REJECT.b.x, REJECT.b.z, 2.4, ev.ok ? [1, 1, 1] : [1, 0.55, 0.48]);
-    const my = T.getHeight(REJECT.b.x, REJECT.b.z);
-    const mid = { x: (REJECT.a.x + REJECT.b.x) / 2, z: (REJECT.a.z + REJECT.b.z) / 2 };
-    S.chips.add(mid.x, T.getHeight(mid.x, mid.z) + 2, mid.z, ICON.length, `${Math.round(ev.len)} m`, '', 0, -18);
-    S.chips.add(REJECT.b.x, my + 2, REJECT.b.z, ICON.bad, ev.ok ? 'valid' : ev.reason, 'bad', 0, -34);
-  }
-  const sy = T.getHeight(SERVICE.x, SERVICE.z);
-  S.chips.add(SERVICE.x, sy + d.h + 2, SERVICE.z, ICON.info, d.label, '', 0, -20);
-  S.chips.add(SERVICE.x, sy + d.h + 2, SERVICE.z, ICON.cost, money(d.cost), 'cost', 0, -40);
-  S.chips.add(SERVICE.x, sy + 1, SERVICE.z, ICON.radius, `${d.coverage} m`, '', 0, 26);
-}
+// ------------------------------------------------------------------------------------- staging
 
 export async function stage(ctx, S, api) {
-  REJECT = findRejected(ctx);
-  buildRoads(ctx);
+  const t0 = performance.now();
+  // A staged demo district is built without an affordability gate; the live game is not.
+  S._freeBuild = true;
+  const T = ctx.world.terrain;
+
+  // 1 — grade the site: the flatten brush levels the shelf, then a 120 m pad at the spine junction
+  levelSite(ctx, api);
+  sculpt(ctx, api, 'flatten', PAD.x, PAD.z, PAD.size, 100, 3, SITE.level);
+
+  // 2 — the avenue spine
+  drawRoad(ctx, api, 'avenue', 'straight', AVE_X.map((x) => [x, AVE_Z]));
+
+  // 3 — four N–S streets, each snapping onto the avenue at z = 0 (a real T-junction split)
+  for (const x of NS_X) drawRoad(ctx, api, 'street', 'straight', NS_Z.map((z) => [x, z]));
+  // …and two E–W streets, each snapping onto all four N–S streets
+  for (const z of EW_Z) drawRoad(ctx, api, 'street', 'straight', EW_X.map((x) => [x, z]));
+
+  // 4 — a curved street off the east side, and an alley behind the centre block
+  drawRoad(ctx, api, 'street', 'curve', [[160, 120], [232, 8]], { ctrl: { x: 228, z: 96 } });
+  drawRoad(ctx, api, 'alley', 'straight', [[-40, 60], [40, 60]]);
+
   ctx.modules.roads?.rebuild?.();
-  paintZones(ctx);
+  ctx.modules.zoning?.refresh?.();
 
-  // leave a road segment selected so the blue selection ribbon and its info chip are on screen
-  const sel = findAvenueEdge(ctx);
-  if (sel) api.selectObject('road', sel.id);
+  // 5 — zone eight blocks: all four types in both densities
+  paintZone(ctx, api, 'residential', 'low', -232, -96, -88, -8);
+  paintZone(ctx, api, 'residential', 'high', -152, 8, -88, 112);
+  paintZone(ctx, api, 'commercial', 'high', 8, -52, 72, 112);
+  paintZone(ctx, api, 'commercial', 'low', -72, -52, -8, -8);
+  paintZone(ctx, api, 'industrial', 'low', 88, -52, 152, -8);
+  paintZone(ctx, api, 'industrial', 'high', 168, -52, 232, -8);
+  paintZone(ctx, api, 'office', 'high', 88, 8, 152, 112);
+  paintZone(ctx, api, 'office', 'low', 168, 8, 232, 112);
+  ctx.modules.zoning?.refresh?.();
 
-  // hold a curved avenue mid-draw: anchor on the intersection, control placed, cursor on open ground
-  api.select('road', { type: 'avenue', mode: 'curve', elevation: 0, snap: ['magnet'] });
-  api.beginAt(GHOST.a[0], GHOST.a[1]);
-  api.controlAt(GHOST.ctrl[0], GHOST.ctrl[1]);
-  api.setHover(GHOST.b[0], GHOST.b[1]);
+  // 6 — let the buildings module fill the lots, so bulldoze has real victims
+  const spawned = ctx.modules.buildings?.spawnFreeLots?.(80) ?? 0;
+  ctx.modules.buildings?.flush?.();
+  if (spawned < 30) ctx.log.error(`showcase: spawnFreeLots returned ${spawned} (want ≥ 30) — the district will read as empty`);
 
-  S._showcaseDraw = () => composite(ctx, S);
-  S.dirty();
+  // 7 — raise a knoll south-east of the spine and smooth its skirt
+  let dabs = 0;
+  while (T.getHeight(KNOLL.x, KNOLL.z) < KNOLL.peak - 1 && dabs < 60) {
+    sculpt(ctx, api, 'raise', KNOLL.x, KNOLL.z, KNOLL.size, 70, 4);
+    dabs += 4;
+  }
+  sculpt(ctx, api, 'smooth', KNOLL.x, KNOLL.z, KNOLL.size * 1.3, 60, 3);
 
-  const p = S.tools.road.state().preview;
-  const rej = REJECT ? S.tools.road._eval(REJECT.a, REJECT.b) : null;
-  ctx.log.info(`showcase: ${ctx.world.roads.edges.size} edges, ghost ${p ? `${Math.round(p.len)} m / ${money(p.cost)} / ${p.ok ? 'valid' : p.reason}` : 'none'}, rejected ${rej ? `${Math.round(rej.len)} m @ ${Math.round(REJECT.b.x)},${Math.round(REJECT.b.z)} — ${rej.reason || 'VALID (no red demo)'}` : 'none found'}, selection edge #${sel?.id}`);
+  // 8 — leave one building selected so the white footprint outline is on screen (criterion 12)
+  let sel = null;
+  for (const b of ctx.world.buildings.items.values()) {
+    if (b.x > 0 && b.x < 80 && b.z > 20 && b.z < 120) { sel = b; break; }
+  }
+  if (sel) api.setSelection('building', sel.id);
+
+  // 9 — pin the six poses
+  api.select(null);
+  const n = api._showcasePoses(true);
+  S._freeBuild = false;
+
+  const h = api.history();
+  const terrainEntries = h.entries.filter((e) => e.label.startsWith('terrain:')).length;
+  ctx.log.info(
+    `showcase: ${ctx.world.roads.edges.size} edges / ${ctx.world.roads.nodes.size} nodes / `
+    + `${ctx.world.zones.cells.size} zone cells / ${ctx.world.buildings.items.size} buildings, `
+    + `knoll ${T.getHeight(KNOLL.x, KNOLL.z).toFixed(1)} m, ${h.entries.length} history entries `
+    + `(${terrainEntries} terrain:), ${n} poses, ${((performance.now() - t0) / 1000).toFixed(1)} s`,
+  );
 }

@@ -11,18 +11,18 @@
   "ok": true,
   "crops": 5,
   "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 121370,
+  "elapsedMs": 114522,
   "fps": 11.6,
-  "measuredFrames": 2,
-  "frameMs": 8821.3,
-  "drawCalls": 84,
-  "triangles": 1275670,
+  "measuredFrames": 4,
+  "frameMs": 4681.1,
+  "drawCalls": 89,
+  "triangles": 1293002,
   "programs": 35,
   "textures": 48,
   "geometries": 57,
-  "heapMB": 70.5,
+  "heapMB": 68,
   "moduleMs": {
-    "environment": 0.5,
+    "environment": 0.29999999701976776,
     "props": 0.10000000894069672,
     "terrain": 0,
     "roads": 0
@@ -45,32 +45,32 @@
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.5,
-      "initMs": 317
+      "ms": 0.3,
+      "initMs": 161
     },
     "props": {
       "status": "ready",
       "errors": 0,
       "ms": 0.1,
-      "initMs": 2626
+      "initMs": 1918
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 6821
+      "initMs": 5279
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 124
+      "initMs": 126
     }
   },
   "errors": [],
   "warnings": [
     "[props] no roads yet: road furniture deferred until roads:changed",
-    "[.WebGL-0x35b400105a00] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow)."
+    "[.WebGL-0x2a8c00162600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow)."
   ],
   "png": "shots/props/dev2f/street_12.png"
 }

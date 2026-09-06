@@ -23,8 +23,15 @@ const CAP0 = 48, CAP1 = 520;
 const DETAIL_R = 620;                 // beyond this a chunk contributes only its impostor draw
 const FOLIAGE_R = 260;                // bushes/hedges/litter stop drawing well before that
 const FOLIAGE_CAST_R = 170;           // ... and stop casting sooner still
-const FURN_CAST_R = 250;
+const FURN_CAST_R = 560;
 const LOD1_CAST_R = 120;
+
+/** Stable per-instance hash in [0,1) — the stochastic LOD cross-fade uses it, never the frame clock. */
+function hash01(i) {
+  let h = Math.imul(i + 0x9e3779b9, 0x85ebca6b);
+  h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
 
 const _m = new THREE.Matrix4();
 const _q = new THREE.Quaternion();
@@ -502,9 +509,18 @@ export class PropField {
     g.attributes.iA.array.set((isImp ? c.impA : c.iA).subarray(s.off * 4, (s.off + cnt) * 4), n * 4);
     if (!isImp) g.attributes.iB.array.set(c.iB.subarray(s.off * 4, (s.off + cnt) * 4), n * 4);
     g.attributes.iTint.array.set(c.tint.subarray(s.off * 3, (s.off + cnt) * 3), n * 3);
-    const f = blend >= 1 ? (inverted ? -0.0001 : 1) : (inverted ? -blend : blend);
     const fa = g.attributes.iFade.array;
-    fa.fill(f, n, n + cnt);
+    if (blend >= 1) {
+      fa.fill(1, n, n + cnt);
+    } else {
+      // each instance belongs wholly to one tier; which one is a stable hash of its index, so the
+      // population crosses over gradually across the band and no pixel is ever half-drawn
+      for (let i = 0; i < cnt; i++) {
+        const h = hash01(s.off + i);
+        const near = h < blend;
+        fa[n + i] = (inverted ? !near : near) ? 1 : -1;
+      }
+    }
     if (this.kindVisible.tree_oak === false || this.kindVisible.tree_pine === false) {
       for (let i = 0; i < cnt; i++) {
         const k = c.kindOf[s.off + i];

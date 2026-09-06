@@ -1,0 +1,113 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=tools&time=12&camera=roadtool&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "tools",
+  "time": 12,
+  "camera": "roadtool",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "crops": 5,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 190638,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 15625.4,
+  "drawCalls": 133,
+  "triangles": 998659,
+  "programs": 53,
+  "textures": 54,
+  "geometries": 85,
+  "heapMB": 104.9,
+  "moduleMs": {
+    "environment": 0.29999999701976776,
+    "tools": 0,
+    "terrain": 0,
+    "roads": 0,
+    "zoning": 0.09999999403953552,
+    "buildings": 0,
+    "props": 0.09999999403953552,
+    "services": 0,
+    "simulation": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      74,
+      57,
+      96
+    ],
+    "target": [
+      52,
+      2,
+      22
+    ],
+    "distance": 87.9
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 261
+    },
+    "tools": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5537
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 114
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 111
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 2060
+    },
+    "services": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "simulation": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 2
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "[props] no roads yet: road furniture deferred until roads:changed",
+    "[.WebGL-0x393400150e00] GL_INVALID_OPERATION: glDrawElementsInstanced: Two textures of different types use the same sampler location.",
+    "[.WebGL-0x393400150e00] GL_INVALID_OPERATION: glDrawElements: Two textures of different types use the same sampler location.",
+    "[.WebGL-0x393400150e00] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow)."
+  ],
+  "png": "shots/tools/rdev2/roadtool_12.png"
+}
