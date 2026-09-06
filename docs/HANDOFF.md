@@ -4,6 +4,40 @@ Everything needed to pick SimBuild up cold. Written 2026-09-06, at the end of th
 
 ---
 
+## 0. The prompt to paste when you come back
+
+Reading this file is necessary but not sufficient — an agent that only reads it will stall on two things a fresh
+container cannot supply by itself. Paste this instead:
+
+```
+ultracode
+
+Read docs/HANDOFF.md, then continue the SimBuild build loop.
+
+Setup first, in this order:
+  npm install
+  ./tools/devserver.sh                       # dev server; every agent screenshots through it
+  ./tools/fetch-reference.sh                 # CS2 reference images - not in the repo, gone with each container
+  export SIMBUILD_REF=$HOME/.simbuild/ref    # where the critics look for them
+  node tools/screenshot.mjs --showcase buildings --time 12 --camera aerial --out shots/smoke.png
+Look at that screenshot before doing anything else. If it is not OK with errors=0, fix that first.
+
+Then run tools/workflows/wave.js with the modules from docs/STATUS.json -> modules[].next, finish wave 2,
+then wave 2b (services, infoviews), wave 3 (democity, transit), then the whole-game critic and the blind
+A/B judging. Never inflate scores. Do not ask me questions - make routine decisions yourself, state your
+assumptions, and keep going.
+```
+
+Why each part matters:
+
+- **`ultracode`** — without it the Workflow tool is opt-in only and the agent will build serially by hand instead
+  of fanning out builders and critics. This one word is the difference between the orchestration running and not.
+- **`./tools/fetch-reference.sh`** — the CS2 screenshots are not in the repo (asset policy) and lived in a session
+  scratchpad that no longer exists. Critics calibrate against them **every round**; without them the whole scoring
+  scale drifts. The script is idempotent and takes about ten seconds.
+- **`./tools/devserver.sh`** — a fresh container has no dev server, and a dead server fails every round in flight.
+- **the smoke screenshot** — proves the toolchain end to end before an agent spends a round discovering it is broken.
+
 ## 1. Start here (60 seconds)
 
 ```bash
@@ -119,9 +153,9 @@ lands outside the judge's directory. Give a judge `docs/prompts/BLIND-JUDGE.md` 
   showcase timing out before `ready` (readiness now accepts 3 frames in headless), and `page.screenshot` timing
   out because the render loop hogs the main thread (the tool now calls `window.__sim.freeze()` before capturing).
   Symptom in both cases: failed shot, empty log, zero console errors.
-- **CS2 reference images are not in the repo** (asset policy) and lived in a session scratchpad that is now gone.
-  Re-fetch them from the Steam store API for app 949230 — the URLs are recorded next to
-  `docs/reference/CS2-LOOK.md`. Critics need them to calibrate every round.
+- **CS2 reference images are not in the repo** (asset policy) and do not survive a new container. Run
+  `./tools/fetch-reference.sh` (idempotent, ~10 s) and `export SIMBUILD_REF=$HOME/.simbuild/ref`. Critics
+  calibrate against them every round; without them the scoring scale drifts and nobody notices.
 - **125 residual spec defects** are tracked in `docs/prompts/_review/residual.json` — unmeasurable acceptance
   items and arithmetic nits in specs that passed anyway. A critic **must not** fail a builder on anything listed
   there as unmeasurable.

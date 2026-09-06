@@ -1,0 +1,76 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 12,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1280,
+  "height": 720,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "crops": 0,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 38950,
+  "fps": 11.6,
+  "measuredFrames": 3,
+  "frameMs": 2389.4,
+  "drawCalls": 115,
+  "triangles": 533936,
+  "programs": 30,
+  "textures": 46,
+  "geometries": 51,
+  "heapMB": 70.7,
+  "moduleMs": {
+    "environment": 0.29999999701976776,
+    "props": 0,
+    "terrain": 0,
+    "roads": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      193.8,
+      404.8,
+      283.2
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 520
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 150
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 1570
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4694
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 74
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "[props] no roads yet: road furniture deferred until roads:changed",
+    "[.WebGL-0x395c0011ce00] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow)."
+  ],
+  "png": "shots/props/dev2f/aerial_12.png"
+}
