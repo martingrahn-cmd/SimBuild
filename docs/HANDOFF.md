@@ -38,6 +38,33 @@ Why each part matters:
 - **`./tools/devserver.sh`** — a fresh container has no dev server, and a dead server fails every round in flight.
 - **the smoke screenshot** — proves the toolchain end to end before an agent spends a round discovering it is broken.
 
+## 0b. Running it on your own machine (much faster)
+
+The cloud box has 4 cores and **no GPU**, which is the single biggest limit on this project: 2 concurrent agents,
+3–10 s per 1080p frame, 30–170 s per screenshot. A laptop with a real GPU changes the arithmetic completely — an
+M4 (10 cores) gives 8 concurrent agents and sub-second frames.
+
+```bash
+git clone -b claude/skylines-threejs-builder-gri6n7 https://github.com/martingrahn-cmd/SimBuild.git
+cd SimBuild
+./tools/setup-local.sh        # deps, Playwright browser, reference images, dev server, smoke test
+```
+
+Then open a Claude Code session in that directory and paste §0 above. Nothing else differs — the screenshot tool
+falls back to Playwright's own Chromium when `/opt/pw-browsers` is absent, and the Workflow tool sizes its agent
+pool from the core count automatically.
+
+Two things worth doing there that cannot be done here:
+
+- **Measure the frame rate for real.** `SIM_GL=metal` (Apple Silicon) or `SIM_GL=gl`, then check `gpuRenderer` in
+  the JSON actually names your GPU and not SwiftShader; `SIM_HEADED=1` forces a real window if headless falls back
+  to software. The ≥ 50 fps @ 1080p budget in ARCHITECTURE §9 is still unverified, and `fpsGpu` in STATUS.json
+  stays null until someone fills it in from a run like that.
+- **Judge the look on a real display.** Every score in this project was awarded from a software-rendered frame.
+
+The usage limit is per Anthropic account and follows you, so it is unchanged locally — but far fewer tokens are
+wasted on timeouts, retries and re-shot frames.
+
 ## 1. Start here (60 seconds)
 
 ```bash
