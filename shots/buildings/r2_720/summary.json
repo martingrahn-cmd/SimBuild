@@ -1,0 +1,23 @@
+{
+  "module": "buildings",
+  "round": "2_720",
+  "at": "2026-09-06T07:06:38.153Z",
+  "shots": [
+    {
+      "png": "shots/buildings/r2_720/block_12.png",
+      "camera": "block",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 109,
+      "triangles": 1504818,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 109,
+  "maxTriangles": 1504818,
+  "minFps": 11.6,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

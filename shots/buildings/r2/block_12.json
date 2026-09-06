@@ -1,0 +1,79 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=buildings&time=12&camera=block&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "buildings",
+  "time": 12,
+  "camera": "block",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 255172,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 19738.6,
+  "drawCalls": 130,
+  "triangles": 1669744,
+  "programs": 25,
+  "textures": 45,
+  "geometries": 62,
+  "heapMB": 187.1,
+  "moduleMs": {
+    "environment": 0.3999999910593033,
+    "buildings": 0,
+    "terrain": 0.10000000894069672,
+    "roads": 0,
+    "zoning": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      -7.3,
+      36,
+      247.2
+    ],
+    "target": [
+      -93.4,
+      22,
+      258.5
+    ],
+    "distance": 88
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.4,
+      "initMs": 406
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 102
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5344
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 68
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/buildings/r2/block_12.png"
+}

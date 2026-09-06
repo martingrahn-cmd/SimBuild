@@ -1,0 +1,79 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=buildings&time=12&camera=downtown&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "buildings",
+  "time": 12,
+  "camera": "downtown",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 228936,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 10072.9,
+  "drawCalls": 181,
+  "triangles": 1050558,
+  "programs": 25,
+  "textures": 45,
+  "geometries": 88,
+  "heapMB": 187.4,
+  "moduleMs": {
+    "environment": 0.5,
+    "buildings": 0.09999999403953552,
+    "terrain": 0,
+    "roads": 0,
+    "zoning": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      236.6,
+      133.8,
+      275.5
+    ],
+    "target": [
+      30,
+      30,
+      40
+    ],
+    "distance": 330
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.5,
+      "initMs": 279
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 121
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5138
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 217
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 7
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/buildings/r2/downtown_12.png"
+}

@@ -1,0 +1,33 @@
+{
+  "png": "shots/props/dev2f/closeup_6p5.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "closeup",
+  "time": 6.5,
+  "rects": {
+    "props.canopy_broad": [
+      1151,
+      459,
+      85,
+      85
+    ],
+    "props.crown": [
+      1127,
+      416,
+      133,
+      133
+    ],
+    "props.pool": [
+      424,
+      468,
+      252,
+      252
+    ],
+    "props.lamp_head": [
+      503,
+      486,
+      32,
+      32
+    ]
+  }
+}

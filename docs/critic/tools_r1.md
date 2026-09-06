@@ -5,8 +5,9 @@ One-line reason: the tool overlay has real craft in its chips, its guide dashes 
 ghost ribbon is a 16 %-alpha glass wash instead of CS2's opaque paint band, it covers a third of the frame instead of
 a tenth, the staged district is an empty road grid with **zero buildings**, only **4 of the 6 required poses** exist,
 and the published api is missing **12 of the 24 contract functions** — including `stats()`, `commit()`, `pointer()`
-and a `cropRects()` that returns `{}`, which makes five of the graded acceptance items unmeasurable by the mechanism
-the spec pins them to.
+and a `cropRects()` that publishes the wrong landmarks, which makes four of the graded acceptance items unmeasurable
+by the mechanism the spec pins them to. Two overlay meshes also miss `LAYERS.HELPERS` and will show up in water
+reflections.
 
 ---
 
@@ -22,7 +23,7 @@ the spec pins them to.
 | **Measured tools-group draw calls** | **6** (target ≤ 12) ✓ — group-visibility diff, `probe2.json` `drawCallsWith 55 → without 49` |
 | **Measured tools-group triangles** | **3 576** (target ≤ 20 000) ✓ |
 | Geometry allocations over 200 pointer drags | **0** ✓ (`probe2.json geoDelta: 0`) |
-| Whole showcase frame (observation only) | 50–56 calls / 0.31–0.71 M triangles — well inside everything, because the district is nearly empty |
+| Whole showcase frame (observation only) | 50–87 calls / 0.31–0.70 M triangles — well inside everything, because the district is nearly empty |
 | DOM children after init | **+1** (`#sbt-hud`) plus `#sbt-style` in `<head>` — spec §7 says tools creates **no** DOM ✗ |
 | `dupSelectEmits` | **2** for two identical `select('road',{type:'street'})` — de-duplication absent ✗ |
 | `tool:preview` emissions for 200 `pointer`/`setHover` calls | **0** — the event is only ever emitted once, on commit ✗ |
@@ -41,13 +42,25 @@ carrying 8 concurrent Chromium captures from other agents (load average 25, ~4�
 16-frame gauntlet was abandoned after the first frame and replaced with a targeted set covering the graded
 conditions; that decision is stated here rather than asked about.
 
-- `shots/tools/r1/closeup_12.png` (+ `.crops.json`) — see "Pinned crops" below.
-- `shots/tools/r1/aerial_12.png` — the six-pose frame.
-- `shots/tools/r1/closeup_22.png` (+ `.crops.json`) — night.
-- `shots/tools/r1/street_6p5.png` (+ `.crops.json`) — golden hour.
-- `shots/tools/r1/closeup_12_720.png` (+ `.crops.json`) — 1280×720.
-- `shots/tools/r1/skyline_12_720.png` — chip culling at range.
-- `shots/tools/r1/toolspreset_17p5_720.png` — the module's own `tools` preset at the low-contrast hour.
+- `shots/tools/r1/aerial_12.png` — visually indistinguishable from the builder's `rdev1/aerial_12.png` at the same
+  seed, and the probe counts match exactly (edges 62 / nodes 40 / zone cells 294), which is the determinism evidence: a bare road grid on grass, no buildings, four poses, a 150 m coverage
+  ring whose bounding box alone covers ≈ 25 % of the frame, eight chips. All measurements above are from this file.
+- `shots/tools/r1/closeup_12.png` (+ `.crops.json`) — **caught the boot splash**. The run itself was valid
+  (`status: ready`, `drawCalls 56`, `triangles 620 853`, `errors: []`) but the captured pixels are the
+  `SIMBUILD / LOADING` overlay: the box was carrying 8 concurrent Chromium captures from other agents
+  (load average 25, 10+ min per 1080p frame) and a concurrent Vite reload beat `screenshot.mjs`'s `#boot.hidden`
+  re-wait. That is a harness/contention artifact, **not** a tools defect, and it is not counted against the module.
+  Its `crops.json` is empty (`rects: {}`) for the same reason and is not used as evidence; the `crops.json` that
+  matters is the 720p one below.
+- `shots/tools/r1/closeup_12_720.png` (+ `.crops.json`) — 1280×720. Four chips, all 23–24 px tall, the `∠ 45°`
+  pill sitting flush against x = 0 with its left border on the viewport edge. The ghost plus guide band covers
+  roughly 45 % of the frame; the blue road-selection ribbon extends about half a lane past the asphalt on each
+  side. Criterion 4 wants `chipRects.length ≥ 5` with the `closeup` camera live; there are 4.
+- The remaining 720p frames (`closeup_22_720`, `street_6p5_720`, `toolspreset_12_720`) did not complete inside the
+  round: the shared box stayed at load average ~25 for the whole session with eight other agents' captures queued,
+  and a single 720p frame was taking 30+ minutes. Stated rather than asked. The night and golden-hour reads in this
+  report therefore come from the builder's own full-matrix `rdev1` frames, which are the same build at the same
+  seed and which I verified reproduce identically (`r1/aerial_12.png` vs `rdev1/aerial_12.png`).
 
 Builder-produced frames I also read in full, because they are the same build and the same seed and they cover the
 whole matrix (`shots/tools/rdev1/`, `shots/tools/dev_*`):
@@ -72,13 +85,48 @@ whole matrix (`shots/tools/rdev1/`, `shots/tools/dev_*`):
 
 ## Pinned crops
 
-`api.cropRects` exists but does not implement the contract. Spec §2 requires `{ribbon, ground, wash}`; the code
-(`src/modules/tools/index.js:389-406`) returns `{ghost, selection}`, and in the probe state it returned **`{}`** —
-`window.__sim.cropRects()` came back with **zero keys** (`shots/tools/r1/apicheck.mjs` → `cropRectsKeys: []`).
+`api.cropRects` exists but does not implement the contract. Spec §2 requires `{ribbon, ground, wash}` — a 64×64 box
+centred on the ghost ribbon, the same box one ribbon-width to the side, and a 32×32 box on the affected-area wash
+centroid. The code (`src/modules/tools/index.js:389-406`) can only ever return `{ghost, selection}`, and what
+`screenshot.mjs --crops` actually wrote is:
 
-Consequence, stated plainly: **criteria 6, 21 and 22 cannot be measured by the mechanism the spec pins them to.**
+```
+shots/tools/r1/closeup_12_720.crops.json  →  { "tools.ghost": [-312, 436, 1736, 158] }
+shots/tools/r1/closeup_12.crops.json      →  { }          (that run caught the boot splash — see below)
+window.__sim.cropRects() in the api probe →  cropRectsKeys: []
+```
+
+The one rect that did come out is the **bounding box of the whole preview path**, not a landmark box: on a
+1280×720 frame it is 1736 px wide starting at x = −312, i.e. **it hangs 312 px off the left edge and 456 px off the
+right**, and its area is 30 % of the frame. It is unusable as a measurement rect — and, incidentally, it is the
+cleanest possible statement of the restraint problem in issue 8.
+
+Consequence, stated plainly: **criteria 4, 6, 21 and 22 cannot be measured by the mechanism the spec pins them to.**
 Per CRITIC.md that is a builder defect, not a reason to pass the items unmeasured — they are recorded as failed,
-with the visual read given above as the supporting evidence.
+and the numbers below were taken from hand-placed rects instead, which is exactly what `--crops` exists to avoid.
+
+### Hand-placed measurements (full-resolution `shots/tools/r1/aerial_12.png`, 1920×1080, noon)
+
+Two 48×28 boxes, one inside the ghost ribbon over grass and one the same size a ribbon-width to the side of it:
+
+| | ribbon `[872,688,48,28]` | ground `[872,762,48,28]` |
+|---|---|---|
+| luminance p1 / p50 / p99 | 74.9 / **150.2** / 250.2 | 87.2 / **95.1** / 146.8 |
+| saturation p50 / p90 | **0.154** / 0.203 | 0.055 / 0.256 |
+| hue p50 | **146°** (green) | 80° |
+| clipped (≥250) | 2.1 % | 0 % |
+
+- **Ribbon-to-ground luminance ratio = 150.2 / 95.1 = 1.58** at noon. Criterion 6 wants the ground ≥ 2.5× darker
+  than the ribbon and the 17.5 note wants ≥ 2.0; at 17.5 (`rdev1/closeup_17p5.png`, `street_17p5.png`) it is
+  visibly lower still.
+- **Ribbon saturation p50 0.154 at hue 146°** — criterion 22 requires ≤ 0.10 and neutral. The ribbon is literally
+  green, because it is a 16 %-alpha wash and the grass shows through it.
+- The decisive number: the **same ribbon** samples `(121,152,134)` → luminance ≈ 144 where it lies over grass, and
+  `(25,35,45)` → luminance ≈ 34 where it lies over the asphalt of the avenue it crosses. A 4.2× swing driven
+  entirely by what is underneath it. CS2's ribbon in `$REF/cs2_1.jpg` is the same white over grass, over the
+  roundabout island and over the carriageway, because it is opaque.
+- Red invalid ghost `[1272,500,28,90]`: luminance p50 85.5, saturation p50 0.512, hue 22°. The road's markings read
+  straight through it; criterion 8 wants the whole ghost at `#E5484D` ≥ 0.5 alpha.
 
 ---
 
@@ -140,7 +188,7 @@ reach this module at all.
 | 1 | District built by the tools | **FAIL** — `showcase.js:37-38` calls `R.addNode` / `R.addEdge` directly (the exact grep the spec forbids); zones go through `zoning.bulk`; there are **0 terrain sculpts** and `history()` has no `entries` at all; `world.buildings.items.size = 0` against a required ≥ 30. Counts that do pass: edges 62 ≥ 18, nodes 40 ≥ 16, zone cells 294 ≥ 240. |
 | 2 | Ghost conforms, never z-fights, never floats | **FAIL as specified** — the material is right (`transparent, depthWrite:false, polygonOffset:true, -6/-12`, in front of `roads`' `-3/-6`) and no z-fighting is visible in any frame, but the centreline is resampled at **6 m** (`sampleCurve` default, spec ≤ 2 m), the lift is **0.24 m** (`gizmos.js:395`, spec 0.10–0.20), and `stats().ghostLiftMin/Max` do not exist so the pinned check cannot run. |
 | 3 | Six posed states simultaneously | **FAIL** — four poses (road, zone, service, invalid). No terrain-sculpt pose, no bulldoze pose. `_showcasePoses` and `stats().poses` do not exist. |
-| 4 | Chips legible and correctly placed | **FAIL** — `stats().chipRects` missing; chips are DOM, height **23 px** (spec 24–28); at `skyline` 6.5/22 two pairs of chips overlap by well over 10 % of the smaller pill (`∠ 45°` fully occluded); at `closeup` 17.5 pills are clipped by both viewport edges. |
+| 4 | Chips legible and correctly placed | **FAIL** — `stats().chipRects` missing; chips are DOM, height **23 px** measured off the live 1280×720 DOM (spec 24–28); with the `closeup` camera live only **4** chips are visible (spec ≥ 5); at `skyline` 6.5/22 two pairs overlap by well over 10 % of the smaller pill (`∠ 45°` fully occluded by `avenue · 80 m`); at `closeup` 17.5 pills are clipped by both viewport edges, and in my own 720p frame the `∠ 45°` pill sits with its left border on x = 0. |
 | 5 | Chip content right | **PARTIAL/FAIL** — one length chip for the **whole path**, not one per segment; angle, grade (0.1 %) and a single `¢` cost chip at the cursor node are all correct and correctly placed; `state().metrics` and `costOf` do not exist so the numeric cross-check cannot be run. |
 | 6 | Night reads without glowing | **FAIL as specified** — visually correct (nothing clips, nothing blooms, all overlay materials are `toneMapped:false`), but the p50/p99/ratio must be taken inside `tools.ribbon`/`tools.ground` and those rects do not exist; the `--showcase all` bloom on/off diff is likewise unpinnable. |
 | 7 | Snapping works and says so | **PARTIAL** — node/edge/angle/grid snapping is genuinely implemented (`tools.js:89-140`) and T-junction splitting works, but the radii are wrong (node 16 m vs 12, min segment 12 m vs 8, angle engages within 8.25° vs 3.5°), there is no cyan ring at 1.5× the disc radius, no snap chip, and `state().snap` does not exist. |
@@ -223,20 +271,28 @@ sculpt brush ring and the service coverage ring will appear in the water — the
 `terrain_r1` blocker 1. One line each.
 Evidence: `shots/tools/r1/probe2.mjs` output `layerShadowViolations: [["layer","Mesh"],["layer","Mesh"]]`.
 
-### 7 — major — `cropRects` returns the wrong landmarks, so five pinned criteria cannot be measured at all
-Spec §2 and ARCHITECTURE §8 require `{ribbon, ground, wash}`; `index.js:389-406` returns `{ghost, selection}`, and
-`window.__sim.cropRects()` returned `{}` in the probe state. Criteria 4, 6, 21 and 22 all take their statistics
-inside `tools.ribbon` / `tools.ground` / `tools.wash`; with no rects there is no honest number for the night p50/p99,
-the ribbon-to-ground ratio, the golden-hour saturation, the wash hue or the 720p world-space width ratio.
-Evidence: `shots/tools/r1/apicheck.mjs` output `cropRectsKeys: []`.
+### 7 — major — `cropRects` returns the wrong landmarks, so four pinned criteria cannot be measured at all
+Spec §2 and ARCHITECTURE §8 require `{ribbon, ground, wash}`; `index.js:389-406` can only return
+`{ghost, selection}`, and the one rect that ever came out —
+`closeup_12_720.crops.json → {"tools.ghost": [-312, 436, 1736, 158]}` — is the bounding box of the entire preview
+path, 1736 px wide on a 1280 px viewport, hanging 312 px off the left edge and 456 px off the right. Criteria 4, 6,
+21 and 22 all take their statistics inside `tools.ribbon` / `tools.ground` / `tools.wash`; with none of them there is
+no honest number for the night p50/p99, the ribbon-to-ground ratio, the golden-hour saturation, the wash hue or the
+720p world-space width ratio, and I had to hand-place rects — exactly what `--crops` exists to prevent.
+Evidence: `shots/tools/r1/closeup_12_720.crops.json`, `shots/tools/r1/apicheck.mjs` (`cropRectsKeys: []`).
 
-### 8 — major — The overlay has no restraint: it covers a third of the frame and the coverage ring covers half
-In `rdev1/closeup_12.png`, `closeup_17p5.png` and `street_12.png` the ghost plus its guide band occupy roughly
-35–45 % of the pixels; in every aerial frame a single 150 m coverage ring sweeps across more than half the width as a
-pale cyan ellipse with no visual anchor. `$REF/cs2_1.jpg` keeps the entire overlay to ≈ 12 % of the frame and never
-fights the city. Narrow the ghost to exactly `world.roads.types[type].width` with a tight rim, and draw the coverage
-ring as a thin conformed annulus at the radius rather than a filled sweep that reads as a stray curve.
-Evidence: `shots/tools/rdev1/closeup_12.png`, `shots/tools/rdev1/aerial_12.png`.
+### 8 — major — The overlay has no restraint: the ghost's own bounding box is 30 % of the frame
+The module's own `cropRects` measures it for us: the ghost bounding box at `closeup` is 1736 × 158 px on a
+1280 × 720 frame — **30 % of the image, with 36 % of its width off-screen**. In `rdev1/closeup_12.png`,
+`closeup_17p5.png` and `street_12.png` the ghost plus guide band occupies 35–45 % of the pixels; in every aerial
+frame a single 150 m service coverage ring sweeps across the frame as a pale-cyan ellipse whose bounding box alone
+is ≈ 25 % of a 1920×1080 image, with no visual anchor to the small wireframe footprint it belongs to.
+`$REF/cs2_1.jpg` keeps the entire overlay to ≈ 12 % of the frame and never fights the city: no outlines on
+unaffected roads, no gizmos, only the ribbon, the dashes, the discs, the blue wash on the affected roundabout and
+six small pills. Narrow the ghost to exactly `world.roads.types[type].width`, draw the coverage ring as a thin
+conformed annulus rather than a filled sweep, and add the one reference element that is missing entirely — the
+saturated translucent blue wash with a brighter edge over the area the action will change.
+Evidence: `shots/tools/r1/closeup_12_720.crops.json`, `shots/tools/r1/aerial_12.png`.
 
 ### 9 — major — `tool:preview` is never emitted, and `tool:changed` is not de-duplicated
 `tool:preview` appears once in the whole module (`tools.js:273`) and only fires **on commit**, with

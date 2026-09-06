@@ -1,0 +1,77 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=12&camera=treecloseup&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 12,
+  "camera": "treecloseup",
+  "seed": 1337,
+  "width": 1280,
+  "height": 720,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "crops": 5,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 205899,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 11950.7,
+  "drawCalls": 84,
+  "triangles": 1066664,
+  "programs": 35,
+  "textures": 48,
+  "geometries": 57,
+  "heapMB": 71,
+  "moduleMs": {
+    "environment": 1.0999999940395355,
+    "props": 0.20000000298023224,
+    "terrain": 0.09999999403953552,
+    "roads": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      105,
+      25.1,
+      62.4
+    ],
+    "target": [
+      94.5,
+      23,
+      53.1
+    ],
+    "distance": 14.2
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 1.1,
+      "initMs": 198
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 1416
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5141
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 77
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "[props] no roads yet: road furniture deferred until roads:changed",
+    "[.WebGL-0x39c400110e00] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x39c400116200] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow)."
+  ],
+  "png": "shots/props/dev2/treecloseup_12.png"
+}

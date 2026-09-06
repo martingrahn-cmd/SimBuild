@@ -1,0 +1,39 @@
+{
+  "png": "shots/props/dev2/park_12.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "park",
+  "time": 12,
+  "rects": {
+    "props.canopy_broad": [
+      563,
+      429,
+      85,
+      85
+    ],
+    "props.canopy_conifer": [
+      716,
+      461,
+      85,
+      85
+    ],
+    "props.crown": [
+      1013,
+      228,
+      133,
+      133
+    ],
+    "props.pool": [
+      526,
+      383,
+      156,
+      156
+    ],
+    "props.lamp_head": [
+      589,
+      384,
+      32,
+      32
+    ]
+  }
+}

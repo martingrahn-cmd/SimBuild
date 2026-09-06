@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=zoning&time=6.5&camera=zones&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "zoning",
+  "time": 6.5,
+  "camera": "zones",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 105705,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 8643.2,
+  "drawCalls": 47,
+  "triangles": 406776,
+  "programs": 25,
+  "textures": 40,
+  "geometries": 40,
+  "heapMB": 55,
+  "moduleMs": {
+    "environment": 0.29999999701976776,
+    "zoning": 0,
+    "terrain": 0,
+    "roads": 0
+  },
+  "hour": 6.5,
+  "cameraState": {
+    "position": [
+      128.7,
+      216.2,
+      180.3
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 300
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 436
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 9
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5460
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 123
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/zoning/r2/zones_6p5.png"
+}

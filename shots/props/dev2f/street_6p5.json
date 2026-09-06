@@ -1,0 +1,26 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=props&time=6.5&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "props",
+  "time": 6.5,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1280,
+  "height": 720,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": false,
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+  "errors": [],
+  "warnings": [
+    "[props] no roads yet: road furniture deferred until roads:changed",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow).",
+    "[.WebGL-0x30640011e600] GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow)."
+  ],
+  "png": "shots/props/dev2f/street_6p5.png"
+}

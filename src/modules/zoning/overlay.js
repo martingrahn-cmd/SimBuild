@@ -1,152 +1,187 @@
-// CS2-style zoning overlay: one merged, terrain-conforming mesh per zone type (translucent fill +
-// fine grid pattern + animated bright region outline), one mesh for the empty zonable band, and one
-// mesh for the lot outlines. Everything is unlit and drawn as a decal over terrain/roads.
+// CS2-style zoning overlay: one merged terrain-conforming mesh per zone type plus one for the empty
+// zonable band. Five draw calls, no per-frame allocation.
+//
+// The three things that make this read as CS2 rather than as coloured paper (zoning.md §3):
+//   * the fill is a translucent tint at alpha 0.52, so the ground's own value survives under it;
+//   * the 8 m cell lattice, the lot lines and the region outline are all *screen-space* widths, so a
+//     line is 1-2.5 px at 60 m and still 1 px at 660 m instead of a 3 m stripe and a shimmer;
+//   * the colour is authored in display space and driven by weather.night, so the overlay is a lit
+//     HUD layer over a dark city at 22:00 instead of the brightest thing in the frame.
+//
+// Geometry is clipped against RoadField, not against the 8 m cell lattice, so the road-facing edge is
+// parallel to the kerb with a constant setback (items 7, 8) even though the cell data stays
+// world-aligned.
 import * as THREE from 'three';
 import { RENDER_ORDER } from '../../core/constants.js';
-import { ZONE_TYPES, zoneColors, lotColor } from './palette.js';
+import { hash2 } from '../../core/rng.js';
+import { ZONE_TYPES, zoneColors, preToneMapped, toneFix, OVERLAY } from './palette.js';
 
-const LIFT_CELL = 0.16;   // m above the ground
-const LIFT_LOT = 0.26;
-const SUB = 2;            // 2x2 quads per 8 m cell -> matches the 4 m terrain grid
+const MAX_PUSH = 5.6;   // m a cell corner may be cleared before the cell is dropped instead (half a cell diagonal)
+const SUB = 2;   // 2x2 quads per 8 m cell: the nodes land exactly on terrain's own 4 m grid, so the
+                 // overlay is the terrain surface, not an approximation of it (item 9).
 
 const VERT = /* glsl */`
-attribute vec2 aUv;
 attribute vec4 aMask;
+attribute vec4 aLotMask;
+attribute vec2 aCell;
 attribute float aDens;
 attribute float aRnd;
 attribute float aLot;
-varying vec2 vUv;
 varying vec4 vMask;
+varying vec4 vLotMask;
+varying vec2 vCell;
 varying float vDens;
 varying float vRnd;
 varying float vLot;
+varying float vDepth;
 varying vec3 vWPos;
 #include <common>
 #include <fog_pars_vertex>
 void main() {
-  vUv = aUv; vMask = aMask; vDens = aDens; vRnd = aRnd; vLot = aLot;
+  vMask = aMask; vLotMask = aLotMask; vCell = aCell; vDens = aDens; vRnd = aRnd; vLot = aLot;
   vec4 wp = modelMatrix * vec4(position, 1.0);
   vWPos = wp.xyz;
   vec4 mvPosition = viewMatrix * wp;
+  vDepth = -mvPosition.z;
   #include <fog_vertex>
   gl_Position = projectionMatrix * mvPosition;
 }`;
 
 const FRAG = /* glsl */`
-uniform vec3 uLow;
-uniform vec3 uHigh;
-uniform float uTime;
-uniform float uFill;
-uniform float uGrid;
-uniform float uEdge;
-uniform float uOpacity;
-uniform float uHatch;
-varying vec2 vUv;
+uniform vec3 uLow, uHigh, uLowFix, uHighFix, uLowLin, uHighLin;
+uniform float uTime, uFill, uOpacity, uNight, uNightA, uExposure;
+uniform float uLineW, uEdgeW, uEdgeGlow, uEdgeA, uLotW, uLineLift, uLotLift;
+uniform float uHatch, uHatchP, uHatchW, uHatchDark;
+uniform float uPulseAmp, uPulseHz, uAtmo, uFogRelief;
 varying vec4 vMask;
+varying vec4 vLotMask;
+varying vec2 vCell;
 varying float vDens;
 varying float vRnd;
 varying float vLot;
+varying float vDepth;
 varying vec3 vWPos;
 #include <common>
 #include <fog_pars_fragment>
+
+float band(float px, float halfPx) { return 1.0 - smoothstep(halfPx - 0.6, halfPx + 0.6, px); }
+
 void main() {
-  vec3 base = mix(uLow, uHigh, vDens) * (1.06 + 0.18 * vRnd);
-  vec2 uv = vUv;
+  // ---- class colour, authored in display space -----------------------------------------------
+  // The pre value is chosen so AgX at this exposure returns the palette hex; the fix term restores
+  // what AgX's Rec.2020 inset cannot reach. Dividing by the exposure first makes the overlay
+  // exposure-invariant, so the night look comes from uNight and not from the environment's
+  // brightening of the exposure curve after dark.
+  // (An off-screen pass such as terrain's planar water reflection compiles this shader with the tone
+  //  mapper switched off; there the plain linear colour is the right thing to encode.)
+  vec3 pre = mix(uLow, uHigh, vDens);
+  vec3 fix = mix(uLowFix, uHighFix, vDens);
+  vec3 col;
+#ifdef TONE_MAPPING
+  gl_FragColor = vec4(pre / max(uExposure, 1e-4), 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+  col = clamp(gl_FragColor.rgb + fix, 0.0, 1.0);
+#else
+  gl_FragColor = vec4(mix(uLowLin, uHighLin, vDens), 1.0);
+  #include <colorspace_fragment>
+  col = gl_FragColor.rgb;
+#endif
 
-  // fine grid: a thin darker/brighter line inside every cell border
-  vec2 g = min(uv, 1.0 - uv);
-  float gd = min(g.x, g.y);
-  float gaa = fwidth(gd) * 1.1 + 0.0015;
-  float grid = 1.0 - smoothstep(0.038 - gaa, 0.038 + gaa, gd);
+  // ---- screen-space metrics ------------------------------------------------------------------
+  vec2 gc = vWPos.xz / 8.0;
+  vec2 gw = fwidth(gc) + 1e-7;
+  float mpp = 8.0 * max(gw.x, gw.y);          // metres per pixel on the ground here
+  float ppc = 1.0 / max(gw.x, gw.y);          // pixels per 8 m cell
 
-  // 45 deg hatch on high density so the two densities read apart at any zoom
-  float d45 = (vWPos.x - vWPos.z) * 0.70710678;
-  float hs = abs(fract(d45 / 3.0) - 0.5) * 2.0;
-  float haa = fwidth(hs) * 1.2 + 0.02;
-  float hatch = uHatch * vDens * (1.0 - smoothstep(0.34 - haa, 0.34 + haa, hs));
+  // ---- 8 m cell lattice: a light line, width clamped to 1.0-2.5 px ----------------------------
+  vec2 gd = abs(fract(gc) - 0.5);
+  float gpx = min(gd.x / gw.x, gd.y / gw.y);
+  float gHalf = clamp(0.5 * uLineW / mpp, 0.5, 1.25);
+  float lat = band(gpx, gHalf) * smoothstep(3.0, 7.0, ppc);
 
-  // region outline on the sides that face a different zone
-  float bd = 4.0;
-  if (vMask.x > 0.5) bd = min(bd, 1.0 - uv.x);
-  if (vMask.y > 0.5) bd = min(bd, uv.x);
-  if (vMask.z > 0.5) bd = min(bd, 1.0 - uv.y);
-  if (vMask.w > 0.5) bd = min(bd, uv.y);
-  float eaa = fwidth(bd) * 1.1 + 0.0015;
-  float edge = 1.0 - smoothstep(0.080 - eaa, 0.080 + eaa, bd);
-  float core = 1.0 - smoothstep(0.028 - eaa, 0.028 + eaa, bd);
+  // ---- 45 deg hatch: high density only, 3 m world period --------------------------------------
+  float hc = (vWPos.x - vWPos.z) * 0.70710678 / uHatchP;
+  float hw = fwidth(hc) + 1e-7;
+  float hpx = abs(fract(hc) - 0.5) / hw;
+  float hHalf = clamp(0.5 * uHatchW / (uHatchP * hw), 0.55, 3.0);
+  float hatch = vDens * uHatch * band(hpx, hHalf) * smoothstep(2.5, 5.0, 1.0 / hw);
 
-  // slow pulse travelling along the outline
-  float ph = (vWPos.x + vWPos.z) * 0.020 - uTime * 0.22;
-  float pulse = 0.62 + 0.38 * sin(ph * 6.2831853);
+  // ---- lot lines and the region outline, both clamped in screen space -------------------------
+  vec2 luv = clamp((vWPos.xz - vCell) / 8.0, 0.0, 1.0);
+  float rd = 8.0;
+  if (vMask.x > 0.5) rd = min(rd, 1.0 - luv.x);
+  if (vMask.y > 0.5) rd = min(rd, luv.x);
+  if (vMask.z > 0.5) rd = min(rd, 1.0 - luv.y);
+  if (vMask.w > 0.5) rd = min(rd, luv.y);
+  float ld = 8.0;
+  if (vLotMask.x > 0.5) ld = min(ld, 1.0 - luv.x);
+  if (vLotMask.y > 0.5) ld = min(ld, luv.x);
+  if (vLotMask.z > 0.5) ld = min(ld, 1.0 - luv.y);
+  if (vLotMask.w > 0.5) ld = min(ld, luv.y);
+  float eHalf = clamp(0.5 * uEdgeW / mpp, 0.75, 2.0);
+  float edge = band(rd * 8.0 / mpp, eHalf);
+  float glow = 1.0 - smoothstep(0.0, uEdgeGlow, rd * 8.0);
+  float lotL = band(ld * 8.0 / mpp, clamp(0.5 * uLotW / mpp, 0.5, 1.4)) * smoothstep(3.0, 7.0, ppc);
 
-  // saturated near-opaque fill with darker grid lines, like the CS2 zone overlay
-  vec3 col = base;
-  col *= mix(1.0, 0.52, grid);
-  col *= mix(1.0, 0.82, hatch);
-  // cells that are not part of a lot (block cores, back gardens) sit back a little
-  col *= mix(0.80, 1.0, vLot);
-  float a = (uFill - (1.0 - vLot) * 0.10) + grid * uGrid * 0.5 + hatch * 0.06;
+  // ---- compose in display space ---------------------------------------------------------------
+  float pulse = 1.0 + uPulseAmp * (0.5 + 0.5 * sin(uTime * uPulseHz * 6.2831853));
+  col *= mix(1.0, uHatchDark, hatch);
+  col *= 0.97 + 0.06 * vRnd;                             // faint per-cell variation
+  col *= mix(0.95, 1.0, vLot);                           // block cores sit a shade back
+  // Lattice and lot lines are a fixed step lighter, not a mix toward white: a proportional mix makes
+  // the line contrast depend on how dark the class is, and on the dark classes it lands above the
+  // 30/255 step that reads as per-pixel stipple rather than as a drawn grid (item 9).
+  col = clamp(col + lat * uLineLift, 0.0, 1.0);
+  col = clamp(col + lotL * uLotLift, 0.0, 1.0);
+  col += glow * 0.075 * (1.0 - lat);
+  vec3 oc = clamp(mix(col, vec3(1.0), 0.86) * pulse, 0.0, 1.0);
+  col = mix(col, oc, edge);
 
-  col = mix(col, mix(base, vec3(1.0), 0.55), edge * (0.40 + 0.60 * pulse));
-  col = mix(col, vec3(0.96, 0.98, 1.0), core * 0.88);
-  a = max(a, edge * uEdge * (0.55 + 0.45 * pulse));
-  a = max(a, core * uEdge);
-  a *= uOpacity;
+  float a = uFill + lat * 0.05 + lotL * 0.04 + hatch * 0.03 - (1.0 - vLot) * 0.03;
+  a = max(a, edge * uEdgeA);
+
+  // ---- aerial perspective: distant blocks lose chroma with the terrain, no sticker pop ---------
+  float atmo = clamp((vDepth - 260.0) / 700.0, 0.0, 1.0) * uAtmo;
+  col = mix(col, vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), atmo * 0.9);
+  a *= 1.0 - atmo * 0.30;
+
+  col *= uNight;
+  a *= uOpacity * uNightA;
   if (a < 0.004) discard;
-
   gl_FragColor = vec4(col, a);
+  // The overlay shares the scene's fog (item 19) — but after dark the haze converges on the same
+  // blue-grey as the ground, and a HUD layer that dissolves into it stops being readable. Give the
+  // fog back part of the way at night; by day uFogRelief is 0 and the fog applies in full.
+  vec3 envPreFog = gl_FragColor.rgb;
   #include <fog_fragment>
-  #include <tonemapping_fragment>
-  #include <colorspace_fragment>
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, envPreFog, uFogRelief);
 }`;
 
-const LOT_VERT = /* glsl */`
-attribute vec3 aColor;
-attribute float aKind;
-varying vec3 vCol;
-varying float vKind;
-varying vec3 vWPos;
-#include <common>
-#include <fog_pars_vertex>
-void main() {
-  vCol = aColor; vKind = aKind;
-  vec4 wp = modelMatrix * vec4(position, 1.0);
-  vWPos = wp.xyz;
-  vec4 mvPosition = viewMatrix * wp;
-  #include <fog_vertex>
-  gl_Position = projectionMatrix * mvPosition;
-}`;
-
-const LOT_FRAG = /* glsl */`
-uniform float uOpacity;
-uniform float uTime;
-varying vec3 vCol;
-varying float vKind;
-varying vec3 vWPos;
-#include <common>
-#include <fog_pars_fragment>
-void main() {
-  // kind 0 = lot border, 1 = frontage bar (brighter, gently breathing)
-  float pulse = 0.80 + 0.20 * sin(((vWPos.x + vWPos.z) * 0.02 - uTime * 0.22) * 6.2831853);
-  vec3 col = mix(vCol, vCol * 1.25 + 0.18, vKind);
-  float a = mix(0.40, 0.55 * pulse, vKind) * uOpacity;
-  gl_FragColor = vec4(col, a);
-  #include <fog_fragment>
-  #include <tonemapping_fragment>
-  #include <colorspace_fragment>
-}`;
-
-function cellMaterial(shared, low, high, opts = {}) {
+function cellMaterial(shared, colors, opts = {}) {
   const m = new THREE.ShaderMaterial({
     uniforms: THREE.UniformsUtils.merge([
       THREE.UniformsLib.fog,
       {
-        uLow: { value: low }, uHigh: { value: high },
-        uTime: shared.uTime, uOpacity: shared.uOpacity,
-        uFill: { value: opts.fill ?? 0.63 },
-        uGrid: { value: opts.grid ?? 0.30 },
-        uEdge: { value: opts.edge ?? 0.95 },
-        uHatch: { value: opts.hatch ?? 1.0 },
+        uLow: { value: null }, uHigh: { value: null }, uLowFix: { value: null }, uHighFix: { value: null },
+        uLowLin: { value: null }, uHighLin: { value: null }, uExposure: { value: 1 },
+        uTime: { value: 0 }, uOpacity: { value: 1 }, uNight: { value: 1 }, uNightA: { value: 1 },
+        uFill: { value: opts.fill ?? OVERLAY.fill },
+        uLineW: { value: opts.lineW ?? OVERLAY.lineWorld },
+        uEdgeW: { value: OVERLAY.edgeWorld },
+        uEdgeGlow: { value: OVERLAY.edgeGlow },
+        uEdgeA: { value: opts.edgeA ?? OVERLAY.edgeAlpha },
+        uLotW: { value: 0.75 },
+        uLineLift: { value: opts.lineLift ?? 0.115 },
+        uLotLift: { value: 0.085 },
+        uHatch: { value: opts.hatch ?? 1 },
+        uHatchP: { value: OVERLAY.hatchPeriod },
+        uHatchW: { value: OVERLAY.hatchWidth },
+        uHatchDark: { value: OVERLAY.hatchDark },
+        uPulseAmp: { value: opts.pulse ?? OVERLAY.pulseAmp },
+        uPulseHz: { value: OVERLAY.pulseHz },
+        uAtmo: { value: OVERLAY.atmo },
+        uFogRelief: { value: 0 },
       },
     ]),
     vertexShader: VERT,
@@ -160,11 +195,19 @@ function cellMaterial(shared, low, high, opts = {}) {
     polygonOffsetFactor: -4,
     polygonOffsetUnits: -12,
   });
-  // UniformsUtils.merge clones; re-point the shared animation uniforms so one write drives all
+  // UniformsUtils.merge clones, so re-point the shared animation uniforms: one write drives all
   m.uniforms.uTime = shared.uTime;
   m.uniforms.uOpacity = shared.uOpacity;
-  m.uniforms.uLow.value = low;
-  m.uniforms.uHigh.value = high;
+  m.uniforms.uNight = shared.uNight;
+  m.uniforms.uNightA = shared.uNightA;
+  m.uniforms.uLow.value = colors.low;
+  m.uniforms.uHigh.value = colors.high;
+  m.uniforms.uLowFix.value = colors.lowFix;
+  m.uniforms.uHighFix.value = colors.highFix;
+  m.uniforms.uLowLin.value = colors.lowLin;
+  m.uniforms.uHighLin.value = colors.highLin;
+  m.uniforms.uExposure = shared.uExposure;
+  m.uniforms.uFogRelief = shared.uFogRelief;
   return m;
 }
 
@@ -175,60 +218,76 @@ export class ZoneOverlay {
     this.world = ctx.world;
     this.group = new THREE.Group();
     this.group.name = 'zoning-overlay';
-    this.group.renderOrder = RENDER_ORDER.MARKINGS + 4;
     ctx.group.add(this.group);
-    this.shared = { uTime: { value: 0 }, uOpacity: { value: 1 } };
+    this.shared = {
+      uTime: { value: 0 }, uOpacity: { value: 1 }, uNight: { value: 1 }, uNightA: { value: 1 },
+      uExposure: { value: 1 }, uFogRelief: { value: 0 },
+    };
     this.colors = zoneColors();
-    this.meshes = new Map();      // type -> Mesh
-    this.stats = { cells: 0, lots: 0, tris: 0, draws: 0 };
+    this.meshes = new Map();
+    this.stats = { cells: 0, lots: 0, tris: 0, draws: 0, ms: 0 };
+    this.materials = [];
+    this._vcache = new Map();
 
-    const white = new THREE.Color(0.80, 0.85, 0.92);
-    this.emptyMat = cellMaterial(this.shared, white, white, { fill: 0.10, grid: 0.42, edge: 0.42, hatch: 0.0 });
+    const emptyHex = 0xdbe6f7;
+    const emptyLin = new THREE.Color().setHex(emptyHex, THREE.SRGBColorSpace);
+    this.emptyMat = cellMaterial(this.shared, {
+      low: preToneMapped(emptyHex), high: preToneMapped(emptyHex),
+      lowFix: toneFix(emptyHex), highFix: toneFix(emptyHex),
+      lowLin: emptyLin, highLin: emptyLin,
+    }, { fill: OVERLAY.emptyFill, hatch: 0, edgeA: 0.24, lineW: 0.42, pulse: 0.0, lineLift: 0.30 });
     for (const t of ZONE_TYPES) {
-      const mat = cellMaterial(this.shared, this.colors[t].low, this.colors[t].high);
-      const mesh = new THREE.Mesh(new THREE.BufferGeometry(), mat);
+      const mesh = new THREE.Mesh(new THREE.BufferGeometry(), cellMaterial(this.shared, this.colors[t]));
       mesh.frustumCulled = false;
       mesh.visible = false;
       mesh.renderOrder = RENDER_ORDER.MARKINGS + 5;
       this.group.add(mesh);
       this.meshes.set(t, mesh);
+      this.materials.push(mesh.material);
     }
     this.emptyMesh = new THREE.Mesh(new THREE.BufferGeometry(), this.emptyMat);
     this.emptyMesh.frustumCulled = false;
     this.emptyMesh.visible = false;
     this.emptyMesh.renderOrder = RENDER_ORDER.MARKINGS + 4;
     this.group.add(this.emptyMesh);
-
-    this.lotMat = new THREE.ShaderMaterial({
-      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uOpacity: this.shared.uOpacity, uTime: this.shared.uTime }]),
-      vertexShader: LOT_VERT, fragmentShader: LOT_FRAG,
-      transparent: true, depthWrite: false, depthTest: true, side: THREE.DoubleSide, fog: true,
-      polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -18,
-    });
-    this.lotMat.uniforms.uOpacity = this.shared.uOpacity;
-    this.lotMat.uniforms.uTime = this.shared.uTime;
-    this.lotMesh = new THREE.Mesh(new THREE.BufferGeometry(), this.lotMat);
-    this.lotMesh.frustumCulled = false;
-    this.lotMesh.visible = false;
-    this.lotMesh.renderOrder = RENDER_ORDER.MARKINGS + 6;
-    this.group.add(this.lotMesh);
+    this.materials.push(this.emptyMat);
   }
 
   setVisible(v) { this.group.visible = !!v; }
   get visible() { return this.group.visible; }
   setOpacity(v) { this.shared.uOpacity.value = v; }
-  update(dt) { this.shared.uTime.value += dt; }
+  get opacity() { return this.shared.uOpacity.value; }
+
+  update(dt) {
+    // The outline pulse is presentation, not world state, so it runs on wall time rather than on the
+    // frame dt the loop clamps to 0.1 s (at 3 fps under software GL that clamp would slow the pulse
+    // to a third of real time). It stops dead when the clock is paused, which is what every capture
+    // does, so a still is deterministic and two stills of the same scene are identical.
+    const t = performance.now() * 0.001;
+    const real = this._lastT ? Math.min(0.5, t - this._lastT) : dt;
+    this._lastT = t;
+    const tw = this.world.time;
+    if (!tw.paused && tw.speed > 0) this.shared.uTime.value += real;
+    // item 4: the overlay is a lit HUD layer, dimmed by the environment's published night factor.
+    const w = this.world.weather;
+    let night = w && typeof w.night === 'number' ? w.night : null;
+    if (night === null) {
+      const el = this.ctx.clock?.sunElevation?.() ?? 1;
+      night = 1 - Math.min(1, Math.max(0, (el + 0.13) / 0.15));
+    }
+    this.shared.uNight.value = 1 + (OVERLAY.nightMul - 1) * night;
+    this.shared.uNightA.value = 1 + (OVERLAY.nightAlpha - 1) * night;
+    this.shared.uFogRelief.value = OVERLAY.nightFogRelief * night;
+  }
 
   // ------------------------------------------------------------------ build
   rebuild() {
     const t0 = performance.now();
     this.buildCells();
-    this.buildLots();
     this.stats.ms = performance.now() - t0;
     return this.stats;
   }
 
-  /** Zone id used for the boundary test: same type AND density = same region. */
   _zid(c) { return c ? c.type + (c.density === 'high' ? '1' : '0') : null; }
 
   buildCells() {
@@ -237,72 +296,110 @@ export class ZoneOverlay {
     for (const t of ZONE_TYPES) buckets.set(t, []);
     const empty = [];
     for (const [key, c] of cells) buckets.get(c.type)?.push([key, c]);
-    for (const [key, z] of grid.zonable) if (!cells.has(key)) empty.push([key, z]);
+    for (const key of grid.zonable.keys()) if (!cells.has(key)) empty.push(key);
 
+    this._vcache.clear();
     let tris = 0, draws = 0;
     for (const t of ZONE_TYPES) {
       const list = buckets.get(t);
       const mesh = this.meshes.get(t);
-      const geo = this._cellGeometry(list, (c) => (c.density === 'high' ? 1 : 0), (key, c) => this._zid(c));
+      const geo = this._geometry(list.map((p) => p[0]), false);
       mesh.geometry.dispose();
       mesh.geometry = geo;
       mesh.visible = list.length > 0;
       if (mesh.visible) { draws++; tris += geo.index.count / 3; }
     }
-    const geoE = this._cellGeometry(empty, () => 0, () => 'empty', true);
+    const geoE = this._geometry(empty, true);
     this.emptyMesh.geometry.dispose();
     this.emptyMesh.geometry = geoE;
     this.emptyMesh.visible = empty.length > 0;
     if (this.emptyMesh.visible) { draws++; tris += geoE.index.count / 3; }
+    this._vcache.clear();
 
     this.stats.cells = cells.size;
+    this.stats.lots = grid.lots.size;
     this.stats.tris = tris;
     this.stats.draws = draws;
   }
 
   /**
-   * Merged geometry for a list of [key, record] cells. `densOf` returns 0/1, `zidOf` returns the
-   * region id used to decide where the bright outline goes; `emptyMode` compares against the zonable
-   * map instead of the painted cells.
+   * Terrain height at a point already pushed clear of the road corridor. The third component of the
+   * cached triple is the height; the fourth is how far the point had to move, which the caller uses
+   * to drop a cell the corridor would otherwise turn inside out at a junction.
    */
-  _cellGeometry(list, densOf, zidOf, emptyMode = false) {
+  _node(px, pz, out) {
+    const k = ((px + 1024) * 0.25) * 1024 + (pz + 1024) * 0.25;   // nodes land on terrain's 4 m grid
+    let v = this._vcache.get(k);
+    if (v === undefined) {
+      const p = this.grid.field.push(px, pz);
+      v = [p.x, p.z, this.world.terrain.getHeight(p.x, p.z), Math.hypot(p.x - px, p.z - pz)];
+      this._vcache.set(k, v);
+    }
+    out[0] = v[0]; out[1] = v[1]; out[2] = v[2]; out[3] = v[3];
+  }
+
+  /**
+   * Merged geometry for a list of cell keys. `emptyMode` builds the unpainted zonable band, whose
+   * "region" is the band itself.
+   */
+  _geometry(keys, emptyMode) {
     const geo = new THREE.BufferGeometry();
-    const n = list.length;
-    const g = this.grid, T = this.world.terrain;
-    const vpc = (SUB + 1) * (SUB + 1);
-    const tpc = SUB * SUB * 2;
+    const n = keys.length;
+    const g = this.grid;
+    const vpc = (SUB + 1) * (SUB + 1), tpc = SUB * SUB * 2;
     const pos = new Float32Array(n * vpc * 3);
-    const uv = new Float32Array(n * vpc * 2);
     const mask = new Float32Array(n * vpc * 4);
+    const lmask = new Float32Array(n * vpc * 4);
+    const cellA = new Float32Array(n * vpc * 2);
     const dens = new Float32Array(n * vpc);
     const rnd = new Float32Array(n * vpc);
     const lotf = new Float32Array(n * vpc);
     const idx = new Uint32Array(n * tpc * 3);
-    const cell = g.cell, step = cell / SUB;
-    const rng = this.ctx.rng.fork('overlay');
+    const cell = g.cell, step = cell / SUB, lift = OVERLAY.liftCell;
+    const seed = this.world.seed | 0;
+    const nodeOut = [0, 0, 0, 0];
+    const zid = emptyMode
+      ? (k) => (g.zonable.has(k) && !g.cells.has(k) ? 'empty' : null)
+      : (k) => this._zid(g.cells.get(k));
+    const lotOf = emptyMode ? () => -1 : (k) => (g.claimed.has(k) ? g.claimed.get(k) : -1);
     let vp = 0, ip = 0, vbase = 0;
-    const has = emptyMode
-      ? (ix, iz) => (g.zonable.has(g.key(ix, iz)) && !g.cells.has(g.key(ix, iz)) ? 'empty' : null)
-      : (ix, iz) => zidOf(g.key(ix, iz), g.cells.get(g.key(ix, iz)));
+    const scratch = new Float32Array(vpc * 3);
 
     for (let c = 0; c < n; c++) {
-      const [key, rec] = list[c];
+      const key = keys[c];
       const ci = key.indexOf(',');
       const ix = +key.slice(0, ci), iz = +key.slice(ci + 1);
       const x0 = ix * cell - g.half, z0 = iz * cell - g.half;
-      const me = emptyMode ? 'empty' : zidOf(key, rec);
-      const mpx = has(ix + 1, iz) === me ? 0 : 1;
-      const mnx = has(ix - 1, iz) === me ? 0 : 1;
-      const mpz = has(ix, iz + 1) === me ? 0 : 1;
-      const mnz = has(ix, iz - 1) === me ? 0 : 1;
-      const d = densOf(rec);
-      const r = rng.float();
-      const inLot = emptyMode || g.claimed.has(key) ? 1 : 0;
+      const me = zid(key);
+      const mpx = zid(g.key(ix + 1, iz)) === me ? 0 : 1;
+      const mnx = zid(g.key(ix - 1, iz)) === me ? 0 : 1;
+      const mpz = zid(g.key(ix, iz + 1)) === me ? 0 : 1;
+      const mnz = zid(g.key(ix, iz - 1)) === me ? 0 : 1;
+      const my = lotOf(key);
+      const lpx = my >= 0 && lotOf(g.key(ix + 1, iz)) !== my ? 1 : 0;
+      const lnx = my >= 0 && lotOf(g.key(ix - 1, iz)) !== my ? 1 : 0;
+      const lpz = my >= 0 && lotOf(g.key(ix, iz + 1)) !== my ? 1 : 0;
+      const lnz = my >= 0 && lotOf(g.key(ix, iz - 1)) !== my ? 1 : 0;
+      const rec = emptyMode ? null : g.cells.get(key);
+      const d = rec && rec.density === 'high' ? 1 : 0;
+      const r = hash2(ix, iz, seed);            // position-derived, so paint order cannot change it
+      const inLot = my >= 0 ? 1 : 0;
+      // A cell that would need more than one cell-width of clearing sits essentially inside a
+      // junction; pushing its corners out individually folds the quad into a spike, so drop it.
+      let worst = 0, sp = 0;
       for (let j = 0; j <= SUB; j++) for (let i = 0; i <= SUB; i++) {
-        const px = x0 + i * step, pz = z0 + j * step;
-        pos[vp * 3] = px; pos[vp * 3 + 1] = T.getHeight(px, pz) + LIFT_CELL; pos[vp * 3 + 2] = pz;
-        uv[vp * 2] = i / SUB; uv[vp * 2 + 1] = j / SUB;
+        this._node(x0 + i * step, z0 + j * step, nodeOut);
+        scratch[sp++] = nodeOut[0]; scratch[sp++] = nodeOut[1]; scratch[sp++] = nodeOut[2];
+        if (nodeOut[3] > worst) worst = nodeOut[3];
+      }
+      if (worst > MAX_PUSH) continue;
+      sp = 0;
+      for (let j = 0; j <= SUB; j++) for (let i = 0; i <= SUB; i++) {
+        nodeOut[0] = scratch[sp++]; nodeOut[1] = scratch[sp++]; nodeOut[2] = scratch[sp++];
+        pos[vp * 3] = nodeOut[0]; pos[vp * 3 + 1] = nodeOut[2] + lift; pos[vp * 3 + 2] = nodeOut[1];
         mask[vp * 4] = mpx; mask[vp * 4 + 1] = mnx; mask[vp * 4 + 2] = mpz; mask[vp * 4 + 3] = mnz;
+        lmask[vp * 4] = lpx; lmask[vp * 4 + 1] = lnx; lmask[vp * 4 + 2] = lpz; lmask[vp * 4 + 3] = lnz;
+        cellA[vp * 2] = x0; cellA[vp * 2 + 1] = z0;
         dens[vp] = d; rnd[vp] = r; lotf[vp] = inLot;
         vp++;
       }
@@ -313,76 +410,24 @@ export class ZoneOverlay {
       }
       vbase += vpc;
     }
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('aUv', new THREE.BufferAttribute(uv, 2));
-    geo.setAttribute('aMask', new THREE.BufferAttribute(mask, 4));
-    geo.setAttribute('aDens', new THREE.BufferAttribute(dens, 1));
-    geo.setAttribute('aRnd', new THREE.BufferAttribute(rnd, 1));
-    geo.setAttribute('aLot', new THREE.BufferAttribute(lotf, 1));
-    geo.setIndex(new THREE.BufferAttribute(idx, 1));
+    geo.setAttribute('position', new THREE.BufferAttribute(pos.subarray(0, vp * 3), 3));
+    geo.setAttribute('aMask', new THREE.BufferAttribute(mask.subarray(0, vp * 4), 4));
+    geo.setAttribute('aLotMask', new THREE.BufferAttribute(lmask.subarray(0, vp * 4), 4));
+    geo.setAttribute('aCell', new THREE.BufferAttribute(cellA.subarray(0, vp * 2), 2));
+    geo.setAttribute('aDens', new THREE.BufferAttribute(dens.subarray(0, vp), 1));
+    geo.setAttribute('aRnd', new THREE.BufferAttribute(rnd.subarray(0, vp), 1));
+    geo.setAttribute('aLot', new THREE.BufferAttribute(lotf.subarray(0, vp), 1));
+    geo.setIndex(new THREE.BufferAttribute(idx.subarray(0, ip), 1));
     geo.computeBoundingSphere();
     return geo;
   }
 
-  buildLots() {
-    const lots = [...this.grid.lots.values()];
-    const T = this.world.terrain;
-    const pos = [], col = [], kind = [], idx = [];
-    const push = (x, z, c, k) => {
-      pos.push(x, T.getHeight(x, z) + LIFT_LOT, z);
-      col.push(c.r, c.g, c.b);
-      kind.push(k);
-      return pos.length / 3 - 1;
-    };
-    // one border ribbon: for each lot side, a strip inset inward by `th`
-    const strip = (ax, az, bx, bz, inx, inz, th, c, k) => {
-      const len = Math.hypot(bx - ax, bz - az);
-      const segs = Math.max(1, Math.round(len / 4));
-      let p0 = push(ax, az, c, k), p1 = push(ax + inx * th, az + inz * th, c, k);
-      for (let s = 1; s <= segs; s++) {
-        const t = s / segs;
-        const x = ax + (bx - ax) * t, z = az + (bz - az) * t;
-        const q0 = push(x, z, c, k), q1 = push(x + inx * th, z + inz * th, c, k);
-        idx.push(p0, q0, p1, p1, q0, q1);
-        p0 = q0; p1 = q1;
-      }
-    };
-    for (const l of lots) {
-      const c = lotColor(l.type, l.density);
-      const hw = l.w * 0.5, hd = l.d * 0.5;
-      // corners: front-left, front-right, back-right, back-left (front = toward the road)
-      const fx = l.x - l.nx * hd, fz = l.z - l.nz * hd;
-      const bx = l.x + l.nx * hd, bz = l.z + l.nz * hd;
-      const fl = [fx - l.ax * hw, fz - l.az * hw], fr = [fx + l.ax * hw, fz + l.az * hw];
-      const bl = [bx - l.ax * hw, bz - l.az * hw], br = [bx + l.ax * hw, bz + l.az * hw];
-      const th = 0.5;
-      strip(fl[0], fl[1], fr[0], fr[1], l.nx, l.nz, th, c, 0);            // front
-      strip(bl[0], bl[1], br[0], br[1], -l.nx, -l.nz, th, c, 0);          // back
-      strip(fl[0], fl[1], bl[0], bl[1], l.ax, l.az, th, c, 0);            // left
-      strip(fr[0], fr[1], br[0], br[1], -l.ax, -l.az, th, c, 0);          // right
-      // frontage bar: a brighter thicker band hugging the street edge of the lot
-      const inset = 0.55;
-      strip(fl[0] + l.nx * inset, fl[1] + l.nz * inset, fr[0] + l.nx * inset, fr[1] + l.nz * inset, l.nx, l.nz, 0.55, c, 1);
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
-    geo.setAttribute('aColor', new THREE.BufferAttribute(new Float32Array(col), 3));
-    geo.setAttribute('aKind', new THREE.BufferAttribute(new Float32Array(kind), 1));
-    geo.setIndex(idx);
-    geo.computeBoundingSphere();
-    this.lotMesh.geometry.dispose();
-    this.lotMesh.geometry = geo;
-    this.lotMesh.visible = lots.length > 0;
-    this.stats.lots = lots.length;
-    if (this.lotMesh.visible) { this.stats.draws++; this.stats.tris += idx.length / 3; }
-    return geo;
-  }
-
+  /** Copy the scene's fog and the renderer exposure into the custom shaders. Allocation-free. */
   syncFog(scene) {
+    this.shared.uExposure.value = this.ctx.renderer?.toneMappingExposure ?? 1;
     const fog = scene.fog;
-    const mats = [...this.meshes.values()].map((x) => x.material).concat([this.emptyMat, this.lotMat]);
-    for (const m of mats) {
-      const u = m.uniforms;
+    for (let i = 0; i < this.materials.length; i++) {
+      const u = this.materials[i].uniforms;
       if (!u.fogColor) continue;
       if (fog) { u.fogColor.value.copy(fog.color); if (u.fogDensity) u.fogDensity.value = fog.density ?? 0; }
       else if (u.fogDensity) u.fogDensity.value = 0;
@@ -392,7 +437,6 @@ export class ZoneOverlay {
   dispose() {
     for (const m of this.meshes.values()) { m.geometry.dispose(); m.material.dispose(); }
     this.emptyMesh.geometry.dispose(); this.emptyMat.dispose();
-    this.lotMesh.geometry.dispose(); this.lotMat.dispose();
     this.group.parent?.remove(this.group);
   }
 }

@@ -1,0 +1,96 @@
+{
+  "module": "traffic",
+  "round": "1",
+  "at": "2026-09-05T23:54:15.238Z",
+  "shots": [
+    {
+      "png": "shots/traffic/r1/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 65,
+      "triangles": 557845,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/traffic/r1/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": false,
+      "errors": 0
+    },
+    {
+      "png": "shots/traffic/r1/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 71,
+      "triangles": 1037665,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/traffic/r1/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 87,
+      "triangles": 1015927,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/traffic/r1/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 70,
+      "triangles": 852745,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/traffic/r1/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 84,
+      "triangles": 815277,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/traffic/r1/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 71,
+      "triangles": 1017309,
+      "errors": 0,
+      "moduleStatus": "ready"
+    },
+    {
+      "png": "shots/traffic/r1/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 11.6,
+      "drawCalls": 87,
+      "triangles": 995571,
+      "errors": 0,
+      "moduleStatus": "ready"
+    }
+  ],
+  "maxDrawCalls": 87,
+  "maxTriangles": 1037665,
+  "minFps": 11.6,
+  "totalErrors": 0,
+  "uniqueErrors": []
+}

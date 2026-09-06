@@ -1,393 +1,533 @@
-// Placement rules: forests from a slope/height/noise density map outside roads and lots, garden trees and
-// hedges on the strip behind the pavement, lamps from roads.api.lampPositions, signals from
-// roads.api.intersections, and sidewalk furniture along frontage with a 1-D occupancy test per edge.
+// Placement rules. Everything here is deterministic (ctx.rng only) and every candidate goes through
+// one gate — `Placer.tryAdd` — which snaps y by KIND (never by isRoad), rejects asphalt, water and
+// footprint overlaps using the spec's own radii table, and only then writes the item.
 import { makeNoise2D } from '../../core/rng.js';
-import { SPECIES } from './trees.js';
+import { SPECIES, SPECIES_NAMES, RADII, SCALE_MIN, SCALE_MAX, shapeFor } from './species.js';
 
-/** Cylinders (x, z, r) that stay clear of planting — the showcase drops one on every camera eye point. */
-export const CLEAR_ZONES = [];
-export function clearOf(x, z) {
-  for (let i = 0; i < CLEAR_ZONES.length; i++) {
-    const c = CLEAR_ZONES[i];
-    const dx = x - c.x, dz = z - c.z;
-    if (dx * dx + dz * dz < c.r * c.r) return false;
+const SIDEWALK_LIFT = 0.21;      // ROAD_LIFT 0.08 + SW_H 0.16 - 0.03  (roads/build.js:12,18)
+const SIDEWALK_KINDS = new Set(['bench', 'bin', 'hydrant', 'sign', 'bus_stop']);
+const NO_ASPHALT = new Set(['tree_oak', 'tree_pine', 'bush', 'fence', 'planter', 'bench', 'bin']);
+const LAMP_CLEAR = new Set(['bench', 'bin', 'sign']);
+const MAX_R = 2.2;
+
+export class Placer {
+  constructor(ctx) {
+    this.ctx = ctx;
+    this.world = ctx.world;
+    this.T = ctx.world.terrain;
+    this.reset();
   }
-  return true;
-}
 
-const SIDEWALK_Y = 0.16 + 0.08;   // roads' SW_H + ROAD_LIFT above the road profile height
-const VERGE_Y = 0.25 + 0.16 + 0.08; // terrain under the corridor sits DROP below the profile
-
-/** Chamfer distance (metres) to the nearest paved cell, from the roads coverage mask. */
-export function roadDistanceField(world) {
-  const cov = world.roads.coverage;
-  if (!cov || !cov.data) return null;
-  const { res, cell, data } = cov;
-  const half = world.size / 2;
-  const d = new Float32Array(res * res);
-  const BIG = 1e6;
-  for (let i = 0; i < d.length; i++) d[i] = data[i] ? 0 : BIG;
-  const D1 = 1, D2 = Math.SQRT2;
-  for (let z = 0; z < res; z++) for (let x = 0; x < res; x++) {
-    const i = z * res + x;
-    let v = d[i];
-    if (v === 0) continue;
-    if (x > 0) v = Math.min(v, d[i - 1] + D1);
-    if (z > 0) v = Math.min(v, d[i - res] + D1);
-    if (x > 0 && z > 0) v = Math.min(v, d[i - res - 1] + D2);
-    if (x < res - 1 && z > 0) v = Math.min(v, d[i - res + 1] + D2);
-    d[i] = v;
+  reset() {
+    this.items = [];
+    this.byId = new Map();
+    this.hash = new Map();
+    this.nextId = 1;
+    this.trees = [];
+    this.furniture = [];
+    this.fenceRuns = [];
+    this.hedgeRuns = [];
+    this.bushes = [];
+    this.planterFills = [];
+    this.litter = [];
+    this.lampHeads = [];
+    this.signals = [];
+    this.stops = [];
+    this.lampsByEdge = new Map();
+    this.signalNodes = new Set();
   }
-  for (let z = res - 1; z >= 0; z--) for (let x = res - 1; x >= 0; x--) {
-    const i = z * res + x;
-    let v = d[i];
-    if (v === 0) continue;
-    if (x < res - 1) v = Math.min(v, d[i + 1] + D1);
-    if (z < res - 1) v = Math.min(v, d[i + res] + D1);
-    if (x < res - 1 && z < res - 1) v = Math.min(v, d[i + res + 1] + D2);
-    if (x > 0 && z < res - 1) v = Math.min(v, d[i + res - 1] + D2);
-    d[i] = v;
-  }
-  return {
-    at(x, z) {
-      const ix = Math.floor((x + half) / cell), iz = Math.floor((z + half) / cell);
-      if (ix < 0 || iz < 0 || ix >= res || iz >= res) return 1e6;
-      return d[iz * res + ix] * cell;
-    },
-  };
-}
 
-/** Lot occupancy (if zoning is present) so forests never grow through buildings. */
-function lotTest(world) {
-  const lots = world.zones?.lots;
-  if (!lots || !lots.size) return null;
-  const cell = 16, half = world.size / 2, res = Math.ceil(world.size / cell);
-  const grid = new Uint8Array(res * res);
-  const mark = (x, z) => {
-    const ix = Math.floor((x + half) / cell), iz = Math.floor((z + half) / cell);
-    if (ix >= 0 && iz >= 0 && ix < res && iz < res) grid[iz * res + ix] = 1;
-  };
-  for (const lot of lots.values()) {
-    const r = Math.max(lot.w, lot.d) * 0.5 + 4;
-    for (let dz = -r; dz <= r; dz += cell * 0.5) for (let dx = -r; dx <= r; dx += cell * 0.5) mark(lot.x + dx, lot.z + dz);
-  }
-  return (x, z) => {
-    const ix = Math.floor((x + half) / cell), iz = Math.floor((z + half) / cell);
-    return ix >= 0 && iz >= 0 && ix < res && iz < res ? grid[iz * res + ix] : 0;
-  };
-}
+  key(x, z) { return `${Math.floor(x / 4)},${Math.floor(z / 4)}`; }
 
-// ---------------------------------------------------------------- forest
-export function scatterForest(ctx, roadDist, opts = {}) {
-  const { world, rng } = ctx;
-  const T = world.terrain;
-  const half = world.size / 2;
-  const { spacing = 6.1, maxTrees = 16000, minRoadDist = 15, edge = 24 } = opts;
-  const n1 = makeNoise2D(world.seed + 71);   // macro forest patches
-  const n2 = makeNoise2D(world.seed + 913);  // clearings / species mix
-  const inLot = lotTest(world);
-  const r = rng.fork('forest');
-  const out = [];
-  const cols = Math.floor((world.size - edge * 2) / spacing);
-  const start = -half + edge;
-  for (let jz = 0; jz < cols; jz++) {
-    for (let jx = 0; jx < cols; jx++) {
-      const x = start + jx * spacing + r.range(-spacing * 0.46, spacing * 0.46);
-      const z = start + jz * spacing + r.range(-spacing * 0.46, spacing * 0.46);
-      const h = T.getHeight(x, z);
-      if (h < 1.2) continue;
-      const slope = T.getSlope(x, z);
-      if (slope > 0.72) continue;
-      if (roadDist && roadDist.at(x, z) < minRoadDist) continue;
-      if (inLot && inLot(x, z)) continue;
-      if (!clearOf(x, z)) continue;
-      // density: broad patches, thinned on steep ground and near the shoreline
-      let dens = 0.5 + 0.5 * n1.fbm(x / 380, z / 380, 4);
-      dens = Math.pow(Math.max(0, dens - 0.14) / 0.86, 0.75) * 1.25;
-      const clear = 0.5 + 0.5 * n2.fbm(x / 110 + 11, z / 110 - 7, 3);
-      dens *= 0.42 + 0.72 * clear;
-      dens *= Math.min(1, (h - 1.2) / 2.5);
-      dens *= 1 - Math.min(0.85, Math.max(0, (slope - 0.34) / 0.42));
-      if (h > 78) dens *= Math.max(0, 1 - (h - 78) / 55);
-      if (r.float() > dens) continue;
-      // species mix by altitude / slope with a noisy stand boundary
-      const stand = 0.5 + 0.5 * n2.fbm(x / 240 - 31, z / 240 + 19, 3);
-      const coniferBias = Math.min(1, Math.max(0, (h - 22) / 55) + slope * 0.8 + (stand - 0.5) * 0.9);
-      let sp;
-      if (r.float() < coniferBias) sp = 'pine';
-      else sp = r.float() < 0.34 + (1 - coniferBias) * 0.2 ? 'birch' : 'oak';
-      // stand age varies over ~70 m so the canopy is lumpy rather than an orchard
-      const age = 0.70 + 0.62 * (0.5 + 0.5 * n2.fbm(x / 68 + 5, z / 68 - 3, 2));
-      out.push(makeTree(r, sp, x, T.getHeight(x, z), z, 'forest', age));
-      if (out.length >= maxTrees) return out;
+  near(x, z, radius, fn) {
+    const c = Math.ceil(radius / 4);
+    const ix = Math.floor(x / 4), iz = Math.floor(z / 4);
+    for (let dz = -c; dz <= c; dz++) for (let dx = -c; dx <= c; dx++) {
+      const arr = this.hash.get(`${ix + dx},${iz + dz}`);
+      if (!arr) continue;
+      for (let i = 0; i < arr.length; i++) if (fn(arr[i]) === false) return false;
     }
+    return true;
   }
-  return out;
+
+  /** Ground height for a kind, exactly per the spec's item 3a rule. */
+  groundY(kind, x, z, opts) {
+    if (opts && opts.y !== undefined) return opts.y;
+    if (SIDEWALK_KINDS.has(kind) && opts && opts.edgeId !== undefined && opts.t !== undefined) {
+      const lc = this.world.roads.laneCenter?.(opts.edgeId, 0, opts.t);
+      if (lc) return lc.y + SIDEWALK_LIFT;
+    }
+    return this.T.getHeight(x, z);
+  }
+
+  /** Footprint + clearance test. `exemptFence` lets a fence run touch its own neighbours. */
+  free(kind, x, z, scale, opts = {}) {
+    const r = (RADII[kind] ?? 0.4) * scale;
+    let ok = true;
+    this.near(x, z, r + MAX_R + 1.6, (o) => {
+      if (kind === 'fence' && o.kind === 'fence') return true;
+      if (opts.group !== undefined && o.group === opts.group) return true;
+      const dx = o.x - x, dz = o.z - z;
+      const d = Math.hypot(dx, dz);
+      const need = r + (RADII[o.kind] ?? 0.4) * (o.scale || 1);
+      if (d < need) { ok = false; return false; }
+      if ((kind === 'streetlamp' && LAMP_CLEAR.has(o.kind)) || (o.kind === 'streetlamp' && LAMP_CLEAR.has(kind))) {
+        if (d < 1.5) { ok = false; return false; }
+      }
+      return true;
+    });
+    return ok;
+  }
+
+  onAsphalt(x, z) { return this.world.roads.isRoad ? this.world.roads.isRoad(x, z) === 1 : false; }
+
+  /** Trunks must clear the asphalt edge by 1.2 m. */
+  trunkClear(x, z) {
+    if (this.onAsphalt(x, z)) return false;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      if (this.onAsphalt(x + Math.cos(a) * 1.3, z + Math.sin(a) * 1.3)) return false;
+    }
+    return true;
+  }
+
+  /**
+   * The one gate. Returns the new item or null.
+   * opts: {heading, scale, species, variant, side, t, edgeId, lotId, nodeId, y, group, force}
+   */
+  tryAdd(kind, x, z, opts = {}) {
+    const scale = opts.scale ?? 1;
+    if (this.T.isWater(x, z)) return null;
+    if (NO_ASPHALT.has(kind) && this.onAsphalt(x, z)) return null;
+    if ((kind === 'tree_oak' || kind === 'tree_pine') && !this.trunkClear(x, z)) return null;
+    if (!opts.force && !this.free(kind, x, z, scale, opts)) return null;
+    const y = this.groundY(kind, x, z, opts);
+    const it = {
+      id: this.nextId++, kind, x, y, z,
+      heading: opts.heading ?? 0, scale,
+    };
+    if (opts.species) it.species = opts.species;
+    if (opts.variant) it.variant = opts.variant;
+    if (opts.side) it.side = opts.side;
+    if (opts.t !== undefined) it.t = opts.t;
+    if (opts.edgeId !== undefined) it.edgeId = opts.edgeId;
+    if (opts.lotId !== undefined) it.lotId = opts.lotId;
+    if (opts.nodeId !== undefined) it.nodeId = opts.nodeId;
+    if (opts.group !== undefined) it.group = opts.group;
+    this.items.push(it);
+    this.byId.set(it.id, it);
+    const k = this.key(x, z);
+    let arr = this.hash.get(k);
+    if (!arr) { arr = []; this.hash.set(k, arr); }
+    arr.push(it);
+    return it;
+  }
+
+  remove(id) {
+    const it = this.byId.get(id);
+    if (!it) return false;
+    this.byId.delete(id);
+    const i = this.items.indexOf(it);
+    if (i >= 0) this.items.splice(i, 1);
+    const arr = this.hash.get(this.key(it.x, it.z));
+    if (arr) { const j = arr.indexOf(it); if (j >= 0) arr.splice(j, 1); }
+    return true;
+  }
+
+  at(x, z, radius = 2) {
+    const out = [];
+    this.near(x, z, radius, (o) => { if (Math.hypot(o.x - x, o.z - z) <= radius) out.push(o); return true; });
+    return out;
+  }
 }
 
-const HEIGHTS = {
-  oak: [8.5, 15.5], pine: [12, 24], birch: [8, 15],
-};
-const TINT = {
-  oak: [[0.80, 0.98, 0.66], [1.06, 1.02, 0.80], [0.92, 1.0, 0.74], [1.12, 0.94, 0.60]],
-  pine: [[0.80, 0.94, 0.82], [0.92, 1.0, 0.88], [0.72, 0.90, 0.80]],
-  birch: [[0.98, 1.05, 0.80], [1.08, 1.05, 0.72], [0.90, 1.0, 0.76]],
-};
-export function makeTree(rng, species, x, y, z, kind, scaleK = 1) {
-  const hr = HEIGHTS[species];
-  const s = rng.range(hr[0], hr[1]) * scaleK;
-  const t = TINT[species][(rng.float() * TINT[species].length) | 0];
+// ------------------------------------------------------------------ tree helper
+export function makeTree(rng, placer, species, x, z, opts = {}) {
+  const sp = SPECIES[species];
+  const scale = opts.scale ?? rng.range(SCALE_MIN, SCALE_MAX);
+  const it = placer.tryAdd(sp.kind, x, z, {
+    species, scale, heading: rng.float() * Math.PI * 2, edgeId: opts.edgeId, lotId: opts.lotId,
+  });
+  if (!it) return null;
+  const worldH = sp.base * scale;
+  const shp = shapeFor(species, worldH);
+  const t = sp.tints[(rng.float() * sp.tints.length) | 0];
   const v = rng.range(0.88, 1.12);
-  return {
-    x, y, z, species, kind,
-    scale: s, rot: rng.float() * Math.PI * 2,
-    lean: rng.range(-0.035, 0.035),
-    tint: [t[0] * v, t[1] * v, t[2] * v],
-  };
+  placer.trees.push({
+    item: it, x: it.x, y: it.y, z: it.z, heading: it.heading, worldH, species,
+    tint: [t[0] * v, t[1] * v, t[2] * v], shape: shp, group: opts.group || 'forest',
+  });
+  if (opts.litter !== false) placer.litter.push({ x: it.x, y: it.y, z: it.z, scale: Math.max(1.0, Math.min(2.5, worldH * 0.13)) });
+  return it;
 }
 
-// ---------------------------------------------------------------- street
-const FURNITURE_TYPES = ['street', 'avenue', 'alley'];
-
-export function placeStreet(ctx, roadDist) {
-  const { world, modules } = ctx;
-  const R = world.roads;
-  const roads = modules.roads;
-  const rng = ctx.rng.fork('street');
+// ------------------------------------------------------------------ forest (Poisson-disc)
+export function scatterForest(ctx, placer, region, opts = {}) {
+  const { rng, world } = ctx;
   const T = world.terrain;
-  const kinds = {
-    streetlamp: [], trafficlight: [], bench: [], bin: [], hydrant: [], sign: [],
-    bus_stop: [], fence: [], planter: [], bush: [], flowers: [], hedge: [],
-    plate_stop: [], plate_speed: [], plate_street: [], plate_bus: [], glass: [],
-  };
-  const trees = [];
-  if (!roads || !R.edges.size) return { kinds, trees };
+  const r = rng.fork('forest');
+  const n1 = makeNoise2D(world.seed + 71);
+  const n2 = makeNoise2D(world.seed + 913);
+  const density = opts.density ?? 1;
+  const maxTrees = Math.round((opts.maxTrees ?? 6500) * density);
+  const attempts = Math.round(maxTrees * 26);
+  const { x0, z0, x1, z1 } = region;
+  const maxH = (T.maxHeight ?? 200) - 20;
+  const lots = world.zones?.lots;
+  let placed = 0;
+  for (let i = 0; i < attempts && placed < maxTrees; i++) {
+    const x = r.range(x0, x1), z = r.range(z0, z1);
+    const h = T.getHeight(x, z);
+    if (h < 0.9 || h > maxH) continue;
+    if (T.isWater(x, z)) continue;
+    const slope = T.getSlope(x, z);
+    if (slope > 0.55) continue;
+    if (opts.roadClear && world.roads.isRoad && world.roads.isRoad(x, z) !== 0) continue;
+    if (lots && lots.size && inLot(lots, x, z)) continue;
+    if (opts.avoid && !opts.avoid(x, z)) continue;
+    // macro stands + clearings
+    let dens = 0.5 + 0.5 * n1.fbm(x / 340, z / 340, 4);
+    dens = Math.pow(Math.max(0, dens - 0.16) / 0.84, 0.7);
+    dens *= 0.42 + 0.72 * (0.5 + 0.5 * n2.fbm(x / 105 + 11, z / 105 - 7, 3));
+    dens *= 1 - Math.min(0.9, Math.max(0, (slope - 0.30) / 0.30));
+    // feather the region border so the stand does not end on a straight line
+    const fx = Math.min(x - x0, x1 - x), fz = Math.min(z - z0, z1 - z);
+    dens *= Math.min(1, Math.min(fx, fz) / 70);
+    dens = Math.max(0, Math.min(1, dens));
+    if (dens < (opts.standMin ?? 0.30)) continue;   // hard stand boundary: woodland, not parkland
+    const rmin = (2.2 + 4.6 * (1 - dens)) * r.range(0.72, 1.40);
+    if (!poissonFree(placer, x, z, rmin)) continue;
+    // species mix: conifers up the slope and with altitude, broadleaves in the valley
+    const stand = 0.5 + 0.5 * n2.fbm(x / 210 - 31, z / 210 + 19, 3);
+    const conifer = Math.min(1, 0.18 + Math.max(0, (h - 12) / 34) + slope * 0.9 + (stand - 0.5) * 1.3);
+    let sp;
+    if (r.float() < conifer) sp = r.bool(0.55) ? 'spruce' : 'fir';
+    else {
+      sp = r.weighted([['oak', 30], ['maple', 13], ['birch', 18], ['poplar', 12], ['willow', 7], ['blossom', 4]]);
+      if (sp === 'willow' && h > 12) sp = 'oak';
+    }
+    const it = makeTree(r, placer, sp, x, z, { litter: false });
+    if (it) { placer.trees[placer.trees.length - 1].rmin = rmin; placed++; }
+  }
+  return placed;
+}
 
-  const signalNodes = new Set();
-  // ---- traffic signals at real intersections
-  const inters = roads.intersections ? roads.intersections() : [];
+function poissonFree(placer, x, z, rmin) {
+  let ok = true;
+  placer.near(x, z, rmin + 1, (o) => {
+    if (o.kind !== 'tree_oak' && o.kind !== 'tree_pine') return true;
+    if (Math.hypot(o.x - x, o.z - z) < rmin) { ok = false; return false; }
+    return true;
+  });
+  return ok;
+}
+
+function inLot(lots, x, z) {
+  for (const lot of lots.values()) {
+    const dx = x - lot.x, dz = z - lot.z;
+    const c = Math.cos(lot.heading), s = Math.sin(lot.heading);
+    const u = dx * c - dz * s, v = dx * s + dz * c;
+    if (Math.abs(u) < lot.w * 0.5 + 1 && Math.abs(v) < lot.d * 0.5 + 1) return true;
+  }
+  return false;
+}
+
+// ------------------------------------------------------------------ road furniture
+const FURNITURE_TYPES = new Set(['street', 'avenue', 'alley']);
+
+/** Signals at every node with >= 3 street/avenue arms. */
+export function placeSignals(ctx, placer) {
+  const roads = ctx.modules.roads;
+  const R = ctx.world.roads;
+  if (!roads?.intersections) return;
+  const inters = roads.intersections();
   for (const it of inters) {
     if (it.roundabout) continue;
     const major = it.arms.filter((a) => a.type === 'street' || a.type === 'avenue');
     if (major.length < 3) continue;
-    signalNodes.add(it.id);
-    for (const a of it.arms) {
-      if (a.type === 'alley' || a.type === 'gravel') continue;
+    if (placer.signalNodes.has(it.id)) continue;
+    placer.signalNodes.add(it.id);
+    const sig = { nodeId: it.id, x: it.x, y: it.y, z: it.z, arms: [], cycle: 60 };
+    const base = Math.atan2(major[0].dir.x, major[0].dir.z);
+    for (const a of major) {
       const dx = a.dir.x, dz = a.dir.z;
-      const rx = dz, rz = -dx;                       // right of a driver approaching the node
-      const lateral = a.width + (a.sidewalk || 2) * 0.55;
-      const along = a.trim + 3.4;
+      const rx = dz, rz = -dx;
+      const lateral = a.width * 0.5 + (a.sidewalk || 2) * 0.62;
+      const along = a.trim + 3.6;
       const x = it.x + dx * along + rx * lateral;
       const z = it.z + dz * along + rz * lateral;
-      const y = T.getHeight(x, z) + VERGE_Y;
-      kinds.trafficlight.push({ x, y, z, heading: Math.atan2(-dx, dz), scale: 1, nodeId: it.id, phase: 0 });
+      const heading = Math.atan2(-dx, dz);
+      const edge = R.edges.get(a.edgeId);
+      const t = edge ? Math.min(0.98, Math.max(0.02, (a.trim + 3.6) / Math.max(1, edge.length))) : 0.05;
+      const tt = a.atA === false ? 1 - t : t;
+      const lc = R.laneCenter?.(a.edgeId, 0, tt);
+      const y = (lc ? lc.y : ctx.world.terrain.getHeight(x, z)) + SIDEWALK_LIFT;
+      const item = placer.tryAdd('trafficlight', x, z, {
+        heading, scale: 1, y, edgeId: a.edgeId, t: tt, nodeId: it.id, group: `sig${it.id}`, force: true,
+      });
+      if (!item) continue;
+      const ang = Math.atan2(dx, dz);
+      let d = Math.abs(((ang - base + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+      const group = d > Math.PI * 0.5 ? 0 : 1;
+      placer.furniture.push({ kit: 'trafficlight', x, y, z, heading, scale: 1 });
+      sig.arms.push({ edgeId: a.edgeId, atA: a.atA !== false, group, x, y, z, heading, item });
     }
-    // phase groups: opposite arms share a phase
-    const list = kinds.trafficlight.filter((s) => s.nodeId === it.id);
-    if (list.length) {
-      const base = Math.atan2(it.arms[0].dir.x, it.arms[0].dir.z);
-      for (const s of list) {
-        const a = s.heading;
-        const d = Math.abs(((a - base + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
-        s.phase = d > Math.PI * 0.5 ? 0 : 1;
-      }
-    }
+    if (sig.arms.length) placer.signals.push(sig);
   }
-
-  // ---- per edge: lamps, then furniture in the gaps
-  for (const e of R.edges.values()) {
-    const T4 = R.types[e.type] || R.types.street;
-    const isRoad = FURNITURE_TYPES.includes(e.type);
-    // lamps on everything except gravel
-    if (e.type !== 'gravel') {
-      for (const p of roads.lampPositions(e.id)) {
-        kinds.streetlamp.push({ x: p.x, y: p.y, z: p.z, heading: p.heading, scale: rng.range(0.97, 1.03), edgeId: e.id });
-      }
-    }
-    if (!isRoad || !T4.sidewalk) continue;
-    const len = e.length;
-    const from = (e.trimA || 0) + 7, to = len - (e.trimB || 0) - 7;
-    if (to - from < 10) continue;
-    // 1-D occupancy along the edge so furniture never lands on a lamp base
-    const lampDs = [];
-    for (const p of roads.lampPositions(e.id)) lampDs.push(p.t * len);
-    const free = (d) => { for (const ld of lampDs) if (Math.abs(ld - d) < 5.5) return false; return true; };
-
-    const sidewalkOff = T4.asphaltHalf + T4.sidewalk * 0.55;
-    const vergeOff = T4.asphaltHalf + T4.sidewalk + 2.6;
-    const step = e.type === 'avenue' ? 15 : 19;
-    let hydrantAcc = rng.range(0, 60);
-    let stopAcc = 0;
-    for (let d = from; d <= to; d += step) {
-      for (const sgn of [1, -1]) {
-        const dd = d + (sgn > 0 ? 0 : step * 0.5);
-        if (dd < from || dd > to || !free(dd)) continue;
-        const s = R.sample(e.id, dd / len);
-        if (!s) continue;
-        const nx = -s.tangent.z, nz = s.tangent.x;
-        const px = s.x + nx * sgn * sidewalkOff, pz = s.z + nz * sgn * sidewalkOff;
-        const heading = Math.atan2(-nx * sgn, nz * sgn); // face the carriageway
-        const y = s.y + SIDEWALK_Y;
-        if (T.isWater(px, pz)) continue;
-        const roll = rng.float();
-        if (roll < 0.20) kinds.bench.push({ x: px, y, z: pz, heading, scale: 1 });
-        else if (roll < 0.36) kinds.bin.push({ x: px, y, z: pz, heading, scale: 1 });
-        else if (roll < 0.52) kinds.planter.push({ x: px, y, z: pz, heading, scale: rng.range(0.9, 1.15), flowers: rng.bool(0.6) });
-        else if (roll < 0.60) {
-          kinds.sign.push({ x: px, y, z: pz, heading, scale: 1 });
-          kinds.plate_speed.push({ x: px, y, z: pz, heading, scale: 1 });
-        }
-        // verge planting behind the pavement
-        if (rng.float() < 0.45) {
-          const vx = s.x + nx * sgn * (vergeOff + rng.range(-0.8, 1.6));
-          const vz = s.z + nz * sgn * (vergeOff + rng.range(-0.8, 1.6));
-          if (!T.isWater(vx, vz) && clearOf(vx, vz) && (!roadDist || roadDist.at(vx, vz) > 1)) {
-            const gy = T.getHeight(vx, vz);
-            if (rng.float() < 0.45) trees.push(makeTree(rng, rng.weighted([['oak', 5], ['birch', 4], ['pine', 1]]), vx, gy, vz, 'street', 0.62));
-            else kinds.bush.push({ x: vx, y: gy, z: vz, heading: rng.float() * 6.28, scale: rng.range(0.85, 1.5) });
-          }
-        }
-      }
-      hydrantAcc += step;
-      if (hydrantAcc > 78) {
-        hydrantAcc = 0;
-        const s = R.sample(e.id, d / len);
-        if (s) {
-          const nx = -s.tangent.z, nz = s.tangent.x;
-          const sgn = rng.bool() ? 1 : -1;
-          kinds.hydrant.push({ x: s.x + nx * sgn * (T4.asphaltHalf + T4.sidewalk * 0.82), y: s.y + SIDEWALK_Y, z: s.z + nz * sgn * (T4.asphaltHalf + T4.sidewalk * 0.82), heading: Math.atan2(-nx * sgn, nz * sgn), scale: 1 });
-        }
-      }
-      stopAcc += step;
-    }
-
-    // stop / street-name signs on the approaches of unsignalised junctions
-    for (const [node, atA] of [[e.a, true], [e.b, false]]) {
-      if (signalNodes.has(node)) continue;
-      const info = R.nodes.get(node);
-      if (!info || info.edges.size < 3) continue;
-      const dAlong = atA ? (e.trimA || 0) + 4.5 : len - (e.trimB || 0) - 4.5;
-      const s = R.sample(e.id, dAlong / len);
-      if (!s) continue;
-      const nx = -s.tangent.z, nz = s.tangent.x;
-      const sgn = atA ? 1 : -1;                 // outer kerb on the approach side
-      const px = s.x + nx * sgn * (T4.asphaltHalf + T4.sidewalk * 0.65);
-      const pz = s.z + nz * sgn * (T4.asphaltHalf + T4.sidewalk * 0.65);
-      const face = atA ? 1 : -1;
-      const heading = Math.atan2(s.tangent.x * face, -s.tangent.z * face);
-      kinds.sign.push({ x: px, y: s.y + SIDEWALK_Y, z: pz, heading, scale: 1 });
-      if (rng.bool(0.5)) kinds.plate_stop.push({ x: px, y: s.y + SIDEWALK_Y, z: pz, heading, scale: 1 });
-      else kinds.plate_street.push({ x: px, y: s.y + SIDEWALK_Y, z: pz, heading, scale: 1 });
-    }
-
-    // bus stops on the longer through-roads
-    if ((e.type === 'street' || e.type === 'avenue') && len > 66 && rng.bool(0.38)) {
-      const d = len * 0.42;
-      const s = R.sample(e.id, d / len);
-      if (s) {
-        const nx = -s.tangent.z, nz = s.tangent.x;
-        const sgn = 1;
-        const off = T4.asphaltHalf + T4.sidewalk + 1.35;
-        const px = s.x + nx * sgn * off, pz = s.z + nz * sgn * off;
-        if (!T.isWater(px, pz)) {
-          const heading = Math.atan2(-nx * sgn, nz * sgn);
-          const y = T.getHeight(px, pz) + VERGE_Y;
-          kinds.bus_stop.push({ x: px, y, z: pz, heading, scale: 1 });
-          kinds.glass.push({ x: px, y, z: pz, heading, scale: 1 });
-          const fx = s.x + nx * sgn * (T4.asphaltHalf + T4.sidewalk * 0.55), fz = s.z + nz * sgn * (T4.asphaltHalf + T4.sidewalk * 0.55);
-          kinds.sign.push({ x: fx, y: s.y + SIDEWALK_Y, z: fz, heading, scale: 1 });
-          kinds.plate_bus.push({ x: fx, y: s.y + SIDEWALK_Y, z: fz, heading, scale: 1 });
-        }
-      }
-    }
-  }
-  return { kinds, trees };
 }
 
-// ---------------------------------------------------------------- gardens
-/**
- * Garden planting on the strip behind the pavement (or on zoning lots when they exist):
- * hedges/fences along the frontage line, an ornamental tree or two and shrubs.
- */
-export function placeGardens(ctx, roadDist, out) {
-  const { world } = ctx;
-  const R = world.roads;
-  const T = world.terrain;
-  const rng = ctx.rng.fork('gardens');
-  const lots = world.zones?.lots;
-  const push = (arr, o) => arr.push(o);
-  const addRow = (x0, z0, dirX, dirZ, length, y0, kindArr, spacing, jitter) => {
-    const n = Math.max(1, Math.round(length / spacing));
-    for (let i = 0; i < n; i++) {
-      const t = (i + 0.5) / n;
-      const x = x0 + dirX * length * t + rng.range(-jitter, jitter);
-      const z = z0 + dirZ * length * t + rng.range(-jitter, jitter);
-      if (T.isWater(x, z) || (roadDist && roadDist.at(x, z) < 3)) continue;
-      push(kindArr, { x, y: T.getHeight(x, z), z, heading: Math.atan2(dirX, -dirZ), scale: rng.range(0.9, 1.15) });
+/** Lamps on the roads' own anchors, verbatim: same count, same x/y/z. */
+export function placeLamps(ctx, placer, edgeIds) {
+  const roads = ctx.modules.roads;
+  const R = ctx.world.roads;
+  if (!roads?.lampPositions) return;
+  const ids = edgeIds || [...R.edges.keys()];
+  for (const id of ids) {
+    const e = R.edges.get(id);
+    if (!e || e.type === 'gravel') continue;
+    const list = roads.lampPositions(id);
+    const mine = [];
+    for (const p of list) {
+      const it = placer.tryAdd('streetlamp', p.x, p.z, {
+        heading: p.heading, scale: 1, y: p.y, edgeId: id, side: p.side, t: p.t, force: true,
+      });
+      if (!it) continue;
+      placer.furniture.push({ kit: 'streetlamp', x: p.x, y: p.y, z: p.z, heading: p.heading, scale: 1 });
+      placer.lampHeads.push({ x: p.x, y: p.y, z: p.z, heading: p.heading, kit: 'streetlamp', edgeId: id, t: p.t, side: p.side });
+      mine.push({ id: it.id, x: p.x, y: p.y, z: p.z, heading: p.heading, side: p.side, t: p.t });
     }
+    placer.lampsByEdge.set(id, mine);
+  }
+}
+
+/** Street trees, benches, bins, hydrants, signs and bus stops along one edge. */
+export function placeEdgeFurniture(ctx, placer, edgeIds) {
+  const R = ctx.world.roads;
+  const T = ctx.world.terrain;
+  const rng = ctx.rng.fork('street');
+  const ids = edgeIds || [...R.edges.keys()];
+  const intersections = ctx.modules.roads?.intersections?.() || [];
+  const nearInt = (x, z) => {
+    for (const i of intersections) if (Math.hypot(i.x - x, i.z - z) < 40) return true;
+    return false;
   };
-
-  if (lots && lots.size) {
-    for (const lot of lots.values()) {
-      if (lot.type !== 'residential') continue;
-      const c = Math.cos(lot.heading), s = Math.sin(lot.heading);
-      const front = lot.d * 0.5 - 1.6;
-      addRow(lot.x - c * lot.w * 0.42 - s * front, lot.z + s * lot.w * 0.42 - c * front, c, -s, lot.w * 0.84, 0, out.kinds.fence, 2.0, 0.05);
-      for (let i = 0; i < 2; i++) {
-        const ox = rng.range(-0.32, 0.32) * lot.w, oz = rng.range(-0.2, 0.32) * lot.d;
-        const x = lot.x + c * ox - s * oz, z = lot.z - s * ox - c * oz;
-        if (T.isWater(x, z)) continue;
-        out.trees.push(makeTree(rng, rng.weighted([['oak', 5], ['birch', 5], ['pine', 2]]), x, T.getHeight(x, z), z, 'garden', 0.58));
-      }
-    }
-    return out;
-  }
-
-  // no zoning yet: green the block interiors on a jittered grid keyed off the distance to the
-  // nearest kerb, so the built-up area reads as a leafy suburb instead of mown lawn.
-  const half = world.size / 2;
-  const step = 7.0;
-  const n = Math.floor((world.size - 60) / step);
-  for (let jz = 0; jz < n; jz++) for (let jx = 0; jx < n; jx++) {
-    const x = -half + 30 + jx * step + rng.range(-step * 0.45, step * 0.45);
-    const z = -half + 30 + jz * step + rng.range(-step * 0.45, step * 0.45);
-    const rd = roadDist ? roadDist.at(x, z) : 1e6;
-    if (rd < 4.5 || rd > 52) continue;
-    if (!clearOf(x, z)) continue;
-    if (T.isWater(x, z)) continue;
-    if (T.getSlope(x, z) > 0.55) continue;
-    const y = T.getHeight(x, z);
-    if (y < 0.8) continue;
-    // thin out right next to the kerb (that strip belongs to the pavement kit)
-    const p = rd < 9 ? 0.12 : rd < 18 ? 0.62 : 0.82;
-    if (rng.float() > p) continue;
-    const roll = rng.float();
-    if (roll < 0.42) out.trees.push(makeTree(rng, rng.weighted([['oak', 6], ['birch', 5], ['pine', 3]]), x, y, z, 'garden', rd < 14 ? 0.62 : 0.78));
-    else if (roll < 0.62) out.kinds.hedge.push({ x, y, z, heading: rng.float() * 6.28, scale: rng.range(0.9, 1.5) });
-    else if (roll < 0.88) out.kinds.bush.push({ x, y, z, heading: rng.float() * 6.28, scale: rng.range(0.8, 1.7) });
-    else out.kinds.flowers.push({ x, y, z, heading: rng.float() * 6.28, scale: rng.range(0.8, 1.5) });
-  }
-  // picket fence runs along the front of some block faces
-  for (const e of R.edges.values()) {
-    if (e.type !== 'street' && e.type !== 'alley') continue;
+  for (const id of ids) {
+    const e = R.edges.get(id);
+    if (!e || !FURNITURE_TYPES.has(e.type)) continue;
     const Ty = R.types[e.type] || R.types.street;
     if (!Ty.sidewalk) continue;
     const len = e.length;
     const from = (e.trimA || 0) + 8, to = len - (e.trimB || 0) - 8;
-    if (to - from < 24) continue;
-    for (const sgn of [1, -1]) {
-      if (!rng.bool(0.45)) continue;
-      const offF = Ty.asphaltHalf + Ty.sidewalk + 2.4;
-      const d0 = from + rng.range(0, 12), d1 = Math.min(to, d0 + rng.range(24, 70));
-      for (let d = d0; d < d1; d += 2.0) {
-        const sm = R.sample(e.id, d / len);
-        if (!sm) continue;
-        const nx = -sm.tangent.z, nz = sm.tangent.x;
-        const x = sm.x + nx * sgn * offF, z = sm.z + nz * sgn * offF;
-        if (T.isWater(x, z)) continue;
-        out.kinds.fence.push({ x, y: T.getHeight(x, z), z, heading: Math.atan2(sm.tangent.x, -sm.tangent.z), scale: 1 });
+    if (to - from < 12) continue;
+    const r = rng.fork(`e${id}`);
+
+    // --- street trees in the verge, 12-18 m, both sides (item 13a)
+    if (Ty.sidewalk >= 3) {
+      for (const sgn of [1, -1]) {
+        let d = from + r.range(0, 8);
+        while (d <= to) {
+          const s = R.sample(id, d / len);
+          if (s) {
+            const nx = -s.tangent.z, nz = s.tangent.x;
+            const off = Ty.asphaltHalf + Ty.sidewalk + r.range(0.8, 1.6);
+            const x = s.x + nx * sgn * off, z = s.z + nz * sgn * off;
+            const sp = r.weighted([['oak', 11], ['maple', 5], ['birch', 7], ['poplar', 5], ['blossom', 3]]);
+            makeTree(r, placer, sp, x, z, { edgeId: id, group: 'street' });
+          }
+          d += r.range(12, 18);
+        }
+      }
+    }
+
+    // --- benches / bins on the sidewalk, >= 40 m apart, 0.6-1.2 m back from the kerb, facing the road
+    let d = from + r.range(4, 14);
+    let k = 0;
+    while (d <= to) {
+      const sgn = k % 2 === 0 ? 1 : -1;
+      placeKerbside(placer, R, id, len, d, sgn, Ty, k % 2 === 0 ? 'bench' : 'bin', r);
+      k++;
+      d += r.range(40, 48);
+    }
+    // --- hydrants
+    d = from + r.range(14, 34);
+    while (d <= to) {
+      placeKerbside(placer, R, id, len, d, r.bool() ? 1 : -1, Ty, 'hydrant', r, 0.55);
+      d += r.range(58, 76);
+    }
+    // --- junction signs
+    for (const [node, atA] of [[e.a, true], [e.b, false]]) {
+      const info = R.nodes.get(node);
+      if (!info || info.edges.size < 2) continue;
+      const dAlong = atA ? (e.trimA || 0) + 5.0 : len - (e.trimB || 0) - 5.0;
+      const s = R.sample(id, dAlong / len);
+      if (!s) continue;
+      const sgn = atA ? 1 : -1;
+      const kit = r.bool(0.45) ? 'sign_stop' : (r.bool(0.5) ? 'sign_street' : 'sign');
+      placeKerbside(placer, R, id, len, dAlong, sgn, Ty, 'sign', r, 0.45, kit,
+        Math.atan2(s.tangent.x * sgn, -s.tangent.z * sgn));
+    }
+    // --- bus stop: >= 1 per 250 m, within 40 m of an intersection, on the sidewalk
+    if ((e.type === 'street' || e.type === 'avenue') && len > 60) {
+      const n = Math.max(1, Math.floor(len / 250));
+      for (let k = 0; k < n; k++) {
+        const dd = from + (to - from) * ((k + 0.35) / n);
+        const s = R.sample(id, dd / len);
+        if (!s) continue;
+        const sgn = k % 2 === 0 ? 1 : -1;
+        const nx = -s.tangent.z, nz = s.tangent.x;
+        const off = Ty.asphaltHalf + Ty.sidewalk - 0.85;
+        const x = s.x + nx * sgn * off, z = s.z + nz * sgn * off;
+        if (!nearInt(x, z)) continue;
+        if (placer.onAsphalt(x, z)) continue;
+        const heading = Math.atan2(-nx * sgn, nz * sgn);
+        const it = placer.tryAdd('bus_stop', x, z, { heading, scale: 1, edgeId: id, t: dd / len, side: sgn > 0 ? 'right' : 'left', group: `bs${id}${k}` });
+        if (!it) continue;
+        placer.furniture.push({ kit: 'bus_stop', x: it.x, y: it.y, z: it.z, heading, scale: 1 });
+        placer.stops.push({ id: it.id, x: it.x, y: it.y, z: it.z, heading, edgeId: id, side: sgn > 0 ? 'right' : 'left', t: dd / len });
+        // flag on the kerb
+        const fx = s.x + nx * sgn * (Ty.asphaltHalf + Ty.sidewalk * 0.42), fz = s.z + nz * sgn * (Ty.asphaltHalf + Ty.sidewalk * 0.42);
+        if (!placer.onAsphalt(fx, fz)) {
+          const fit = placer.tryAdd('sign', fx, fz, { heading, scale: 1, edgeId: id, t: dd / len, group: `bs${id}${k}` });
+          if (fit) placer.furniture.push({ kit: 'sign_bus', x: fit.x, y: fit.y, z: fit.z, heading, scale: 1 });
+        }
       }
     }
   }
-  return out;
 }
+
+/** Kerbside item: search the 0.6-1.2 m setback band (and +-2 m along) for a spot off the asphalt. */
+function placeKerbside(placer, R, id, len, d, sgn, Ty, kind, r, minOff = 0.6, kit = null, headingOverride = null) {
+  for (const dd of [d, d + 2.2, d - 2.2, d + 4.4]) {
+    if (dd < 0 || dd > len) continue;
+    const s = R.sample(id, dd / len);
+    if (!s) continue;
+    const nx = -s.tangent.z, nz = s.tangent.x;
+    for (const off of [0.9, 0.7, 1.1, 1.2, minOff]) {
+      const x = s.x + nx * sgn * (Ty.asphaltHalf + off);
+      const z = s.z + nz * sgn * (Ty.asphaltHalf + off);
+      if (placer.onAsphalt(x, z)) continue;
+      const heading = headingOverride !== null ? headingOverride : Math.atan2(-nx * sgn, nz * sgn);
+      const it = placer.tryAdd(kind, x, z, { heading, scale: 1, edgeId: id, t: dd / len, side: sgn > 0 ? 'right' : 'left' });
+      if (!it) continue;
+      placer.furniture.push({ kit: kit || kind, x: it.x, y: it.y, z: it.z, heading, scale: 1 });
+      return it;
+    }
+  }
+  return null;
+}
+
+// ------------------------------------------------------------------ park / plaza + boundaries
+export function placePark(ctx, placer, park) {
+  const { rng } = ctx;
+  const T = ctx.world.terrain;
+  const r = rng.fork('park');
+  const { cx, cz, w, d } = park;
+  const hw = w * 0.5, hd = d * 0.5;
+  const inside = (x, z) => Math.abs(x - cx) < hw && Math.abs(z - cz) < hd;
+
+  // hedge runs framing two sides, with a gate gap
+  for (const [ax, az, bx, bz] of [
+    [cx - hw, cz - hd, cx + hw, cz - hd],
+    [cx - hw, cz - hd, cx - hw, cz + hd],
+  ]) {
+    hedgeLine(ctx, placer, ax, az, bx, bz, { gap: [0.42, 0.58] });
+  }
+  // two built fence variants on the other two sides
+  fenceLine(ctx, placer, cx + hw, cz - hd, cx + hw, cz + hd, 'railing', { gap: [0.46, 0.56] });
+  fenceLine(ctx, placer, cx - hw, cz + hd, cx + hw, cz + hd, 'slat');
+
+  // lantern posts around a central plaza, benches facing in, bins, planters
+  const px = cx, pz = cz;
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 + 0.2;
+    const rr = 16;
+    const x = px + Math.cos(a) * rr, z = pz + Math.sin(a) * rr;
+    const it = placer.tryAdd('streetlamp', x, z, { heading: Math.atan2(px - x, -(pz - z)), scale: 1, variant: 'lantern' });
+    if (!it) continue;
+    placer.furniture.push({ kit: 'streetlamp_lantern', x: it.x, y: it.y, z: it.z, heading: it.heading, scale: 1 });
+    placer.lampHeads.push({ x: it.x, y: it.y, z: it.z, heading: it.heading, kit: 'streetlamp_lantern' });
+  }
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + 0.5;
+    const x = px + Math.cos(a) * 10.5, z = pz + Math.sin(a) * 10.5;
+    const it = placer.tryAdd('bench', x, z, { heading: Math.atan2(px - x, -(pz - z)), scale: 1 });
+    if (it) placer.furniture.push({ kit: 'bench', x: it.x, y: it.y, z: it.z, heading: it.heading, scale: 1 });
+  }
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2 + 1.1;
+    const x = px + Math.cos(a) * 13.5, z = pz + Math.sin(a) * 13.5;
+    const it = placer.tryAdd('bin', x, z, { heading: r.float() * 6.28, scale: 1 });
+    if (it) placer.furniture.push({ kit: 'bin', x: it.x, y: it.y, z: it.z, heading: it.heading, scale: 1 });
+  }
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    const x = px + Math.cos(a) * 7.0, z = pz + Math.sin(a) * 7.0;
+    const it = placer.tryAdd('planter', x, z, { heading: r.float() * 6.28, scale: 1 });
+    if (!it) continue;
+    placer.furniture.push({ kit: 'planter', x: it.x, y: it.y, z: it.z, heading: it.heading, scale: 1 });
+    placer.planterFills.push({ x: it.x, y: it.y, z: it.z, heading: it.heading, scale: 1 });
+  }
+  // specimen trees of several species + shrub groups
+  const specimens = ['oak', 'maple', 'blossom', 'willow', 'fir', 'birch', 'spruce', 'poplar'];
+  for (let i = 0; i < 46; i++) {
+    const x = r.range(cx - hw + 4, cx + hw - 4), z = r.range(cz - hd + 4, cz + hd - 4);
+    if (Math.hypot(x - px, z - pz) < 20) continue;
+    makeTree(r, placer, specimens[i % specimens.length], x, z, { group: 'park' });
+  }
+  for (let i = 0; i < 90; i++) {
+    const x = r.range(cx - hw + 2, cx + hw - 2), z = r.range(cz - hd + 2, cz + hd - 2);
+    if (Math.hypot(x - px, z - pz) < 5) continue;
+    const scale = r.range(0.85, 1.45);
+    const it = placer.tryAdd('bush', x, z, { heading: r.float() * 6.28, scale });
+    if (it) placer.bushes.push({ x: it.x, y: it.y, z: it.z, heading: it.heading, scale });
+  }
+  return inside;
+}
+
+/** A hedge run: items every 2 m plus one geometry run per <= 16 m so chunk culling still works. */
+export function hedgeLine(ctx, placer, ax, az, bx, bz, opt = {}) {
+  const T = ctx.world.terrain;
+  const L = Math.hypot(bx - ax, bz - az);
+  const n = Math.max(2, Math.round(L / 2));
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    if (opt.gap && t > opt.gap[0] && t < opt.gap[1]) { flushRun(placer, pts, 'hedge'); continue; }
+    const x = ax + (bx - ax) * t, z = az + (bz - az) * t;
+    if (T.isWater(x, z) || placer.onAsphalt(x, z)) { flushRun(placer, pts, 'hedge'); continue; }
+    const it = placer.tryAdd('fence', x, z, { variant: 'hedge', scale: 1, heading: Math.atan2(bx - ax, -(bz - az)) });
+    if (!it) { flushRun(placer, pts, 'hedge'); continue; }
+    pts.push({ x: it.x, y: it.y, z: it.z });
+    if (pts.length >= 9) { const last = pts[pts.length - 1]; flushRun(placer, pts, 'hedge'); pts.push({ ...last }); }
+  }
+  flushRun(placer, pts, 'hedge');
+}
+
+export function fenceLine(ctx, placer, ax, az, bx, bz, variant, opt = {}) {
+  const T = ctx.world.terrain;
+  const L = Math.hypot(bx - ax, bz - az);
+  const n = Math.max(2, Math.round(L / 2));
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    if (opt.gap && t > opt.gap[0] && t < opt.gap[1]) { flushRun(placer, pts, variant); continue; }
+    const x = ax + (bx - ax) * t, z = az + (bz - az) * t;
+    if (T.isWater(x, z) || placer.onAsphalt(x, z)) { flushRun(placer, pts, variant); continue; }
+    const it = placer.tryAdd('fence', x, z, { variant, scale: 1, heading: Math.atan2(bx - ax, -(bz - az)) });
+    if (!it) { flushRun(placer, pts, variant); continue; }
+    pts.push({ x: it.x, y: it.y, z: it.z });
+    if (pts.length >= 9) { const last = pts[pts.length - 1]; flushRun(placer, pts, variant); pts.push({ ...last }); }
+  }
+  flushRun(placer, pts, variant);
+}
+
+function flushRun(placer, pts, variant) {
+  if (pts.length >= 2) {
+    const copy = pts.map((p) => ({ ...p }));
+    if (variant === 'hedge') placer.hedgeRuns.push({ pts: copy });
+    else placer.fenceRuns.push({ pts: copy, variant });
+  }
+  pts.length = 0;
+}
+
+export { SIDEWALK_LIFT, SPECIES_NAMES };

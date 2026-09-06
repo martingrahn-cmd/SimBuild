@@ -1,0 +1,497 @@
+{
+ "stats": {
+  "cells": 1573,
+  "zonable": 2290,
+  "lots": 99,
+  "claimed": 910,
+  "per": {
+   "residential": 535,
+   "commercial": 294,
+   "industrial": 337,
+   "office": 407
+  },
+  "overlay": {
+   "cells": 1573,
+   "lots": 99,
+   "tris": 18320,
+   "draws": 5,
+   "ms": 45.100000001490116
+  }
+ },
+ "probes": [
+  {
+   "type": "residential",
+   "density": "low",
+   "x": -44,
+   "z": 20
+  },
+  {
+   "type": "residential",
+   "density": "high",
+   "x": -172,
+   "z": 20
+  },
+  {
+   "type": "commercial",
+   "density": "low",
+   "x": 20,
+   "z": -92
+  },
+  {
+   "type": "commercial",
+   "density": "high",
+   "x": 12,
+   "z": 12
+  },
+  {
+   "type": "industrial",
+   "density": "low",
+   "x": 164,
+   "z": 20
+  },
+  {
+   "type": "industrial",
+   "density": "high",
+   "x": 252,
+   "z": 20
+  },
+  {
+   "type": "office",
+   "density": "low",
+   "x": 84,
+   "z": 20
+  },
+  {
+   "type": "office",
+   "density": "high",
+   "x": 92,
+   "z": -20
+  }
+ ],
+ "staging": {
+  "nodes": {},
+  "junctions": [
+   {
+    "id": 2,
+    "x": -320,
+    "z": 0
+   },
+   {
+    "id": 3,
+    "x": -240,
+    "z": 0
+   },
+   {
+    "id": 4,
+    "x": -160,
+    "z": 0
+   },
+   {
+    "id": 5,
+    "x": -80,
+    "z": 0
+   },
+   {
+    "id": 6,
+    "x": 0,
+    "z": 0
+   },
+   {
+    "id": 7,
+    "x": 80,
+    "z": 0
+   },
+   {
+    "id": 8,
+    "x": 160,
+    "z": 0
+   },
+   {
+    "id": 9,
+    "x": 240,
+    "z": 0
+   },
+   {
+    "id": 10,
+    "x": 320,
+    "z": 0
+   },
+   {
+    "id": 24,
+    "x": -240,
+    "z": -160
+   },
+   {
+    "id": 25,
+    "x": -200,
+    "z": -160
+   },
+   {
+    "id": 26,
+    "x": -160,
+    "z": -160
+   },
+   {
+    "id": 30,
+    "x": 0,
+    "z": -127
+   },
+   {
+    "id": 32,
+    "x": 80,
+    "z": -115
+   },
+   {
+    "id": 34,
+    "x": 160,
+    "z": -140
+   },
+   {
+    "id": 36,
+    "x": 240,
+    "z": -157
+   },
+   {
+    "id": 55,
+    "x": -320,
+    "z": -80
+   },
+   {
+    "id": 56,
+    "x": -320,
+    "z": 80
+   },
+   {
+    "id": 62,
+    "x": -240,
+    "z": -80
+   },
+   {
+    "id": 63,
+    "x": -240,
+    "z": 80
+   },
+   {
+    "id": 64,
+    "x": -240,
+    "z": 160
+   },
+   {
+    "id": 69,
+    "x": -160,
+    "z": -80
+   },
+   {
+    "id": 70,
+    "x": -160,
+    "z": 80
+   },
+   {
+    "id": 71,
+    "x": -160,
+    "z": 160
+   },
+   {
+    "id": 76,
+    "x": -80,
+    "z": 80
+   },
+   {
+    "id": 77,
+    "x": -80,
+    "z": 160
+   },
+   {
+    "id": 80,
+    "x": 0,
+    "z": -80
+   },
+   {
+    "id": 81,
+    "x": 0,
+    "z": 80
+   },
+   {
+    "id": 82,
+    "x": 0,
+    "z": 160
+   },
+   {
+    "id": 87,
+    "x": 80,
+    "z": -80
+   },
+   {
+    "id": 88,
+    "x": 80,
+    "z": 80
+   },
+   {
+    "id": 89,
+    "x": 80,
+    "z": 160
+   },
+   {
+    "id": 94,
+    "x": 160,
+    "z": -80
+   },
+   {
+    "id": 95,
+    "x": 160,
+    "z": 80
+   },
+   {
+    "id": 96,
+    "x": 160,
+    "z": 160
+   },
+   {
+    "id": 101,
+    "x": 240,
+    "z": -80
+   },
+   {
+    "id": 102,
+    "x": 240,
+    "z": 80
+   },
+   {
+    "id": 103,
+    "x": 240,
+    "z": 160
+   },
+   {
+    "id": 108,
+    "x": 320,
+    "z": -80
+   },
+   {
+    "id": 109,
+    "x": 320,
+    "z": 80
+   }
+  ],
+  "hillside": {
+   "start": [
+    182,
+    -152.4
+   ],
+   "peak": [
+    136,
+    -22,
+    0.533
+   ],
+   "end": [
+    110.7,
+    36.7
+   ]
+  },
+  "waterfront": [
+   [
+    -320,
+    -160
+   ],
+   [
+    -280,
+    -160
+   ],
+   [
+    -240,
+    -160
+   ],
+   [
+    -200,
+    -160
+   ],
+   [
+    -160,
+    -159.8
+   ],
+   [
+    -120,
+    -156.6
+   ],
+   [
+    -80,
+    -144.7
+   ],
+   [
+    -40,
+    -131.4
+   ],
+   [
+    0,
+    -126.7
+   ],
+   [
+    40,
+    -120.5
+   ],
+   [
+    80,
+    -115.4
+   ],
+   [
+    120,
+    -122.6
+   ],
+   [
+    160,
+    -140.1
+   ],
+   [
+    200,
+    -152.4
+   ],
+   [
+    240,
+    -157.4
+   ],
+   [
+    280,
+    -159.2
+   ],
+   [
+    320,
+    -160
+   ]
+  ],
+  "highway": [
+   [
+    -460,
+    -190
+   ],
+   [
+    -300,
+    -184
+   ],
+   [
+    -150,
+    -176
+   ]
+  ],
+  "bare": [
+   -80,
+   -80
+  ],
+  "slopeTarget": [
+   159,
+   -87
+  ]
+ },
+ "tuning": {
+  "fill": 0.52,
+  "emptyFill": 0.13,
+  "lineWorld": 0.55,
+  "edgeWorld": 1.1,
+  "edgeGlow": 2.6,
+  "edgeAlpha": 0.95,
+  "hatchPeriod": 3,
+  "hatchWidth": 1.25,
+  "hatchDark": 0.82,
+  "pulseAmp": 0.3,
+  "pulseHz": 0.22,
+  "nightMul": 0.42,
+  "nightAlpha": 1,
+  "atmo": 0.75,
+  "liftCell": 0.16,
+  "liftLot": 0.26
+ },
+ "status": {
+  "status": "ready",
+  "errors": 0,
+  "ms": 0,
+  "initMs": 5
+ },
+ "lots": {
+  "wh": {
+   "16": 36,
+   "24": 45,
+   "32": 14,
+   "48": 4
+  },
+  "ds": {
+   "24": 85,
+   "32": 14
+  },
+  "corners": {
+   "true": 25,
+   "false": 74
+  },
+  "badFrame": 0,
+  "badHeading": 0,
+  "badRoad": 0,
+  "badY": 0,
+  "n": 99
+ },
+ "cellCheck": {
+  "water": 0,
+  "steep": 0,
+  "relief": 0,
+  "hiway": 0,
+  "quadOverflow": 0
+ },
+ "lotHiway": 0,
+ "frontEdge": [
+  {
+   "id": 137,
+   "type": "street",
+   "side": "right",
+   "n": 30,
+   "curve": false,
+   "maxDev": 0.4,
+   "clMin": 1.55,
+   "clMax": 1.95,
+   "onRoad": 20,
+   "maxGap": 1.98
+  },
+  {
+   "id": 137,
+   "type": "street",
+   "side": "left",
+   "n": 30,
+   "curve": false,
+   "maxDev": 0.4,
+   "clMin": 1.55,
+   "clMax": 1.95,
+   "onRoad": 25,
+   "maxGap": 1.98
+  },
+  {
+   "id": 139,
+   "type": "street",
+   "side": "right",
+   "n": 67,
+   "curve": true,
+   "maxDev": 0.45,
+   "clMin": 1.55,
+   "clMax": 2,
+   "onRoad": 52,
+   "maxGap": 1.94
+  },
+  {
+   "id": 139,
+   "type": "street",
+   "side": "left",
+   "n": 67,
+   "curve": true,
+   "maxDev": 0.4,
+   "clMin": 1.55,
+   "clMax": 1.95,
+   "onRoad": 59,
+   "maxGap": 2.25
+  }
+ ],
+ "toggle": {
+  "draws": 5,
+  "tris": 18320,
+  "back": 47,
+  "moduleMs": 0,
+  "geo": 40
+ },
+ "errors": [
+  "THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:176: 'toneMappingExposure' : undeclared identifier\n\u0000\n\n  171:   // what AgX's Rec.2020 inset cannot reach. Dividing by the exposure first makes the overlay\n  172:   // exposure-invariant, so the night look comes from uNight and not from the environment's\n  173:   // brightening of the exposure curve after dark.\n  174:   vec3 pre = mix(uLow, uHigh, vDens);\n  175:   vec3 fix = mix(uLowFix, uHighFix, vDens);\n> 176:   gl_",
+  "THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:176: 'toneMappingExposure' : undeclared identifier\n\u0000\n\n  171:   // what AgX's Rec.2020 inset cannot reach. Dividing by the exposure first makes the overlay\n  172:   // exposure-invariant, so the night look comes from uNight and not from the environment's\n  173:   // brightening of the exposure curve after dark.\n  174:   vec3 pre = mix(uLow, uHigh, vDens);\n  175:   vec3 fix = mix(uLowFix, uHighFix, vDens);\n> 176:   gl_"
+ ]
+}

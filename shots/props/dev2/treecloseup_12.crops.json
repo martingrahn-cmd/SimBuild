@@ -1,0 +1,39 @@
+{
+  "png": "shots/props/dev2/treecloseup_12.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "treecloseup",
+  "time": 12,
+  "rects": {
+    "props.canopy_broad": [
+      597,
+      24,
+      85,
+      85
+    ],
+    "props.crown": [
+      573,
+      1,
+      133,
+      133
+    ],
+    "props.pool": [
+      141,
+      362,
+      138,
+      138
+    ],
+    "props.lamp_head": [
+      222,
+      213,
+      32,
+      32
+    ],
+    "props.hedge": [
+      465,
+      643,
+      171,
+      43
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "png": "shots/zoning/r2/crops_zones_12.png",
+  "width": 1920,
+  "height": 1080,
+  "camera": "zones",
+  "time": 12,
+  "rects": {
+    "zoning.emptyBand": [
+      350,
+      735,
+      120,
+      120
+    ],
+    "zoning.bareGround": [
+      803,
+      265,
+      120,
+      120
+    ],
+    "zoning.nearBlock": [
+      1348,
+      877,
+      100,
+      100
+    ],
+    "zoning.farBlock": [
+      488,
+      12,
+      100,
+      100
+    ]
+  }
+}

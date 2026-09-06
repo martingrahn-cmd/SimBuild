@@ -1,0 +1,72 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=zoning&time=17.5&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "zoning",
+  "time": 17.5,
+  "camera": "aerial",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 127556,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 11103,
+  "drawCalls": 43,
+  "triangles": 343800,
+  "programs": 25,
+  "textures": 40,
+  "geometries": 39,
+  "heapMB": 55,
+  "moduleMs": {
+    "environment": 0.6000000014901161,
+    "zoning": 0,
+    "terrain": 0,
+    "roads": 0
+  },
+  "hour": 17.5,
+  "cameraState": {
+    "position": [
+      193.8,
+      404.6,
+      283.2
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "distance": 520
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.6,
+      "initMs": 776
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5735
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 105
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/zoning/r2/aerial_17p5.png"
+}

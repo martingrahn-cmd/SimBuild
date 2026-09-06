@@ -1,0 +1,39 @@
+{
+  "png": "shots/props/dev2f/street_22.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "street",
+  "time": 22,
+  "rects": {
+    "props.canopy_broad": [
+      1181,
+      223,
+      85,
+      85
+    ],
+    "props.crown": [
+      679,
+      70,
+      133,
+      133
+    ],
+    "props.pool": [
+      629,
+      306,
+      307,
+      307
+    ],
+    "props.lamp_head": [
+      803,
+      215,
+      32,
+      32
+    ],
+    "props.hedge": [
+      1109,
+      561,
+      171,
+      43
+    ]
+  }
+}

@@ -8,8 +8,65 @@
   "height": 1080,
   "quality": "high",
   "gpu": "swiftshader",
-  "ok": false,
-  "error": "page.screenshot: Timeout 240000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 222678,
+  "fps": 11.6,
+  "measuredFrames": 1,
+  "frameMs": 21689.1,
+  "drawCalls": 127,
+  "triangles": 2101509,
+  "programs": 50,
+  "textures": 49,
+  "geometries": 66,
+  "heapMB": 60.8,
+  "moduleMs": {
+    "environment": 0.19999999552965164,
+    "props": 0,
+    "terrain": 0.10000000149011612,
+    "roads": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      86.2,
+      26.1,
+      76.7
+    ],
+    "target": [
+      40,
+      0,
+      40
+    ],
+    "distance": 60
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 638
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 926
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 6378
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 135
+    }
+  },
   "errors": [],
-  "warnings": []
+  "warnings": [],
+  "png": "shots/props/r1/street_12.png"
 }

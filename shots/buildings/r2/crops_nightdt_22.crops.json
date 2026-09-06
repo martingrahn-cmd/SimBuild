@@ -1,0 +1,21 @@
+{
+  "png": "shots/buildings/r2/crops_nightdt_22.png",
+  "width": 1920,
+  "height": 1080,
+  "camera": "night_downtown",
+  "time": 22,
+  "rects": {
+    "buildings.nightFacade": [
+      82,
+      146,
+      200,
+      200
+    ],
+    "buildings.farTower": [
+      0,
+      121,
+      128,
+      128
+    ]
+  }
+}

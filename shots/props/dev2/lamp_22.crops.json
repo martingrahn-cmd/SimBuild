@@ -1,0 +1,39 @@
+{
+  "png": "shots/props/dev2/lamp_22.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "lamp",
+  "time": 22,
+  "rects": {
+    "props.canopy_broad": [
+      708,
+      27,
+      85,
+      85
+    ],
+    "props.crown": [
+      623,
+      0,
+      133,
+      133
+    ],
+    "props.pool": [
+      597,
+      620,
+      85,
+      85
+    ],
+    "props.lamp_head": [
+      487,
+      0,
+      32,
+      32
+    ],
+    "props.hedge": [
+      926,
+      615,
+      171,
+      43
+    ]
+  }
+}

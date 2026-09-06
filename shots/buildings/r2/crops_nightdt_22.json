@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=buildings&time=22&camera=night_downtown&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "buildings",
+  "time": 22,
+  "camera": "night_downtown",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "crops": 2,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 264982,
+  "fps": 11.6,
+  "measuredFrames": 1,
+  "frameMs": 23039.5,
+  "drawCalls": 138,
+  "triangles": 1542956,
+  "programs": 25,
+  "textures": 45,
+  "geometries": 77,
+  "heapMB": 186.8,
+  "moduleMs": {
+    "environment": 0.20000000298023224,
+    "buildings": 0.10000000894069672,
+    "terrain": 0,
+    "roads": 0,
+    "zoning": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      113.2,
+      41.6,
+      -37.9
+    ],
+    "target": [
+      -59.5,
+      22.4,
+      -17
+    ],
+    "distance": 175
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 616
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 84
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 5362
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 78
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/buildings/r2/crops_nightdt_22.png"
+}

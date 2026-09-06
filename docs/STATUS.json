@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-05T22:44:31.492Z",
+  "updatedAt": "2026-09-06T07:51:30.723Z",
   "passThreshold": 8.5,
   "maxRounds": 4,
   "gpuNote": "fps values are SwiftShader software rendering (relative only); fpsGpu is null until measured on a real GPU",
@@ -347,7 +347,7 @@
         }
       ],
       "next": {
-        "phase": "build",
+        "phase": "critic",
         "round": 2
       },
       "pass": false,
@@ -363,59 +363,215 @@
       "consoleErrors": 0,
       "maxDrawCalls": 6,
       "apiContractOk": true,
-      "builtRound": 1
+      "builtRound": 2
     },
     "buildings": {
       "wave": 2,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 6,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] Five required api entries do not exist (styleCounts, features, forceLod, lotSurface, cropRects) and stats() is missing 5 of 12 fields: typeof api.styleCounts/features/forceLod/lotSurface/cropRects === 'undefined'. stats() returns only {chunks, tris0, tris1, visible, buildMs, buildings, til",
+        "[blocker] Pastel night: facade only 2.6-3.3x darker than its windows, and no lit ground floor anywhere: Median of the brightest 10% over the median of the darkest 50% of a 200x200 facade patch on the full-res night_downtown_22.png: 3.33 at (1000,150), 2.75 at (1450,100), 2.64 at (250,50); 2.90 at (4",
+        "[blocker] Per-fragment window static: fract(sin(dot(...))) hashed from an interpolated varying: material.js:39 contains fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123), fed by the interpolated varying vWinCell, so adjacent pixels inside one window cell hash to different states at range - the ",
+        "[blocker] `lit` is never updated: 0 of 307 buildings are lit at 22:00: spawn() writes lit:false and nothing in update() ever writes it again, although world.weather.night === 1 at ?time=22 and the windows are visibly emitting. Section 2 requires lit kept current every frame; item 22 requires >= 90% ",
+        "[major] Downtown is one archetype in six colours: no crown variety, 24 of 30 towers share a styleId: Within 250 m of presets.downtown.target the 30 buildings above 60 m carry only 6 distinct styleId (office_glass_blue x8, office_stone x6, office_glass_sky x6, office_glass_dark x4, office_glass_green",
+        "[major] Facades are painted, not built, on the towers the closeup and street presets frame: The officelow/apt archetypes do carry a projecting floor band with a shadow line and a parapet cap with visible thickness - keep that. But every tower:* is a single flat prism whose windows, mullions and refl",
+        "[major] Buildings are pasted onto the ground: no contact darkening, bare grass from lot edge to kerb, tufts through the plate: block_12.png row y=950, scanning x 600->760 across the asphalt toward the pale office wall gives L = 93, 90, 91, 108, 94, 95, 94, 93, 92, 94, 93, 92, 94, 91, 93 - flat 93 +-",
+        "[major] Triangle budget blown, LOD1 barely cheaper than LOD0, declared budget still wrong: closeup_22 renders 2 052 752 triangles against a 2 000 000 cap and aerial_12 renders 1 817 528 against the 1 400 000 aerial cap. stats() gives tris1/tris0 = 242 564 / 405 204 = 0.599 against a <= 0.35 ceiling,",
+        "[major] The catalog preset stages no catalog, the block preset frames no mixed-use corner, and staging misses its section 8 floors: showcase.js:12 points catalog at (40,0,40) - the downtown core - and stage() never builds the 8x5 grid at >= 50 m pitch, so item 5's 'one of each of the 40 classes, one",
+        "[major] Growth does not read as growth, and industrial ignores level entirely: setLevel(id, 1..5) on one commercial/low lot gives heights 9.19, 9.19, 12.59, 12.59, 15.99 m and floors 1, 1, 2, 2, 3 - height is flat across two of the four steps where item 23 requires a strict increase at every step. i",
+        "[minor] No infoview tint support: With world.infoview.active set and buildingTint(id) returning a colour, the frame diff is meanAbs 0.000/255 (item 21 wants > 20/255 with a tint applied, 0 with it removed, tint weight >= 0.7 and emissive suppressed). The material has no infoview path at all. ARCHITE",
+        "[minor] serialize/deserialize is not a round trip, ids restart, and demolish never frees a staged lot: stats().tris0 goes 405 204 -> 405 260 across serialize() -> deserialize() (the lot w/d fallback in deserialize differs from the staged lot), where item 19 requires an identical tris0 and an identic",
+        "[minor] normalScale 1.0 with no distance fade, and a raw black skirt wall on sloped lots: material.normalScale is 1.0 against item 15's <= 0.6 ceiling, with no fade to <= 0.25 beyond 150 m. The pixel half of item 15 passes (0.000% of building-surface pixels above luma 245 in the skyline_12 and skyli",
+        "[minor] Suburb reads as one house repeated: In block_12 every house has the same ridge direction, the same roof pitch and the same grey shingle; only the wall colour changes, where cs2_4 gets its life from ridge direction, plan shape and roof colour changing house to house. The shingle texture also "
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 6,
+          "pass": false,
+          "errors": 0,
+          "draws": 215,
+          "report": "docs/critic/buildings_r1.md"
+        }
+      ],
       "next": {
         "phase": "critic",
-        "round": 1
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 2,
+      "pass": false,
+      "strengths": [
+        "Seating is exact: 307 buildings x 8 perimeter samples give a worst |base - terrain| of 0.05 m, 0 buildings with terrain above the ground-floor slab and 0 floating, with the skirt driven by the minimum perimeter sample. Item 8 is the only fully clean pass in the checklist.",
+        "Zero console errors and modules.buildings.status === 'ready' in all 17 captured shots including 1280x720, and in all three probes.",
+        "Determinism is clean: no Math.random anywhere in the module, seed 1337 gives byte-identical tris0 (405 204) across two runs, and seed 7 differs in 29 of 40 byClass counts (72%).",
+        "The chunked merged-geometry architecture works: 40 chunks = 40 draw calls for a 307-building city, one shared material, four atlas textures (2048 albedo/normal/ORM + 1024 emissive), initMs ~105 ms, moduleMs 0.0. The substrate is right; the content is what is thin.",
+        "The officelow and apt archetypes already carry real geometric relief - projecting floor bands with a shadow line under them and a parapet cap with visible cap thickness. That is the standard to bring the towers and the brick variants up to, not something to trade away.",
+        "Houses have real content: pitched roofs with fascia and soffit, chimneys, dormers, solar panels, garages with doors, porches, driveways, paths, lawn plates and hedges.",
+        "The industrial sheds are genuinely a different silhouette family - ribbed cladding, roller-door loading docks, dock canopies, silos - and aerial_22 is a convincing night city at 520 m."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 215,
+      "apiContractOk": false
     },
     "props": {
       "wave": 2,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 5,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] props adds four real THREE.PointLights: src/modules/props/render.js:266 constructs new THREE.PointLight(0xffc987, 0, 34, 2) four times and parents them into the props group, steering them to follow the nearest lamps within 80 m. The probe confirms them live by traversing __sim.registry.get",
+        "[blocker] api is still the pre-spec one — 10 of §2's 15 members missing: Shipped api is {rebuild, stats, lamps, signalState, count, serialize, deserialize}. Missing: place, remove, at, lampsFor, signals, signalFor, stops, setDensity, cropRects, debug{setKindVisible,setLod,setSway,setPools,lodHistogr",
+        "[blocker] frozen world.props.kinds is mutated; three illegal kinds ship and no item carries species: index.js:191 pushes 'tree_birch', 'hedge' and 'flowers' onto world.props.kinds, making it 15 strings instead of the frozen 12. items holds 6916 of kind tree_birch (must be {kind:'tree_oak', species:'",
+        "[blocker] 1.92 M props triangles against a 700 k cap; 2.18 M whole-frame against 1.8 M; per-species meshes and no 256 m chunks: group.visible diff at aerial_12: draws 160 -> 38, so props costs 122 draws (cap 120); triangles 2 175 798 -> 257 031, so props costs 1 918 767 (cap 700 000, 2.7x). Whole-fr",
+        "[blocker] the forest is speckle, not woodland, from 300 m out: Pixels differing from their 3x3 median by >= 35 L, full-res, cap 0.05 %: aerial_12 woodland crop [1300,60,400,300] = 6.103 % (122x over); skyline_12 woodland crop [600,430,400,200] = 4.400 % (88x). Whole-frame: aerial_12 3.361 %, skyline",
+        "[blocker] 17 051 footprint overlaps, 43 props on asphalt, 31 props off the ground: Probe over all 18 938 items using item 3d's own radii table, with fence-fence and same-bus_stop pairs exempted: 17 051 pairwise footprint-circle violations. Examples: bench/hydrant 0.81 m apart where 1.15 m is require",
+        "[major] night foliage is a dimmed noon, not moonlight: Same rect, same camera: the aerial woodland rect [1300,60,400,300] has p50 89 at 12:00 and 55 at 22:00, a ratio of 0.62x against item 5a's <= 0.35x. At street range it is worse: the street_22 near crown [830,300,180,180] has mean L 60.6 while th",
+        "[major] the lamp ground pool has a hard straight rim and is clipped by the kerb: 1-px scanline across the pool boundary in street_22 at y = 660, x 1150->1190: 180, 180, 155.9, 155.7, 107.5, 83.4 — a single adjacent step of 48.2 L and a 96.6 L drop across 4 px, against item 6d's 6 L cap, and crop_poo",
+        "[major] three species, no species attribute, and scale is an absolute height in metres: trees.js:17 declares SPECIES = ['oak','pine','birch']. §3's table needs five silhouette classes (conifer spire, broad round crown, tall narrow, wide low spreading, small ornamental) across eight species strings, ",
+        "[major] trees stop casting shadows at ~92 m, so aerial and golden hour have no shadows at all: render.js:53 sets { cast: false } on the whole LOD1 tier, so tree shadows end at the LOD0 range. In aerial_12, aerial_6p5 and skyline_12 there is not one tree or lamp shadow anywhere in frame, and aerial_6",
+        "[major] the signal clock is a dt accumulator that ignores world.time and never reads traffic: index.js:107 advances S.lensT += dt, and src/main.js:121 derives dt from performance.now() without scaling by clock.speed, so ?speed=0 does not freeze it and __sim.setTime() does not move it. The probe step",
+        "[major] wind sway is a dt accumulator, so no two captures at the same ?time= match: index.js:213 advances S.wind.uTime.value += dt with the same real wall-clock dt as issue 11. Items 14 and 16 are both built on pixel diffs between two loads or two clock settings at the same ?time=, and an accumulato",
+        "[major] forest scatter is a jittered lattice and there is no street-tree rhythm: place.js:85,91-96 scatters on a 6.1 m grid with +/-0.46 x spacing jitter — the grid-scatter failure §6 names explicitly, and item 13d requires a nearest-neighbour histogram with no bin over 35 % and a mean NN distance i",
+        "[major] five presets instead of §8's eight, and no park, so a third of the acceptance set is unshootable: showcase.js declares lamps_night, forest, crossing, bench, canopy. §8 requires forest, avenue, signal, lamp, park, treecloseup, busstop, canopy. CityCamera.apply() returns false for an unknown p",
+        "[minor] hedges are 1.1 m card blobs and there is exactly one fence type: furniture.js:267 builds hedge as cardBlob({cards:20, radius:0.62, height:1.1}) — below item 11a's 1.2-1.8 m, with no modelled undulating top of >= 0.08 m amplitude and no darker interior (top-to-side dL >= 15), i.e. simulation_",
+        "[minor] lamp column geometry is out of spec and there is no ornamental lantern variant: furniture.js:22,38-40: the column is a 8.0 m cylinder with the luminaire at 8.365 m where item 4c wants 8.5-9.5 m; it tapers 0.25 m to 0.17 m diameter where the spec wants ~0.16 m to ~0.10 m; the mast arm reaches",
+        "[minor] furniture has no albedo texture and trunks read as flat untextured grey: index.js:167-172 gives every opaque piece one shared MeshStandardMaterial with vertexColors: true and no map, so bench slats, bins, hydrants, signal housings and lamp columns are flat colour fields broken only by a shar",
+        "[minor] detached leaf cards float in mid-air over the carriageway: In crossing_12, crop [380,480,520,400], several elongated green leaf cards hang above the asphalt near the signal mast with no trunk or branch beneath them. Either LOD1 canopy cards are being placed off their instance origin, or a tr"
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 5,
+          "pass": false,
+          "errors": 0,
+          "draws": 160,
+          "report": "docs/critic/props_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "Lamp anchoring is exactly right: 98/98 roads.lampPositions anchors matched within 0.05 m in x, y and z across 40 sampled edges, and zero lamps within 8 m of an intersection. Keep taking each anchor's own y rather than re-deriving it.",
+        "The night rig genuinely lights the ground: the pool is 2.23x the luminance of road 12 m off-lamp and warm at R - B = +17.5, both clearing item 6. Only the pool's shape, falloff and render order need fixing.",
+        "Near-camera dappled tree shadows at crossing_12 show real branch structure rather than an ellipse — item 8's hard half. Extend it to the LOD1 tier instead of rebuilding it.",
+        "Exposure discipline is the one thing right in every frame: blackPct <= 0.01 %, whitePct <= 0.002 %, p1 >= 27 everywhere. Do not fix night foliage by lifting exposure.",
+        "Zero console errors in every capture and every probe, module status ready in every valid shot, and every texture procedural with no manifest additions — the asset policy is clean.",
+        "The trunk is a real swept tube with branching (trees.js), not a cylinder-plus-sphere. Keep the skeleton and hang a better canopy on it.",
+        "Foliage uses alphaTest 0.42 and never transparent:true (trees.js:310), and no props shader reads cameraPosition, so the terrain_r1 reflection-confetti trap is avoided by construction."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 160,
+      "apiContractOk": false
     },
     "traffic": {
       "wave": 2,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 5,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] Nothing casts a shadow at any hour, and the contact decal is hidden under the car: SHADOW_CASTING is initialised false (sim.js:16) and all 26 InstancedMeshes are built with castShadow = SHADOW_CASTING (sim.js:79), so no vehicle or pedestrian darkens the road at noon, golden hour or night. ",
+        "[blocker] Nine api functions do not exist and five more return the wrong shape: signalState, vehicle, setDensity, density, forceLod, step, freeze, debug and cropRects are all undefined; world.traffic.kinds is absent (kinds() is a function instead). flowGrid, outsideConnections, signals, stats and se",
+        "[blocker] The showcase stages roads' network by importing ../roads/showcase.js: src/modules/traffic/showcase.js:4 imports stage from '../roads/showcase.js', which section 8 forbids outright, and stages roads' demo grid. None of section 8's network exists: no avenue x street crossroads at (40,40) spl",
+        "[blocker] Published world.traffic records break the section 2 field contract in four ways: v.y is the raw laneCenter().y with the 0.08 m ROAD_LIFT omitted - median error -0.003 m against a required +0.08, so 0/153 vehicles pass item 1 (worst 11.82 m); the render matrix does add +0.085 (sim.js:618) s",
+        "[blocker] The cars are smooth 1950s toys, not CS2 vehicles: The lofted superellipse bodies have real curvature and that should be kept, but item 2's checklist is unmet: no number plate, no grille, no mirrors, no door shut-lines, no separate bumper, no headlamp housing; the glasshouse is one smoked b",
+        "[major] Only 7 of 28 eligible junctions are signalised, the phase integrates dt, and no signal head is ever drawn: signals() reports 7 where roads.intersections() offers 28 nodes with arms >= 3 and roundabout === false. The phase advances by s.t += dt (graph.js:158), so it is not the pure function o",
+        "[major] Density does not follow the hour: 163 vehicles at every graded time: stats().vehicles is 163 / 162 / 163 / 163 at hours 6.5 / 12 / 17.5 / 22, and byKind is identical at all four. Item 8 requires 60-110 / 130-190 / >=200 / 30-65 with v(22) <= 0.35 x v(17.5); the measured ratio is 1.00. target",
+        "[major] No LOD and no distance culling anywhere in the module: There is no LOD system and no cull distance; frustumCulled = false is set on every mesh and every live instance is submitted at full detail at any range (grep for lod/LOD/cull in src/modules/traffic/ returns only a comment). Item 12 requ",
+        "[major] Night lamp radiances are all below their bands and there is no tail or brake pool: Read from the fragment shader (materials.js VEH_COLOR): head = 1.0 x lightsOn x 2.3 -> 2.3 against band 3.0-5.0; tail = 1.0 x (lightsOn x 0.70 + brake x 2.0) -> 0.70 steady against band 1.2-2.0 and 2.7 braking",
+        "[major] Over the per-frame budget, and the declared budget and dependencies are the wrong ones: moduleMs.traffic measures 4.7 ms at junction_12_720 and 5.3 ms at aerial_12 against item 16's <= 1.6 ms, and against ARCHITECTURE section 9's <= 2 ms for any single module. index.js:72-73 still declares d",
+        "[major] Metallic paint, metallic glass, and environment.setupMaterial is never called: Body paint is metalness 0.62 where item 11 allows <= 0.15 with a clearcoat-like specular tint, and glass is metalness 0.80 where it must be 0 (materials.js:44-47, 54-56). That is why bodies read as painted resin u",
+        "[major] Agent motion is still scaled by the clock speed: index.js:98-99 is the line the spec preamble names and forbids: const speed = w.time.paused ? (ctx.headless ? 1 : 0) : Math.max(0.5, Math.min(3, w.time.speed)); const sdt = Math.min(0.1, dt) * speed. The 0.5 floor keeps the fleet alive in a sp",
+        "[minor] The roundabout carries a single vehicle: circle_12_720.png shows one car on the entire ring. Item 6's yield probe needs >= 3 yield events on two fed radials over 20 s with zero ring/entry pairs closer than item 5's gap, and $REF/cs2_1.jpg shows singles circulating plus a box truck and an art",
+        "[minor] Outside connections are not at the map border and spawnVehicle returns null: outsideConnections() returns three entries at (-330, 40), (-640, 360) and (620, -150); item 15 requires nodes within 60 m of the map border (|x| >= 964 or |z| >= 964), so 0 of 3 qualify. The shape is {nodeId,x,z,hig",
+        "[minor] Lamp glow quads inflate up to 2.4x with camera distance: materials.js:160-162 scales the glow cross-quads by clamp(dist/115.0, 1.0, 2.4) so headlights stay visible from the aerial camera. Item 7 requires that no lamp lens be larger on screen than the signal head next to it; an artificial min",
+        "[minor] The street preset barely has pedestrians in it: street_12.png, street_12_720.png and street_22.png each show at most one pedestrian, all of them far from the camera. Item 14 requires at least one vehicle and two pedestrians in frame at the core street preset (target [40,0,40]) and at night_s"
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 5,
+          "pass": false,
+          "errors": 0,
+          "draws": 87,
+          "report": "docs/critic/traffic_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "The driving behaviour is the best thing here and should survive the rewrite: IDM car-following with a per-vehicle desired speed, first-come junction reservation, a keep-clear rule that refuses to enter a node it cannot clear, and spill-back queueing produce queues that genuinely resemble $REF/cs2_1.jpg - 0 negative gaps in 91 same-lane pairs, evenly spaced, on the correct side, crossing arm moving while the stopped arm waits.",
+        "Zero console errors across 14 shots, modules.traffic.status === 'ready' everywhere, whole-frame draw calls 64-87 against a 200 ceiling and traffic's own 18-26 against 45. No Math.random. Blast radius clean - only src/modules/traffic/ is touched.",
+        "roads:changed is handled correctly: world.roads.removeEdge on an edge carrying 26 vehicles left zero dangling references after one frame and after 1.5 s, with no error. Item 20 passes outright.",
+        "No pile at the world origin - InstancedMesh.count is set to the live number, so aerial_12 and skyline_12 are clean and there is no metallic blob at (0,0).",
+        "lightsOn reads the sun rather than the clock: 0 of 163 vehicles lit at hours 6.5, 12 and 17.5, 163 of 163 at hour 22.",
+        "Vehicle bodies keep their chroma at night - the red and blue cars in closeup_22 measure a mean chroma of 35.2 against a whole-frame mean of 19.0, so they are lit by the scene rather than silhouetted. That is the hardest half of item 7 and it already works.",
+        "One shared InstancedMesh per class with a per-vertex material id (paint/glass/tyre/rim/lens/trim) and wheels spun in the vertex shader is the right architecture for the budget - keep it and add LOD on top rather than starting over.",
+        "Frames are tonally sound: closeup_12 p1 53.7 / p99 169.4 with 0% white clipping, closeup_22 p1 26.4 / p99 132.1 with 0.013% clipped. No crush, no blow-out, no z-fighting, no sparkle at any camera or time."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 87,
+      "apiContractOk": false
     },
     "tools": {
       "wave": 2,
-      "round": 0,
-      "score": null,
-      "status": "stub",
-      "openIssues": [],
-      "history": [],
+      "round": 1,
+      "score": 5.5,
+      "status": "needs-work",
+      "openIssues": [
+        "[blocker] The ghost ribbon is glass, not paint (uFillA 0.16): gizmos.js:21 sets the ribbon body alpha to 0.16, so the ghost is a wash rather than CS2's opaque near-white band. Measured on the full-resolution shots/tools/r1/aerial_12.png: inside the ribbon [872,688,48,28] luminance p50 = 150.2, satur",
+        "[blocker] The staged district is empty - zero buildings - and it is not built by the tools: world.buildings.items.size = 0 (probe shots/tools/r1/apicheck.mjs). 'buildings' is not in dependencies, so src/core/showcase.js:22-30 never initialises it and showcase.js never calls spawnFreeLots/flush. shot",
+        "[blocker] Twelve of the twenty-four api functions do not exist; eight more return the wrong shape: Missing entirely: pointer, pointerNdc, click, rightClick, commit, costOf, setSelection, clearSelection, pickAt, setPreviewVisible, stats, _showcasePoses. Wrong return shape: select and current return a",
+        "[major] Only four of six poses are staged, and three required camera presets do not exist: showcase.cameras declares tools / toolsclose / toolswide. The spec requires roadtool, zonetool, sculpt, bulldoze, service and invalid at the exact positions in section 8, and aerial must show all six at once. ",
+        "[major] Chips are DOM elements; they overlap each other and clip at the viewport edge: chips.js injects #sbt-style into <head> and #sbt-hud into <body>. Spec section 7 is explicit that tools creates no DOM and every readout is 3D geometry in ctx.group, so it survives with ui absent and is countable ",
+        "[major] The brush ring and the coverage circle are not on LAYERS.HELPERS, so they enter water reflections: ConformDisc (gizmos.js:294-300) sets renderOrder, castShadow and receiveShadow but never mesh.layers.set(LAYERS.HELPERS). A probe walking ctx.group found exactly two geometry-bearing meshes off",
+        "[major] cropRects returns the wrong landmarks and in practice returns nothing, so four pinned criteria cannot be measured: Spec section 2 and ARCHITECTURE section 8 require {ribbon, ground, wash} - a 64x64 box on the ghost ribbon, the same box one ribbon-width to the side, and a 32x32 box on the aff",
+        "[major] The overlay has no restraint: the ghost covers a third of the frame and the coverage ring covers a quarter: In rdev1/closeup_12.png, closeup_17p5.png and street_12.png the ghost plus its guide band occupy roughly 35-45% of the pixels; in every aerial frame the service coverage ring (a 150 m ",
+        "[major] tool:preview is never emitted, and tool:changed is not de-duplicated: tool:preview appears exactly once in the module (tools.js:273) and fires only on commit, with points as [[x,z]] pairs plus an undocumented committed:true, instead of the ARCHITECTURE section 5 payload {kind, points:[{x,y,z",
+        "[minor] Costs are charged straight to world.economy.money, bypassing simulation: index.js:36-41 does e.money -= n on world.economy, which is simulation's world section (src/core/world.js:89). Spec section 7 routes every cost through ctx.modules.simulation.spend(a) and every refund through .earn(a), ",
+        "[minor] Rule constants and the exact reason strings do not match the spec: Max grade 13% with no highway exception (spec 12% / 8% highway); min segment 12 m (spec 8 m); node snap radius 16 m (spec 12 m); angle snap engages within 8.25 degrees (spec 3.5); map bound +-1010 m (spec +-1024); no 'no wate",
+        "[minor] Bulldoze marquee marks nothing inside it; service footprint is a wireframe cage: bulldozeTool.draw (tools.js:876-899) draws a red rectangle outline for the marquee and a red cage only for the single hovered target; objects inside the marquee get no red translucent volume, and there is no '-N",
+        "[minor] Ghost sampling and lift are outside the specified bands: sampleCurve(a, b, ctrl, step = 6) resamples the centreline every 6 m against the spec's <= 2 m, so a tight curve over rolling ground will cut corners; the ribbon lift is 0.24 m (gizmos.js:395) against the 0.10-0.20 m band. No z-fightin",
+        "[minor] Core request omits the binding HUD item: docs/core-requests/tools.md covers terrain.writeHeights, roads.splitEdge, props.place/remove and a services def table - all correct and well argued. It omits the one item spec section 2 makes mandatory: dropping the .api? indirection at src/modules/ui"
+      ],
+      "history": [
+        {
+          "round": 1,
+          "score": 5.5,
+          "pass": false,
+          "errors": 0,
+          "draws": 87,
+          "report": "docs/critic/tools_r1.md"
+        }
+      ],
       "next": {
-        "phase": "critic",
-        "round": 1
+        "phase": "build",
+        "round": 2
       },
-      "builtRound": 1
+      "builtRound": 1,
+      "pass": false,
+      "strengths": [
+        "The chips are the closest thing in the build to the reference: dark rounded pills, white 600-weight text, a leading stroke glyph, a green money glyph on the cost pill and a red-tinted pill for the reason. Keep the visual design exactly as it is when they move off DOM.",
+        "The alignment guide - a white dashed centre stripe continuing past the cursor across open ground (tools.js:385) - reads correctly against cs2_1.jpg for dash rhythm and width.",
+        "The zone brush: cells on the true 8 m grid, in the zone colour at 0.42 alpha, inside a dashed ring, filtered through zonableAt so nothing lights outside the buildable band.",
+        "The invalid state is honest: findRejected searches the real map for a real segment that the real evaluator rejects, and the chip prints the real reason string. No faked red.",
+        "Snapping is genuinely implemented - node, edge with a real T-junction split via removeEdge plus two addEdges, 15 degree angle steps including angles relative to roads already at the anchor, and an 8 m grid.",
+        "Undo has real inverse operations for roads, zone strokes, terrain strokes, services and demolitions, and the terrain path uses exactly the sanctioned heights write-back plus modify(strength:0) refresh.",
+        "Cost discipline is excellent: 6 draw calls and 3576 triangles for the whole tools group with four poses live, zero geometry allocations across 200 pointer drags, moduleMs 0.3, initMs 4.",
+        "Zero console errors and status ready in every frame and every probe, and the district is byte-identical between runs at seed 1337."
+      ],
+      "consoleErrors": 0,
+      "maxDrawCalls": 87,
+      "apiContractOk": false
     },
     "democity": {
       "wave": 3,
@@ -518,17 +674,17 @@
     "passed": [],
     "needsWork": [
       "audio:unscored:r0",
-      "buildings:unscored:r0",
-      "props:unscored:r0",
-      "traffic:unscored:r0",
-      "tools:unscored:r0",
       "democity:unscored:r0",
       "services:unscored:r0",
       "infoviews:unscored:r0",
       "transit:unscored:r0",
+      "props:5:r1",
+      "traffic:5:r1",
+      "tools:5.5:r1",
       "terrain:6:r1",
       "roads:6:r1",
       "effects:6:r1",
+      "buildings:6:r1",
       "simulation:6.5:r1",
       "zoning:6.5:r1",
       "environment:7:r2",

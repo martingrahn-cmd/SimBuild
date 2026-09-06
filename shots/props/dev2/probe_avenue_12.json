@@ -1,0 +1,428 @@
+{
+ "apiKeys": [
+  "at",
+  "count",
+  "cropRects",
+  "debug",
+  "deserialize",
+  "lampsFor",
+  "place",
+  "rebuild",
+  "remove",
+  "serialize",
+  "setDensity",
+  "signalFor",
+  "signals",
+  "stats",
+  "stops"
+ ],
+ "missing": [],
+ "kinds": [
+  "streetlamp",
+  "trafficlight",
+  "tree_oak",
+  "tree_pine",
+  "bench",
+  "bin",
+  "hydrant",
+  "sign",
+  "bus_stop",
+  "fence",
+  "bush",
+  "planter"
+ ],
+ "stats": {
+  "items": 5963,
+  "byKind": {
+   "streetlamp": 90,
+   "trafficlight": 28,
+   "tree_oak": 3820,
+   "tree_pine": 1577,
+   "bench": 14,
+   "bin": 16,
+   "hydrant": 13,
+   "sign": 18,
+   "bus_stop": 4,
+   "fence": 285,
+   "bush": 88,
+   "planter": 10
+  },
+  "instances": 5397,
+  "draws": 21,
+  "tris": 109384,
+  "chunks": 7,
+  "species": [
+   "birch",
+   "oak",
+   "blossom",
+   "maple",
+   "poplar",
+   "willow",
+   "fir",
+   "spruce"
+  ],
+  "ms": 629.1,
+  "radii": {
+   "streetlamp": 0.25,
+   "trafficlight": 0.3,
+   "tree_oak": 0.6,
+   "tree_pine": 0.5,
+   "bench": 0.9,
+   "bin": 0.3,
+   "hydrant": 0.25,
+   "sign": 0.2,
+   "bus_stop": 2.2,
+   "fence": 0.2,
+   "bush": 0.7,
+   "planter": 0.6
+  }
+ },
+ "lodHistogram": {
+  "lod0": 25,
+  "lod1": 97,
+  "impostor": 586
+ },
+ "cropRects": {
+  "props.canopy_broad": [
+   210,
+   304,
+   85,
+   85
+  ],
+  "props.crown": [
+   1046,
+   126,
+   133,
+   133
+  ],
+  "props.pool": [
+   920,
+   521,
+   180,
+   180
+  ],
+  "props.lamp_head": [
+   957,
+   303,
+   32,
+   32
+  ]
+ },
+ "lights": 0,
+ "lightKinds": [],
+ "budget": {
+  "onDraws": 101,
+  "offDraws": 37,
+  "propsDraws": 64,
+  "onTris": 941462,
+  "offTris": 478408,
+  "propsTris": 463054
+ },
+ "itemCount": 5963,
+ "ground": {
+  "bad": 0,
+  "worst": 0,
+  "worstItem": null,
+  "pct": 100
+ },
+ "onAsphalt": 0,
+ "inWater": 0,
+ "overlaps": 0,
+ "overlapEx": [],
+ "lamps": {
+  "anchors": 82,
+  "matched": 82,
+  "edgesWithCountMismatch": 0,
+  "lampsWithin8mOfIntersection": 0
+ },
+ "trees": {
+  "n": 200,
+  "bySpecies": {
+   "oak": 53,
+   "blossom": 20,
+   "maple": 50,
+   "birch": 43,
+   "poplar": 22,
+   "willow": 5,
+   "fir": 1,
+   "spruce": 6
+  },
+  "scale": {
+   "min": 0.78,
+   "max": 1.32,
+   "mean": 1.042,
+   "std": 0.156
+  },
+  "headingMaxBucketPct": 11,
+  "dupTriples": 0
+ },
+ "forest": {
+  "n": 5240,
+  "sampled": 600,
+  "meanNN": 5.36,
+  "maxBinPct": 36.2,
+  "hist": [
+   0,
+   2,
+   2,
+   61,
+   196,
+   217,
+   86,
+   21,
+   3,
+   2,
+   1,
+   1,
+   2,
+   0,
+   1,
+   5
+  ]
+ },
+ "streetTrees": 157,
+ "signals": [
+  {
+   "nodeId": 4,
+   "x": -1,
+   "y": 15.44390904812612,
+   "z": 40,
+   "arms": 4,
+   "phase": 0,
+   "greenArms": [
+    12
+   ],
+   "cycle": 60,
+   "source": "props",
+   "armStates": [
+    {
+     "edgeId": 11,
+     "atA": false,
+     "state": "red",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 21,
+     "atA": false,
+     "state": "red",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 12,
+     "atA": true,
+     "state": "green",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 22,
+     "atA": true,
+     "state": "red",
+     "timeToChange": 26
+    }
+   ]
+  },
+  {
+   "nodeId": 5,
+   "x": 43,
+   "y": 15.763303940951829,
+   "z": 40,
+   "arms": 4,
+   "phase": 0,
+   "greenArms": [
+    13
+   ],
+   "cycle": 60,
+   "source": "props",
+   "armStates": [
+    {
+     "edgeId": 12,
+     "atA": false,
+     "state": "red",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 29,
+     "atA": false,
+     "state": "red",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 13,
+     "atA": true,
+     "state": "green",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 30,
+     "atA": true,
+     "state": "red",
+     "timeToChange": 26
+    }
+   ]
+  },
+  {
+   "nodeId": 6,
+   "x": 131,
+   "y": 18.491414858503582,
+   "z": 40,
+   "arms": 4,
+   "phase": 0,
+   "greenArms": [
+    14
+   ],
+   "cycle": 60,
+   "source": "props",
+   "armStates": [
+    {
+     "edgeId": 13,
+     "atA": false,
+     "state": "red",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 37,
+     "atA": false,
+     "state": "red",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 14,
+     "atA": true,
+     "state": "green",
+     "timeToChange": 26
+    },
+    {
+     "edgeId": 38,
+     "atA": true,
+     "state": "red",
+     "timeToChange": 26
+    }
+   ]
+  }
+ ],
+ "signalCount": 8,
+ "signalFor": {
+  "state": "red",
+  "timeToChange": 26,
+  "source": "props"
+ },
+ "phase": {
+  "at12": 0,
+  "at18": 0,
+  "back12": 0,
+  "halfCycle": 2
+ },
+ "handover": {
+  "source": "traffic",
+  "phase": 3,
+  "greenArms": [
+   11
+  ],
+  "armStates": [
+   {
+    "edgeId": 11,
+    "atA": false,
+    "state": "green",
+    "timeToChange": 60
+   },
+   {
+    "edgeId": 21,
+    "atA": false,
+    "state": "red",
+    "timeToChange": 60
+   }
+  ],
+  "drawsSame": true,
+  "trisSame": true
+ },
+ "handbackSource": "props",
+ "updateMs": {
+  "median": 0,
+  "max": 0.1
+ },
+ "rebuildMs": 632,
+ "idempotent": {
+  "items": true,
+  "instances": true,
+  "tris": true,
+  "chunks": true
+ },
+ "serialize": {
+  "version": 3,
+  "items": 5963,
+  "sample": {
+   "id": 1,
+   "kind": "trafficlight",
+   "x": -16,
+   "z": 46.48,
+   "heading": 1.5708,
+   "scale": 1,
+   "edgeId": 11
+  }
+ },
+ "place": {
+  "id": 5964,
+  "ms": 130.5,
+  "inItems": true,
+  "event": {
+   "added": [
+    5964
+   ],
+   "removed": []
+  }
+ },
+ "poolAxis": [
+  13.4,
+  13.4,
+  13.4,
+  13.4
+ ],
+ "stopsCount": 4,
+ "stats2": {
+  "items": 5963,
+  "byKind": {
+   "streetlamp": 90,
+   "trafficlight": 28,
+   "tree_oak": 3820,
+   "tree_pine": 1577,
+   "bench": 14,
+   "bin": 16,
+   "hydrant": 13,
+   "sign": 18,
+   "bus_stop": 4,
+   "fence": 285,
+   "bush": 88,
+   "planter": 10
+  },
+  "instances": 5397,
+  "draws": 18,
+  "tris": 84970,
+  "chunks": 7,
+  "species": [
+   "birch",
+   "oak",
+   "blossom",
+   "maple",
+   "poplar",
+   "willow",
+   "fir",
+   "spruce"
+  ],
+  "ms": 630.1,
+  "radii": {
+   "streetlamp": 0.25,
+   "trafficlight": 0.3,
+   "tree_oak": 0.6,
+   "tree_pine": 0.5,
+   "bench": 0.9,
+   "bin": 0.3,
+   "hydrant": 0.25,
+   "sign": 0.2,
+   "bus_stop": 2.2,
+   "fence": 0.2,
+   "bush": 0.7,
+   "planter": 0.6
+  }
+ },
+ "consoleErrors": []
+}

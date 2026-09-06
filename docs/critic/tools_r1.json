@@ -1,0 +1,170 @@
+{
+  "module": "tools",
+  "round": 1,
+  "score": 5.5,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 87,
+  "apiContractOk": false,
+  "acceptanceFailed": [
+    "1. The showcase district is built by the tools, not around them",
+    "2. Ghost ribbon conforms to terrain, never z-fights, never floats",
+    "3. All six posed tool states render simultaneously",
+    "4. Chips are legible and correctly placed",
+    "5. Chip content is right",
+    "6. Night reads without glowing",
+    "7. Snapping works and says so",
+    "8. Invalid states are unmistakable",
+    "9. Undo/redo is exact",
+    "10. Zone-brush preview matches the zoning overlay exactly",
+    "11. Bulldoze marks its victims, not the neighbourhood",
+    "12. Selection is a real contract",
+    "14. Nothing leaks into water reflections or shadows",
+    "15. The preview never survives its tool",
+    "16. Event hygiene",
+    "17. Terrain sculpt reads as a brush, not a stamp",
+    "18. Service placement validates against roads",
+    "19. Degrades cleanly where a neighbour offers no placement path",
+    "21. 1280x720 holds",
+    "22. Golden hour is not white-out"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "The ghost ribbon is glass, not paint (uFillA 0.16)",
+      "detail": "gizmos.js:21 sets the ribbon body alpha to 0.16, so the ghost is a wash rather than CS2's opaque near-white band. Measured on the full-resolution shots/tools/r1/aerial_12.png: inside the ribbon [872,688,48,28] luminance p50 = 150.2, saturation p50 = 0.154 at hue 146 degrees (green); the ground box the same size beside it [872,762,48,28] is p50 = 95.1. Ribbon-to-ground ratio = 1.58, against the >= 2.0 the spec asks for even at the low-contrast hour and the >= 2.5x criterion 6 asks for at night. The decisive number: the same ribbon samples (121,152,134) ~ luminance 144 over grass and (25,35,45) ~ luminance 34 where it crosses the avenue - a 4.2x swing driven entirely by what is underneath it, because grass, lane markings and crosswalk bars all read straight through. $REF/cs2_1.jpg is the opposite: one opaque white value over grass, over the roundabout island and over the carriageway alike. Raise the body to a near-opaque neutral white with linear output <= 0.70 (about 196-218/255 encoded, which keeps criterion 6's bloom ceiling), keep depthWrite:false and toneMapped:false, and demote the rim from 'the only thing carrying the shape' to a subtle brightening.",
+      "evidence": "shots/tools/r1/aerial_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "The staged district is empty - zero buildings - and it is not built by the tools",
+      "detail": "world.buildings.items.size = 0 (probe shots/tools/r1/apicheck.mjs). 'buildings' is not in dependencies, so src/core/showcase.js:22-30 never initialises it and showcase.js never calls spawnFreeLots/flush. shots/tools/r1/aerial_12.png and rdev1/skyline_12.png therefore read as a bare road grid on grass - a wireframe test bed, not a district - and bulldoze has no victims at all (criterion 11). Separately criterion 1's construction rule is broken at the root: showcase.js:37-38 builds every road with R.addNode / R.addEdge directly, which is exactly the grep the spec says must return nothing; zones go through zoning.bulk; terrain is never sculpted (world.terrain.getHeight(150,-120) = 2.3 m against the required >= 14 m knoll) and history() carries no 'terrain:' entries because it carries no entries at all. Add buildings, props, services and simulation to dependencies, drive the whole district through select/pointer/click/commit, and call spawnFreeLots(40) + flush() with the >= 30 assertion the spec asks for.",
+      "evidence": "shots/tools/r1/aerial_12.png"
+    },
+    {
+      "rank": 3,
+      "severity": "blocker",
+      "title": "Twelve of the twenty-four api functions do not exist; eight more return the wrong shape",
+      "detail": "Missing entirely: pointer, pointerNdc, click, rightClick, commit, costOf, setSelection, clearSelection, pickAt, setPreviewVisible, stats, _showcasePoses. Wrong return shape: select and current return a string instead of {tool,options}; setOption returns undefined; state() returns {tool,options,hover,selection,history,tool_state} with none of phase/points/cursor/valid/reason/cost/refund/affordable/snap/metrics; history() returns {undo:null,redo:null} instead of {undo:int,redo:int,entries:[]}; undo/redo return a label or null instead of a boolean; serialize returns {selection} without {options}. select('bogusname') returns 'select' and silently activates the select tool instead of returning null with a warning; 'transit' and 'infoview' are not accepted, stored or forwarded. This is not bookkeeping: without stats() there is no ghostLiftMin/Max, poses, chips, chipRects or ghostVerts, and without click()/commit() no undo, cost or validity item can be driven headlessly - which is why criteria 2, 3, 4, 6, 9, 15, 21 and 22 are recorded as failed rather than measured. Also budget is declared {drawCalls:12, triangles:90_000} against the required {20, 40_000}.",
+      "evidence": "shots/tools/r1/apicheck.mjs"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "Only four of six poses are staged, and three required camera presets do not exist",
+      "detail": "showcase.cameras declares tools / toolsclose / toolswide. The spec requires roadtool, zonetool, sculpt, bulldoze, service and invalid at the exact positions in section 8, and aerial must show all six at once. composite() (showcase.js:129-172) stages road ghost, zone brush, service ghost and the red invalid ghost only. There is no terrain-sculpt pose and no bulldoze pose anywhere, so the two tools with the most visible ground gizmos - the two concentric brush rings with the signed-delta chip, and the doomed-object red volumes - never appear in any frame of any run. api.stats().poses and api._showcasePoses do not exist either, so the probe half of criterion 3 cannot run.",
+      "evidence": "shots/tools/r1/aerial_12.png"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "Chips are DOM elements; they overlap each other and clip at the viewport edge",
+      "detail": "chips.js injects #sbt-style into <head> and #sbt-hud into <body>. Spec section 7 is explicit that tools creates no DOM and every readout is 3D geometry in ctx.group, so it survives with ui absent and is countable in renderer.info; document.body.children grew by one. Visible consequences: measured pill height is 23 px at 1280x720 against the required 24-28; in rdev1/skyline_6p5.png and skyline_22.png the chip reading 'angle 45 deg' is completely hidden behind 'avenue . 80 m' and 'length 11..' is cut in half by 'Cannot end in water'; in dev_closeup_17.5.png pills hang off both the left and the right viewport edges because the cull at chips.js:96 tests the anchor point rather than the pill box; and at skyline_12.png every chip vanishes (640 m cull) while at the same preset at 06.5 and 22 they do not. Move them to one InstancedMesh of quads with a 2x CanvasTexture atlas, size the quad so one texel is about 0.5 px at 1080p, cull by clip w > 0, cap at 12, and resolve overlaps along the anchor's screen normal.",
+      "evidence": "shots/tools/rdev1/skyline_6p5.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "The brush ring and the coverage circle are not on LAYERS.HELPERS, so they enter water reflections",
+      "detail": "ConformDisc (gizmos.js:294-300) sets renderOrder, castShadow and receiveShadow but never mesh.layers.set(LAYERS.HELPERS). A probe walking ctx.group found exactly two geometry-bearing meshes off layer 8 - the terrain/zone brush ring and the service coverage circle. The terrain planar-reflection camera disables exactly layer 8 and nothing else (src/modules/terrain/water.js:192), so both land in the water reflection. This is the same defect class as terrain_r1 blocker 1. Two lines: add layers.set(LAYERS.HELPERS) in the ConformDisc constructor, next to the castShadow line that is already there.",
+      "evidence": "shots/tools/r1/probe2.mjs"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "title": "cropRects returns the wrong landmarks and in practice returns nothing, so four pinned criteria cannot be measured",
+      "detail": "Spec section 2 and ARCHITECTURE section 8 require {ribbon, ground, wash} - a 64x64 box on the ghost ribbon, the same box one ribbon-width to the side, and a 32x32 box on the affected-area wash centroid. index.js:389-406 can only return {ghost, selection}. What screenshot.mjs --crops actually wrote: shots/tools/r1/closeup_12_720.crops.json = {\"tools.ghost\": [-312, 436, 1736, 158]} and nothing else. That is the bounding box of the whole preview path, not a landmark box - on a 1280x720 frame it is 1736 px wide starting at x = -312, so it hangs 312 px off the left edge and 456 px off the right, and its area is 30% of the frame. Unusable as a measurement rect. Criteria 4, 6, 21 and 22 all take their statistics inside tools.ribbon / tools.ground / tools.wash; with none of those there is no honest number for the night p50/p99, the ribbon-to-ground ratio, the golden-hour saturation, the wash hue or the 720p world-space width ratio, and this critic had to hand-place rects instead, which is precisely what --crops exists to prevent.",
+      "evidence": "shots/tools/r1/closeup_12_720.crops.json"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "title": "The overlay has no restraint: the ghost covers a third of the frame and the coverage ring covers a quarter",
+      "detail": "In rdev1/closeup_12.png, closeup_17p5.png and street_12.png the ghost plus its guide band occupy roughly 35-45% of the pixels; in every aerial frame the service coverage ring (a 150 m radius park) sweeps across the frame as a pale-cyan ellipse whose bounding box alone is about 25% of a 1920x1080 image, with no visual anchor to the tiny wireframe footprint it belongs to. $REF/cs2_1.jpg keeps the entire overlay to roughly 12% of the frame and never fights the city: no outlines on unaffected roads, no gizmos, nothing but the ribbon, the dashes, the discs, the blue wash on the affected roundabout and six small pills. Narrow the ghost to exactly world.roads.types[type].width, draw the coverage ring as a thin conformed annulus at the radius rather than a filled sweep, and add the missing element the reference does have - a saturated translucent blue wash with a brighter edge over the area the action will change.",
+      "evidence": "shots/tools/r1/aerial_12.png"
+    },
+    {
+      "rank": 9,
+      "severity": "major",
+      "title": "tool:preview is never emitted, and tool:changed is not de-duplicated",
+      "detail": "tool:preview appears exactly once in the module (tools.js:273) and fires only on commit, with points as [[x,z]] pairs plus an undocumented committed:true, instead of the ARCHITECTURE section 5 payload {kind, points:[{x,y,z}]}. A probe made 200 pointer moves and counted zero emissions. Meanwhile selectTool_ emits tool:changed unconditionally (index.js:240), so two identical select('road',{type:'street'}) calls emitted 2 - exactly the ping-pong the spec's known-failure list warns about and the reason the de-duplication rule exists. Emit tool:preview throttled to <= 20 Hz whenever the preview geometry changes, and compare tool plus deep-equal options before emitting tool:changed. setOption correctly emits exactly one, and selection:changed is correctly de-duplicated - keep both.",
+      "evidence": "shots/tools/r1/probe2.mjs"
+    },
+    {
+      "rank": 10,
+      "severity": "minor",
+      "title": "Costs are charged straight to world.economy.money, bypassing simulation",
+      "detail": "index.js:36-41 does e.money -= n on world.economy, which is simulation's world section (src/core/world.js:89). Spec section 7 routes every cost through ctx.modules.simulation.spend(a) and every refund through .earn(a), and when simulation is absent nothing is charged and affordable is true. As written tools writes another module's section on every commit and would double-count the moment simulation is in the same showcase; simulation is not even a declared dependency.",
+      "evidence": "src/modules/tools/index.js"
+    },
+    {
+      "rank": 11,
+      "severity": "minor",
+      "title": "Rule constants and the exact reason strings do not match the spec",
+      "detail": "Max grade 13% with no highway exception (spec 12% / 8% highway); min segment 12 m (spec 8 m); node snap radius 16 m (spec 12 m); angle snap engages within 8.25 degrees (spec 3.5); map bound +-1010 m (spec +-1024); no 'no water crossing unless elevation >= 4' rule; no 'no shared-node angle < 25 degrees' rule. Reason strings are wrong where the spec makes them exact: 'Needs road access' should be 'No road access'; 'Service placement unavailable' should be 'service placement unavailable'; 'Prop placement not available yet' should be 'props placement unavailable' - and both should be returned as {ok:false, reason} from commit(), not shown as a toast. The road price table is also 10x the spec's stated assumption (costs.js street 24/m = 2400 per 100 m against 240).",
+      "evidence": "src/modules/tools/tools.js"
+    },
+    {
+      "rank": 12,
+      "severity": "minor",
+      "title": "Bulldoze marquee marks nothing inside it; service footprint is a wireframe cage",
+      "detail": "bulldozeTool.draw (tools.js:876-899) draws a red rectangle outline for the marquee and a red cage only for the single hovered target; objects inside the marquee get no red translucent volume, and there is no '-N items' chip. serviceTool draws g.footprint as a bracket cage rather than the filled rectangle at the kind's true footprint size that criterion 18 asks for - visible in dev_tools_12.png as an empty wireframe box floating over the grass. Both are the parts of the overlay a player reads to know what an action will destroy or occupy.",
+      "evidence": "shots/tools/dev_tools_12.png"
+    },
+    {
+      "rank": 13,
+      "severity": "minor",
+      "title": "Ghost sampling and lift are outside the specified bands",
+      "detail": "sampleCurve(a, b, ctrl, step = 6) resamples the centreline every 6 m against the spec's <= 2 m, so a tight curve over rolling ground will cut corners; the ribbon lift is 0.24 m (gizmos.js:395) against the 0.10-0.20 m band. No z-fighting is visible at any camera and the material offsets are correctly more negative than roads' (-6/-12 against roads' -3/-6), so this is a tolerance miss rather than a rendering fault - but stats().ghostLiftMin/Max do not exist, so it cannot be verified the way criterion 2 asks.",
+      "evidence": "src/modules/tools/gizmos.js"
+    },
+    {
+      "rank": 14,
+      "severity": "minor",
+      "title": "Core request omits the binding HUD item",
+      "detail": "docs/core-requests/tools.md covers terrain.writeHeights, roads.splitEdge, props.place/remove and a services def table - all correct and well argued. It omits the one item spec section 2 makes mandatory: dropping the .api? indirection at src/modules/ui/hud.js:458, :518 and :531, which is still present in the tree. Until it is filed and fixed the HUD cannot reach this module at all, and the HUD half of criterion 16 stays unobservable.",
+      "evidence": "docs/core-requests/tools.md"
+    }
+  ],
+  "strengths": [
+    "The chips are the closest thing in the build to the reference: dark rounded pills, white 600-weight text, a leading stroke glyph, a green money glyph on the cost pill and a red-tinted pill for the reason. Keep the visual design exactly as it is when they move off DOM.",
+    "The alignment guide - a white dashed centre stripe continuing past the cursor across open ground (tools.js:385) - reads correctly against cs2_1.jpg for dash rhythm and width.",
+    "The zone brush: cells on the true 8 m grid, in the zone colour at 0.42 alpha, inside a dashed ring, filtered through zonableAt so nothing lights outside the buildable band.",
+    "The invalid state is honest: findRejected searches the real map for a real segment that the real evaluator rejects, and the chip prints the real reason string. No faked red.",
+    "Snapping is genuinely implemented - node, edge with a real T-junction split via removeEdge plus two addEdges, 15 degree angle steps including angles relative to roads already at the anchor, and an 8 m grid.",
+    "Undo has real inverse operations for roads, zone strokes, terrain strokes, services and demolitions, and the terrain path uses exactly the sanctioned heights write-back plus modify(strength:0) refresh.",
+    "Cost discipline is excellent: 6 draw calls and 3576 triangles for the whole tools group with four poses live, zero geometry allocations across 200 pointer drags, moduleMs 0.3, initMs 4.",
+    "Zero console errors and status ready in every frame and every probe, and the district is byte-identical between runs at seed 1337."
+  ],
+  "summary": "The tool overlay has real craft in its chips, its guide dashes and its zone brush, and its cost discipline is exemplary (6 draw calls, 3576 triangles, zero per-frame allocation, no console errors). But the ghost ribbon is a 16% alpha glass wash rather than CS2's opaque paint band - measured 1.58x the ground's luminance where the spec wants 2.0-2.5x, and swinging 4.2x in brightness depending on whether it lies over grass or asphalt - the overlay covers a third of the frame where the reference covers a tenth, the staged district is a bare road grid with zero buildings built by direct world.roads calls rather than by the tools, only four of the six required poses exist and three of the six required camera presets do not, and the published api is missing twelve of twenty-four contract functions including stats(), commit(), pointer() and a cropRects() that returns {} - which leaves four pinned acceptance criteria unmeasurable by the mechanism the spec pins them to. Two meshes also miss LAYERS.HELPERS and will show up in water reflections.",
+  "shots": [
+    "shots/tools/r1/aerial_12.png",
+    "shots/tools/r1/closeup_12.png",
+    "shots/tools/r1/closeup_12_720.png",
+    "shots/tools/r1/closeup_12_720.crops.json",
+    "shots/tools/r1/closeup_12.crops.json",
+    "shots/tools/r1/apicheck.mjs",
+    "shots/tools/r1/probe2.mjs",
+    "shots/tools/rdev1/aerial_6p5.png",
+    "shots/tools/rdev1/aerial_12.png",
+    "shots/tools/rdev1/aerial_17p5.png",
+    "shots/tools/rdev1/aerial_22.png",
+    "shots/tools/rdev1/street_6p5.png",
+    "shots/tools/rdev1/street_12.png",
+    "shots/tools/rdev1/street_17p5.png",
+    "shots/tools/rdev1/street_22.png",
+    "shots/tools/rdev1/closeup_6p5.png",
+    "shots/tools/rdev1/closeup_12.png",
+    "shots/tools/rdev1/closeup_17p5.png",
+    "shots/tools/rdev1/closeup_22.png",
+    "shots/tools/rdev1/skyline_6p5.png",
+    "shots/tools/rdev1/skyline_12.png",
+    "shots/tools/rdev1/skyline_17p5.png",
+    "shots/tools/rdev1/skyline_22.png",
+    "shots/tools/dev_tools_12.png",
+    "shots/tools/dev_tools_17.5.png",
+    "shots/tools/dev_closeup_17.5.png"
+  ]
+}

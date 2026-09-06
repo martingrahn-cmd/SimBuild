@@ -1,0 +1,173 @@
+{
+  "module": "traffic",
+  "round": 1,
+  "score": 5.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 87,
+  "apiContractOk": false,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "Nothing casts a shadow at any hour, and the contact decal is hidden under the car",
+      "detail": "SHADOW_CASTING is initialised false (sim.js:16) and all 26 InstancedMeshes are built with castShadow = SHADOW_CASTING (sim.js:79), so no vehicle or pedestrian darkens the road at noon, golden hour or night. Item 10 requires castShadow = true and receiveShadow = true on every mesh. The substitute contact decal is real (near-black, alpha to ~0.75) but sits at the vehicle's own transform slid only uSun = (0.6,0,0.6) m, so the body occludes it: measured at the isolated van in closeup_12, lit asphalt mean luma 72.8, tyre-contact line 64.0 = 12% below, where item 10 requires 15-35% below; the pedestrian decal in the same frame reaches 24% below because nothing covers it. Turn real CSM casting on and throw the decal along the sun vector by a distance derived from sun elevation so a wedge is visible beside the car.",
+      "evidence": "shots/traffic/r1/closeup_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "Nine api functions do not exist and five more return the wrong shape",
+      "detail": "signalState, vehicle, setDensity, density, forceLod, step, freeze, debug and cropRects are all undefined; world.traffic.kinds is absent (kinds() is a function instead). flowGrid, outsideConnections, signals, stats and serialize return non-contract shapes; spawnVehicle returns null instead of an id or -1. This removes the instruments the rest of the checklist is written against: without debug.setVisible there is no fleet/shadow/pool mask (items 7, 10, 11, 12), without cropRects window.__sim.cropRects() returns {} and no .crops.json is ever written (items 7, 11), without freeze+step there is no repeatable state (items 12, 21). Implement section 2's api block verbatim including stats()'s full shape with byKindTris, byLod, draws, tris, queued and emissive.",
+      "evidence": "shots/traffic/r1/apicheck.mjs"
+    },
+    {
+      "rank": 3,
+      "severity": "blocker",
+      "title": "The showcase stages roads' network by importing ../roads/showcase.js",
+      "detail": "src/modules/traffic/showcase.js:4 imports stage from '../roads/showcase.js', which section 8 forbids outright, and stages roads' demo grid. None of section 8's network exists: no avenue x street crossroads at (40,40) split at x = -200..200, no 8-segment one-way ring at (-200,-40) with four named radials, no dual-carriageway highway from (-1000,340) to (1000,140) with a tangential ramp, no alley at x=160, no fleet line-up at (-260,40). Declared cameras are junction/highway_night/boulevard/circle; section 8 requires junction/queue/merge/roundabout/crossing/headlights/fleet, so queue_12, queue_17p5, merge_12, crossing_6p5, crossing_12, fleet_12, headlights_22 and roundabout_12 - the frames items 1, 2, 3, 5, 6, 7 and 9 are graded in - cannot be taken at all. Stage the network through the public addNode/addEdge API, call ctx.modules.roads.rebuild() before reading the graph back, then seed the fleet to target synchronously.",
+      "evidence": "src/modules/traffic/showcase.js"
+    },
+    {
+      "rank": 4,
+      "severity": "blocker",
+      "title": "Published world.traffic records break the section 2 field contract in four ways",
+      "detail": "v.y is the raw laneCenter().y with the 0.08 m ROAD_LIFT omitted - median error -0.003 m against a required +0.08, so 0/153 vehicles pass item 1 (worst 11.82 m); the render matrix does add +0.085 (sim.js:618) so it looks right and reads wrong. v.t = v.s / rec.len is measured along the direction of travel, not a->b (graph.js:177), so for every b->a vehicle world.roads.sample(edgeId, t) returns the mirrored point - 46% of the fleet lands >0.8 m from its lane centre in item 4's probe (53.6% within 0.35 m, 53.6% within 0.8 m, 89.5% heading). There is no v.speed at all (the field is v.v), which ui/hud.js:796 reads. lightsOn is a 0..1 number, not a boolean. Pedestrians carry {rec, side, dir, s, v, phase, ...} with no kind, edgeId, t or state, and phase runs 68.1-102.6 instead of [0,1).",
+      "evidence": "shots/traffic/r1/apicheck.mjs"
+    },
+    {
+      "rank": 5,
+      "severity": "blocker",
+      "title": "The cars are smooth 1950s toys, not CS2 vehicles",
+      "detail": "The lofted superellipse bodies have real curvature and that should be kept, but item 2's checklist is unmet: no number plate, no grille, no mirrors, no door shut-lines, no separate bumper, no headlamp housing; the glasshouse is one smoked band with two painted pillar strips rather than windscreen/side/rear panes with body pillars between them; wheels are pale grey blobs half-swallowed by faired-in arches with no dark tyre / lighter hub split and no tyre reaching the ground. Silhouettes are fastbacks with covered rear wheels - a 1948 saloon, not a 2023 hatchback - and van, pickup and box_truck all share the same fastback nose with a box grafted on, so item 3's 'name all nine from silhouette alone' fails before the count. Compare $REF/cs2_5.jpg at the same zoom: clearcoat shoulder highlight, near-black glasshouse with visible pillars, dark tyre with a lighter hub, red lamp cluster, pale plate.",
+      "evidence": "shots/traffic/r1/closeup_12.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "Only 7 of 28 eligible junctions are signalised, the phase integrates dt, and no signal head is ever drawn",
+      "detail": "signals() reports 7 where roads.intersections() offers 28 nodes with arms >= 3 and roundabout === false. The phase advances by s.t += dt (graph.js:158), so it is not the pure function of world.time.day/hour on a 4320 game-second cycle section 2 requires - every re-shoot lands on a different phase and no junction pixel diff is repeatable. signalState(nodeId) does not exist at all (lightState is in its place). Item 22's fallback masts are absent, so under ?showcase=traffic - where props is not loaded - every junction shot shows a queue stopped at nothing. Add the mast (5.2-6.0 m pole, three-lens head, emissive 6.5-9.0) gated on typeof ctx.modules.props?.signalFor !== 'function', signalise every eligible node, and derive the phase from world.time.",
+      "evidence": "shots/traffic/r1/junction_22_720.png"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "title": "Density does not follow the hour: 163 vehicles at every graded time",
+      "detail": "stats().vehicles is 163 / 162 / 163 / 163 at hours 6.5 / 12 / 17.5 / 22, and byKind is identical at all four. Item 8 requires 60-110 / 130-190 / >=200 / 30-65 with v(22) <= 0.35 x v(17.5); the measured ratio is 1.00. targets() does scale with an activity curve but nothing shrinks the live fleet toward the target - vehicles only leave at the end of a route - so after setTime() the count never moves. Despawn the surplus off-screen or at an outside connection, and seed to the pinned hour's target synchronously in showcase.setup so a capture taken 2-3 s after ready is already at target. Class mix must also shift (box_truck+semi >= 18% at 6.5, <= 10% at 17.5).",
+      "evidence": "shots/traffic/r1/apicheck.mjs"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "title": "No LOD and no distance culling anywhere in the module",
+      "detail": "There is no LOD system and no cull distance; frustumCulled = false is set on every mesh and every live instance is submitted at full detail at any range (grep for lod/LOD/cull in src/modules/traffic/ returns only a comment). Item 12 requires three vehicle LODs (LOD0 <= 90 m, LOD1 90-260, LOD2 260-1200, cull > 1200) and two pedestrian LODs (<= 60, 60-160, cull > 220), with LOD1 <= 0.35 x LOD0 triangles and LOD2 <= 45. forceLod is missing so LOD parity cannot be proven either. This is also the direct cause of the frame-time overrun: 163 vehicles x ~1200 triangles are transformed and drawn whether they are 20 m or 900 m from the camera.",
+      "evidence": "shots/traffic/r1/skyline_12.png"
+    },
+    {
+      "rank": 9,
+      "severity": "major",
+      "title": "Night lamp radiances are all below their bands and there is no tail or brake pool",
+      "detail": "Read from the fragment shader (materials.js VEH_COLOR): head = 1.0 x lightsOn x 2.3 -> 2.3 against band 3.0-5.0; tail = 1.0 x (lightsOn x 0.70 + brake x 2.0) -> 0.70 steady against band 1.2-2.0 and 2.7 braking against band 3.5-5.0. All three sit under the headroom item 7 sizes them against the 0.79 bloom threshold, so the lamps read as flat dots rather than haloed lenses. The ground rig contains only forward LAMP.CONE quads, so the 6-8 m red pool behind a car in $REF/cs2_8.jpg does not exist here at all, and the head cone is a 16 m hard-edged trapezoid rather than a pool peaking at <= 0.55 of the lens luminance and falling to 0 at its far edge. Publish stats().emissive so these are readable from a probe.",
+      "evidence": "shots/traffic/r1/street_22.png"
+    },
+    {
+      "rank": 10,
+      "severity": "major",
+      "title": "Over the per-frame budget, and the declared budget and dependencies are the wrong ones",
+      "detail": "moduleMs.traffic measures 4.7 ms at junction_12_720 and 5.3 ms at aerial_12 against item 16's <= 1.6 ms, and against ARCHITECTURE section 9's <= 2 ms for any single module. index.js:72-73 still declares dependencies: ['roads'] and budget: {drawCalls: 170, triangles: 1_600_000}; section 5 requires ['terrain','roads','simulation'] and exactly {drawCalls: 60, triangles: 300_000}. There is no stats().stepMs to attribute the cost to the fixed step. Traffic's own draw calls (18 day / 26 night) are comfortably inside 45, so the cost is CPU in update(), not submission - LOD (issue 8) and a proper fixed step will both help.",
+      "evidence": "shots/traffic/r1/aerial_12.json"
+    },
+    {
+      "rank": 11,
+      "severity": "major",
+      "title": "Metallic paint, metallic glass, and environment.setupMaterial is never called",
+      "detail": "Body paint is metalness 0.62 where item 11 allows <= 0.15 with a clearcoat-like specular tint, and glass is metalness 0.80 where it must be 0 (materials.js:44-47, 54-56). That is why bodies read as painted resin under a broad specular rather than as clearcoated paint with an elongated shoulder highlight along the roof edge, as in $REF/cs2_5.jpg. Roughness values are fine (paint 0.30, glass 0.06, tyre 0.88, rim 0.26). Separately, ctx.modules.environment.setupMaterial is never called for any of the three custom materials - grep for setupMaterial in src/modules/traffic/ is empty - so the additive light rig and the contact decal get neither CSM nor fog, which is exactly the unfogged-vehicle-at-600 m failure item 11 closes with.",
+      "evidence": "src/modules/traffic/materials.js"
+    },
+    {
+      "rank": 12,
+      "severity": "major",
+      "title": "Agent motion is still scaled by the clock speed",
+      "detail": "index.js:98-99 is the line the spec preamble names and forbids: const speed = w.time.paused ? (ctx.headless ? 1 : 0) : Math.max(0.5, Math.min(3, w.time.speed)); const sdt = Math.min(0.1, dt) * speed. The 0.5 floor keeps the fleet alive in a speed=0 capture (17 of 25 sampled vehicles moved in 1.5 s, which is why the queues in the shots look right), but item 13 requires the fixed agent step to accumulate from the raw dt handed to update() so motion is identical at any frame rate and any clock speed. As written, agents run at half speed at speed=0 and 3x at speed=3. There is also no render-time interpolation and no stepMs counter.",
+      "evidence": "src/modules/traffic/index.js"
+    },
+    {
+      "rank": 13,
+      "severity": "minor",
+      "title": "The roundabout carries a single vehicle",
+      "detail": "circle_12_720.png shows one car on the entire ring. Item 6's yield probe needs >= 3 yield events on two fed radials over 20 s with zero ring/entry pairs closer than item 5's gap, and $REF/cs2_1.jpg shows singles circulating plus a box truck and an articulated semi holding a lane. There is nothing here to grade. Weight the ring and its radials in the spawn and routing distribution - section 8 stages the south radial from the avenue and the east radial from the z=-40 street specifically to feed it.",
+      "evidence": "shots/traffic/r1/circle_12_720.png"
+    },
+    {
+      "rank": 14,
+      "severity": "minor",
+      "title": "Outside connections are not at the map border and spawnVehicle returns null",
+      "detail": "outsideConnections() returns three entries at (-330, 40), (-640, 360) and (620, -150); item 15 requires nodes within 60 m of the map border (|x| >= 964 or |z| >= 964), so 0 of 3 qualify. The shape is {nodeId,x,z,highway} rather than {nodeId,edgeId,x,z,type,heading}. spawnVehicle('bus',[edgeId]) returned null rather than a valid id or -1, and only accepts the legacy [{edgeId,dir}] route form, not [edgeId,...] or {edges,loop}. Most of the placement half resolves itself once section 8's network is staged - its two highway ends, the roundabout's west radial and the north avenue all reach the border.",
+      "evidence": "shots/traffic/r1/apicheck.mjs"
+    },
+    {
+      "rank": 15,
+      "severity": "minor",
+      "title": "Lamp glow quads inflate up to 2.4x with camera distance",
+      "detail": "materials.js:160-162 scales the glow cross-quads by clamp(dist/115.0, 1.0, 2.4) so headlights stay visible from the aerial camera. Item 7 requires that no lamp lens be larger on screen than the signal head next to it; an artificial minimum apparent size makes that impossible to hold and makes the aerial night frame read as floating lozenges. Solve far-field visibility with radiance and the bloom threshold instead of geometry, and let LOD2 collapse the lamp to a fixed small quad.",
+      "evidence": "shots/traffic/r1/aerial_22.png"
+    },
+    {
+      "rank": 16,
+      "severity": "minor",
+      "title": "The street preset barely has pedestrians in it",
+      "detail": "street_12.png, street_12_720.png and street_22.png each show at most one pedestrian, all of them far from the camera. Item 14 requires at least one vehicle and two pedestrians in frame at the core street preset (target [40,0,40]) and at night_street ([-40,0,60]), and $REF/cs2_4.jpg makes the sidewalk the alive part of the frame - a yellow-jacketed figure walking, another crossing the zebra, two more mid-block. This is downstream of issue 3: section 8 pins the street preset onto a crossroads with crosswalks and requires the showcase network to guarantee the framing.",
+      "evidence": "shots/traffic/r1/street_12.png"
+    }
+  ],
+  "acceptanceFailed": [
+    "1. Wheels on the road, nothing floating, nothing sunk",
+    "2. Vehicles read as vehicles at close range",
+    "3. Fleet variety",
+    "4. Lane discipline, correct side, correct direction",
+    "5. Car-following: no interpenetration, real queues",
+    "6. Traffic-light compliance and intersection behaviour",
+    "7. Night is headlights, taillights and pools - not glowing toys",
+    "8. Density follows the hour, not a constant",
+    "9. Pedestrians on the sidewalk",
+    "10. Shadows and contact",
+    "11. Materials: paint, not plastic; no sparkle; no clipping",
+    "12. LOD, culling, and no pile at the origin",
+    "13. Motion is continuous",
+    "14. Reads correctly at every zoom",
+    "15. Outside connections (ARCHITECTURE section 15)",
+    "16. Budget - traffic is graded on what traffic owns",
+    "18. API contract",
+    "19. stats is live and honest",
+    "21. Determinism, graded from a pinned state",
+    "22. Fallback signal masts, only where props is not live"
+  ],
+  "strengths": [
+    "The driving behaviour is the best thing here and should survive the rewrite: IDM car-following with a per-vehicle desired speed, first-come junction reservation, a keep-clear rule that refuses to enter a node it cannot clear, and spill-back queueing produce queues that genuinely resemble $REF/cs2_1.jpg - 0 negative gaps in 91 same-lane pairs, evenly spaced, on the correct side, crossing arm moving while the stopped arm waits.",
+    "Zero console errors across 14 shots, modules.traffic.status === 'ready' everywhere, whole-frame draw calls 64-87 against a 200 ceiling and traffic's own 18-26 against 45. No Math.random. Blast radius clean - only src/modules/traffic/ is touched.",
+    "roads:changed is handled correctly: world.roads.removeEdge on an edge carrying 26 vehicles left zero dangling references after one frame and after 1.5 s, with no error. Item 20 passes outright.",
+    "No pile at the world origin - InstancedMesh.count is set to the live number, so aerial_12 and skyline_12 are clean and there is no metallic blob at (0,0).",
+    "lightsOn reads the sun rather than the clock: 0 of 163 vehicles lit at hours 6.5, 12 and 17.5, 163 of 163 at hour 22.",
+    "Vehicle bodies keep their chroma at night - the red and blue cars in closeup_22 measure a mean chroma of 35.2 against a whole-frame mean of 19.0, so they are lit by the scene rather than silhouetted. That is the hardest half of item 7 and it already works.",
+    "One shared InstancedMesh per class with a per-vertex material id (paint/glass/tyre/rim/lens/trim) and wheels spun in the vertex shader is the right architecture for the budget - keep it and add LOD on top rather than starting over.",
+    "Frames are tonally sound: closeup_12 p1 53.7 / p99 169.4 with 0% white clipping, closeup_22 p1 26.4 / p99 132.1 with 0.013% clipped. No crush, no blow-out, no z-fighting, no sparkle at any camera or time."
+  ],
+  "summary": "Score 5.0, fail. The module on disk is the pre-spec exploratory build, not a build against the spec: no vehicle or pedestrian casts a shadow at any hour (castShadow=false on all 26 meshes; contact darkening measures 12% where 15-35% is required), nine of seventeen api functions do not exist and world.traffic.kinds is absent, the showcase imports and stages roads' network from ../roads/showcase.js so none of section 8's network or its seven camera presets exist, and the published vehicle and pedestrian records break the section 2 contract (v.y omits the 0.08 m road lift so 0/153 pass item 1; v.t is travel-direction so 46% of the fleet fails the lane check; pedestrians carry no edgeId, t or state). Density is flat at 163 vehicles across all four graded hours, only 7 of 28 eligible junctions are signalised and the phase integrates dt, there is no LOD or culling, and moduleMs peaks at 5.3 ms against a 1.6 ms budget. Twenty of twenty-two acceptance items fail. What does work - IDM car-following with real queues on the correct side, correct roads:changed handling, no origin pile, correct day/night lightsOn, coloured bodies at night, and one InstancedMesh per class - is worth preserving through the rewrite.",
+  "shots": [
+    "shots/traffic/r1/aerial_12.png",
+    "shots/traffic/r1/aerial_22.png",
+    "shots/traffic/r1/street_12.png",
+    "shots/traffic/r1/street_22.png",
+    "shots/traffic/r1/skyline_12.png",
+    "shots/traffic/r1/skyline_22.png",
+    "shots/traffic/r1/closeup_12.png",
+    "shots/traffic/r1/closeup_22.png",
+    "shots/traffic/r1/junction_12_720.png",
+    "shots/traffic/r1/junction_22_720.png",
+    "shots/traffic/r1/highway_night_22_720.png",
+    "shots/traffic/r1/boulevard_12_720.png",
+    "shots/traffic/r1/circle_12_720.png",
+    "shots/traffic/r1/street_12_720.png",
+    "shots/traffic/r1/street720_12.png"
+  ]
+}

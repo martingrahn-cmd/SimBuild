@@ -1,0 +1,15 @@
+{
+  "png": "shots/tools/r1/closeup_22_720.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "closeup",
+  "time": 22,
+  "rects": {
+    "tools.ghost": [
+      -312,
+      436,
+      1736,
+      158
+    ]
+  }
+}

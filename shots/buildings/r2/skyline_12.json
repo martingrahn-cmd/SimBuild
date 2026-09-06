@@ -1,0 +1,89 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=buildings&time=12&camera=skyline&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "buildings",
+  "time": 12,
+  "camera": "skyline",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 191601,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 12295.3,
+  "drawCalls": 228,
+  "triangles": 1119144,
+  "programs": 25,
+  "textures": 45,
+  "geometries": 87,
+  "heapMB": 187.9,
+  "moduleMs": {
+    "environment": 0.4000000059604645,
+    "buildings": 0.09999999403953552,
+    "terrain": 0.09999999403953552,
+    "roads": 0,
+    "zoning": 0
+  },
+  "hour": 12,
+  "cameraState": {
+    "position": [
+      718.4,
+      183.4,
+      -522.9
+    ],
+    "target": [
+      0,
+      40,
+      0
+    ],
+    "distance": 900
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.4,
+      "initMs": 265
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 78
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 4785
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 49
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 3
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "requestfailed: http://127.0.0.1:5173/assets/aerial_beach_01/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/rock_face/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/rock_face/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/gravel_floor_02/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/aerial_beach_01/arm.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/gravel_floor_02/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/gravel_floor_02/diff.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/rock_face/nor.jpg net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:5173/assets/aerial_beach_01/nor.jpg net::ERR_ABORTED"
+  ],
+  "png": "shots/buildings/r2/skyline_12.png"
+}

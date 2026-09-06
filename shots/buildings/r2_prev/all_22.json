@@ -1,0 +1,156 @@
+{
+  "url": "http://127.0.0.1:5173/?showcase=all&time=22&camera=street&seed=1337&quality=high&headless=1&speed=0",
+  "showcase": "all",
+  "time": 22,
+  "camera": "street",
+  "seed": 1337,
+  "width": 1920,
+  "height": 1080,
+  "quality": "high",
+  "gpu": "swiftshader",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 80809,
+  "fps": 10,
+  "measuredFrames": 3,
+  "frameMs": 5425.7,
+  "drawCalls": 38,
+  "triangles": 998686,
+  "programs": 41,
+  "textures": 55,
+  "geometries": 62,
+  "heapMB": 79.3,
+  "moduleMs": {
+    "terrain": 0.10000000894069672,
+    "environment": 0.29999999701976776,
+    "roads": 0,
+    "zoning": 0.09999999403953552,
+    "buildings": 0,
+    "props": 0,
+    "traffic": 0,
+    "effects": 0.09999999403953552,
+    "simulation": 0,
+    "tools": 0,
+    "ui": 7,
+    "audio": 0.20000000298023224,
+    "services": 0,
+    "infoviews": 0,
+    "transit": 0,
+    "democity": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      86.2,
+      26.4,
+      76.7
+    ],
+    "target": [
+      40,
+      0,
+      40
+    ],
+    "distance": 60
+  },
+  "modules": {
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 4744
+    },
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 116
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 64
+    },
+    "zoning": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 4
+    },
+    "buildings": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 78
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 403
+    },
+    "traffic": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 45
+    },
+    "effects": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.1,
+      "initMs": 5
+    },
+    "simulation": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 3
+    },
+    "tools": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 3
+    },
+    "ui": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 7,
+      "initMs": 8
+    },
+    "audio": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.2,
+      "initMs": 832
+    },
+    "services": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "infoviews": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "transit": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    },
+    "democity": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 0
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "png": "shots/buildings/r2/all_22.png"
+}

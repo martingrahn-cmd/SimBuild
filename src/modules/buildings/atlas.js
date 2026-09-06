@@ -345,13 +345,13 @@ export function drawBay(t, def, x0, w0, y0, h0, variant) {
   t.gradA(wx, wy, ww, wh, [[0, g0], [0.42, mixHex(g0, g1, 0.75)], [0.55, shade(g1, 1.25)], [1, g1]]);
   // sky sliver + a soft diagonal reflection streak (shifted per bay variant)
   A.save();
-  A.globalAlpha = 0.26 + variant * 0.07; A.globalCompositeOperation = 'screen';
+  A.globalAlpha = 0.36 + variant * 0.07; A.globalCompositeOperation = 'screen';
   A.fillStyle = '#7d93ad';
   A.beginPath();
   A.moveTo(wx, wy + wh * (0.4 + variant * 0.22)); A.lineTo(wx + ww * (0.4 + variant * 0.3), wy); A.lineTo(wx + ww, wy); A.lineTo(wx, wy + wh);
   A.closePath(); A.fill();
   A.restore();
-  t.o(wx, wy, ww, wh, def.glassRough ?? 0.09, def.glassMetal ?? 0.72);
+  t.o(wx, wy, ww, wh, def.glassRough ?? 0.34, def.glassMetal ?? 0.12);
   t.n(wx, wy, ww, wh, 0, 0);
   t.eRoom(wx, wy, ww, wh, 1, 0.3);
 
@@ -389,7 +389,7 @@ export function drawBay(t, def, x0, w0, y0, h0, variant) {
   A.fillRect(wx - fw, wy - fw, fw, wh + fw * 2);
   A.fillRect(wx + ww, wy - fw, fw, wh + fw * 2);
   t.o(wx - fw, wy - fw, ww + fw * 2, wh + fw * 2, 0.42, def.frameMetal ?? 0.15);
-  t.o(wx, wy, ww, wh, def.glassRough ?? 0.09, def.glassMetal ?? 0.72);
+  t.o(wx, wy, ww, wh, def.glassRough ?? 0.34, def.glassMetal ?? 0.12);
   t.e(wx - fw, wy - fw, ww + fw * 2, fw, 0);
   t.e(wx - fw, wy + wh, ww + fw * 2, fw, 0);
   t.e(wx - fw, wy - fw, fw, wh + fw * 2, 0);
@@ -428,7 +428,7 @@ export function drawCurtainBay(t, def, x0, w0, y0, h0, variant) {
   // spandrel (opaque panel in front of the floor slab)
   t.a(x0, y0, w0, h0 * spand, def.spandrelColor || shade(def.glass[1], 0.75));
   t.gradA(x0, y0, w0, h0 * spand, [[0, shade(def.spandrelColor || def.glass[1], 0.62)], [1, shade(def.spandrelColor || def.glass[1], 0.95)]]);
-  t.o(x0, y0, w0, h0 * spand, 0.32, 0.25);
+  t.o(x0, y0, w0, h0 * spand, 0.46, 0.12);
   t.e(x0, y0, w0, h0 * spand, 0);
   // glass — the vertical gradient stays shallow and the reflection wedge shifts per bay so a
   // repeated tile does not read as herringbone across a whole curtain wall
@@ -439,7 +439,7 @@ export function drawCurtainBay(t, def, x0, w0, y0, h0, variant) {
   const kk = 0.45 + variant * 0.5;
   A.beginPath(); A.moveTo(x0, gy + gh * (0.4 + variant * 0.25)); A.lineTo(x0 + w0 * kk, gy); A.lineTo(x0 + w0, gy); A.lineTo(x0, gy + gh);
   A.closePath(); A.fill(); A.restore();
-  t.o(x0, gy, w0, gh, def.glassRough ?? 0.06, def.glassMetal ?? 0.85);
+  t.o(x0, gy, w0, gh, def.glassRough ?? 0.33, def.glassMetal ?? 0.12);
   t.eRoom(x0, gy, w0, gh, 1, 0.26);
   if (variant === 1) {
     A.save(); A.globalAlpha = 0.55; A.fillStyle = '#b9b3a4'; A.fillRect(x0 + mw, gy, w0 - mw * 2, gh * t.rnd(0.2, 0.45)); A.restore();
@@ -447,7 +447,7 @@ export function drawCurtainBay(t, def, x0, w0, y0, h0, variant) {
   // mullions
   const bar = (x, y, w, h, vertical) => {
     t.a(x, y, w, h, mull);
-    t.o(x, y, w, h, 0.35, 0.55);
+    t.o(x, y, w, h, 0.42, 0.55);
     t.e(x, y, w, h, 0);
     if (vertical) { t.n(x, y, w * 0.5, h, -0.4, 0); t.n(x + w * 0.5, y, w * 0.5, h, 0.4, 0); }
     else { t.n(x, y, w, h * 0.5, 0, 0.4); t.n(x, y + h * 0.5, w, h * 0.5, 0, -0.4); }
@@ -512,10 +512,10 @@ export function drawShopfront(t, def, x0, w0, y0, h0, variant) {
     A.fillRect(x0 + w0 * (0.08 + i * 0.17), gy + gh * t.rnd(0.4, 0.66), w0 * 0.11, gh * 0.3);
   }
   A.restore();
-  t.o(x0 + w0 * 0.03, gy, w0 * 0.94, gh, 0.08, 0.6);
+  t.o(x0 + w0 * 0.03, gy, w0 * 0.94, gh, 0.34, 0.14);
   t.eRoom(x0 + w0 * 0.03, gy, w0 * 0.94, gh, 0.72, 0.4);
   // mullions + door
-  const bar = (x, y, w, h) => { t.a(x, y, w, h, def.frame); t.o(x, y, w, h, 0.4, 0.3); t.e(x, y, w, h, 0); };
+  const bar = (x, y, w, h) => { t.a(x, y, w, h, def.frame); t.o(x, y, w, h, 0.42, 0.3); t.e(x, y, w, h, 0); };
   bar(x0, gy, w0 * 0.03, gh + bulk); bar(x0 + w0 * 0.97, gy, w0 * 0.03, gh + bulk);
   bar(x0 + w0 * 0.48, gy, w0 * 0.035, gh);
   bar(x0, gy, w0, h0 * 0.018);

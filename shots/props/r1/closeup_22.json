@@ -9,7 +9,8 @@
   "quality": "high",
   "gpu": "swiftshader",
   "ok": false,
-  "error": "page.waitForFunction: Timeout 240000ms exceeded.",
+  "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
   "errors": [],
-  "warnings": []
+  "warnings": [],
+  "png": "shots/props/r1/closeup_22.png"
 }

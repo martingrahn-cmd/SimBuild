@@ -8,8 +8,67 @@
   "height": 1080,
   "quality": "high",
   "gpu": "swiftshader",
-  "ok": false,
-  "error": "page.waitForFunction: Timeout 240000ms exceeded.",
+  "ok": true,
+  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "elapsedMs": 169355,
+  "fps": 11.6,
+  "measuredFrames": 2,
+  "frameMs": 9074.5,
+  "drawCalls": 103,
+  "triangles": 1787861,
+  "programs": 56,
+  "textures": 50,
+  "geometries": 68,
+  "heapMB": 61.2,
+  "moduleMs": {
+    "environment": 0.30000000447034836,
+    "props": 0,
+    "terrain": 0,
+    "roads": 0
+  },
+  "hour": 22,
+  "cameraState": {
+    "position": [
+      718.4,
+      183.4,
+      -522.9
+    ],
+    "target": [
+      0,
+      40,
+      0
+    ],
+    "distance": 900
+  },
+  "modules": {
+    "environment": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0.3,
+      "initMs": 342
+    },
+    "props": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 416
+    },
+    "terrain": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 4690
+    },
+    "roads": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 39
+    }
+  },
   "errors": [],
-  "warnings": []
+  "warnings": [
+    "requestfailed: http://127.0.0.1:5173/node_modules/.vite/deps/three.module-Cg0SxxSv.js?v=376742c9 net::ERR_ABORTED"
+  ],
+  "png": "shots/props/r1/skyline_22.png"
 }

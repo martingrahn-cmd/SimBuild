@@ -1,0 +1,27 @@
+{
+  "png": "shots/props/dev2/forest_12.png",
+  "width": 1280,
+  "height": 720,
+  "camera": "forest",
+  "time": 12,
+  "rects": {
+    "props.canopy_broad": [
+      833,
+      624,
+      85,
+      85
+    ],
+    "props.canopy_conifer": [
+      929,
+      635,
+      85,
+      85
+    ],
+    "props.crown": [
+      728,
+      403,
+      133,
+      133
+    ]
+  }
+}
