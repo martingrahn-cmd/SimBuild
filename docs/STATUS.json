@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r10-2026-09-11",
-    "state": "R15 local save recovery and R13-to-current exact compatibility accepted; awaiting human replay",
-    "playerSource": "R15 durability fixes on accepted R14 architecture; production build, cross-version, rollback and recovery contracts pass",
+    "id": "human-playtest-r16-2026-09-12",
+    "state": "R16 bug-report discoverability accepted on the verified R15 checkpoint; awaiting human replay",
+    "playerSource": "R16 UI visibility repair on accepted R15 architecture; production build and main/pause Issue Form contract pass",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4175,6 +4175,11 @@
         "id": "R15",
         "decision": "accepted atomic previous local slot revision, automatic safe fallback, exact Props/Traffic repeated restore and R13 compatibility",
         "score": "Props 6.4, Traffic 7.2, UI 7.0, Simulation 6.5 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R16",
+        "decision": "accepted bounded GitHub bug-report button visibility and helper-copy repair in main and pause menus",
+        "score": "UI 7.0 FAIL and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4234,10 +4239,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 164 modules after R12",
-      "startup": "PASS: all 16 modules ready, 0 errors; main/pause menus include version, fullscreen, settings and Report a bug",
+      "build": "PASS: Vite 8.2.2, 164 modules after R16",
+      "startup": "PASS: all 16 modules ready, 0 errors; main/pause menus each expose one accented 366 × 54 px Report a bug action",
       "saveLoad": "PASS retained; Traffic mixed-purpose serialization restores exactly and Simulation 90-day self-test remains exact",
-      "evidence": "shots/playtest-fixes-r10/traffic-causality.json; shots/playtest-fixes-r12/early-growth.json; shots/playtest-fixes-r12/daylight-lock.json; docs/builds/playtest_r12_mvp_repair.md",
+      "evidence": "tools/bug-report-visibility-probe.mjs; shots/playtest-fixes-r16/bug-report.json; docs/builds/playtest_r16_bug_report_visibility.md",
       "live": "PASS: gamevolt.io/simbuild reports version 77bfd55; all 16 modules ready, zero errors; Report a bug and Always daylight visible"
     },
     "observeDuringPlaytest": [
@@ -4251,7 +4256,8 @@
       "Save, reload and continue editing; report any changed roadside props because Props exact serialization remains open.",
       "With Roads selected, confirm the pale roadside cells make the exact house-growth depth and terrain/water exclusions understandable.",
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
-      "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
+      "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
+      "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
     "nextAutonomousStep": "Specify and implement a bounded bankruptcy/recovery state using the existing economy terms, with deterministic balance, save/load and UI evidence. Keep loans as debt and do not inject silent money. If the original Slot1 load error recurs, capture its exact owner/error before changing another save contract.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
@@ -4535,9 +4541,22 @@
         "severity": "major game-state clarity",
         "status": "open: negative treasury and deficit are now explained, but no formal bankruptcy, restructuring or recovery game state exists",
         "finding": "A city can continue at a negative treasury and continuing deficit without a defined bankruptcy/recovery outcome."
+      },
+      {
+        "id": "PT-2026-09-12-34",
+        "severity": "minor usability",
+        "status": "R16 fixed and verified in both menus; human replay pending",
+        "finding": "The working GitHub Report a bug action was too visually similar to ordinary secondary menu choices and could be missed by public testers.",
+        "verification": [
+          "tools/bug-report-visibility-probe.mjs",
+          "shots/playtest-fixes-r16/bug-report.json",
+          "shots/playtest-fixes-r16/bug-report-main.png",
+          "shots/playtest-fixes-r16/bug-report-pause.png",
+          "docs/builds/playtest_r16_bug_report_visibility.md"
+        ]
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-33 retained. R15 gives PT-29 a verified local recovery revision and exact R13-to-current compatibility, while the unavailable original hosted payload and cross-device cloud revision history remain open. R14 fixes PT-30/PT-32 and improves PT-31; PT-33 bankruptcy/recovery remains open.",
+    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R16 makes the existing GitHub feedback path conspicuous in both menus without changing its destination or any critic score. R15 save durability and all earlier accepted repairs remain intact; PT-33 bankruptcy/recovery remains the next autonomous development step.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "77bfd55 (R12 product commit on SimBuild main)",
