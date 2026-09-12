@@ -466,6 +466,7 @@ function addBox(acc, cx, cy, cz, hx, hy, hz, m) {
 /** Full vehicle body geometry (body + wheels + lamps + extras) for a kind. */
 export function buildVehicleGeometry(kind, lod=0) {
   if(kind==='semi')return buildSemi(lod);
+  if(kind==='box_truck')return buildBoxTruck(lod);
   const original=SPECS[kind];
   const spec=lod===1?{...original,lod:1,ring:6,rows:original.rows.filter((r,i,a)=>i===0||i===a.length-1||i%2===0)}:original;
   const acc = new Acc();
@@ -553,6 +554,45 @@ export function buildVehicleGeometry(kind, lod=0) {
     addBox(acc, -spec.HW * 0.86, 1.05, -spec.L * 0.5 + 1.25, 0.06, 0.36, 0.06, MAT.TRIM);
   }
   return { geometry: acc.toGeometry(), spec, lamps, tris: acc.tris };
+}
+
+// A rigid delivery truck needs a visible break between cab and cargo box. Running it through the
+// passenger-vehicle loft made the whole eight-metre body read as one swollen van at street level.
+// Keep the authoritative footprint and axle positions, but author the two real volumes separately.
+function buildBoxTruck(lod){
+  const spec=SPECS.box_truck,a=new Acc();
+  if(lod===2){
+    addBox(a,0,.72,-2.65,1.20,.52,1.55,MAT.PAINT);
+    addBox(a,0,1.86,-2.65,1.16,.82,1.48,MAT.GLASS);
+    addBox(a,0,2.06,1.55,1.26,1.24,2.65,MAT.PANEL);
+    return{geometry:a.toGeometry(),spec,lamps:{},tris:a.tris};
+  }
+  const cab={...spec,L:3.10,H:2.88,ring:lod?6:12,lod,round:.22,pillars:[.34,.72],pw:.018,panelFrom:undefined,rows:[
+    [0,.48,1.30,.92,1,1,0],[.06,.44,1.58,1,1,1,0],[.16,.44,2.22,1,.72,.96,1],
+    [.30,.44,2.72,1,.58,.92,1],[.66,.44,2.88,1,.56,.92,1],[.79,.44,2.82,1,.62,.94,1],
+    [.88,.48,2.48,1,1,1,0],[1,.56,2.38,.98,1,1,0],
+  ]};
+  const start=a.pos.length;addBody(a,cab);for(let i=start+2;i<a.pos.length;i+=3)a.pos[i]-=2.65;
+  addBox(a,0,2.02,1.55,1.26,1.28,2.65,MAT.PANEL);
+  addBox(a,0,.69,.55,1.08,.16,3.62,MAT.DARK);
+  const ws=lod?5:12;
+  for(const z of [-2.95,2.82,3.18])for(const side of [-1,1])addWheel(a,side*spec.HW*.91,spec.wheelR,z,spec.wheelR,spec.wheelW,ws,side<0);
+  const frontZ=-4.20,lensY=.92,lensX=.80;
+  for(const side of [-1,1])addLensQuad(a,side*lensX,lensY,frontZ-.02,.25,.14,-1,MAT.HEAD);
+  for(const side of [-1,1])addLensQuad(a,side*.88,.88,4.22,.22,.12,1,MAT.TAIL);
+  addBox(a,0,.70,frontZ-.025,.66,.18,.025,MAT.DARK);
+  addBox(a,0,.48,frontZ-.04,.24,.07,.02,MAT.PLATE);
+  addBox(a,0,2.62,-1.02,.76,.10,.24,MAT.PAINT);
+  if(!lod){
+    for(const side of [-1,1]){
+      addBox(a,side*1.31,2.15,-3.18,.11,.20,.08,MAT.DARK);
+      addBox(a,side*1.265,1.55,1.55,.012,.035,2.55,MAT.WHITE);
+      addBox(a,side*.72,2.02,4.215,.025,1.17,.025,MAT.TRIM);
+    }
+    addBox(a,0,2.02,4.22,.012,1.18,.018,MAT.PANEL);
+    addBox(a,0,.60,4.24,.24,.07,.02,MAT.PLATE);
+  }
+  return{geometry:a.toGeometry(),spec,lamps:{hx:lensX,hy:lensY,hz:frontZ-.03,tx:.88,ty:.88,tz:4.23},tris:a.tris};
 }
 
 // Tractor and trailer share an instance draw, with aJoint selecting a fifth-wheel transform.

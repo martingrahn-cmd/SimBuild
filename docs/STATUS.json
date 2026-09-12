@@ -4160,6 +4160,11 @@
         "id": "R12",
         "decision": "accepted bounded traffic-purpose, early-settlement, daylight and GitHub-reporting repair",
         "score": "whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R13",
+        "decision": "accepted bounded rigid box-truck LOD0/1 art repair",
+        "score": "Traffic 7.2 FAIL and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4194,19 +4199,19 @@
     "rankedKnownIssues": [
       {
         "rank": 1,
-        "issue": "Human replay is required for PT-23/PT-27/PT-28: fixtures now remove the leaked showcase fleet, reduce 22-resident traffic to 7 passenger vehicles, add land-use trip purposes and accelerate settlement below 150, but subjective density and pace remain ungraded."
+        "issue": "Human replay is required for PT-23/PT-27/PT-28: objective fixtures remove the leaked showcase fleet, reduce 22-resident traffic to 7 passenger vehicles, add land-use trip purposes and accelerate settlement below 150, but subjective density and pace remain ungraded."
       },
       {
         "rank": 2,
-        "issue": "Close-range vehicle art remains visibly provisional, especially vans and box trucks; current evidence confirms real LOD0 is loaded."
+        "issue": "Close-range fleet art remains below the final bar. R13 repairs the rigid box truck with separate cab/cargo/chassis geometry; vans, buses, semis, markings and broader variation remain open."
       },
       {
         "rank": 3,
-        "issue": "Prefab roundabout placement and a visible frontage/buildable-depth guide remain missing usability features. Manual service-building rotation is fixed in R12 with R in 45-degree steps."
+        "issue": "R11 fixes for prefab roundabouts, frontage-depth guidance, base night readability and inland-water rendering require human readability/quality replay; do not list these accepted features as missing."
       },
       {
         "rank": 4,
-        "issue": "Base night readability, river surface quality and cold-start duration remain weak. Always daylight is now available as a preference; it does not close the base visual defects."
+        "issue": "Cold start still reaches the main menu in about 3.1 seconds. Terrain is the measured dominant stage; perform internal terrain-stage attribution before changing product quality."
       },
       {
         "rank": 5,
@@ -4234,7 +4239,7 @@
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
     ],
-    "nextAutonomousStep": "Run the user's human replay of PT-23/PT-27/PT-28 on a fresh small city. If density and pace pass, improve PT-26 close vehicle LOD0 art next; otherwise capture the exact save/road state and tune only the failed traffic or settlement term. Then implement prefab roundabout placement and the frontage-depth guide in that order; manual service rotation is already fixed with R in 45-degree steps.",
+    "nextAutonomousStep": "Run the user’s human replay of PT-23/PT-27/PT-28 and the accepted R11 roundabout/frontage/night/river fixes. If the objective traffic and pace changes pass subjectively, continue PT-26 with the next measured close-range fleet asset; otherwise capture the exact save and tune only the failed term. Cold-start Terrain attribution remains the next objective engineering task.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4437,10 +4442,17 @@
       {
         "id": "PT-2026-09-12-26",
         "severity": "high visual quality",
-        "status": "new human-playtest failure; confirmed as current LOD0 authored geometry/material quality rather than an asset-loading failure",
+        "status": "R13 partial repair accepted: rigid box truck now has separate cab/cargo/chassis and clearer close detail; broader fleet art remains open; human replay pending",
         "finding": "Cars, vans and box trucks look crude at close range. Large white vehicle bodies are especially unfinished because form language, material variation, glazing, lights and commercial markings are too weak despite LOD0 being loaded correctly.",
         "evidence": "shots/playtest-checkpoint-2026-09-12/human-vehicle-closeup-quality.png",
-        "evidenceSha256": "44388021f56624c27126f83d244c83b1ec1fc07218173bef5a8a0b54977af2c8"
+        "evidenceSha256": "44388021f56624c27126f83d244c83b1ec1fc07218173bef5a8a0b54977af2c8",
+        "verification": [
+          "shots/playtest-fixes-r13/vehicles-before-fleet.png",
+          "shots/playtest-fixes-r13/vehicles-after-fleet.png",
+          "shots/playtest-fixes-r13/vehicles-after-front.png",
+          "docs/builds/playtest_r13_vehicle_art.md",
+          "docs/critic/playtest_r13_vehicle_art_local.md"
+        ]
       },
       {
         "id": "PT-2026-09-12-27",
@@ -4457,7 +4469,7 @@
         "finding": "Traffic origin, destination and vehicle class are not sufficiently tied to land use. Freight selection is mainly time-based and general routes use aggregate activity, so trucks can target residential streets or tiny shops. Implement deterministic home/work/shop/industry/external trip purposes: commuter cars between residences and jobs, customer and delivery trips for commerce, and freight between industry, commerce and outside connections."
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-28 retained through the live 2026-09-12 playtest. PT-24 numeric-keypad Enter is fixed locally; PT-23 and PT-27 fail traffic/progression feel; PT-25, PT-26 and PT-28 remain open.",
+    "humanPlaytestSession": "Findings PT-01 through PT-28 retained. R12 objectively repairs PT-23/PT-27/PT-28 pending human replay; PT-24 and PT-25 are fixed; R13 partially repairs PT-26 box-truck art while broader fleet quality remains open.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "77bfd55 (R12 product commit on SimBuild main)",
@@ -4622,6 +4634,14 @@
       "daylight": "shots/playtest-fixes-r12/daylight-lock.json",
       "daylightVisual": "shots/playtest-fixes-r12/daylight-at-23.png",
       "serviceRotation": "shots/playtest-fixes-r12/service-rotation.json"
+    },
+    "r13Evidence": {
+      "build": "docs/builds/playtest_r13_vehicle_art.md",
+      "critic": "docs/critic/playtest_r13_vehicle_art_local.md",
+      "before": "shots/playtest-fixes-r13/vehicles-before-fleet.png",
+      "after": "shots/playtest-fixes-r13/vehicles-after-fleet.png",
+      "front": "shots/playtest-fixes-r13/vehicles-after-front.png",
+      "trafficContract": "shots/playtest-fixes-r10/traffic-causality.json"
     }
   }
 }

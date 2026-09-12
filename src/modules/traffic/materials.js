@@ -74,7 +74,7 @@ if ( vm < 0.5 ) {
   tCol = vec3( 0.082, 0.085, 0.090 );
   tRgh = 0.32; tMtl = 0.86;
 } else if ( vm < 7.5 ) {           // cargo panel
-  tCol = mix( vPaint, vec3( 0.86, 0.86, 0.85 ), 0.74 );
+  tCol = mix( vPaint, vec3( 0.86, 0.86, 0.85 ), 0.58 );
   tRgh = 0.44; tMtl = 0.06;
 } else if ( vm < 8.5 ) {           // underbody
   tCol = vec3( 0.020, 0.020, 0.022 );

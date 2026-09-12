@@ -198,3 +198,7 @@ PT-25 is fixed locally. Settings contains persistent **Always daylight**; at act
 The requested GitHub reporting entry is implemented in the main and pause menus. **Report a bug** opens `.github/ISSUE_TEMPLATE/bug_report.yml` with the visible New Dollarton version in the title. It does not yet attach a save or diagnostics automatically.
 
 Evidence and the unchanged-score review are in `docs/builds/playtest_r12_mvp_repair.md` and `docs/critic/playtest_r12_local.md`. Human replay is still required before PT-23/PT-27/PT-28 can be closed subjectively.
+
+## R13 fordonsgrafik — 2026-09-12
+
+PT-26 är delvis rättad. Distributionslastbilen byggs nu av en separat hytt, ett rektangulärt lastskåp och ett synligt chassi, med speglar, grill, lampor, registreringsskylt, bakdörrar och sidoreflexer. Mått, trafikmängd, resmål, fysik och sparläge är oförändrade. Före/efter-bilderna är inspekterade utan fel och hela trafikprovet för tom väg, liten stad, markanvändning, U-sväng, externa anslutningar, determinism och återladdning passerar. Övriga fordonsmodeller behöver fortfarande höjas innan PT-26 kan stängas helt; poängen är oförändrad.
