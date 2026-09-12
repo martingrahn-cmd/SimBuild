@@ -237,3 +237,9 @@ The final recorded PT-20 presentation gap is locally closed with scores unchange
 ## Cold-start attribution after R11 fixes — 2026-09-12
 
 A fresh normal-entry profile still reaches readiness in about 3.1 seconds. The measured module costs are Terrain 1,863ms, Props 397ms, Audio 289ms, Environment 35ms and UI 3ms. The honest loading shell remains immediate. No quality-reducing or ownership-changing startup candidate was accepted; the next autonomous step is internal Terrain-stage attribution before any product edit. The complete recorded human-finding fix set now needs subjective player retest.
+
+## GameVolt cloud saves — 2026-09-12
+
+SimBuild now uses GameVolt's existing Supabase-backed SDK during normal play on `gamevolt.io`. Guests keep the atomic IndexedDB slot system. Signed-in players synchronize Autosave and Slots 1–3 across devices; each slot resolves by `savedAt`, deletions use durable tombstones, and switching accounts mirrors the newly signed-in account instead of uploading the previous account's local cities. Cloud payloads use browser-native gzip/base64 with backward-compatible raw JSON reads. The measured current city save is about 3.4 MB locally and 2.0 MB encoded.
+
+The production Supabase `games` registry contains `simbuild`, and its reproducible seed statement is in GameVolt `sql/simbuild.sql`. The pure merge/compression contract probe, a real IndexedDB replacement/delete probe, a mocked signed-in save/delete round trip and the production build all pass with zero page errors. Gameplay serialization, restore ownership and critic scores are unchanged. Human cross-device login/reload remains the final subjective verification.

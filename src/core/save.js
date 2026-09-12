@@ -101,6 +101,14 @@ export function createSaveSystem(core, registry) {
     },
     restore,
     slots: storage.slots,
+    async cloudRecords() {
+      try { return await storage.records(); }
+      catch (e) { events.emit('save:failed', { action: 'cloud-read', error: e?.message || String(e) }); return null; }
+    },
+    async replaceCloudRecords(records) {
+      try { await storage.replace(records); events.emit('save:slots-changed', {}); return true; }
+      catch (e) { events.emit('save:failed', { action: 'cloud-write', error: e?.message || String(e) }); return false; }
+    },
     async remove(slot) {
       try { await storage.remove(slot); events.emit('save:removed', { slot }); return true; }
       catch (e) { events.emit('save:failed', { action: 'delete', slot, error: e?.message || String(e) }); return false; }

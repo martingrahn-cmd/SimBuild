@@ -11,6 +11,7 @@ import { parseParams, selectModules } from './core/showcase.js';
 import { installDebug } from './core/debug.js';
 import { MODULE_NAMES } from './core/constants.js';
 import { createSaveSystem } from './core/save.js';
+import { connectCloudSaves } from './core/cloud-save.js';
 
 const bootMsg = (m, percent) => {
   const el = document.getElementById('bootmsg'); if (el) el.textContent = m;
@@ -104,6 +105,7 @@ async function boot() {
   sim.save = (slot) => saveSystem.save(slot); sim.load = (slot) => saveSystem.load(slot); sim.saves = saveSystem;
   await saveSystem.ready; // Hydrate slot metadata before the initial menu renders at app:ready.
   const playMode = params.mode === 'play' && showcaseName === 'democity';
+  if (playMode && !params.headless) sim.cloudSaves = connectCloudSaves(core, saveSystem);
   if (playMode) {
     bootMsg('PREPARING NEW GAME', 86);
     if (rec?.def.showcase?.cameras) for (const [k, v] of Object.entries(rec.def.showcase.cameras)) camera.registerPreset(k, v);

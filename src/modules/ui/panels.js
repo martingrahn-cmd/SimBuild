@@ -141,9 +141,11 @@ export class Menus {
   }
   _slots(mode, menu) {
     const saves = this.saves();
+    const cloud = window.__sim?.cloudSaves?.state;
     const existing = new Map((saves?.slots?.() || []).map((s) => [s.slot, s]));
     const ids = [...SLOTS, ...[...existing.keys()].filter((k) => !SLOTS.includes(k))];
-    this._head(menu, `<div class="sb-h1">${mode === 'save' ? 'Save Game' : 'Load Game'}</div><div class="sb-h2">${mode === 'save' ? 'Pick a slot. Saves live in this browser; download JSON to keep a copy.' : 'Pick a save to restore. The current city is replaced.'}</div>`);
+    const location = cloud?.signedIn ? 'Signed in · slots sync across your devices.' : 'Saved on this device · sign in with GameVolt for cloud sync.';
+    this._head(menu, `<div class="sb-h1">${mode === 'save' ? 'Save Game' : 'Load Game'}</div><div class="sb-h2">${mode === 'save' ? `Pick a slot. ${location}` : `Pick a save to restore. ${location}`}</div>`);
     const body = this._body(menu);
     const list = el('div', 'sb-slots');
     for (const id of ids) {
