@@ -85,11 +85,11 @@ export class Menus {
     });
   }
   _reportBug(body) {
-    this._mbtn(body, ICONS.noteWarn(), 'Report a bug', 'GitHub', () => {
+    this._mbtn(body, ICONS.noteWarn(), 'Report a bug', 'Help improve the game', () => {
       const title=encodeURIComponent(`[Bug] New Dollarton ${VERSION_LABEL}`);
       window.open(`https://github.com/martingrahn-cmd/SimBuild/issues/new?template=bug_report.yml&title=${title}`,'_blank','noopener,noreferrer');
       this.hud.action('reportBug',VERSION_LABEL);
-    });
+    }, 'report-bug');
   }
 
   _cloudPromo(body) {

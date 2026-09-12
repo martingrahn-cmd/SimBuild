@@ -380,6 +380,13 @@ button.sb-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .sb-mbtn.primary { background: linear-gradient(180deg, #47a0ff, #2b86ea); border-color: var(--accent-2); color: #fff; }
 .sb-mbtn.primary:hover { background: linear-gradient(180deg, #55a8ff, #3590f0); }
 .sb-mbtn.primary .sb-ms { color: rgba(255,255,255,.75); }
+.sb-mbtn.report-bug { height: 54px; margin-top: 4px; color: #fff7e8;
+  background: linear-gradient(135deg, rgba(245,163,78,.24), rgba(221,91,73,.13));
+  border-color: rgba(255,181,91,.58); box-shadow: inset 3px 0 0 #f5a34e, 0 3px 12px rgba(0,0,0,.16); }
+.sb-mbtn.report-bug svg { color: #ffc06c; filter: drop-shadow(0 0 5px rgba(255,170,76,.25)); }
+.sb-mbtn.report-bug .sb-ms { max-width: 150px; color: #ffd49d; line-height: 1.2; text-align: right; }
+.sb-mbtn.report-bug:hover { background: linear-gradient(135deg, rgba(255,177,88,.34), rgba(232,103,82,.2));
+  border-color: rgba(255,199,126,.82); box-shadow: inset 3px 0 0 #ffc06c, 0 5px 16px rgba(0,0,0,.22); }
 .sb-mbtn:disabled { opacity: .45; cursor: default; transform: none; }
 .sb-cloud-promo { display: grid; grid-template-columns: 32px 1fr; gap: 2px 10px; margin-top: 7px; padding: 11px 12px; border-radius: 8px; background: linear-gradient(135deg, rgba(38,130,232,.2), rgba(52,195,199,.1)); border: 1px solid rgba(98,178,255,.28); }
 .sb-cloud-promo > svg { grid-row: 1 / span 2; width: 28px; height: 28px; align-self: center; }
