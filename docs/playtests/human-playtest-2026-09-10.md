@@ -161,3 +161,28 @@ Varje punkt följer projektets befintliga flöde: implementera → kör → veri
 25. **El-/vattenbrist syntes bara inne i huspanelen och nätregeln var oklar** (`PT-2026-09-11-20`)
    - Presentationen är nu fixad och lokalt verifierad. Färdiga hus med verklig brist får en el- och/eller vattenmarkör ovanför huset. El-, vatten- och avfallsmenyerna förklarar att nätet följer sammanhängande vägar, när betalad import används och att separata kablar/rör inte ingår i den nuvarande modellen.
    - Försörjningslogiken ändrades inte. Bevis: `shots/playtest-fixes-r11/utility-warning-contract.json`, `utility-warning-markers.png`, `utility-road-guide.png`, errors=0.
+
+## Live-omtest — 2026-09-12
+
+26. **Orimlig fordonskö i en fempersonersby** (`PT-2026-09-12-23`, critical)
+   - En tät stillastående fordonsrad uppstod på en yttre väg utan rimligt mål. Detta underkänner trafikens mänskliga trovärdighet trots att det tidigare småstadskontraktet gav ett tekniskt synligt fordonsantal.
+   - Separera flottmål, resmål, vägval och kapaciteten i vändningen innan någon ändring accepteras.
+   - Evidens: `shots/playtest-checkpoint-2026-09-12/human-implausible-traffic-queue.png`.
+
+27. **Numeriska Enter avslutade inte vägen** (`PT-2026-09-12-24`, high)
+   - Fixad lokalt. Både huvudtangentbordets Enter och `NumpadEnter` anropar nu det aktiva verktygets gemensamma commit-kommando. Webbläsarprovet gav exakt ett commit-anrop och noll fel.
+
+28. **Önskemål om fortsatt simulering med fast dagsljus** (`PT-2026-09-12-25`)
+   - Inte implementerat. Ett framtida `Alltid dagsljus` ska endast låsa den visuella miljötiden; datum, ekonomi, byggande och trafik ska fortsätta och sparad simuleringstid får inte ändras.
+
+29. **Närbildskvaliteten på fordon är otillräcklig** (`PT-2026-09-12-26`, high)
+   - Källinspektion bekräftar att LOD0 laddas inom 90 meter. Bilden visar därför den nuvarande riktiga geometrin och materialen, inte ett laddningsfel. Särskilt vita skåp- och lastbilar saknar tillräcklig form, materialvariation, glas, lampor och märkning.
+   - Evidens: `shots/playtest-checkpoint-2026-09-12/human-vehicle-closeup-quality.png`.
+
+30. **13 invånare motsvarar inte den synliga byn** (`PT-2026-09-12-27`, critical)
+   - Mänskligt omtest underkänner PT-09. Många färdiga bostäder och verksamheter finns, men befolkningen är 13 samtidigt som trafikbilden är överdriven. Inflyttning/occupancy och trafik måste kalibreras tillsammans.
+   - Evidens: `shots/playtest-checkpoint-2026-09-12/human-population-pacing-13.png`.
+
+31. **Resmål och fordonstyp följer inte markanvändningen** (`PT-2026-09-12-28`, critical)
+   - Nuvarande källkod väger startvägar mot sammanlagda boende/jobb, men skiljer inte tillräckligt på bostad, handel, kontor och industri. Lastbilsandelen styrs främst av tid på dygnet och generella resmål väljs från vägnoder.
+   - Inför deterministiska resesyften: pendling mellan bostäder och jobb, kund-/leveransresor till handel samt gods mellan industri, handel och externa anslutningar.

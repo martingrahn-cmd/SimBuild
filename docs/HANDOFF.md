@@ -4,6 +4,8 @@
 
 The main and pause menus display `Version 0.1.0 · build <7-character source commit>`. The GameVolt sync action injects the source commit into the compiled bundle, so the label identifies the code actually running even while an older Cloudflare-cached page is being served.
 
+The 2026-09-12 live playtest added PT-23 through PT-28. Numpad Enter is fixed locally and verified to dispatch one tool commit. The current highest-priority failure is traffic/progression coherence: a 5-person hamlet produced a dense outlying queue, a visually established hamlet still reported 13 residents, and source inspection confirms that general traffic does not yet bind trip purpose and vehicle class to residential/commercial/office/industrial land use. Close vehicle LOD0 quality and an Always daylight display preference are also recorded. Preserve the three resized human screenshots under `shots/playtest-checkpoint-2026-09-12/` and their hashes in STATUS.
+
 ## Current boundary — R10 ready for human retest
 
 The bounded R10 response to the 2026-09-10 playtest is implemented and verified. Use `http://127.0.0.1:5180/?mode=play`; port 5173 currently belongs to an unrelated project and is not the SimBuild server. A new city gives the clearest test of progression, imports and construction, although existing saves remain supported.

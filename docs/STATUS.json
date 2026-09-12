@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-12T10:40:00.000Z",
+  "updatedAt": "2026-09-12T12:05:00.000Z",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4189,19 +4189,19 @@
     "rankedKnownIssues": [
       {
         "rank": 1,
-        "issue": "Human retest required for the full PT-01 through PT-22 fix set, especially opening pace, construction duration, U-turn presentation, river, night readability, vehicle LOD, tree motion, cricket mix, frontage, roundabout, utility warnings and fullscreen."
+        "issue": "Live human retest fails traffic/progression coherence: a 5-person hamlet queues vehicles on an implausible outlying route, a built-up hamlet still has only 13 residents, and trip purposes/vehicle classes are not tied sufficiently to land use. Reproduce and repair PT-23/PT-27/PT-28 together without losing the zero-traffic empty-road contract."
       },
       {
         "rank": 2,
-        "issue": "Underlying startup time remains several seconds even though the shell and honest progress appear immediately; profile initialization stages before changing ownership or asset quality."
+        "issue": "Close-range vehicle art remains visibly provisional, especially white vans and box trucks; current evidence confirms real LOD0 is loaded, so repair authored geometry/material differentiation rather than loading or cache behavior."
       },
       {
         "rank": 3,
-        "issue": "Portal/GitHub publishing and in-game bug reporting remain a documented proposal; never embed client credentials."
+        "issue": "Underlying startup time remains several seconds even though the shell and honest progress appear immediately; profile initialization stages before changing ownership or asset quality."
       },
       {
         "rank": 4,
-        "issue": "Sustained sub-50fps performance, raw heap, sparse city fabric, Props exactness and broader critic findings remain open."
+        "issue": "In-game bug reporting and Always daylight remain open. GitHub/portal publishing is implemented; never embed client credentials. Sustained sub-50fps performance, raw heap, sparse city fabric and Props exactness also remain open."
       }
     ],
     "normalEntryVerification": {
@@ -4224,7 +4224,7 @@
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
     ],
-    "nextAutonomousStep": "Profile Terrain cold initialization internally (heightmap generation, texture generation/upload, mesh and grass) before attempting a bounded owner-safe startup improvement. Preserve the immediate loading shell, real progress, visual quality, simulation determinism and all R10/R11 contracts. The current human-playtest fix set first needs subjective retest.",
+    "nextAutonomousStep": "Reproduce PT-23/PT-27/PT-28 with a deterministic small-city fixture. Attribute fleet target, land-use origin/destination choice, freight class selection and dead-end queue capacity separately; then make one bounded Traffic/Simulation change that preserves empty isolated road=0, save/load and determinism. PT-24 NumpadEnter is already fixed and must remain verified.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4284,7 +4284,7 @@
       {
         "id": "PT-2026-09-10-09",
         "severity": "high",
-        "status": "R10 objective balance fixture is faster; subjective opening pace pending",
+        "status": "R10 objective balance fixture was faster, but 2026-09-12 human retest FAIL: visible hamlet still only 13 residents; PT-27 tracks the evidence",
         "finding": "The initial city growth feels too slow. Calibrate early demand, household arrival, occupancy and first-milestone timing using measured normal-play timelines. Coordinate with PT-02 so visible construction adds anticipation without further delaying the opening; allow several early sites to build concurrently and provide frequent progress feedback.",
         "evidence": "shots/playtest-checkpoint-2026-09-10/human-slow-opening-day4-pop21.png",
         "evidenceSha256": "ca86980595a9b8e5aa416c3c9ddd599ef1dad20f7a2b488677351ede456c9748",
@@ -4403,9 +4403,51 @@
         "status": "R11 fixed and UI contract PASS",
         "finding": "No fullscreen control was discoverable. A Fullscreen / Exit Fullscreen toggle is now present in both the main and pause menus and follows the browser fullscreen state.",
         "verification": "shots/playtest-fixes-r11/fullscreen-contract.json"
+      },
+      {
+        "id": "PT-2026-09-12-23",
+        "severity": "critical traffic realism",
+        "status": "new human-playtest failure; reproduced visually, root attribution in progress",
+        "finding": "A very small 5-person hamlet produces a dense stationary queue on an outlying road with no plausible destination. The fleet count, route destination and dead-end turn capacity must be measured separately; local traffic may not be added solely to make roads look busy.",
+        "evidence": "shots/playtest-checkpoint-2026-09-12/human-implausible-traffic-queue.png",
+        "evidenceSha256": "180c4a2c97a90293b70fd39f1dd3afd4c49fd7d07abf6fb0090bf93a0538b6a6"
+      },
+      {
+        "id": "PT-2026-09-12-24",
+        "severity": "high usability",
+        "status": "fixed locally; browser keyboard probe dispatches NumpadEnter to the active tool commit exactly once with zero errors",
+        "finding": "The numeric keypad Enter key did not finish road construction because Tools accepted only KeyboardEvent.code Enter. Both Enter and NumpadEnter must invoke the same commit command."
+      },
+      {
+        "id": "PT-2026-09-12-25",
+        "severity": "requested setting",
+        "status": "recorded; not implemented",
+        "finding": "Add an Always daylight display setting that fixes environmental lighting at a readable daytime hour while simulation time, dates, economy, construction and traffic continue normally. Persist the preference without altering saved simulation time."
+      },
+      {
+        "id": "PT-2026-09-12-26",
+        "severity": "high visual quality",
+        "status": "new human-playtest failure; confirmed as current LOD0 authored geometry/material quality rather than an asset-loading failure",
+        "finding": "Cars, vans and box trucks look crude at close range. Large white vehicle bodies are especially unfinished because form language, material variation, glazing, lights and commercial markings are too weak despite LOD0 being loaded correctly.",
+        "evidence": "shots/playtest-checkpoint-2026-09-12/human-vehicle-closeup-quality.png",
+        "evidenceSha256": "44388021f56624c27126f83d244c83b1ec1fc07218173bef5a8a0b54977af2c8"
+      },
+      {
+        "id": "PT-2026-09-12-27",
+        "severity": "critical progression feel",
+        "status": "PT-09 human retest FAIL; objective R10 fixture improvement was insufficient",
+        "finding": "A visually established hamlet with many completed homes and businesses still reports only 13 residents. Occupancy and arrival pacing do not match the visible settlement, while traffic simultaneously looks excessive.",
+        "evidence": "shots/playtest-checkpoint-2026-09-12/human-population-pacing-13.png",
+        "evidenceSha256": "7e90917b6539d35db14c7c1ff35cf096bbcbd9929d93f4fd1d0d541f5e759efa"
+      },
+      {
+        "id": "PT-2026-09-12-28",
+        "severity": "critical simulation realism",
+        "status": "confirmed architecture gap; not implemented",
+        "finding": "Traffic origin, destination and vehicle class are not sufficiently tied to land use. Freight selection is mainly time-based and general routes use aggregate activity, so trucks can target residential streets or tiny shops. Implement deterministic home/work/shop/industry/external trip purposes: commuter cars between residences and jobs, customer and delivery trips for commerce, and freight between industry, commerce and outside connections."
       }
     ],
-    "humanPlaytestSession": "2026-09-10 findings; R10 fixes plus PT-19 save-menu repair completed 2026-09-11; PT-14 through PT-18 remain queued; 19 findings/proposals retained.",
+    "humanPlaytestSession": "Findings PT-01 through PT-28 retained through the live 2026-09-12 playtest. PT-24 numeric-keypad Enter is fixed locally; PT-23 and PT-27 fail traffic/progression feel; PT-25, PT-26 and PT-28 remain open.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "c5d3195 (2026-09-06); current verified work remains local/unpublished",

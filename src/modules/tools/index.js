@@ -594,7 +594,8 @@ function bindInput(ctx) {
   const onKey = (e) => {
     const target = e.target && typeof e.target.closest === 'function' ? e.target : null;
     if (e.defaultPrevented || target?.closest('input,textarea,select') || target?.isContentEditable || ctx.modules.ui?.hud?.menus?.isOpen?.()) return;
-    if (e.code === 'Enter' && target?.closest('button,[role="button"]')) return;
+    const enter = e.code === 'Enter' || e.code === 'NumpadEnter';
+    if (enter && target?.closest('button,[role="button"]')) return;
     S.mods.shift = e.shiftKey; S.mods.alt = e.altKey; S.mods.ctrl = e.ctrlKey || e.metaKey;
     if (e.ctrlKey || e.metaKey) {
       if (e.code === 'KeyZ' && !e.shiftKey) { api.undo(); e.preventDefault(); return; }
@@ -611,7 +612,7 @@ function bindInput(ctx) {
       return;
     }
     if (e.altKey) return;
-    if (e.code === 'Enter') { api.commit(); e.preventDefault(); return; }
+    if (enter) { api.commit(); e.preventDefault(); return; }
     // Numeric keys belong to the HUD's simulation speed controls; the toolbar selects tools.
     if (e.code === 'KeyB') api.select('bulldoze');
   };

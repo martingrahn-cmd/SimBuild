@@ -123,7 +123,7 @@ export class Hud {
     return [
       { id: 'inspect', label: 'Select / Inspect', icon: 'pointer', neutral: true },
       { sep: true },
-      { id: 'roads', label: 'Roads', icon: 'roads', tool: 'road', hint: [['LMB', 'Add node'], ['Enter', 'Finish & build'], ['RMB', 'Undo point'], ['⌘/Ctrl+Z', 'Undo built road'], ['Esc', 'Select mode']],
+      { id: 'roads', label: 'Roads', icon: 'roads', tool: 'road', hint: [['LMB', 'Add node'], ['Enter / Num Enter', 'Finish & build'], ['RMB', 'Undo point'], ['⌘/Ctrl+Z', 'Undo built road'], ['Esc', 'Select mode']],
         options: [
           { kind: 'modes', id: 'mode', label: 'Tool Mode', items: [['straight', 'Straight'], ['curve', 'Curved'], ['free', 'Continuous'], ['grid', 'Grid']], value: 'straight' },
           { kind: 'stepper', id: 'elevation', label: 'Elevation', value: 0, step: 5, min: -20, max: 60, unit: ' m' },
