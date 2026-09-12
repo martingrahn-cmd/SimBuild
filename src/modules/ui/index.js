@@ -34,6 +34,7 @@ export default {
       ev.on('save:cloud-failed', (p) => hud.notify({ type: 'warning', title: 'Cloud sync paused', body: `${String(p?.error || 'Connection unavailable')}. Your local saves are safe.`, ttl: 8 }), own),
       ev.on('save:failed', (p) => hud.notify({ type: 'error', title: p?.action === 'load' ? 'Could not load game' : p?.action === 'delete' ? 'Could not delete save' : p?.action === 'migration' ? 'Existing save kept in legacy storage' : p?.action === 'storage' ? 'Save storage unavailable' : 'Could not save game', body: String(p?.error || 'Storage unavailable'), ttl: 10 }), own),
       ev.on('save:loaded', () => { hud.notify({ type: 'success', title: 'Game loaded', body: `${hud.cityName} · day ${ctx.clock.day}`, ttl: 6 }); hud.hideInfo(); hud.setSource({}); hud.minimap.setSample(null); }, own),
+      ev.on('save:recovered', (p) => { hud.notify({ type: 'warning', title: 'Previous save recovered', body: `The newest ${p?.slot || 'city'} copy could not be loaded, so New Dollarton opened the previous safe version. Save again after checking the city.`, ttl: 14 }); hud.menus.refresh(); }, own),
       ev.on('module:error', (p) => {
         if (p?.module === 'ui') return;
         hud.notify({ type: 'error', title: `Module "${p?.module}" ${p?.phase || ''} error`, body: String(p?.error?.message || p?.error || 'unknown error').slice(0, 140), ttl: 12 });

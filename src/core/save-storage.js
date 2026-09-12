@@ -31,7 +31,20 @@ export function createSlotStorage(onFailure = () => {}) {
       try { operation(tx, value => { result = value; }); } catch (e) { failure = e; tx.abort(); }
     });
   }
-  const put = (slot, raw, info) => transaction('readwrite', tx => { tx.objectStore('slots').put({ slot, raw }); tx.objectStore('metadata').put(info); });
+  // Keep one committed predecessor in the same row. The read and replacement share one
+  // transaction, so a crash cannot leave a new payload paired with the wrong recovery copy.
+  const put = (slot, raw, info) => transaction('readwrite', tx => {
+    const slots = tx.objectStore('slots'), request = slots.get(slot);
+    request.onsuccess = () => {
+      const current = request.result;
+      let currentValid = false; try { if (current?.raw) { envelope(current.raw); currentValid = true; } } catch { /* Never promote a corrupt primary into recovery. */ }
+      const promote = currentValid && current.raw !== raw;
+      const backupRaw = promote ? current.raw : current?.backupRaw;
+      const backupSavedAt = promote ? (current?.savedAt || 0) : current?.backupSavedAt;
+      slots.put({ slot, raw, savedAt: info.savedAt, ...(backupRaw ? { backupRaw, backupSavedAt: backupSavedAt || 0 } : {}) });
+      tx.objectStore('metadata').put({ ...info, hasRecovery: !!backupRaw, recoverySavedAt: backupSavedAt || 0 });
+    };
+  });
   // Recheck the authoritative payload in the same transaction that would insert legacy data.
   // A concurrent tab may have saved or deleted this slot since the initial metadata scan.
   const migrate = (slot, raw, info) => transaction('readwrite', (tx, result) => {
@@ -86,6 +99,12 @@ export function createSlotStorage(onFailure = () => {}) {
       if (!db && unavailable) throw unavailable;
       throw Error('Save slot not found');
     },
+    async readBackup(slot) {
+      await ready;
+      if (!db) throw unavailable || Error('Save storage unavailable');
+      const entry = await transaction('readonly', (tx, result) => { const r = tx.objectStore('slots').get(slot); r.onsuccess = () => result(r.result); });
+      return entry?.deleted ? null : entry?.backupRaw || null;
+    },
     async remove(slot, deletedAt = Date.now()) {
       await ready;
       if (!db) throw unavailable || Error('Save storage unavailable');
@@ -114,11 +133,22 @@ export function createSlotStorage(onFailure = () => {}) {
         return { slot: record.slot, raw: JSON.stringify(data), data };
       });
       await transaction('readwrite', tx => {
-        const slots = tx.objectStore('slots'), metas = tx.objectStore('metadata'); slots.clear(); metas.clear();
-        for (const record of prepared) {
-          if (record.deleted) { const row = { slot: record.slot, deleted: true, deletedAt: record.deletedAt }; slots.put(row); metas.put(row); }
-          else { slots.put({ slot: record.slot, raw: record.raw }); metas.put(metadata(record.slot, record.data)); }
-        }
+        const slots = tx.objectStore('slots'), metas = tx.objectStore('metadata'), request = slots.getAll();
+        request.onsuccess = () => {
+          const existing = new Map(request.result.map(row => [row.slot, row])); slots.clear(); metas.clear();
+          for (const record of prepared) {
+            if (record.deleted) { const row = { slot: record.slot, deleted: true, deletedAt: record.deletedAt }; slots.put(row); metas.put(row); }
+            else {
+              const old = existing.get(record.slot); let oldValid = false;
+              try { if (old?.raw) { envelope(old.raw); oldValid = true; } } catch { /* Preserve the prior known-good recovery copy. */ }
+              const changed = oldValid && old.raw !== record.raw;
+              const backupRaw = changed ? old.raw : old?.backupRaw;
+              const backupSavedAt = changed ? old.savedAt : old?.backupSavedAt;
+              slots.put({ slot: record.slot, raw: record.raw, savedAt: record.data.savedAt, ...(backupRaw ? { backupRaw, backupSavedAt: backupSavedAt || 0 } : {}) });
+              metas.put({ ...metadata(record.slot, record.data), hasRecovery: !!backupRaw, recoverySavedAt: backupSavedAt || 0 });
+            }
+          }
+        };
       });
       cache.clear(); tombstones.clear();
       for (const record of prepared) {

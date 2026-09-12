@@ -108,6 +108,7 @@ export function createSaveSystem(core, registry) {
       } catch (e) { events.emit('save:failed', { action: 'save', slot, error: e?.message || String(e) }); return null; }
     },
     async load(slot = 'auto') {
+      let primaryError = null;
       try {
         const raw = await storage.read(slot);
         if (!raw) throw new Error('Save slot not found');
@@ -115,7 +116,17 @@ export function createSaveSystem(core, registry) {
         remember(slot);
         return true;
       } catch (e) {
-        events.emit('save:failed', { action: 'load', slot, error: e?.message || String(e) });
+        primaryError = e;
+      }
+      try {
+        const backup = await storage.readBackup(slot);
+        if (!backup) throw primaryError;
+        await restore(JSON.parse(backup));
+        remember(slot);
+        events.emit('save:recovered', { slot, error: primaryError?.message || String(primaryError) });
+        return true;
+      } catch (recoveryError) {
+        events.emit('save:failed', { action: 'load', slot, error: primaryError?.message || recoveryError?.message || String(recoveryError) });
         return false;
       }
     },

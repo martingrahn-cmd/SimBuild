@@ -911,7 +911,10 @@ export default {
       S.field.update(ctx.camera.camera, ctx.camera.pitch, true);
       updateLenses(ctx, true); refreshStats(ctx); S.stats.ms = performance.now() - t0;
       emitChanged(ctx, [...ctx.world.props.items.keys()], removed);
-      if (options.rollback && Number.isFinite(data.version)) ctx.world.props.version = data.version;
+      // syncWorld increments the runtime change counter while rebuilding identical saved items.
+      // Restore the owner's saved counter after synchronous change observers have run so an
+      // immediate re-save and repeated load cycle are byte-exact in both normal and rollback paths.
+      if (Number.isFinite(data.version)) ctx.world.props.version = data.version;
     },
     debug: {
       /**

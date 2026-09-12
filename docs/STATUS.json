@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-12T17:43:05.500Z",
+  "updatedAt": "2026-09-12T18:21:05.211Z",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4119,8 +4119,8 @@
   },
   "playtestCheckpoint": {
     "id": "human-playtest-r10-2026-09-11",
-    "state": "R14 building continuity, zoning/economy clarity and loan repair accepted locally; awaiting human replay",
-    "playerSource": "R14 human-feedback fixes on accepted R13 architecture; production build and bounded contracts pass",
+    "state": "R15 local save recovery and R13-to-current exact compatibility accepted; awaiting human replay",
+    "playerSource": "R15 durability fixes on accepted R14 architecture; production build, cross-version, rollback and recovery contracts pass",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4170,6 +4170,11 @@
         "id": "R14",
         "decision": "accepted bounded building-chunk visibility, demand/economy explanation and milestone-capacity loan repair",
         "score": "Buildings 7.4, UI 7.0, Simulation 6.5 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R15",
+        "decision": "accepted atomic previous local slot revision, automatic safe fallback, exact Props/Traffic repeated restore and R13 compatibility",
+        "score": "Props 6.4, Traffic 7.2, UI 7.0, Simulation 6.5 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4204,15 +4209,15 @@
     "rankedKnownIssues": [
       {
         "rank": 1,
-        "issue": "Reproduce the reported hosted Slot 1 load failure without overwriting its payload, then prove cross-version migration and a player-accessible recovery copy. Existing owner rollback remains required."
+        "issue": "Obtain or reproduce the reported hosted Slot1 failure if it recurs. R15 proves actual R13-to-current exact restore and local previous-version recovery, but a second recovery revision is not synced to a new computer."
       },
       {
         "rank": 2,
-        "issue": "Human replay is required for population/traffic pacing, empty-zone demand clarity, the repaired loan flow and the R11 roundabout/frontage/night/river fixes."
+        "issue": "Define and verify a bankruptcy/recovery loop. R14 explains negative treasury and the largest cost, but loans are short-term liquidity and no loss/restructuring state exists."
       },
       {
         "rank": 3,
-        "issue": "Define and verify a bankruptcy/recovery loop. R14 explains negative treasury and the largest cost, but loans are short-term liquidity and no loss/restructuring state exists."
+        "issue": "Human replay is required for population/traffic pacing, empty-zone demand clarity, the repaired loan flow and the R11 roundabout/frontage/night/river fixes."
       },
       {
         "rank": 4,
@@ -4224,7 +4229,7 @@
       },
       {
         "rank": 6,
-        "issue": "Sustained sub-50fps performance, raw heap, sparse city fabric, transit/traffic interaction and Props exactness retain their recorded failed gates."
+        "issue": "Sustained sub-50fps performance, raw heap, sparse city fabric and transit/traffic interaction retain their recorded failed gates."
       }
     ],
     "normalEntryVerification": {
@@ -4248,7 +4253,7 @@
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
     ],
-    "nextAutonomousStep": "Reproduce PT-29 against an isolated copy of the reported hosted save, preserve failed-load rollback, and add only evidence-backed migration/recovery handling. Then specify and verify PT-33 bankruptcy/recovery behavior before returning to fleet art or cold-start work.",
+    "nextAutonomousStep": "Specify and implement a bounded bankruptcy/recovery state using the existing economy terms, with deterministic balance, save/load and UI evidence. Keep loans as debt and do not inject silent money. If the original Slot1 load error recurs, capture its exact owner/error before changing another save contract.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4480,9 +4485,18 @@
       {
         "id": "PT-2026-09-12-29",
         "severity": "critical save continuity",
-        "status": "open: exact hosted Slot 1 load error has not been reproduced; existing failed-load rollback preserves the previous world, but formal cross-version migration and recovery-copy evidence remain required",
+        "status": "R15 partial durability repair accepted: actual published R13 save restores exactly in current source; newest local corruption falls back to one prior committed payload; exact player cloud error and cross-device cloud revision history remain open",
         "finding": "A hosted saved city produced an error when the player tried to load it. Public update-safe saves need explicit schema migration, rollback and recovery evidence across released versions.",
-        "evidence": "shots/playtest-checkpoint-2026-09-12/human-save-load-error-report"
+        "evidence": "shots/playtest-checkpoint-2026-09-12/human-save-load-error-report",
+        "verification": [
+          "tools/save-recovery-probe.mjs",
+          "tools/save-version-compat-probe.mjs",
+          "tools/save-atomicity-probe.mjs",
+          "shots/playtest-fixes-r15/save-recovery.json",
+          "shots/playtest-fixes-r15/save-r13-to-r15.json",
+          "shots/playtest-fixes-r15/save-atomicity.json",
+          "docs/builds/playtest_r15_save_recovery.md"
+        ]
       },
       {
         "id": "PT-2026-09-12-30",
@@ -4523,7 +4537,7 @@
         "finding": "A city can continue at a negative treasury and continuing deficit without a defined bankruptcy/recovery outcome."
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-33 retained. R14 fixes PT-30 and PT-32 objectively and improves PT-31 presentation; PT-29 exact hosted load failure and PT-33 formal bankruptcy/recovery remain open. Human replay remains required for pacing and clarity.",
+    "humanPlaytestSession": "Findings PT-01 through PT-33 retained. R15 gives PT-29 a verified local recovery revision and exact R13-to-current compatibility, while the unavailable original hosted payload and cross-device cloud revision history remain open. R14 fixes PT-30/PT-32 and improves PT-31; PT-33 bankruptcy/recovery remains open.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "77bfd55 (R12 product commit on SimBuild main)",
@@ -4705,6 +4719,17 @@
       "economyVisual": "shots/playtest-fixes-r14/economy-loan.png",
       "productionBuild": "Vite production build PASS, 164 modules",
       "determinism": "Simulation selftest PASS: deterministic repeat and exact save/load"
+    },
+    "r15Evidence": {
+      "build": "docs/builds/playtest_r15_save_recovery.md",
+      "critic": "docs/critic/playtest_r15_local.md",
+      "recovery": "shots/playtest-fixes-r15/save-recovery.json",
+      "recoveryVisual": "shots/playtest-fixes-r15/save-recovered.png",
+      "crossVersion": "shots/playtest-fixes-r15/save-r13-to-r15.json",
+      "rollback": "shots/playtest-fixes-r15/save-atomicity.json",
+      "cloud": "tools/cloud-save-contract-probe.mjs PASS",
+      "productionBuild": "Vite production build PASS, 164 modules",
+      "determinism": "Simulation selftest PASS"
     }
   }
 }

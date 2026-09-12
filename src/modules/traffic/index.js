@@ -114,10 +114,14 @@ const api={
     return out;
   },
   serialize(){const t=S.traffic;return {module:'traffic',version:2,density:S.density,vehicles:[...t.vehicles.values()].map(v=>({kind:v.kind,edgeId:v.rec.id,lane:v.lane,t:v.t,speed:v.speed,dir:v.dir,paint:v.paint,route:v.route,ri:v.ri,purpose:v.purpose,loop:v.loop,explicit:v.explicit,external:v.external})),peds:t.peds.map(p=>({edgeId:p.rec.id,side:p.side,t:p.t,dir:p.dir,phase:p.phase}))};},
-  deserialize(data){if(data?.module!=='traffic'||!Array.isArray(data.vehicles))return false;if(S.dirty||S.graph.dirty)rebuild();api.setDensity(0);S.density=data.density??null;
-    for(const d of data.vehicles){const rec=S.graph.edges.get(d.edgeId),ci=MIX.findIndex(m=>m[0]===d.kind);if(!rec||ci<0)continue;const dir=d.dir??(d.lane<rec.per?1:-1),v=S.traffic.spawn({rec,dir,s:(dir>0?d.t:1-d.t)*rec.len,ci,purpose:d.purpose,route:d.route,explicit:d.explicit,loop:d.loop,external:d.external,restore:true,lane:d.lane});if(v){v.v=d.speed;v.paint=d.paint??v.paint;v.ri=d.ri??0;}}
-    for(const d of data.peds??[]){const r=S.graph.edges.get(d.edgeId);if(!r?.swR)continue;const p=S.traffic.spawnPed({w:{id:r.id,side:d.side==='right'?1:-1},s:(d.dir>0?d.t:1-d.t)*r.len});if(p){p.dir=d.dir;p.phase=d.phase;}}
-    S.reseed=false;S.traffic.stepPeds(0);population();sync();return true;
+  deserialize(data){if(data?.module!=='traffic'||!Array.isArray(data.vehicles))return false;if(S.dirty||S.graph.dirty)rebuild();api.setDensity(0);S.density=data.density??null;const restoredVehicles=[],restoredPeds=[];
+    for(const d of data.vehicles){const rec=S.graph.edges.get(d.edgeId),ci=MIX.findIndex(m=>m[0]===d.kind);if(!rec||ci<0)continue;const dir=d.dir??(d.lane<rec.per?1:-1),v=S.traffic.spawn({rec,dir,s:(dir>0?d.t:1-d.t)*rec.len,ci,purpose:d.purpose,route:d.route,explicit:d.explicit,loop:d.loop,external:d.external,restore:true,lane:d.lane});if(v){v.v=d.speed;v.paint=d.paint??v.paint;v.ri=d.ri??0;restoredVehicles.push([v,d]);}}
+    for(const d of data.peds??[]){const r=S.graph.edges.get(d.edgeId);if(!r?.swR)continue;const p=S.traffic.spawnPed({w:{id:r.id,side:d.side==='right'?1:-1},s:(d.dir>0?d.t:1-d.t)*r.len});if(p){p.dir=d.dir;p.phase=d.phase;restoredPeds.push([p,d]);}}
+    S.reseed=false;S.traffic.stepPeds(0);population();sync();
+    // Rebuilding world-space positions from t necessarily introduces a final floating-point division.
+    // Keep the authored save fields byte-exact for immediate re-save and repeated load cycles.
+    for(const[v,d]of restoredVehicles){v.t=d.t;v.speed=d.speed;}for(const[p,d]of restoredPeds){p.t=d.t;p.phase=d.phase;p.dir=d.dir;p.side=d.side;p.sideNum=d.side==='right'?1:-1;}
+    return true;
   },
 };
 export default {
