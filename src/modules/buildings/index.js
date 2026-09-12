@@ -485,7 +485,11 @@ export default {
     if (!S.chunks) return;
     S.chunks.beginFrame();
     updateConstruction();
-    if (S.chunks.dirty.size) S.chunks.rebuildDirty(2);
+    // A rebuilt chunk starts with both replacement meshes hidden until its distance LOD is chosen.
+    // Waiting for the periodic LOD sweep left every construction-phase update invisible for up to
+    // 200 ms, which made completed neighbours blink with the building under construction.
+    const rebuilt = S.chunks.dirty.size ? S.chunks.rebuildDirty(2) : 0;
+    if (rebuilt) S.chunks.updateLod(ctx.camera.camera);
     flushEvents();
 
     S.lodTimer += dt;

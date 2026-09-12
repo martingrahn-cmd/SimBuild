@@ -310,6 +310,7 @@ export class Hud {
     ms.addEventListener('click', () => { this.action('milestones'); this.showSide('milestones'); });
     const rci = el('div', 'sb-rci');
     rci.setAttribute('data-tip', 'Zone demand: Residential · Commercial · Industrial · Office');
+    this.rciEl = rci;
     this.rciBars = {};
     for (const [k, l] of [['residential', 'R'], ['commercial', 'C'], ['industrial', 'I'], ['office', 'O']]) {
       rci.appendChild(el('div', 'sb-rci-l', l));
@@ -492,6 +493,7 @@ export class Hud {
   }
   _renderSubpanel(cat) {
     const sub = this.subEl; sub.innerHTML = '';
+    this.zoneDemandGuide = null;
     const head = el('div', 'sb-subpanel-head');
     head.appendChild(el('div', 'sb-title', ICONS[cat.icon]() + `<span>${esc(cat.label)}</span>`));
     if (cat.tabs) {
@@ -511,6 +513,11 @@ export class Hud {
     const body = el('div', 'sb-subpanel-body');
     if (cat.options?.length) body.appendChild(this._renderOptions(cat));
     if (cat.guide) body.appendChild(el('div', 'sb-service-guide', `${ICONS.info()}<span>${esc(cat.guide)}</span>`));
+    if (cat.id === 'zoning') {
+      this.zoneDemandGuide = el('div', 'sb-service-guide');
+      body.appendChild(this.zoneDemandGuide);
+      this.refreshDemand();
+    }
     const cards = el('div', 'sb-cards');
     this.cardEls = {};
     const list = this.cardsOf(cat);
@@ -620,6 +627,12 @@ export class Hud {
     this.toast({ title: p.name || 'Milestone', kicker: `Milestone ${p.level ?? ''} reached`, body: (names ? `Unlocked: ${names}` : 'New possibilities await') + (p.reward ? ` · <b>+¢${fmtInt.format(p.reward)}</b>` : '') });
     this.notify({ type: 'success', title: `Milestone: ${p.name || ''}`, body: names ? `New services unlocked: ${names}.` : 'Your city keeps growing.', ttl: 10 });
   }
+  onLoan(p = {}) {
+    if (p.type === 'loan_refused') this.notify({ type: 'warning', title: 'Loan unavailable', body: p.reason || 'The loan could not be approved.', ttl: 8 });
+    else if (p.type === 'loan_paid' || p.type === 'loan_paid_early') this.notify({ type: 'success', title: 'Loan repaid', body: 'The debt has been cleared.', ttl: 6 });
+    else this.notify({ type: 'money', title: 'Loan approved', body: `¢${Math.round(p.amount || 0).toLocaleString('en-US')} added to the treasury.`, ttl: 7 });
+    if (this.sideKind === 'stats') this._renderStats();
+  }
   toast({ title, kicker = 'Milestone reached', body = '', sticky = false }) {
     this.toastEl?.remove();
     const t = this.toastEl = el('div', 'sb-toast sb-glass' + (sticky ? ' is-sticky' : ''), `<div class="sb-tic">${ICONS.trophy()}</div><div class="sb-tt"><div class="sb-t0">${esc(kicker)}</div><div class="sb-t1">${esc(title)}</div><div class="sb-t2">${body}</div></div>`);
@@ -629,6 +642,11 @@ export class Hud {
   refreshDemand(d) {
     const dem = d || this.source.eco?.demand || {};
     for (const [k, bar] of Object.entries(this.rciBars)) bar.style.width = (clamp01(dem[k]) * 100).toFixed(0) + '%';
+    const names={residential:'Homes',commercial:'Shops',industrial:'Industry',office:'Offices'};
+    const state=v=>v>=.55?'high':v>=.22?'active':'low';
+    const summary=Object.keys(names).map(k=>`${names[k]} ${Math.round(clamp01(dem[k])*100)}% (${state(clamp01(dem[k]))})`).join(' · ');
+    this.rciEl?.setAttribute('data-tip', `Zone demand: ${summary}. Low demand means painted zones wait.`);
+    if(this.zoneDemandGuide)this.zoneDemandGuide.innerHTML=`${ICONS.info()}<span><b>Current demand:</b> ${esc(summary)}. Buildings grow automatically; zones with low demand remain empty until the city needs them.</span>`;
   }
   _refreshWeather() {
     const w = this.ctx.world.weather, night = this.ctx.clock.isNight();
@@ -816,7 +834,21 @@ export class Hud {
     const eco = this.source.eco || {}, net = Math.round(this._budgetNet());
     const imports = eco.utilityImports || {};
     const importedNames = ['power', 'water', 'garbage'].filter((key) => imports[key]).map((key) => ({ power: 'power', water: 'water/sewage', garbage: 'waste' })[key]);
-    return [['Population', fmtInt.format(Math.round(eco.population || 0))], ['Jobs', fmtInt.format(Math.round(eco.jobs || 0))], ['Happiness', `${Math.round(clamp01(eco.happiness) * 100)}%`], ['Treasury', `¢${fmtInt.format(Math.round(eco.money || 0))}`], ['Daily balance', `${net >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(net))}`, net >= 0 ? 'good' : 'bad'], ['Tax rate', `${Math.round((eco.taxRate ?? 0.1) * 100)}%`], ['Utility imports', importedNames.length ? importedNames.join(', ') : 'None'], ['Import cost / day', `¢${fmtInt.format(Math.round(imports.cost || 0))}`], ['Transit fares / day', `¢${fmtInt.format(Math.round(eco.incomeBreakdown?.transit || 0))}`], ['Transit fleet / day', `¢${fmtInt.format(Math.round(eco.expenseBreakdown?.transit || 0))}`]];
+    return [['Population', fmtInt.format(Math.round(eco.population || 0))], ['Jobs', fmtInt.format(Math.round(eco.jobs || 0))], ['Happiness', `${Math.round(clamp01(eco.happiness) * 100)}%`], ['Treasury', `¢${fmtInt.format(Math.round(eco.money || 0))}`], ['Income / day', `+¢${fmtInt.format(Math.round(eco.income || 0))}`, 'good'], ['Expenses / day', `−¢${fmtInt.format(Math.round(eco.expenses || 0))}`, 'bad'], ['Daily balance', `${net >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(net))}`, net >= 0 ? 'good' : 'bad'], ['Tax rate', `${Math.round((eco.taxRate ?? 0.1) * 100)}%`], ['Utility imports', importedNames.length ? importedNames.join(', ') : 'None']];
+  }
+  _budgetRows() {
+    const eco=this.source.eco||{},inc=eco.incomeBreakdown||{},exp=eco.expenseBreakdown||{};
+    return {
+      income:[['Resident tax',inc.residentialTax],['Business tax',inc.businessTax],['Trade',inc.trade],['Transit fares',inc.transit]],
+      expenses:[['Road upkeep',exp.roads],['City administration',exp.admin],['Utility imports & services',exp.services],['Building upkeep',exp.buildings],['Transit fleet',exp.transit],['Loan payments',exp.loans]],
+    };
+  }
+  _budgetGuidance() {
+    const eco=this.source.eco||{}, net=this._budgetNet(), expenses=this._budgetRows().expenses;
+    const largest=expenses.reduce((best,row)=>(+row[1]||0)>(+best[1]||0)?row:best,['Other costs',0]);
+    if((eco.money||0)<0) return `The treasury is below zero, so new purchases are blocked. The city is losing ¢${fmtInt.format(Math.abs(Math.round(net)))}/day; its largest current cost is ${largest[0].toLowerCase()} (¢${fmtInt.format(Math.round(largest[1]||0))}/day). A loan adds cash immediately, but repayments increase daily expenses.`;
+    if(net<0) return `The city is losing ¢${fmtInt.format(Math.abs(Math.round(net)))}/day. Its largest current cost is ${largest[0].toLowerCase()} (¢${fmtInt.format(Math.round(largest[1]||0))}/day). Loans provide short-term cash and add a daily repayment.`;
+    return 'Higher tax raises revenue per resident and filled job, but reduces happiness and demand. The daily balance accrues continuously.';
   }
   _refreshStatsValues() {
     const rows = this._statsRows();
@@ -825,7 +857,13 @@ export class Hud {
       this._setLiveText(node, rows[i][1]);
       node.classList.toggle('good', rows[i][2] === 'good'); node.classList.toggle('bad', rows[i][2] === 'bad');
     }
+    const budget=this._budgetRows(), all=[...budget.income,...budget.expenses];
+    for(let i=0;i<(this._budgetValues?.length||0);i++){
+      const amount=all[i]?.[1]||0,meta=this._budgetValues[i];
+      this._setLiveText(meta.node,`${meta.sign}¢${fmtInt.format(Math.round(Math.abs(amount)))}`);
+    }
     this._setLiveText(this._taxValue, Math.round((this.source.eco?.taxRate ?? 0.1) * 100) + ' %');
+    this._setLiveText(this._budgetGuide, this._budgetGuidance());
     this._setLiveText(this.sideEl.querySelector('.sb-h2 span'), this.cityName + ' · ' + this.dateString());
   }
   _renderStats() {
@@ -846,6 +884,15 @@ export class Hud {
       this.sparks.push({ key, cv, v, col, fmt });
     }
     body.appendChild(sp);
+    const budget=this._budgetRows();this._budgetValues=[];
+    body.appendChild(el('div','sb-section','Income per day'));
+    const incomeRows=el('div','sb-rows');
+    for(const [label,amount] of budget.income){incomeRows.appendChild(el('span','sb-k',label));const node=el('span','sb-v sb-num good',`+¢${fmtInt.format(Math.round(Math.abs(amount||0)))}`);incomeRows.appendChild(node);this._budgetValues.push({node,sign:'+'});}
+    body.appendChild(incomeRows);
+    body.appendChild(el('div','sb-section','Expenses per day'));
+    const expenseRows=el('div','sb-rows');
+    for(const [label,amount] of budget.expenses){expenseRows.appendChild(el('span','sb-k',label));const node=el('span','sb-v sb-num bad',`−¢${fmtInt.format(Math.round(Math.abs(amount||0)))}`);expenseRows.appendChild(node);this._budgetValues.push({node,sign:'−'});}
+    body.appendChild(expenseRows);
     const tax = el('div', 'sb-barrow'); tax.innerHTML = `<span class="sb-k">Tax rate</span>`;
     const st = el('div', 'sb-stepper'); const val = el('span', 'sb-val sb-num', `${Math.round((eco.taxRate ?? 0.1) * 100)} %`);
     const dn = btn('sb-tm', ICONS.chevronDown()), up = btn('sb-tm', ICONS.chevronUp());
@@ -853,7 +900,21 @@ export class Hud {
     const setTax = (d) => { const t = Math.max(0.01, Math.min(0.3, (this.source.eco?.taxRate ?? 0.1) + d)); this.action('setTaxRate', +t.toFixed(2)); val.textContent = `${Math.round(t * 100)} %`; };
     dn.addEventListener('click', () => setTax(-0.01)); up.addEventListener('click', () => setTax(0.01));
     st.append(dn, val, up); tax.append(st, el('span', 'sb-v', '')); body.appendChild(el('div', 'sb-section', 'Budget')); body.appendChild(tax);
-    const loan = btn('sb-action small', ICONS.money() + '<span>Take loan ¢50,000</span>'); loan.addEventListener('click', () => { this.action('takeLoan', 50000, 30); this.notify({ type: 'money', title: 'Loan requested', body: '¢50,000 over 30 days.', ttl: 5 }); });
+    const budgetGuide=el('div','sb-service-guide',`${ICONS.info()}<span>${esc(this._budgetGuidance())}</span>`);this._budgetGuide=budgetGuide.querySelector('span');body.appendChild(budgetGuide);
+    const loans = Array.isArray(eco.loans) ? eco.loans : [];
+    const outstanding = loans.reduce((sum, item) => sum + (+item.remaining || 0), 0);
+    const payment = loans.reduce((sum, item) => sum + (+item.dailyPayment || 0), 0);
+    const remainingCapacity = Math.max(0, Math.floor((eco.loanCapacity || 0) - outstanding));
+    body.appendChild(el('div', 'sb-section', 'Loans'));
+    const debtRows = el('div', 'sb-rows');
+    for (const [label, value] of [['Outstanding debt', `¢${fmtInt.format(Math.round(outstanding))}`], ['Loan payments / day', `−¢${fmtInt.format(Math.round(payment))}`], ['Available credit', `¢${fmtInt.format(remainingCapacity)}`]]) {
+      debtRows.append(el('span', 'sb-k', label), el('span', 'sb-v sb-num', value));
+    }
+    body.appendChild(debtRows);
+    const offer = Math.min(50000, Math.floor(remainingCapacity / 1000) * 1000);
+    const loan = btn('sb-action small', ICONS.money() + `<span>${offer >= 1000 ? `Take loan ¢${fmtInt.format(offer)}` : 'No credit available'}</span>`);
+    loan.disabled = offer < 1000 || loans.length >= 3;
+    loan.addEventListener('click', () => this.action('takeLoan', offer, 30));
     body.appendChild(loan);
     this._drawSparks();
   }

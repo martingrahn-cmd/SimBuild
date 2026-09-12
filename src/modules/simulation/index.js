@@ -197,8 +197,22 @@ export default {
         if (!p) return;
         if (p.action === 'setTaxRate') S.eco.econ.taxRate = Math.max(0.01, Math.min(0.3, +p.args?.[0] || 0.1));
         else if (p.action === 'setSimSpeed') S.speedOverride = p.args?.[0] == null ? null : Math.max(0, +p.args[0]);
-        else if (p.action === 'takeLoan') S.eco.takeLoan(+p.args?.[0] || 0, +p.args?.[1] || 30);
-        else if (p.action === 'repayLoan') S.eco.repayLoan(+p.args?.[0]);
+        else if (p.action === 'takeLoan') {
+          const amount = +p.args?.[0] || 0, days = +p.args?.[1] || 30;
+          const outstanding = S.eco.econ.loans.reduce((sum, loan) => sum + loan.remaining, 0);
+          const reason = S.eco.econ.loans.length >= 3 ? 'Maximum of three active loans reached.'
+            : outstanding + amount > S.eco.econ.loanCapacity ? `Only ¢${Math.max(0, Math.floor(S.eco.econ.loanCapacity - outstanding)).toLocaleString('en-US')} of borrowing capacity remains.`
+              : amount <= 0 ? 'No loan amount was selected.' : '';
+          const loan = reason ? null : S.eco.takeLoan(amount, days);
+          // UI actions happen between simulation ticks. Publish the result now; Economy.step clears
+          // its transient event queue at the start of the next tick.
+          S.eco.events.length = 0;
+          ev.emit('sim:loan', loan ? { type: 'loan', id: loan.id, amount: loan.principal, remaining: loan.remaining, dailyPayment: loan.dailyPayment, daysLeft: loan.daysLeft }
+            : { type: 'loan_refused', amount, reason: reason || 'The loan could not be approved.' });
+        } else if (p.action === 'repayLoan') {
+          const id = +p.args?.[0]; const paid = S.eco.repayLoan(id);
+          ev.emit('sim:loan', paid ? { type: 'loan_paid_early', id } : { type: 'loan_refused', reason: 'The city does not have enough cash to repay this loan.' });
+        }
       }, own),
     );
     ctx.log.info(`economy ready: tick ${S.eco.tick}, ${S.eco.buildings.size} buildings, ${econ.roadKm.toFixed(1)} km roads`);

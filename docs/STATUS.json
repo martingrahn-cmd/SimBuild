@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-12T14:30:00.000Z",
+  "updatedAt": "2026-09-12T17:43:05.500Z",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4119,8 +4119,8 @@
   },
   "playtestCheckpoint": {
     "id": "human-playtest-r10-2026-09-11",
-    "state": "R12 MVP repair accepted locally; awaiting human replay",
-    "playerSource": "R11 human-feedback fixes on accepted R9u architecture; production build and bounded contracts pass",
+    "state": "R14 building continuity, zoning/economy clarity and loan repair accepted locally; awaiting human replay",
+    "playerSource": "R14 human-feedback fixes on accepted R13 architecture; production build and bounded contracts pass",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4165,6 +4165,11 @@
         "id": "R13",
         "decision": "accepted bounded rigid box-truck LOD0/1 art repair",
         "score": "Traffic 7.2 FAIL and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R14",
+        "decision": "accepted bounded building-chunk visibility, demand/economy explanation and milestone-capacity loan repair",
+        "score": "Buildings 7.4, UI 7.0, Simulation 6.5 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4199,22 +4204,26 @@
     "rankedKnownIssues": [
       {
         "rank": 1,
-        "issue": "Human replay is required for PT-23/PT-27/PT-28: objective fixtures remove the leaked showcase fleet, reduce 22-resident traffic to 7 passenger vehicles, add land-use trip purposes and accelerate settlement below 150, but subjective density and pace remain ungraded."
+        "issue": "Reproduce the reported hosted Slot 1 load failure without overwriting its payload, then prove cross-version migration and a player-accessible recovery copy. Existing owner rollback remains required."
       },
       {
         "rank": 2,
-        "issue": "Close-range fleet art remains below the final bar. R13 repairs the rigid box truck with separate cab/cargo/chassis geometry; vans, buses, semis, markings and broader variation remain open."
+        "issue": "Human replay is required for population/traffic pacing, empty-zone demand clarity, the repaired loan flow and the R11 roundabout/frontage/night/river fixes."
       },
       {
         "rank": 3,
-        "issue": "R11 fixes for prefab roundabouts, frontage-depth guidance, base night readability and inland-water rendering require human readability/quality replay; do not list these accepted features as missing."
+        "issue": "Define and verify a bankruptcy/recovery loop. R14 explains negative treasury and the largest cost, but loans are short-term liquidity and no loss/restructuring state exists."
       },
       {
         "rank": 4,
-        "issue": "Cold start still reaches the main menu in about 3.1 seconds. Terrain is the measured dominant stage; perform internal terrain-stage attribution before changing product quality."
+        "issue": "Close-range fleet art remains below the final bar. R13 repairs the rigid box truck; vans, buses, semis, markings and broader variation remain open."
       },
       {
         "rank": 5,
+        "issue": "Cold start still reaches the main menu in about 3.1 seconds. Terrain is the measured dominant stage; perform internal terrain-stage attribution before changing product quality."
+      },
+      {
+        "rank": 6,
         "issue": "Sustained sub-50fps performance, raw heap, sparse city fabric, transit/traffic interaction and Props exactness retain their recorded failed gates."
       }
     ],
@@ -4239,7 +4248,7 @@
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
     ],
-    "nextAutonomousStep": "Run the user’s human replay of PT-23/PT-27/PT-28 and the accepted R11 roundabout/frontage/night/river fixes. If the objective traffic and pace changes pass subjectively, continue PT-26 with the next measured close-range fleet asset; otherwise capture the exact save and tune only the failed term. Cold-start Terrain attribution remains the next objective engineering task.",
+    "nextAutonomousStep": "Reproduce PT-29 against an isolated copy of the reported hosted save, preserve failed-load rollback, and add only evidence-backed migration/recovery handling. Then specify and verify PT-33 bankruptcy/recovery behavior before returning to fleet art or cold-start work.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4467,9 +4476,54 @@
         "severity": "critical simulation realism",
         "status": "R12 objective repair accepted: deterministic land-use purposes, freight class gating and exact Traffic restore; human replay pending",
         "finding": "Traffic origin, destination and vehicle class are not sufficiently tied to land use. Freight selection is mainly time-based and general routes use aggregate activity, so trucks can target residential streets or tiny shops. Implement deterministic home/work/shop/industry/external trip purposes: commuter cars between residences and jobs, customer and delivery trips for commerce, and freight between industry, commerce and outside connections."
+      },
+      {
+        "id": "PT-2026-09-12-29",
+        "severity": "critical save continuity",
+        "status": "open: exact hosted Slot 1 load error has not been reproduced; existing failed-load rollback preserves the previous world, but formal cross-version migration and recovery-copy evidence remain required",
+        "finding": "A hosted saved city produced an error when the player tried to load it. Public update-safe saves need explicit schema migration, rollback and recovery evidence across released versions.",
+        "evidence": "shots/playtest-checkpoint-2026-09-12/human-save-load-error-report"
+      },
+      {
+        "id": "PT-2026-09-12-30",
+        "severity": "major visual continuity",
+        "status": "R14 objective repair accepted: rebuilt building chunks receive their current camera LOD in the same frame; human replay pending",
+        "finding": "Completed buildings blink in and out repeatedly while construction changes occur elsewhere in their render chunk.",
+        "verification": [
+          "tools/building-blink-probe.mjs",
+          "shots/playtest-fixes-r14/building-blink.json",
+          "docs/builds/playtest_r14_buildings_economy.md"
+        ]
+      },
+      {
+        "id": "PT-2026-09-12-31",
+        "severity": "major simulation clarity",
+        "status": "R14 presentation repair accepted: zoning shows live demand states and Statistics shows income/expense causes; underlying pacing remains a human-playtest gate",
+        "finding": "Large painted areas remain empty without explaining that commercial/industrial demand is low, and the budget does not explain the cause of a continuing deficit.",
+        "verification": [
+          "shots/playtest-fixes-r14/economy-loan.png",
+          "docs/builds/playtest_r14_buildings_economy.md"
+        ]
+      },
+      {
+        "id": "PT-2026-09-12-32",
+        "severity": "critical economy interaction",
+        "status": "R14 fixed and verified: Hamlet offers its real ¢30,000 capacity, approval changes treasury immediately, refusal states the reason, debt/payment/credit are visible and loan state restores exactly",
+        "finding": "Take loan always requests ¢50,000 although Hamlet capacity is ¢30,000; the request is rejected while UI only says Loan requested.",
+        "verification": [
+          "tools/loan-ux-probe.mjs",
+          "shots/playtest-fixes-r14/economy-loan.json",
+          "shots/playtest-fixes-r14/economy-loan.png"
+        ]
+      },
+      {
+        "id": "PT-2026-09-12-33",
+        "severity": "major game-state clarity",
+        "status": "open: negative treasury and deficit are now explained, but no formal bankruptcy, restructuring or recovery game state exists",
+        "finding": "A city can continue at a negative treasury and continuing deficit without a defined bankruptcy/recovery outcome."
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-28 retained. R12 objectively repairs PT-23/PT-27/PT-28 pending human replay; PT-24 and PT-25 are fixed; R13 partially repairs PT-26 box-truck art while broader fleet quality remains open.",
+    "humanPlaytestSession": "Findings PT-01 through PT-33 retained. R14 fixes PT-30 and PT-32 objectively and improves PT-31 presentation; PT-29 exact hosted load failure and PT-33 formal bankruptcy/recovery remain open. Human replay remains required for pacing and clarity.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "77bfd55 (R12 product commit on SimBuild main)",
@@ -4642,6 +4696,15 @@
       "after": "shots/playtest-fixes-r13/vehicles-after-fleet.png",
       "front": "shots/playtest-fixes-r13/vehicles-after-front.png",
       "trafficContract": "shots/playtest-fixes-r10/traffic-causality.json"
+    },
+    "r14Evidence": {
+      "build": "docs/builds/playtest_r14_buildings_economy.md",
+      "critic": "docs/critic/playtest_r14_local.md",
+      "buildingContinuity": "shots/playtest-fixes-r14/building-blink.json",
+      "loanContract": "shots/playtest-fixes-r14/economy-loan.json",
+      "economyVisual": "shots/playtest-fixes-r14/economy-loan.png",
+      "productionBuild": "Vite production build PASS, 164 modules",
+      "determinism": "Simulation selftest PASS: deterministic repeat and exact save/load"
     }
   }
 }
