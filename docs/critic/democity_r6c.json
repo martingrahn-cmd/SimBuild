@@ -1,0 +1,20 @@
+{
+  "module": "democity",
+  "round": "6c",
+  "review": "local-critical",
+  "score": 6.0,
+  "pass": false,
+  "basis": {
+    "ownerProfile": "shots/democity/r6b/mainpass-profile.json",
+    "correctedPropsProfile": "shots/democity/r6b-props-corrected/mainpass-profile.json",
+    "candidateProfile": "shots/democity/r6c-candidate-420/mainpass-profile.json",
+    "matrix": "shots/democity/rr6c-candidate-420/summary.json",
+    "api": "shots/democity/r6c-candidate-420/apicheck.json",
+    "restage": "shots/democity/r6c-candidate-420/restage-cycle.json"
+  },
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 799, "maxTriangles": 3735080, "minFps": 30.9},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "invalidTour": false, "sameSeed1337": true, "sameSeed7": true},
+  "change": {"owner": "props", "distanceM": 420, "scope": "render-only hard furniture and shelter glass", "realItemsChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept bounded render optimization and hold score; profile retained hard-furniture kits and distance bands next"
+}

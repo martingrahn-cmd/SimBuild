@@ -1,0 +1,106 @@
+{
+  "module": "tools",
+  "round": 2,
+  "score": 7.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 8,
+  "apiContractOk": false,
+  "acceptanceFailed": [
+    "2. Ghost ribbon conforms to terrain, never z-fights, never floats",
+    "9. Undo/redo is exact",
+    "11. Bulldoze marks its victims, not the neighbourhood",
+    "17. Terrain sculpt reads as a brush, not a stamp"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Existing roads punch through the white preview",
+      "detail": "At 1080p the posed avenue crossing has deep triangular asphalt/kerb intrusions, especially at the lower right. This fails acceptance 2 despite the prescribed transparent/depthWrite:false/-6/-6 material settings and reported 0.15 m vertex lift. Inspect actual rendered road heights and interpolation across the ribbon width; the statistics report requested lift, not continuity over road surfaces. The defect shrinks at 720p, so only checking the smaller render hides it.",
+      "evidence": "shots/tools/r2/critic_roadtool_12.png; shots/tools/r2/critic_roadtool_22.png; shots/tools/r2/closeup_22.png; comparison shots/tools/r2/critic_roadtool_12_720.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Redo fails to restore the post-action terrain",
+      "detail": "Two independent clean loads reproduced the same eight committed actions with three animation frames after each action, undo and redo. All eight succeed; undo restores every terrain vertex and all four counters exactly. Redo restores counters but differs by up to 0.49992847442626953 m across 668 terrain vertices, exceeding the 0.001 m tolerance. Trace: alley roads (-40,155) to (40,155) and (-40,170) to (40,170); two size-16 high-density zone strokes at (-200,-30) office and (-120,50) commercial; size-30 strength-50 sculpt raise (0,170), lower (40,170); demolish building 11; place tree_oak (60,160). A prop replaces the unavailable service per the residual decision. Do not sample only remote terrain points: compare the complete height field.",
+      "evidence": "shots/tools/r2/critic-apicheck.mjs and .json history; shots/tools/r2/critic-follow.mjs and .json history"
+    },
+    {
+      "rank": 3,
+      "severity": "minor",
+      "title": "Sculpt showcase exceeds the permitted terrain step",
+      "detail": "The required 16-ray, 2 m sampling probe finds a 1.728453636 m adjacent step at (150,-172) to (150,-174): heights 7.043300629 and 5.314846992 m. Both endpoints pass the 20 m road exclusion. Acceptance 17 permits at most 1.5 m. The brush does raise monotonically and has no NaN heights, but the staged dome needs more smoothing at its outer slope.",
+      "evidence": "shots/tools/r2/critic-follow.json metrics.sculpt; shots/tools/r2critic_presets/sculpt_12.png"
+    },
+    {
+      "rank": 4,
+      "severity": "minor",
+      "title": "Bulldoze prop volumes do not match their victims",
+      "detail": "The marquee correctly reports/removes 17 items, including three buildings and 14 props, and the building counter drops by three. However every prop is rendered as the same 2.2 x 2.2 x 6 m volume, regardless of its kind or actual footprint; the tall narrow red boxes visibly fail to hug small objects. Acceptance 11 requires object-sized volumes. The showcase also contains only three doomed buildings against the four required by the section 8 pose recipe.",
+      "evidence": "src/modules/tools/index.js:199; shots/tools/r2critic_presets/bulldoze_12.png; shots/tools/r2/critic-follow.json metrics.victims and demolition"
+    },
+    {
+      "rank": 5,
+      "severity": "minor",
+      "title": "Pinned wash crops are contaminated by foliage and chips",
+      "detail": "The wash landmark returns visible rectangles that do not isolate wash pixels. Street dawn yields median hue 72.775 degrees and street night 140 degrees from foreground foliage; skyline evening samples the red reason pill (6.486 degrees). Roadtool noon is also contaminated (184.615 degrees). This is a cropRects measurement-contract defect, not evidence that the wash material itself turns green/red. Keep landmarks clear of occluders and overlay pills, or decline an occluded landmark. Acceptance 22 wash hue is not failed unmeasured.",
+      "evidence": "shots/tools/r2/critic-pixels.json; shots/tools/r2/critic_street_6p5.crops.json and .png; shots/tools/r2/critic_skyline_17p5.crops.json and .png"
+    }
+  ],
+  "strengths": [
+    "The district is authored through tools: 40 edges, 35 nodes, 434 zone cells across all eight type/density combinations, 33 buildings and 24 undo entries.",
+    "All six preview poses render; neutral white ribbon, cyan snap cue, red invalid state and dark 26 px instanced chips establish a coherent visual language.",
+    "Night ribbon luminance and contrast meet the numerical bands without clipping; chip sizes remain constant at 720p.",
+    "Measured tools cost is 8 draw calls and 5802 triangles; 200 pointer calls allocate no geometry.",
+    "Actual node and edge commits, in-place selection, clean unavailable-neighbour failures, deterministic staging, preview cleanup and HUD event deduplication work."
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/tools_r2.md",
+  "summary": "7.0/10, FAIL. Strong improvement from round 1: complete, efficient previews and readable chips. Asphalt penetration, reproducible redo terrain drift, an excessive sculpt step and generic bulldoze prop volumes keep it below the 8.5 AAA bar.",
+  "shots": [
+    "shots/tools/r2/aerial_6p5.png",
+    "shots/tools/r2/aerial_12.png",
+    "shots/tools/r2/aerial_17p5.png",
+    "shots/tools/r2/aerial_22.png",
+    "shots/tools/r2/street_6p5.png",
+    "shots/tools/r2/street_12.png",
+    "shots/tools/r2/street_17p5.png",
+    "shots/tools/r2/street_22.png",
+    "shots/tools/r2/skyline_6p5.png",
+    "shots/tools/r2/skyline_12.png",
+    "shots/tools/r2/skyline_17p5.png",
+    "shots/tools/r2/skyline_22.png",
+    "shots/tools/r2/closeup_6p5.png",
+    "shots/tools/r2/closeup_12.png",
+    "shots/tools/r2/closeup_17p5.png",
+    "shots/tools/r2/closeup_22.png",
+    "shots/tools/r2critic_presets/roadtool_12.png",
+    "shots/tools/r2critic_presets/roadtool_22.png",
+    "shots/tools/r2critic_presets/zonetool_12.png",
+    "shots/tools/r2critic_presets/zonetool_22.png",
+    "shots/tools/r2critic_presets/sculpt_12.png",
+    "shots/tools/r2critic_presets/sculpt_22.png",
+    "shots/tools/r2critic_presets/bulldoze_12.png",
+    "shots/tools/r2critic_presets/bulldoze_22.png",
+    "shots/tools/r2critic_presets/service_12.png",
+    "shots/tools/r2critic_presets/service_22.png",
+    "shots/tools/r2critic_presets/invalid_12.png",
+    "shots/tools/r2critic_presets/invalid_22.png",
+    "shots/tools/r2/critic_roadtool_6p5.png",
+    "shots/tools/r2/critic_roadtool_12.png",
+    "shots/tools/r2/critic_roadtool_17p5.png",
+    "shots/tools/r2/critic_roadtool_22.png",
+    "shots/tools/r2/critic_closeup_12.png",
+    "shots/tools/r2/critic_closeup_22.png",
+    "shots/tools/r2/critic_street_6p5.png",
+    "shots/tools/r2/critic_street_22.png",
+    "shots/tools/r2/critic_skyline_17p5.png",
+    "shots/tools/r2/critic_all_night_street_22.png",
+    "shots/tools/r2/critic_all_aerial_12.png",
+    "shots/tools/r2/critic_roadtool_12_720.png",
+    "shots/tools/r2/critic_roadtool_22_720.png",
+    "shots/tools/r2/critic_closeup_12_720.png",
+    "shots/tools/r2/critic_closeup_22_720.png"
+  ]
+}

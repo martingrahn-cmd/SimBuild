@@ -80,11 +80,11 @@ const FRAG_PARS = /* glsl */`
 uniform sampler2D uNormalTex;
 uniform sampler2D uMacro;
 uniform sampler2D uLandTex;
-uniform sampler2D uGrassMap; uniform sampler2D uGrassFine; uniform sampler2D uGrassFineNor;
-uniform sampler2D uDirtMap;  uniform sampler2D uDirtNor;
-uniform sampler2D uRockMap;  uniform sampler2D uRockNor;
-uniform sampler2D uSandMap;  uniform sampler2D uSandNor;
-uniform sampler2D uScreeMap;
+
+
+
+
+
 uniform float uWorldMin;
 uniform float uWorldSize;
 uniform float uCell;
@@ -93,7 +93,10 @@ uniform float uSeaLevel;
 uniform float uNormalFlip;
 varying vec3 vWPos;
 const vec3 LUMW = vec3(0.30, 0.55, 0.15);
-vec3 tNor(sampler2D t, vec2 uv) { return texture2D(t, uv).xyz * 2.0 - 1.0; }
+uniform highp sampler2DArray uAlbedoLayers;
+vec4 tColor(float layer, vec2 uv) { return texture(uAlbedoLayers, vec3(uv, layer)); }
+uniform highp sampler2DArray uDetailNormals;
+vec3 tNor(float layer, vec2 uv) { return texture(uDetailNormals, vec3(uv, layer)).xyz * 2.0 - 1.0; }
 ${GRASS_PALETTE_GLSL}
 `;
 
@@ -163,11 +166,11 @@ if (wGrass > 0.02) {
   // the photo texture only supplies luminance detail (its olive hue is replaced by the palette)
   vec2 uvB = (wpR + (mac.rg - 0.5) * 9.0) / 61.0;
   vec2 uvC = (rotD * wp + (mac.ba - 0.5) * 11.0) / 47.0;
-  float lB = dot(texture2D(uGrassMap, uvB).rgb, LUMW), lC = dot(texture2D(uGrassMap, uvC).rgb, LUMW);
+  float lB = dot(tColor(0.0, uvB).rgb, LUMW), lC = dot(tColor(0.0, uvC).rgb, LUMW);
   float lum = min(1.7, mix(lB, lC, smoothstep(0.3, 0.7, mac2.g)) / 0.125);
   float det = mix(1.0, lum, 0.55 - 0.15 * far);
   // aerial grain: a third, unwarped coarse sample at 23 m keeps 0.5-3 m texture alive where the fine layer is gone
-  float lD = dot(texture2D(uGrassMap, (rotD * wpR) / 23.0 + 0.41).rgb, LUMW) / 0.125;
+  float lD = dot(tColor(0.0, (rotD * wpR) / 23.0 + 0.41).rgb, LUMW) / 0.125;
   det *= mix(1.0, 0.7 + 0.3 * lD, (1.0 - nearK) * 0.8 + 0.2);
   float grassAO = 1.0;
   vec3 hue = vec3(1.0);
@@ -175,20 +178,20 @@ if (wGrass > 0.02) {
   if (nearK > 0.001) {
     // fine ground-level layer (leafy grass, 4 m repeat): luminance detail + normals
     vec2 uvA = wp / 4.0;
-    vec3 cf = texture2D(uGrassFine, uvA).rgb;
+    vec3 cf = tColor(1.0, uvA).rgb;
     float lf = dot(cf, LUMW) / 0.24;
     det *= mix(1.0, 0.22 + 0.9 * lf, nearK * 0.9);
     hue = mix(hue, normalize(cf + 0.02) * 1.55, nearK * 0.45);         // leaf-litter / blade hue variation
-    vec3 n2 = tNor(uGrassFineNor, uvA);
+    vec3 n2 = tNor(0.0, uvA);
     pert += vec3(n2.x, 0.0, n2.y * uNormalFlip) * wGrass * 0.9;
     grassAO = mix(1.0, 0.6 + 0.45 * lf, nearK * 0.75);
     // micro layer (< 140 m): 1.7 m repeat, rotated; blade-level grain at street level
     float microK = 1.0 - smoothstep(60.0, 140.0, camD);
     if (microK > 0.001) {
       vec2 uvM = (rotC * wp) / 1.7 + 0.13;
-      vec3 cm = texture2D(uGrassFine, uvM).rgb;
+      vec3 cm = tColor(1.0, uvM).rgb;
       det *= mix(1.0, 0.4 + 0.65 * dot(cm, LUMW) / 0.24, microK * 0.65);
-      vec3 n3 = tNor(uGrassFineNor, uvM);
+      vec3 n3 = tNor(0.0, uvM);
       pert += vec3(n3.x, 0.0, n3.y * uNormalFlip) * wGrass * 0.6 * microK;
     }
   }
@@ -203,14 +206,14 @@ if (wGrass > 0.02) {
 }
 if (wDirt > 0.02) {
   vec2 uvB = (wpR + (mac.ba - 0.5) * 14.0) / 38.0;
-  vec3 cd = texture2D(uDirtMap, uvB).rgb;
+  vec3 cd = tColor(2.0, uvB).rgb;
   float dl = dot(cd, LUMW) / 0.09;
   vec3 c = mix(vec3(0.092, 0.082, 0.062), vec3(0.185, 0.165, 0.125), mac2.b) * mix(1.0, dl, 0.45 - 0.15 * far) * (0.85 + 0.3 * fine);
   if (nearK > 0.001) {
     vec2 uvA = wp / 6.0;
-    vec3 cn = texture2D(uDirtMap, uvA).rgb;
+    vec3 cn = tColor(2.0, uvA).rgb;
     c = mix(c, c * normalize(cn + 0.02) * 1.6 * (0.5 + 0.5 * dot(cn, LUMW) / 0.09), nearK * 0.3);
-    vec3 n2 = tNor(uDirtNor, uvA);
+    vec3 n2 = tNor(1.0, uvA);
     pert += vec3(n2.x, 0.0, n2.y * uNormalFlip) * wDirt * 0.8;
   }
   c = mix(c, c * vec3(0.55, 0.5, 0.42), wMud * 0.7);      // wet mud is darker
@@ -220,11 +223,11 @@ if (wDirt > 0.02) {
 }
 if (wSand > 0.02) {
   vec2 uvB = wpR / 30.0;
-  vec3 c = texture2D(uSandMap, uvB).rgb;
+  vec3 c = tColor(4.0, uvB).rgb;
   if (nearK > 0.001) {
     vec2 uvA = wp / 5.0;
-    c = mix(c, texture2D(uSandMap, uvA).rgb, nearK * 0.6);
-    vec3 n2 = tNor(uSandNor, uvA);
+    c = mix(c, tColor(4.0, uvA).rgb, nearK * 0.6);
+    vec3 n2 = tNor(3.0, uvA);
     pert += vec3(n2.x, 0.0, n2.y * uNormalFlip) * wSand * 0.5;
   }
   // grey-tan shingle/sand instead of the pink source; darker pebbly patches from the fine channel
@@ -235,7 +238,7 @@ if (wSand > 0.02) {
   detAO += 0.95 * wSand;
 }
 if (wScree > 0.02) {
-  vec3 c = texture2D(uScreeMap, (rotD * wp) / 14.0).rgb * 0.5;
+  vec3 c = tColor(5.0, (rotD * wp) / 14.0).rgb * 0.5;
   c *= mix(vec3(0.82, 0.8, 0.76), vec3(1.0, 0.94, 0.84), mac3.a) * (0.8 + 0.4 * fine);
   c = mix(c, c * vec3(0.85, 1.0, 0.7), smoothstep(0.3, 0.8, land.b) * 0.4);   // moss between the stones
   albedo += c * wScree;
@@ -247,7 +250,7 @@ if (wRock > 0.05) {
   vec3 bw = abs(gN); bw = bw * bw * bw * bw; bw /= (bw.x + bw.y + bw.z);
   float s = mix(12.0, 58.0, 0.35 + 0.65 * far);
   vec2 uvx = vWPos.zy / s, uvy = vWPos.xz / s, uvz = vWPos.xy / s;
-  vec3 c = texture2D(uRockMap, uvx).rgb * bw.x + texture2D(uRockMap, uvy).rgb * bw.y + texture2D(uRockMap, uvz).rgb * bw.z;
+  vec3 c = tColor(3.0, uvx).rgb * bw.x + tColor(3.0, uvy).rgb * bw.y + tColor(3.0, uvz).rgb * bw.z;
   c *= mix(vec3(0.62, 0.68, 0.74), vec3(0.95, 0.9, 0.84), mac2.r) * (0.8 + 0.4 * mac3.b);
   c = mix(c, vec3(dot(c, vec3(0.33))), 0.65);   // grey, not orange
   // lichen / moss tint on gentler rock, pale at altitude, strata banding
@@ -268,9 +271,9 @@ if (wRock > 0.05) {
     if (gl > 1e-5) pert += (vGrad / max(abs(fDet), 1e-5)) * (wRock / max(1.0, gl * 0.35));
   }
   {
-    vec3 tnx = tNor(uRockNor, uvx), tnz = tNor(uRockNor, uvz);
+    vec3 tnx = tNor(2.0, uvx), tnz = tNor(2.0, uvz);
     vec3 rp = vec3(0.0, tnx.y, tnx.x) * bw.x + vec3(tnz.x, tnz.y, 0.0) * bw.z;
-    if (bw.y > 0.2) { vec3 tny = tNor(uRockNor, uvy); rp += vec3(tny.x, 0.0, tny.y * uNormalFlip) * bw.y; }
+    if (bw.y > 0.2) { vec3 tny = tNor(2.0, uvy); rp += vec3(tny.x, 0.0, tny.y * uNormalFlip) * bw.y; }
     pert += rp * wRock * mix(1.1, 0.8, far) / max(nStr, 0.12) * mix(nStr, 0.6, far) ;
   }
   albedo += c * wRock;
@@ -298,17 +301,42 @@ float splatRough = clamp(rough + (0.5 - mac3.a) * 0.1, 0.25, 1.0);
 diffuseColor.rgb *= splatAlbedo;
 `;
 
+// Each family of terrain detail maps shares one sampler, leaving room for CSM shadows and the
+// environment within WebGL2's minimum 16 fragment texture units. Layers retain wrapping and mipmaps.
+function makeDetailTextureArray(maps, colorSpace = THREE.NoColorSpace) {
+  const size = Math.max(...maps.map(t => t.image.width));
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  const pixels = new Uint8Array(size * size * 4 * maps.length);
+  maps.forEach((map, layer) => {
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, size, size);
+    if (map.flipY) context.setTransform(1, 0, 0, -1, 0, size);
+    context.drawImage(map.image, 0, 0, size, size);
+    pixels.set(context.getImageData(0, 0, size, size).data, layer * size * size * 4);
+  });
+  const texture = new THREE.DataArrayTexture(pixels, size, size, maps.length);
+  texture.colorSpace = colorSpace;
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
+  texture.anisotropy = Math.min(...maps.map(t => t.anisotropy));
+  texture.needsUpdate = true;
+  return texture;
+}
+
 export function createTerrainMaterial(data, tex, opts = {}) {
+  const detailNormals = makeDetailTextureArray([tex.grassFine.normalMap, tex.dirt.normalMap, tex.rock.normalMap, tex.sand.normalMap]);
+  const albedoLayers = makeDetailTextureArray([tex.grass.map, tex.grassFine.map, tex.dirt.map, tex.rock.map, tex.sand.map, tex.scree.map], THREE.SRGBColorSpace);
   const uniforms = {
     uHeightTex: { value: data.heightTex },
     uNormalTex: { value: data.normalTex },
     uMacro: { value: tex.macro },
     uLandTex: { value: tex.land },
-    uGrassMap: { value: tex.grass.map }, uGrassFine: { value: tex.grassFine.map }, uGrassFineNor: { value: tex.grassFine.normalMap },
-    uDirtMap: { value: tex.dirt.map }, uDirtNor: { value: tex.dirt.normalMap },
-    uRockMap: { value: tex.rock.map }, uRockNor: { value: tex.rock.normalMap },
-    uSandMap: { value: tex.sand.map }, uSandNor: { value: tex.sand.normalMap },
-    uScreeMap: { value: tex.scree.map },
+    uDetailNormals: { value: detailNormals },
+    uAlbedoLayers: { value: albedoLayers },
     uWorldMin: { value: -data.half },
     uWorldSize: { value: data.size },
     uCell: { value: data.cell },
@@ -320,6 +348,7 @@ export function createTerrainMaterial(data, tex, opts = {}) {
   };
   const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, metalness: 0, side: THREE.FrontSide });
   mat.name = 'terrain-splat';
+  mat.addEventListener('dispose', () => { detailNormals.dispose(); albedoLayers.dispose(); });
   mat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
@@ -335,7 +364,7 @@ export function createTerrainMaterial(data, tex, opts = {}) {
       .replace('#include <aomap_fragment>', 'reflectedLight.indirectDiffuse *= splatAO;\nreflectedLight.directDiffuse *= mix(1.0, splatAO, 0.5);\nreflectedLight.indirectSpecular *= splatAO;');
     mat.userData.shader = shader;
   };
-  mat.customProgramCacheKey = () => 'terrain-splat-v3:' + Object.keys(mat.defines || {}).join(',');
+  mat.customProgramCacheKey = () => 'terrain-splat-v4:' + Object.keys(mat.defines || {}).join(',');
   mat.userData.uniforms = uniforms;
   return mat;
 }
@@ -382,6 +411,7 @@ vec3 splatN = gN;`)
       .replace('#include <normal_fragment_maps>', '');
   };
   mat.customProgramCacheKey = () => 'terrain-lite-v3';
+  mat.userData.uniforms = uniforms;
   return mat;
 }
 

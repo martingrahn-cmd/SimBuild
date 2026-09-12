@@ -1,5 +1,5 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=all&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5174/?showcase=all&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "all",
   "time": 12,
   "camera": "aerial",
@@ -7,33 +7,33 @@
   "width": 1920,
   "height": 1080,
   "quality": "high",
-  "gpu": "swiftshader",
+  "gpu": "metal",
   "ok": true,
-  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 143015,
-  "fps": 10,
-  "measuredFrames": 2,
-  "frameMs": 5500.4,
-  "drawCalls": 35,
-  "triangles": 182390,
+  "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+  "elapsedMs": 6326,
+  "fps": 60,
+  "measuredFrames": 121,
+  "frameMs": 12,
+  "drawCalls": 32,
+  "triangles": 163894,
   "programs": 36,
-  "textures": 50,
+  "textures": 42,
   "geometries": 46,
-  "heapMB": 76.7,
+  "heapMB": 117.3,
   "moduleMs": {
-    "terrain": 0.09999999403953552,
-    "environment": 0.30000001192092896,
+    "terrain": 0,
+    "environment": 0,
     "roads": 0,
     "zoning": 0,
-    "buildings": 0.09999999403953552,
+    "buildings": 0.10000000009313226,
     "props": 0,
     "traffic": 0,
     "effects": 0,
     "simulation": 0,
     "tools": 0,
-    "ui": 0.09999999403953552,
-    "audio": 0,
     "services": 0,
+    "ui": 0,
+    "audio": 0,
     "infoviews": 0,
     "transit": 0,
     "democity": 0
@@ -56,80 +56,80 @@
     "terrain": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.1,
-      "initMs": 5356
+      "ms": 0,
+      "initMs": 1853
     },
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.3,
-      "initMs": 191
+      "ms": 0,
+      "initMs": 37
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 107
+      "initMs": 34
     },
     "zoning": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 8
+      "initMs": 1
     },
     "buildings": {
       "status": "ready",
       "errors": 0,
       "ms": 0.1,
-      "initMs": 349
+      "initMs": 16
     },
     "props": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 1869
+      "initMs": 361
     },
     "traffic": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 56
+      "initMs": 9
     },
     "effects": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 5
+      "initMs": 1
     },
     "simulation": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 3
+      "initMs": 1
     },
     "tools": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 5
-    },
-    "ui": {
-      "status": "ready",
-      "errors": 0,
-      "ms": 0.1,
-      "initMs": 14
-    },
-    "audio": {
-      "status": "ready",
-      "errors": 0,
-      "ms": 0,
-      "initMs": 1169
+      "initMs": 1
     },
     "services": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
       "initMs": 0
+    },
+    "ui": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 2
+    },
+    "audio": {
+      "status": "ready",
+      "errors": 0,
+      "ms": 0,
+      "initMs": 272
     },
     "infoviews": {
       "status": "ready",

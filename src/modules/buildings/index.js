@@ -19,20 +19,17 @@ const S = {
   lots: new Map(), setupMs: 0, infoKey: null, frame: 0,
 };
 
+const PERIMETER = [[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]];
+
 // ------------------------------------------------------------------ helpers
 function terrainPad(T, lot, plan) {
   const c = Math.cos(lot.heading), s = Math.sin(lot.heading);
-  // sample a small margin outside the footprint and the mid-ring too: a single ring of corners
-  // leaves a bump between them above the slab on rolling ground
-  const hw = (plan.w || lot.w) / 2 + 0.6, hd = (plan.d || lot.d) / 2 + 0.6;
+  const hw = (plan.w || lot.w) / 2, hd = (plan.d || lot.d) / 2;
   let mn = Infinity, mx = -Infinity;
-  // a 5x5 grid, not a ring of corners: on 4 m terrain cells a bump between two corner samples can
-  // still poke through the slab, which is what item 8 measures
-  for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
-    const lx = hw * i * 0.5, lz = hd * j * 0.5;
+  for (const [i, j] of PERIMETER) {
+    const lx = hw * i, lz = hd * j;
     const h = T.getHeight(lot.x + c * lx + s * lz, lot.z + s * lx - c * lz);
-    if (h < mn) mn = h;
-    if (h > mx) mx = h;
+    mn = Math.min(mn, h); mx = Math.max(mx, h);
   }
   return { top: mx, drop: Math.max(0, mx - mn) + 0.6 };
 }
@@ -63,6 +60,10 @@ function spawn(lot, forceId) {
     plan, drop: pad.drop,
     lot: { x: lot.x, z: lot.z, w: lot.w, d: lot.d, heading: lot.heading || 0, corner: !!lot.corner },
   };
+  if (forceId == null && !world.flags.showcase && typeof S.ctx.modules.simulation?.tick === 'function') {
+    const startTick = S.ctx.modules.simulation.tick();
+    b.construction = { startTick, duration: Math.round(120 + Math.min(280, b.height * 4)), progress: 0, phase: 0 };
+  }
   const cap = capacity(b);
   b.occupants = cap.occupants; b.jobs = cap.jobs;
   world.buildings.items.set(id, b);
@@ -118,9 +119,8 @@ function setLevel(id, n) {
   const lot = { ...b.lot, type: b.type, density: b.density, id: b.lotId, corner: b.lot.corner, mixedUse: b.mixedUse, variant: src?.variant };
   try { b.plan = planBuilding(lot, level, rng); }
   catch (e) { S.ctx.log.error(`replan failed for ${id}: ${e?.message || e}`, e); return false; }
-  const zOff = b.plan.zOff || 0;
-  const fx = Math.sin(b.lot.heading || 0), fz = -Math.cos(b.lot.heading || 0);
-  b.x = b.lot.x + fx * zOff; b.z = b.lot.z + fz * zOff;
+  // The original centre survives changes of archetype and setback. Ground dressing uses the same origin.
+  b.plan.zOff = (b.x - b.lot.x) * Math.sin(b.heading) - (b.z - b.lot.z) * Math.cos(b.heading);
   const pad = terrainPad(world.terrain, { ...lot, x: b.x, z: b.z }, b.plan);
   b.y = pad.top; b.drop = pad.drop;
   b.footprint = { w: b.plan.w, d: b.plan.d };
@@ -165,6 +165,71 @@ function spawnFreeLots(limit = 400) {
     if (spawn(lot) >= 0) n++;
   }
   return n;
+}
+
+function retireRemovedZoneLots(ids) {
+  if (!S.ctx || !Array.isArray(ids) || !ids.length) return 0;
+  const removed = new Set(ids);
+  const victims = [];
+  for (const b of S.ctx.world.buildings.items.values()) {
+    if (removed.has(b.lotId)) victims.push(b.id);
+  }
+  for (const id of victims) demolish(id);
+  // Detached showcase/catalog lots are not named by Zoning's journal. Only clear the exact
+  // zoning-owned IDs that disappeared, after demolish has had access to their old references.
+  for (const id of removed) S.lots.delete(id);
+  return victims.length;
+}
+
+function restoreItem(it) {
+  const zoneLot = S.ctx.world.zones.lots.get(it.lotId);
+  const lot = zoneLot || {
+    id: it.lotId, x: it.lot?.x, z: it.lot?.z, w: it.lot?.w ?? 20, d: it.lot?.d ?? 24,
+    heading: it.heading,
+  };
+  Object.assign(lot, {
+    type: it.type, density: it.density, level: it.level,
+    corner: !!it.lot?.corner, mixedUse: !!it.mixedUse, catalog: !!it.catalog,
+    variant: it.variant == null ? undefined : it.variant,
+    facadeIdx: it.facadeIdx == null ? undefined : it.facadeIdx,
+    minFloors: it.minFloors == null ? undefined : it.minFloors,
+    buildingId: null,
+  });
+  const id = spawn(lot, it.id);
+  const b = id >= 0 ? S.ctx.world.buildings.items.get(id) : null;
+  if (!b) return false;
+  if (typeof it.w === 'number') { b.plan.w = it.w; b.footprint.w = it.w; }
+  if (Number.isFinite(it.x) && Number.isFinite(it.z)) { S.chunks.remove(b); b.x = it.x; b.z = it.z; S.chunks.add(b); }
+  b.plan.zOff = (b.x-b.lot.x)*Math.sin(b.heading)-(b.z-b.lot.z)*Math.cos(b.heading);
+  const pad = terrainPad(S.ctx.world.terrain, b, b.plan); b.y = pad.top; b.drop = pad.drop; S.chunks.touch(b);
+  const cap = capacity(b); b.occupants = cap.occupants; b.jobs = cap.jobs;
+  if (it.construction?.duration > 0 && Number.isFinite(it.construction.startTick)) {
+    const now = S.ctx.modules.simulation?.tick?.() || it.construction.startTick;
+    const progress = Math.max(0, Math.min(0.999, (now - it.construction.startTick) / it.construction.duration));
+    b.construction = { startTick: it.construction.startTick, duration: it.construction.duration, progress, phase: Math.min(4, Math.floor(progress * 5)) };
+    b.occupants = 0; b.jobs = 0; S.chunks.touch(b);
+  }
+  return true;
+}
+
+function updateConstruction() {
+  if (!S.ctx || S.ctx.world.flags.showcase) return;
+  const tick = S.ctx.modules.simulation?.tick?.();
+  if (!Number.isFinite(tick)) return;
+  for (const b of S.ctx.world.buildings.items.values()) {
+    const c = b.construction;
+    if (!c) continue;
+    const progress = Math.max(0, Math.min(1, (tick - c.startTick) / Math.max(1, c.duration)));
+    const phase = Math.min(4, Math.floor(progress * 5));
+    c.progress = progress;
+    if (progress >= 1) {
+      b.construction = null;
+      const cap = capacity(b); b.occupants = cap.occupants; b.jobs = cap.jobs;
+      S.chunks.touch(b); S.pending.updated.push(b.id); S.ctx.world.buildings.version++;
+    } else if (phase !== c.phase) {
+      c.phase = phase; S.chunks.touch(b); S.pending.updated.push(b.id); S.ctx.world.buildings.version++;
+    }
+  }
 }
 
 // ------------------------------------------------------------------ night lighting
@@ -290,15 +355,15 @@ function featuresFor(x, z, r) {
       balcTot++;
       if (p.balcony && (p.balconyFloors || 0) >= 3) balc++;
     }
-    if (p.relief) {
-      reveal = Math.min(reveal, p.relief.reveal);
-      band = Math.min(band, p.relief.band);
-      cornice = Math.min(cornice, p.relief.cornice);
+    if (b.relief) {
+      reveal = Math.min(reveal, b.relief.reveal ?? 0);
+      band = Math.min(band, b.relief.band ?? 0);
+      cornice = Math.min(cornice, b.relief.cornice ?? 0);
     }
     const cs = b.cells;
     if (cs) for (let i = 0; i < cs.length; i += 4) {
       cTotal++;
-      const on = cs[i] >= 1 - Math.min(0.96, Math.max(0, lit * cs[i + 3]));
+      const on = S.uniforms.uNight.value > 0.15 && cs[i] >= 1 - Math.min(0.96, Math.max(0, lit * cs[i + 3]));
       if (on) {
         cLit++;
         tierSet.add(Math.round(cs[i + 1] * 100));
@@ -333,36 +398,40 @@ function featuresFor(x, z, r) {
   };
 }
 
-/**
- * The best on-screen facade patch for a building: scores each of its four faces by how squarely it
- * turns toward the camera and whether a `size` rect around it fits in the frame. A street-corridor
- * view has every facade near edge-on, so a hard "must face the camera" test finds nothing — this
- * ranks instead, and falls back to a clamped rect rather than emitting none.
- */
+/** Project generated facade vertices, then verify the centre and four inset points hit this building. */
 function faceRect(b, camera, project, size, W, H) {
-  const cam = camera.camera.position;
-  const c = Math.cos(b.heading), s = Math.sin(b.heading);
-  const hw = b.footprint.w / 2, hd = b.footprint.d / 2;
-  let best = null, bestScore = -1e9;
-  for (const [lx, lz] of [[0, hd], [0, -hd], [hw, 0], [-hw, 0]]) {
-    const wx = b.x + c * lx + s * lz, wz = b.z + s * lx - c * lz;
-    const nx = wx - b.x, nz = wz - b.z, nl = Math.hypot(nx, nz) || 1;
-    const tx = cam.x - wx, tz = cam.z - wz, tl = Math.hypot(tx, tz) || 1;
-    const dot = (nx / nl) * (tx / tl) + (nz / nl) * (tz / tl);
-    if (dot <= 0.02) continue;
-    for (const hf of [0.45, 0.32, 0.6, 0.2]) {
-      const p = project(wx, b.y + b.height * hf, wz);
-      if (!p || !Number.isFinite(p[0]) || !Number.isFinite(p[1]) || p[2] > 1) continue;
-      const m = size / 2;
-      const inside = p[0] >= m && p[0] <= W - m && p[1] >= m && p[1] <= H - m;
-      const onScreen = p[0] >= 0 && p[0] <= W && p[1] >= 0 && p[1] <= H;
-      const score = (inside ? 1000 : onScreen ? 300 : 0) + dot * 40;
-      if (score > bestScore) { bestScore = score; best = p; }
-    }
+  const cam = camera.camera;
+  const rc = new THREE.Raycaster(); rc.layers.enableAll();
+  const candidates = [];
+  const meshes = [];
+  for (const c of S.chunks.chunks.values()) for (const m of c.meshes) if (m?.visible) meshes.push(m);
+  // Project vertices of this building, including setbacks: a footprint face at half height may be empty air.
+  const chunk = S.chunks.chunks.get(b._chunk), mesh = chunk?.meshes[chunk.lod];
+  if (!mesh) return null;
+  const g = mesh.geometry, pos = g.attributes.position, ids = g.attributes.bidx;
+  const seen = new Set();
+  for (let i = 0; i < pos.count; i += 4) {
+    if (ids.getX(i) !== b.slot) continue;
+    const y = pos.getY(i); if (y < b.y + 4 || y > b.y + b.height - 3) continue;
+    const p = project(pos.getX(i), y, pos.getZ(i));
+    if (p[2] < -1 || p[2] > 1 || p[0] < size / 2 || p[0] > W - size / 2 || p[1] < size / 2 || p[1] > H - size / 2) continue;
+    const key = `${Math.round(p[0]/24)},${Math.round(p[1]/24)}`;
+    if (seen.has(key)) continue; seen.add(key);
+    candidates.push(p);
   }
-  if (!best || bestScore < 250) return null;
-  return [Math.max(0, Math.min(W - size, Math.round(best[0] - size / 2))),
-    Math.max(0, Math.min(H - size, Math.round(best[1] - size / 2))), size, size];
+  candidates.sort((a,b) => Math.abs(a[1]-H*.45)-Math.abs(b[1]-H*.45));
+  for (const p of candidates) {
+    const x = Math.round(p[0]-size/2), y = Math.round(p[1]-size/2);
+    let matches = 0;
+    for (const [dx,dy] of [[0,0],[-.25,-.25],[.25,-.25],[-.25,.25],[.25,.25]]) {
+      rc.setFromCamera(new THREE.Vector2((p[0]+dx*size)/W*2-1, 1-(p[1]+dy*size)/H*2),cam);
+      const hit = rc.intersectObjects(meshes,false)[0];
+      if (hit && hit.object.geometry.attributes.bidx.getX(hit.face.a) === b.slot) matches++;
+      else if (dx === 0 && dy === 0) break;
+    }
+    if (matches === 5) return [x,y,size,size];
+  }
+  return null;
 }
 
 // ------------------------------------------------------------------ module
@@ -393,12 +462,21 @@ export default {
     B.levelUp = (id) => setLevel(id, (ctx.world.buildings.items.get(id)?.level || 1) + 1);
     B.at = (x, z) => at(x, z);
 
-    ctx.events.on('zones:changed', () => { if (!ctx.world.flags.showcase || ctx.world.flags.showcase === 'democity') spawnFreeLots(); }, 'buildings');
+    ctx.events.on('zones:changed', (change) => {
+      retireRemovedZoneLots(change?.lots?.removed);
+      // In a playable city, simulation demand schedules construction as game time advances.
+      // Explicit showcases and a build without simulation retain their staging fallback.
+      if (ctx.world.flags.showcase === 'democity' || (!ctx.world.flags.showcase && typeof ctx.modules.simulation?.step !== 'function')) spawnFreeLots();
+    }, 'buildings');
     ctx.events.on('terrain:changed', (r) => {
-      if (!S.chunks || r?.all) { for (const k of S.chunks.chunks.keys()) S.chunks.dirty.add(k); return; }
-      const rad = (r?.radius || 20) + 40;
-      for (const c of S.chunks.chunks.values()) {
-        if (Math.abs(c.cx - r.x) < rad + c.radius && Math.abs(c.cz - r.z) < rad + c.radius) S.chunks.dirty.add(c.key);
+      if (!S.chunks) return;
+      for (const b of ctx.world.buildings.items.values()) {
+        const reach = (r?.radius ?? 20) + Math.hypot(b.footprint.w, b.footprint.d) / 2;
+        if (!r?.all && Math.hypot(b.x - r.x, b.z - r.z) > reach) continue;
+        const pad = terrainPad(ctx.world.terrain, b, b.plan);
+        b.y = pad.top; b.drop = pad.drop;
+        S.chunks.touch(b); S.pending.updated.push(b.id);
+        ctx.world.buildings.version++;
       }
     }, 'buildings');
   },
@@ -406,6 +484,7 @@ export default {
   update(dt, ctx) {
     if (!S.chunks) return;
     S.chunks.beginFrame();
+    updateConstruction();
     if (S.chunks.dirty.size) S.chunks.rebuildDirty(2);
     flushEvents();
 
@@ -424,7 +503,8 @@ export default {
 
     // info view tint (ARCHITECTURE §15, item 21)
     const iv = ctx.world.infoview;
-    const active = iv?.active ?? null;
+    // An infoview-owned film shell must not stack with this legacy albedo tint.
+    const active = iv?.buildingShellActive === true ? null : (iv?.active ?? null);
     S.frame++;
     if (active !== S.infoKey || (active && S.frame % 20 === 0)) {
       S.infoKey = active;
@@ -490,9 +570,9 @@ export default {
       if (t) {
         const near = items.filter((b) => (b.x - t[0]) ** 2 + (b.z - t[2]) ** 2 <= 120 * 120)
           .sort((a, b) => b.height - a.height);
-        for (const b of near) {
-          const r = faceRect(b, camera, project, 200, width, height);
-          if (r) { out.nightFacade = r; break; }
+        if (near[0]) {
+          const r = faceRect(near[0], camera, project, 200, width, height);
+          if (r) out.nightFacade = r;
         }
       }
       const cam = camera.camera.position;
@@ -514,32 +594,47 @@ export default {
       if (!S.ctx) return null;
       return {
         module: 'buildings', version: 2, nextId: S.nextId,
-        items: [...S.ctx.world.buildings.items.values()].map((b) => ({
+        // Canonical ID order keeps save/restore comparisons independent of Map insertion order;
+        // a targeted transaction may legitimately retire and reinsert one earlier ID.
+        items: [...S.ctx.world.buildings.items.values()].sort((a, b) => a.id - b.id).map((b) => ({
           id: b.id, lotId: b.lotId, type: b.type, density: b.density, level: b.level,
-          heading: b.heading, lot: b.lot, mixedUse: b.mixedUse, w: b.plan.w,
+          x: b.x, z: b.z, heading: b.heading, lot: b.lot, mixedUse: b.mixedUse, w: b.plan.w,
           variant: lotOf(b)?.variant ?? null,
           facadeIdx: lotOf(b)?.facadeIdx ?? null, minFloors: lotOf(b)?.minFloors ?? null,
           catalog: !!b.plan.catalog,
+          construction: b.construction ? { startTick: b.construction.startTick, duration: b.construction.duration } : null,
         })),
       };
     },
     deserialize(data) {
       if (!data || !S.ctx) return;
       for (const id of [...S.ctx.world.buildings.items.keys()]) demolish(id);
+      S.lots.clear();
+      // A load replaces the complete owned stock. Rebuild its allocator from the saved IDs instead
+      // of retaining the demolition-era high-water mark, otherwise failed-load rollback changes
+      // future building IDs even when every visible/authored item is restored.
+      S.nextId = 1;
       for (const it of data.items || []) {
-        const id = spawn({
-          id: it.lotId, x: it.lot?.x, z: it.lot?.z, w: it.lot?.w ?? 20, d: it.lot?.d ?? 24,
-          heading: it.heading, type: it.type, density: it.density, level: it.level,
-          corner: !!it.lot?.corner, mixedUse: !!it.mixedUse, catalog: !!it.catalog,
-          variant: it.variant == null ? undefined : it.variant,
-          facadeIdx: it.facadeIdx == null ? undefined : it.facadeIdx,
-          minFloors: it.minFloors == null ? undefined : it.minFloors,
-        }, it.id);
-        const b = id >= 0 ? S.ctx.world.buildings.items.get(id) : null;
-        if (b && typeof it.w === 'number') { b.plan.w = it.w; b.footprint.w = it.w; S.chunks.touch(b); }
+        // Rebind the restored building to the zoning owner's live lot. A detached copy preserves
+        // visuals but leaves lot.buildingId empty, so later bulldoze/growth operations target stale
+        // ownership after a successful load.
+        if (!restoreItem(it)) return false;
       }
       S.nextId = Math.max(S.nextId, data.nextId || 1);
       S.chunks?.flush(); flushEvents();
+      return true;
+    },
+    /** Restore only lots affected by a road inverse; preserve unrelated autonomous growth/levels. */
+    restoreTransaction(data, lotIds) {
+      if (!data || !Array.isArray(data.items) || !Array.isArray(lotIds) || !S.ctx) return false;
+      const targets = new Set(lotIds.filter(id => Number.isInteger(id) && id > 0));
+      const saved = data.items.filter(it => targets.has(it.lotId));
+      for (const id of [...S.ctx.world.buildings.items.values()].filter(b => targets.has(b.lotId)).map(b => b.id)) demolish(id);
+      for (const it of saved) if (!restoreItem(it)) return false;
+      const liveNext = Math.max(1, ...[...S.ctx.world.buildings.items.keys()].map(id => id + 1));
+      S.nextId = Math.max(liveNext, data.nextId || 1);
+      S.chunks?.flush(); flushEvents();
+      return true;
     },
   },
 

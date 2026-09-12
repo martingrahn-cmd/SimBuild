@@ -1,0 +1,34 @@
+{
+  "module": "democity",
+  "round": "r7t",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accept-bounded-change-score-held",
+  "verified": {
+    "build": true,
+    "api": true,
+    "doubleDeserialize": true,
+    "tour": true,
+    "exactCrossSeedRestage": true,
+    "imagesInspected": 17,
+    "errors": 0
+  },
+  "profile": {
+    "baselineFpsPairs": [48.32474226798324, 47.727950681117626],
+    "candidateFpsPairs": [49.049662783568365, 48.24120603015076],
+    "removedPeakTriangles": 57216
+  },
+  "matrix": {
+    "shots": 16,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2941576,
+    "minFps": 44.9
+  },
+  "visualAB": {
+    "maxMeanAbs255": 0.1947265625,
+    "maxChangedPctOver2": 1.7763792438271604,
+    "maxP99": 4
+  },
+  "evidence": "shots/democity/r7t-current-profile; shots/democity/r7t-terrain-lod; shots/democity/r7t",
+  "report": "docs/critic/democity_r7t.md"
+}

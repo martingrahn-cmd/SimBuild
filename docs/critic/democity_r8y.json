@@ -1,0 +1,722 @@
+{
+  "module": "democity",
+  "round": "r8y",
+  "reviewType": "Independent local cardinal missing-link screening audit",
+  "decision": "ACCEPT_QUALIFIED_DIAGNOSTIC",
+  "advanceMeasuredCandidates": false,
+  "rejectionScope": "Do not advance any measured candidate under this strict road-mask/terrain/accepted-contact/current-painted-yield screen. No universal localized-road impossibility or actual road failure is established.",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "rank1Status": "OPEN",
+  "sourceSha256": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+  "routedSha256": "bd3de52084af53bbe95bd02fc0fade0042799fac1aff52258d7ca5c52255a6db",
+  "hashesIndependentlyReconstructed": true,
+  "markerOccurrences": 1,
+  "sourceScope": "One global authored-node snapshot exposure; normal planner return and all world logic unchanged.",
+  "seeds": [
+    {
+      "seed": 1337,
+      "recordedWorldCounts": {
+        "gridNodes": 268,
+        "roadEdges": 604,
+        "painted": 9964,
+        "claimed": 4882,
+        "lots": 612,
+        "buildings": 612
+      },
+      "alleyCalibration": {
+        "edgeId": 975,
+        "front": 5.55,
+        "pavedHalf": 4.05
+      },
+      "allCandidateBooleanClassificationsAndSideYieldSumsVerified": true,
+      "candidateCount": 150,
+      "actualGapHeuristicCount": 19,
+      "filteredNonGaps": 131,
+      "zeroImpactGapCount": 1,
+      "dryNonSteepZeroImpactGapCount": 1,
+      "safePositiveYieldCount": 0,
+      "positiveYieldGapCount": 2,
+      "safeRows": [
+        {
+          "grid": "1,-7->2,-7",
+          "a": {
+            "id": 103,
+            "i": 1,
+            "j": -7,
+            "x": 40,
+            "z": -520
+          },
+          "b": {
+            "id": 104,
+            "i": 2,
+            "j": -7,
+            "x": 120,
+            "z": -520
+          },
+          "length": 80,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 1,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 0,
+          "corridorClaimed": 0,
+          "endpointPainted": 5,
+          "endpointClaimed": 0,
+          "impactedLotCount": 0,
+          "impactedLotIds": [],
+          "predictedLots": 0,
+          "predictedUniqueKeys": 0,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 8,
+              "fullDepth": 0,
+              "predictedLots": 0
+            },
+            {
+              "sign": 1,
+              "slots": 8,
+              "fullDepth": 0,
+              "predictedLots": 0
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": true,
+          "safeReadOnly": true
+        }
+      ],
+      "positiveYieldGapRows": [
+        {
+          "grid": "-8,-11->-7,-11",
+          "a": {
+            "id": 69,
+            "i": -8,
+            "j": -11,
+            "x": -672,
+            "z": -848
+          },
+          "b": {
+            "id": 70,
+            "i": -7,
+            "j": -11,
+            "x": -600,
+            "z": -848
+          },
+          "length": 72,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 1,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 8,
+          "corridorClaimed": 0,
+          "endpointPainted": 11,
+          "endpointClaimed": 5,
+          "impactedLotCount": 1,
+          "impactedLotIds": [
+            425
+          ],
+          "predictedLots": 1,
+          "predictedUniqueKeys": 20,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 7,
+              "fullDepth": 3,
+              "predictedLots": 1
+            },
+            {
+              "sign": 1,
+              "slots": 7,
+              "fullDepth": 2,
+              "predictedLots": 0
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": false,
+          "safeReadOnly": false
+        },
+        {
+          "grid": "-2,-7->-1,-7",
+          "a": {
+            "id": 100,
+            "i": -2,
+            "j": -7,
+            "x": -200,
+            "z": -520
+          },
+          "b": {
+            "id": 101,
+            "i": -1,
+            "j": -7,
+            "x": -120,
+            "z": -520
+          },
+          "length": 80,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 2,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 11,
+          "corridorClaimed": 0,
+          "endpointPainted": 12,
+          "endpointClaimed": 4,
+          "impactedLotCount": 3,
+          "impactedLotIds": [
+            48,
+            50,
+            76
+          ],
+          "predictedLots": 1,
+          "predictedUniqueKeys": 24,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 8,
+              "fullDepth": 4,
+              "predictedLots": 1
+            },
+            {
+              "sign": 1,
+              "slots": 8,
+              "fullDepth": 2,
+              "predictedLots": 0
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": false,
+          "safeReadOnly": false
+        }
+      ],
+      "named2to3Row": {
+        "grid": "2,-7->3,-7",
+        "a": {
+          "id": 104,
+          "i": 2,
+          "j": -7,
+          "x": 120,
+          "z": -520
+        },
+        "b": {
+          "id": 105,
+          "i": 3,
+          "j": -7,
+          "x": 200,
+          "z": -520
+        },
+        "length": 80,
+        "waterSamples": 0,
+        "steepSamples": 0,
+        "interiorRoadSamples": 2,
+        "front": 5.55,
+        "pavedHalf": 4.05,
+        "corridorPainted": 0,
+        "corridorClaimed": 0,
+        "endpointPainted": 5,
+        "endpointClaimed": 3,
+        "impactedLotCount": 2,
+        "impactedLotIds": [
+          29,
+          39
+        ],
+        "predictedLots": 0,
+        "predictedUniqueKeys": 0,
+        "sides": [
+          {
+            "sign": -1,
+            "slots": 8,
+            "fullDepth": 0,
+            "predictedLots": 0
+          },
+          {
+            "sign": 1,
+            "slots": 8,
+            "fullDepth": 0,
+            "predictedLots": 0
+          }
+        ],
+        "actualGap": true,
+        "zeroAcceptedImpact": false,
+        "safeReadOnly": false
+      },
+      "errors": [],
+      "browserErrors": []
+    },
+    {
+      "seed": 7,
+      "recordedWorldCounts": {
+        "gridNodes": 280,
+        "roadEdges": 646,
+        "painted": 10113,
+        "claimed": 5176,
+        "lots": 648,
+        "buildings": 648
+      },
+      "alleyCalibration": {
+        "edgeId": 1024,
+        "front": 5.55,
+        "pavedHalf": 4.05
+      },
+      "allCandidateBooleanClassificationsAndSideYieldSumsVerified": true,
+      "candidateCount": 166,
+      "actualGapHeuristicCount": 23,
+      "filteredNonGaps": 143,
+      "zeroImpactGapCount": 6,
+      "dryNonSteepZeroImpactGapCount": 2,
+      "safePositiveYieldCount": 0,
+      "positiveYieldGapCount": 4,
+      "safeRows": [
+        {
+          "grid": "1,-7->2,-7",
+          "a": {
+            "id": 106,
+            "i": 1,
+            "j": -7,
+            "x": 40,
+            "z": -528
+          },
+          "b": {
+            "id": 107,
+            "i": 2,
+            "j": -7,
+            "x": 120,
+            "z": -528
+          },
+          "length": 80,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 1,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 0,
+          "corridorClaimed": 0,
+          "endpointPainted": 4,
+          "endpointClaimed": 0,
+          "impactedLotCount": 0,
+          "impactedLotIds": [],
+          "predictedLots": 0,
+          "predictedUniqueKeys": 0,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 8,
+              "fullDepth": 0,
+              "predictedLots": 0
+            },
+            {
+              "sign": 1,
+              "slots": 8,
+              "fullDepth": 0,
+              "predictedLots": 0
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": true,
+          "safeReadOnly": true
+        },
+        {
+          "grid": "2,-7->3,-7",
+          "a": {
+            "id": 107,
+            "i": 2,
+            "j": -7,
+            "x": 120,
+            "z": -528
+          },
+          "b": {
+            "id": 108,
+            "i": 3,
+            "j": -7,
+            "x": 200,
+            "z": -528
+          },
+          "length": 80,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 2,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 0,
+          "corridorClaimed": 0,
+          "endpointPainted": 0,
+          "endpointClaimed": 0,
+          "impactedLotCount": 0,
+          "impactedLotIds": [],
+          "predictedLots": 0,
+          "predictedUniqueKeys": 0,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 8,
+              "fullDepth": 0,
+              "predictedLots": 0
+            },
+            {
+              "sign": 1,
+              "slots": 8,
+              "fullDepth": 0,
+              "predictedLots": 0
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": true,
+          "safeReadOnly": true
+        }
+      ],
+      "positiveYieldGapRows": [
+        {
+          "grid": "8,-7->9,-7",
+          "a": {
+            "id": 113,
+            "i": 8,
+            "j": -7,
+            "x": 616,
+            "z": -528
+          },
+          "b": {
+            "id": 114,
+            "i": 9,
+            "j": -7,
+            "x": 688,
+            "z": -528
+          },
+          "length": 72,
+          "waterSamples": 0,
+          "steepSamples": 5,
+          "interiorRoadSamples": 1,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 7,
+          "corridorClaimed": 0,
+          "endpointPainted": 12,
+          "endpointClaimed": 0,
+          "impactedLotCount": 0,
+          "impactedLotIds": [],
+          "predictedLots": 2,
+          "predictedUniqueKeys": 28,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 7,
+              "fullDepth": 4,
+              "predictedLots": 1
+            },
+            {
+              "sign": 1,
+              "slots": 7,
+              "fullDepth": 3,
+              "predictedLots": 1
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": true,
+          "safeReadOnly": false
+        },
+        {
+          "grid": "-2,-7->-1,-7",
+          "a": {
+            "id": 103,
+            "i": -2,
+            "j": -7,
+            "x": -200,
+            "z": -528
+          },
+          "b": {
+            "id": 104,
+            "i": -1,
+            "j": -7,
+            "x": -120,
+            "z": -528
+          },
+          "length": 80,
+          "waterSamples": 0,
+          "steepSamples": 2,
+          "interiorRoadSamples": 2,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 12,
+          "corridorClaimed": 0,
+          "endpointPainted": 12,
+          "endpointClaimed": 3,
+          "impactedLotCount": 1,
+          "impactedLotIds": [
+            587
+          ],
+          "predictedLots": 1,
+          "predictedUniqueKeys": 20,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 8,
+              "fullDepth": 3,
+              "predictedLots": 1
+            },
+            {
+              "sign": 1,
+              "slots": 8,
+              "fullDepth": 2,
+              "predictedLots": 0
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": false,
+          "safeReadOnly": false
+        },
+        {
+          "grid": "-8,-11->-7,-11",
+          "a": {
+            "id": 67,
+            "i": -8,
+            "j": -11,
+            "x": -672,
+            "z": -832
+          },
+          "b": {
+            "id": 68,
+            "i": -7,
+            "j": -11,
+            "x": -600,
+            "z": -832
+          },
+          "length": 72,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 1,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 11,
+          "corridorClaimed": 4,
+          "endpointPainted": 20,
+          "endpointClaimed": 8,
+          "impactedLotCount": 2,
+          "impactedLotIds": [
+            272,
+            434
+          ],
+          "predictedLots": 1,
+          "predictedUniqueKeys": 12,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 7,
+              "fullDepth": 0,
+              "predictedLots": 0
+            },
+            {
+              "sign": 1,
+              "slots": 7,
+              "fullDepth": 3,
+              "predictedLots": 1
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": false,
+          "safeReadOnly": false
+        },
+        {
+          "grid": "1,3->1,4",
+          "a": {
+            "id": 262,
+            "i": 1,
+            "j": 3,
+            "x": 40,
+            "z": 272
+          },
+          "b": {
+            "id": 275,
+            "i": 1,
+            "j": 4,
+            "x": 40,
+            "z": 352
+          },
+          "length": 80,
+          "waterSamples": 0,
+          "steepSamples": 0,
+          "interiorRoadSamples": 1,
+          "front": 5.55,
+          "pavedHalf": 4.05,
+          "corridorPainted": 0,
+          "corridorClaimed": 0,
+          "endpointPainted": 9,
+          "endpointClaimed": 5,
+          "impactedLotCount": 3,
+          "impactedLotIds": [
+            314,
+            317,
+            546
+          ],
+          "predictedLots": 1,
+          "predictedUniqueKeys": 12,
+          "sides": [
+            {
+              "sign": -1,
+              "slots": 8,
+              "fullDepth": 1,
+              "predictedLots": 0
+            },
+            {
+              "sign": 1,
+              "slots": 8,
+              "fullDepth": 3,
+              "predictedLots": 1
+            }
+          ],
+          "actualGap": true,
+          "zeroAcceptedImpact": false,
+          "safeReadOnly": false
+        }
+      ],
+      "named2to3Row": {
+        "grid": "2,-7->3,-7",
+        "a": {
+          "id": 107,
+          "i": 2,
+          "j": -7,
+          "x": 120,
+          "z": -528
+        },
+        "b": {
+          "id": 108,
+          "i": 3,
+          "j": -7,
+          "x": 200,
+          "z": -528
+        },
+        "length": 80,
+        "waterSamples": 0,
+        "steepSamples": 0,
+        "interiorRoadSamples": 2,
+        "front": 5.55,
+        "pavedHalf": 4.05,
+        "corridorPainted": 0,
+        "corridorClaimed": 0,
+        "endpointPainted": 0,
+        "endpointClaimed": 0,
+        "impactedLotCount": 0,
+        "impactedLotIds": [],
+        "predictedLots": 0,
+        "predictedUniqueKeys": 0,
+        "sides": [
+          {
+            "sign": -1,
+            "slots": 8,
+            "fullDepth": 0,
+            "predictedLots": 0
+          },
+          {
+            "sign": 1,
+            "slots": 8,
+            "fullDepth": 0,
+            "predictedLots": 0
+          }
+        ],
+        "actualGap": true,
+        "zeroAcceptedImpact": true,
+        "safeReadOnly": true
+      },
+      "errors": [],
+      "browserErrors": []
+    }
+  ],
+  "smoke": {
+    "ok": true,
+    "fps": 54.6,
+    "drawCalls": 430,
+    "triangles": 2061474,
+    "heapMB": 481.9,
+    "errors": [],
+    "warnings": [
+      "[props] no roads yet: road furniture deferred until roads:changed",
+      "[democity] No valid reserved university site"
+    ]
+  },
+  "smokeAll16ModulesReady": true,
+  "imageInspected": "shots/democity/r8y-local-frontage/runtime-smoke.png",
+  "inspectedFiles": [
+    "docs/builds/democity_r8y_local_frontage.md",
+    "tools/local-frontage-opportunity.mjs",
+    "shots/democity/r8y-local-frontage/opportunities.json",
+    "shots/democity/r8y-local-frontage/runtime-smoke.json",
+    "src/modules/democity/plan.js",
+    "src/modules/democity/index.js",
+    "src/modules/zoning/grid.js",
+    "src/modules/props/index.js"
+  ],
+  "sourceHashes": {
+    "docs/builds/democity_r8y_local_frontage.md": "550515b53b696837914b8227cac9ee7282dc836dbd87f93e133c3e3d945a0c04",
+    "tools/local-frontage-opportunity.mjs": "f256ffbc70bde96cb2b063e626acff17f21b59cc5b86750a748270dced613931",
+    "shots/democity/r8y-local-frontage/opportunities.json": "6e1fcabd74a9df58a25283b79f385bf6e6158f4a1909990527f020654e533760",
+    "shots/democity/r8y-local-frontage/runtime-smoke.json": "444e99037fcbfdf0e6209aebe4460d86b07d433a2009bb2cae5b883b7bcc191f",
+    "src/modules/democity/plan.js": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+    "src/modules/democity/index.js": "7869d17a4fb3401fbcdec5e3f310a46b0574bdc7bf5531a3c8e0d1578a64d11b",
+    "src/modules/zoning/grid.js": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+    "src/modules/props/index.js": "be80cb25874c65a14b90f50702ae2e544850ee430e7f6af7c7400e6062b2156b"
+  },
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "roads"
+      ],
+      "title": "Advance none under this strict measured screen",
+      "detail": "There are19/23 heuristic gaps,1/2 dry non-steep zero-proxy-impact cases, and zero cases combining those filters with positive current-painted-cell yield. This supports no candidate selection from this screen, not a proof no legal local road can improve capacity."
+    },
+    {
+      "rank": 2,
+      "owner": "verification tooling",
+      "supportingOwners": [
+        "roads"
+      ],
+      "title": "actualGap is a sampled road-mask heuristic",
+      "detail": "interiorRoadSamples<=2 tolerates up to2 hits between12% and88% of the segment. No graph path/midpoint connectivity test or exact continuous crossing check is performed; narrow crossings or mask bleed may be misclassified. Filtered-out pairs are not all proven midpoint duplicates."
+    },
+    {
+      "rank": 3,
+      "owner": "verification tooling",
+      "supportingOwners": [
+        "terrain",
+        "zoning"
+      ],
+      "title": "Slope and affected-lot tests are screening proxies",
+      "detail": ".38 is the existing Democity zone-paint filter, not a general road-placement prohibition. Endpoint radius24m and expanded corridor membership identify potential contact, not proven destruction/change of those lots. Risk counts do not establish that an actual road necessarily trades away them."
+    },
+    {
+      "rank": 4,
+      "owner": "verification tooling",
+      "supportingOwners": [
+        "zoning"
+      ],
+      "title": "Yield uses existing painted unclaimed stock and approximate new-road sampling",
+      "detail": "It samples at12m end offsets in8m steps and uses fixed widths/depths, without real new-road frontage trims/pad, terrain refresh, corner extensions or zone repaint. It excludes any newly available or newly painted cells. predictedUniqueKeys includes full-depth run keys even when the run yields zero lots; it is not emitted parcel area."
+    }
+  ],
+  "limits": [
+    "All316 candidate records were read, cardinal adjacency/length checked and Boolean classifications recomputed. Yield totals were recomputed as sums of stored side estimates; primitive terrain/road samples and raw hypothetical slot arrays are not retained, so those live measurements are not independently reproducible from this JSON alone.",
+    "Authored full node table and all road/cell/lot maps are not persisted in this artifact. Recorded268/280 nodes and604/646 road edges are consistent with method/accepted counts, not independently recounted from complete maps here.",
+    "No actual road add/remove, graph split, terrain cut/fill, junction rebuild, zonable regeneration, new zone painting or resulting lot generation was run. No product candidate was tested or rejected on a demonstrated physical-road failure.",
+    "The source route adds only a global snapshot of shallow-copied authored node records. That is a diagnostic global write, not a world road/zone/building mutation. The existing planner still initializes the disposable page normally. debugEdge uses sampling/scratch state and freshly constructed spans, without regeneration or city edits.",
+    "Current source/routed hashes and single marker were independently verified. No production code or saved user data was edited by this critic. There is no retained full before/after world invariant proving global purity across arbitrary future helper implementations.",
+    "The clean official smoke was individually viewed:16 modules ready, zero errors,54.6FPS,430 draws,2061474 triangles,481.9MB raw heap. One accepted-source smoke is not a candidate visual comparison, sustained performance pass or forced-GC memory test.",
+    "Props current source matches the declared accepted hash. The earlier transient import failure and isolated successful import are described by the builder; their complete incident logs are not supplied here. The fresh smoke proves current startup, not the exact cause of the earlier incident or a product repair.",
+    "Only existing authored-node/cardinal pairs and currently painted/unclaimed frontage were screened. Mid-block splits, non-cardinal links, selective painting, modified sampling, coordinated block redesign and other local designs remain untested."
+  ],
+  "nextOwnerSafePriority": {
+    "owner": "democity",
+    "supportingOwners": [
+      "roads",
+      "zoning",
+      "terrain",
+      "buildings"
+    ],
+    "task": "Retain accepted city. Any future local-link proposal needs an explicitly defined design outside or improving this screen, followed by actual owner-built road/frontage and new-lot yield checks plus state/visual verification. Do not infer a blanket road prohibition from the current risk proxies."
+  }
+}

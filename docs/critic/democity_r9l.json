@@ -1,0 +1,738 @@
+{
+  "round": "r9l",
+  "module": "democity",
+  "reviewer": "independent",
+  "decision": "ACCEPT",
+  "decisionScope": "Qualified component-attribution diagnosis and fail-exit verifier repair only; no product optimization accepted",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "pass": false,
+  "threshold": 8.5,
+  "productChange": false,
+  "corrections": [
+    "Builder revised reflection policies and stable conventional medians following audit; latest revised policy interpretation is accepted.",
+    "Pool class must be called lamp ground-light pools, not foliage pools.",
+    "Inventory means prewarm own-visible matched objects; zero matched impostors/furniture is not a general absence claim."
+  ],
+  "verification": {
+    "pairsRecomputed": 40,
+    "blocksChecked": 92,
+    "sampledFramesChecked": 14040,
+    "allStoredPairAndSummaryArithmeticMatches": true,
+    "allRecordedBrowserAndEngineErrorsEmpty": true,
+    "allThreeAggregatePassValuesFalse": true,
+    "sourceHashes": {
+      "tools/r9l-props-component-profile.mjs": "5ec28987a6d4f93e77eaf029911583cb9ebd733a881c9f119ec897dffcabf16d",
+      "src/modules/props/trees.js": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+      "src/modules/props/chunks.js": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+      "src/modules/props/textures.js": "6090fe11d3104bcda0d9729f250e856153ebad69c1c55f083e122ed89dedf039"
+    },
+    "records": [
+      {
+        "file": "shots/democity/r9l-props-components/sync-on-uncapped.json",
+        "sha256": "417be46110db12c6cc95dee7010e1ac2f25ccb27a9623e16d3144467febe1cef",
+        "reflection": false,
+        "captureSync": true,
+        "uncapped": true,
+        "frames": 120,
+        "warmFrames": 120,
+        "cycles": 3,
+        "pass": false,
+        "rows": [
+          {
+            "component": "lod1",
+            "inventory": {
+              "objects": 37,
+              "instances": 2630,
+              "sourceTriangles": 441840,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 53.84111696151331,
+                "maskedFps": 56.60110372088606,
+                "fpsPct": 5.126169208832798,
+                "controlDriftPct": 3.198241640483164,
+                "drawCalls": -28.0,
+                "triangles": -405003.0
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 53.21255319781129,
+                "maskedFps": 57.397044052558584,
+                "fpsPct": 7.863728769397604,
+                "controlDriftPct": 0.8735560822130172,
+                "drawCalls": -28.0,
+                "triangles": -405011.40000000014
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 51.96438852922965,
+                "maskedFps": 58.38279653663128,
+                "fpsPct": 12.351551108489067,
+                "controlDriftPct": 5.69846180419873,
+                "drawCalls": -28.0,
+                "triangles": -404985.6000000001
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 7.863728769397604,
+              "maxControlDriftPct": 5.69846180419873,
+              "stableCycles": 2,
+              "medianDrawCalls": -28.0,
+              "medianTriangles": -405003.0
+            },
+            "stableOnlyConventionalMedianFpsPct": 6.494948989115201,
+            "rowPass": true
+          },
+          {
+            "component": "impostors",
+            "inventory": {
+              "objects": 0,
+              "instances": 0,
+              "sourceTriangles": 0,
+              "baseTriangles": []
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 53.269221941896106,
+                "maskedFps": 49.705906718827165,
+                "fpsPct": -6.689257122913606,
+                "controlDriftPct": 1.2784090914483972,
+                "drawCalls": 0.0,
+                "triangles": 57.60000000009313
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 53.45494500722644,
+                "maskedFps": 54.92996429492372,
+                "fpsPct": 2.7593691986735225,
+                "controlDriftPct": 0.579090382651243,
+                "drawCalls": 0.0,
+                "triangles": 17.399999999906868
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 53.0771457025821,
+                "maskedFps": 55.09641873278237,
+                "fpsPct": 3.8044114909932647,
+                "controlDriftPct": 0.8403733053012008,
+                "drawCalls": 0.0,
+                "triangles": 21.600000000093132
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 2.7593691986735225,
+              "maxControlDriftPct": 1.2784090914483972,
+              "stableCycles": 3,
+              "medianDrawCalls": 0.0,
+              "medianTriangles": 21.600000000093132
+            },
+            "stableOnlyConventionalMedianFpsPct": 2.7593691986735225,
+            "rowPass": false
+          },
+          {
+            "component": "pools",
+            "inventory": {
+              "objects": 1,
+              "instances": 1325,
+              "sourceTriangles": 381600,
+              "baseTriangles": [
+                288
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 52.723900646244175,
+                "maskedFps": 52.17164471055873,
+                "fpsPct": -1.0474489347646276,
+                "controlDriftPct": 1.2741092245367405,
+                "drawCalls": -1.0,
+                "triangles": -381543.0
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 52.78350021517063,
+                "maskedFps": 54.01755570560432,
+                "fpsPct": 2.337956909646177,
+                "controlDriftPct": 1.0468440735532498,
+                "drawCalls": -1.0,
+                "triangles": -381585.59999999986
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 53.69849140137558,
+                "maskedFps": 53.55230274873332,
+                "fpsPct": -0.2722397758804007,
+                "controlDriftPct": 4.436890597945802,
+                "drawCalls": -1.0,
+                "triangles": -381585.6000000001
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": -0.2722397758804007,
+              "maxControlDriftPct": 4.436890597945802,
+              "stableCycles": 3,
+              "medianDrawCalls": -1.0,
+              "medianTriangles": -381585.59999999986
+            },
+            "stableOnlyConventionalMedianFpsPct": -0.2722397758804007,
+            "rowPass": true
+          },
+          {
+            "component": "lenses",
+            "inventory": {
+              "objects": 1,
+              "instances": 3858,
+              "sourceTriangles": 46296,
+              "baseTriangles": [
+                12
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 51.745562506199065,
+                "maskedFps": 48.04420066484075,
+                "fpsPct": -7.1530033921554,
+                "controlDriftPct": 0.4268989446586966,
+                "drawCalls": -1.0,
+                "triangles": -46234.799999999814
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 52.244617248403834,
+                "maskedFps": 55.01054368663824,
+                "fpsPct": 5.294184518729361,
+                "controlDriftPct": 2.333275290084445,
+                "drawCalls": -1.0,
+                "triangles": -46285.200000000186
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 50.43762595846766,
+                "maskedFps": 50.56890012642224,
+                "fpsPct": 0.26027031498800923,
+                "controlDriftPct": 9.582118969097058,
+                "drawCalls": -1.0,
+                "triangles": -46291.19999999995
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 0.26027031498800923,
+              "maxControlDriftPct": 9.582118969097058,
+              "stableCycles": 2,
+              "medianDrawCalls": -1.0,
+              "medianTriangles": -46285.200000000186
+            },
+            "stableOnlyConventionalMedianFpsPct": -0.9294094367130192,
+            "rowPass": true
+          },
+          {
+            "component": "halos",
+            "inventory": {
+              "objects": 1,
+              "instances": 1,
+              "sourceTriangles": 441.6666666666667,
+              "baseTriangles": [
+                441.6666666666667
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 50.19783792162309,
+                "maskedFps": 52.196607220530666,
+                "fpsPct": 3.9817836418141628,
+                "controlDriftPct": 9.972877112455663,
+                "drawCalls": -1.0,
+                "triangles": 55.200000000186265
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 48.362187820218224,
+                "maskedFps": 49.1823435391502,
+                "fpsPct": 1.6958614899326374,
+                "controlDriftPct": 2.760149088344925,
+                "drawCalls": -1.0,
+                "triangles": -3.6000000000931323
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 49.05569204953281,
+                "maskedFps": 48.92168453595762,
+                "fpsPct": -0.27317423927050166,
+                "controlDriftPct": 0.10628730373045098,
+                "drawCalls": -1.0,
+                "triangles": -20.399999999906868
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 1.6958614899326374,
+              "maxControlDriftPct": 9.972877112455663,
+              "stableCycles": 2,
+              "medianDrawCalls": -1.0,
+              "medianTriangles": -3.6000000000931323
+            },
+            "stableOnlyConventionalMedianFpsPct": 0.7113436253310679,
+            "rowPass": true
+          },
+          {
+            "component": "furniture",
+            "inventory": {
+              "objects": 0,
+              "instances": 0,
+              "sourceTriangles": 0,
+              "baseTriangles": []
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 54.65827546551533,
+                "maskedFps": 49.4152528418622,
+                "fpsPct": -9.592367448477269,
+                "controlDriftPct": 4.657091480738543,
+                "drawCalls": 0.0,
+                "triangles": 53.39999999990687
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 53.18985158109561,
+                "maskedFps": 54.719562243502054,
+                "fpsPct": 2.875944596450286,
+                "controlDriftPct": 0.7357829867594854,
+                "drawCalls": 0.0,
+                "triangles": 22.800000000046566
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 53.914376492824665,
+                "maskedFps": 54.95260337988509,
+                "fpsPct": 1.9256958061985463,
+                "controlDriftPct": 3.4135824650023907,
+                "drawCalls": 0.0,
+                "triangles": 31.199999999953434
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 1.9256958061985463,
+              "maxControlDriftPct": 4.657091480738543,
+              "stableCycles": 3,
+              "medianDrawCalls": 0.0,
+              "medianTriangles": 31.199999999953434
+            },
+            "stableOnlyConventionalMedianFpsPct": 1.9256958061985463,
+            "rowPass": false
+          }
+        ]
+      },
+      {
+        "file": "shots/democity/r9l-props-components/final-v2.json",
+        "sha256": "7f0ad97c8b2e336c1fece36c9479fdc0f8415f9fe1cc01f48fbc90019f9081ef",
+        "reflection": false,
+        "captureSync": true,
+        "uncapped": true,
+        "frames": 180,
+        "warmFrames": 180,
+        "cycles": 3,
+        "pass": false,
+        "rows": [
+          {
+            "component": "lod1",
+            "inventory": {
+              "objects": 37,
+              "instances": 2630,
+              "sourceTriangles": 441840,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 52.505511198226216,
+                "maskedFps": 58.90630624757084,
+                "fpsPct": 12.190710847818309,
+                "controlDriftPct": 4.437447155538497,
+                "drawCalls": -28.0,
+                "triangles": -405032.80000000005
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 50.20681169094141,
+                "maskedFps": 56.6964848177284,
+                "fpsPct": 12.9258817842,
+                "controlDriftPct": 4.516308893225543,
+                "drawCalls": -28.0,
+                "triangles": -405065.59999999986
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 50.072793661610376,
+                "maskedFps": 56.594875019651,
+                "fpsPct": 13.025199676528022,
+                "controlDriftPct": 3.993103832498692,
+                "drawCalls": -28.0,
+                "triangles": -405048.0
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 12.9258817842,
+              "maxControlDriftPct": 4.516308893225543,
+              "stableCycles": 3,
+              "medianDrawCalls": -28.0,
+              "medianTriangles": -405048.0
+            },
+            "stableOnlyConventionalMedianFpsPct": 12.9258817842,
+            "rowPass": true
+          },
+          {
+            "component": "pools",
+            "inventory": {
+              "objects": 1,
+              "instances": 1325,
+              "sourceTriangles": 381600,
+              "baseTriangles": [
+                288
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 52.71138107594251,
+                "maskedFps": 52.93183555805976,
+                "fpsPct": 0.41822937972282315,
+                "controlDriftPct": 7.967253855712317,
+                "drawCalls": -1.0,
+                "triangles": -381587.19999999995
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 53.63014326553106,
+                "maskedFps": 51.00739607191358,
+                "fpsPct": -4.890434807589184,
+                "controlDriftPct": 4.404472966443333,
+                "drawCalls": -1.0,
+                "triangles": -381621.59999999986
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 51.26000725347558,
+                "maskedFps": 53.9924410590241,
+                "fpsPct": 5.330537297891724,
+                "controlDriftPct": 4.639380658602151,
+                "drawCalls": -1.0,
+                "triangles": -381600.0
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 0.41822937972282315,
+              "maxControlDriftPct": 7.967253855712317,
+              "stableCycles": 2,
+              "medianDrawCalls": -1.0,
+              "medianTriangles": -381600.0
+            },
+            "stableOnlyConventionalMedianFpsPct": 0.22005124515127017,
+            "rowPass": true
+          },
+          {
+            "component": "lenses",
+            "inventory": {
+              "objects": 1,
+              "instances": 3858,
+              "sourceTriangles": 46296,
+              "baseTriangles": [
+                12
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 52.714148724183445,
+                "maskedFps": 54.143480222589865,
+                "fpsPct": 2.7114760135559024,
+                "controlDriftPct": 7.76653605541014,
+                "drawCalls": -1.0,
+                "triangles": -46278.0
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 52.75168494837759,
+                "maskedFps": 51.175617661968055,
+                "fpsPct": -2.987709848418796,
+                "controlDriftPct": 7.903322556302016,
+                "drawCalls": -1.0,
+                "triangles": -46329.19999999995
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 51.57984889053005,
+                "maskedFps": 54.88306857354461,
+                "fpsPct": 6.404089492439402,
+                "controlDriftPct": 12.626651824575823,
+                "drawCalls": -1.0,
+                "triangles": -46296.0
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 2.7114760135559024,
+              "maxControlDriftPct": 12.626651824575823,
+              "stableCycles": 0,
+              "medianDrawCalls": -1.0,
+              "medianTriangles": -46296.0
+            },
+            "stableOnlyConventionalMedianFpsPct": null,
+            "rowPass": false
+          },
+          {
+            "component": "halos",
+            "inventory": {
+              "objects": 1,
+              "instances": 1,
+              "sourceTriangles": 441.6666666666667,
+              "baseTriangles": [
+                441.6666666666667
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 48.4577559936035,
+                "maskedFps": 48.926338678988856,
+                "fpsPct": 0.9669921270130777,
+                "controlDriftPct": 1.3702133380754569,
+                "drawCalls": -1.0,
+                "triangles": 0.8000000000465661
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 50.623233257196105,
+                "maskedFps": 52.23295899766925,
+                "fpsPct": 3.179816137572211,
+                "controlDriftPct": 7.243669863199721,
+                "drawCalls": -1.0,
+                "triangles": -59.199999999953434
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 53.32292161546674,
+                "maskedFps": 47.88762371030208,
+                "fpsPct": -10.193173480554574,
+                "controlDriftPct": 3.248878292538946,
+                "drawCalls": -1.0,
+                "triangles": 0.0
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 0.9669921270130777,
+              "maxControlDriftPct": 7.243669863199721,
+              "stableCycles": 2,
+              "medianDrawCalls": -1.0,
+              "medianTriangles": 0.0
+            },
+            "stableOnlyConventionalMedianFpsPct": -4.613090676770748,
+            "rowPass": true
+          }
+        ]
+      },
+      {
+        "file": "shots/democity/r9l-props-components/final-v3.json",
+        "sha256": "21f2dad201145d253680ca81777be3914593345c0c159de25781a4953e98f7ff",
+        "reflection": true,
+        "captureSync": true,
+        "uncapped": true,
+        "frames": 180,
+        "warmFrames": 180,
+        "cycles": 5,
+        "pass": false,
+        "rows": [
+          {
+            "component": "lod1",
+            "inventory": {
+              "objects": 37,
+              "instances": 2630,
+              "sourceTriangles": 441840,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 62.06629263265762,
+                "maskedFps": 68.39165621856095,
+                "fpsPct": 10.191302424554838,
+                "controlDriftPct": 14.09455843041108,
+                "drawCalls": -27.24444444444444,
+                "triangles": -402507.31666666665
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 51.61597624140182,
+                "maskedFps": 58.97192281207516,
+                "fpsPct": 14.251297962999754,
+                "controlDriftPct": 23.544382547324467,
+                "drawCalls": -27.24444444444444,
+                "triangles": -402534.41666666674
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 57.71313657414488,
+                "maskedFps": 66.02354839864026,
+                "fpsPct": 14.399515115278593,
+                "controlDriftPct": 42.1862075300984,
+                "drawCalls": -27.24444444444444,
+                "triangles": -402555.21666666656
+              },
+              {
+                "cycle": 3,
+                "expectedFps": 62.00935531937648,
+                "maskedFps": 59.4628522355147,
+                "fpsPct": -4.106643377835695,
+                "controlDriftPct": 25.406724510667125,
+                "drawCalls": -27.24444444444444,
+                "triangles": -402549.9166666665
+              },
+              {
+                "cycle": 4,
+                "expectedFps": 55.183133208544916,
+                "maskedFps": 61.90459813623756,
+                "fpsPct": 12.180288680403972,
+                "controlDriftPct": 3.8093195020794113,
+                "drawCalls": -27.24444444444444,
+                "triangles": -402549.9166666665
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": 12.180288680403972,
+              "maxControlDriftPct": 42.1862075300984,
+              "stableCycles": 1,
+              "medianDrawCalls": -27.24444444444444,
+              "medianTriangles": -402549.9166666665
+            },
+            "stableOnlyConventionalMedianFpsPct": 12.180288680403972,
+            "rowPass": false
+          },
+          {
+            "component": "pools",
+            "inventory": {
+              "objects": 1,
+              "instances": 1325,
+              "sourceTriangles": 381600,
+              "baseTriangles": [
+                288
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 49.72134977301846,
+                "maskedFps": 49.61821539834923,
+                "fpsPct": -0.20742472829086145,
+                "controlDriftPct": 0.9087770191421084,
+                "drawCalls": -0.2444444444444116,
+                "triangles": -379086.11666666693
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 50.54454642450282,
+                "maskedFps": 50.1099635307495,
+                "fpsPct": -0.8598017481518783,
+                "controlDriftPct": 4.151287629907391,
+                "drawCalls": -0.2444444444444116,
+                "triangles": -379151.7166666668
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 50.400444117330665,
+                "maskedFps": 50.240035726080464,
+                "fpsPct": -0.3182678130311256,
+                "controlDriftPct": 4.734986287227752,
+                "drawCalls": -0.2444444444444116,
+                "triangles": -379101.9166666665
+              },
+              {
+                "cycle": 3,
+                "expectedFps": 51.76685966850071,
+                "maskedFps": 54.57687759678355,
+                "fpsPct": 5.428217871969321,
+                "controlDriftPct": 9.88911680712319,
+                "drawCalls": -0.2444444444444116,
+                "triangles": -379101.9166666665
+              },
+              {
+                "cycle": 4,
+                "expectedFps": 54.17810931124434,
+                "maskedFps": 54.561988481357986,
+                "fpsPct": 0.7085503259412818,
+                "controlDriftPct": 0.5477967730570242,
+                "drawCalls": -0.2444444444444116,
+                "triangles": -379101.9166666665
+              }
+            ],
+            "fullSeriesSummary": {
+              "medianFpsPct": -0.20742472829086145,
+              "maxControlDriftPct": 9.88911680712319,
+              "stableCycles": 4,
+              "medianDrawCalls": -0.2444444444444116,
+              "medianTriangles": -379101.9166666665
+            },
+            "stableOnlyConventionalMedianFpsPct": -0.26284627066099353,
+            "rowPass": true
+          }
+        ]
+      }
+    ]
+  },
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "props",
+      "finding": "Reflection-off final-v2 LOD1 gives 3/3 stable responses 12.190711%,12.925882%,13.025200%; median12.925882%, masked draw median−28 and triangle median−405048. Supports local rendering-cost attribution, not a shipping gain."
+    },
+    {
+      "rank": 2,
+      "owner": "props / verification",
+      "finding": "Lamp pools have high source triangle count but no repeatable positive timing: stable median +0.220051% reflection-off, −0.262846% separate reflection-on. Deprioritize geometry optimization from triangle counts alone."
+    },
+    {
+      "rank": 3,
+      "owner": "verification",
+      "finding": "Lenses final-v2 0/3 stable; halos oppose; final-v3 LOD1 1/5 stable. Retain failed rows/aggregate outcomes."
+    },
+    {
+      "rank": 4,
+      "owner": "democity / whole-game",
+      "finding": "Existing city-fabric, foliage, night, material and scene-integration quality issues remain open; this timing diagnosis does not improve visual score."
+    }
+  ],
+  "limitations": [
+    "One fixed seed1337/interchange/22:00/high-quality/paused scenario on a Chrome Metal session; no ordinary-camera, day, other-seed or sustained whole-game performance proof.",
+    "Initial and final-v2 reflection OFF; final-v3 reflection ON. Headless ON and uncapped in all three. Final-v3 is a separate-policy diagnostic, not a matched long replication.",
+    "All three aggregate gates fail. Local usable rows do not turn an aggregate failure into a pass.",
+    "Adjacent A controls are shared and correlated; <=5% endpoint drift cannot exclude drift or noise inside B. No-op absent-class rows produce substantial apparent responses.",
+    "Raw per-frame timestamps/elapsed durations are not retained: pair arithmetic is independently verified from block FPS, but original FPS denominators cannot be reconstructed.",
+    "Inventory is a prewarm snapshot of selected objects whose own visible property is true, not exact per-frame, ancestor-visible, frustum-tested, species or distance census. Object selection remains fixed during the run.",
+    "Runtime type/material/base-triangle classification is specific to present source and does not exhaust Props. The noninstanced Standard-material furniture predicate also admits glass/alpha foliage if visible. No LOD0 component is measured.",
+    "Visibility masking can change color, depth, shadows and dependent passes; callbacks continue. Mask response does not isolate main-pass shading, geometry, CPU or GPU time, nor predict a safe shipping optimization.",
+    "2630 LOD1 instances do not prove CAP1 violation: top-down selection bypasses normal CAP1=520. Top-down flag and bucket distances are not retained by this probe.",
+    "Halos are 1325 Points vertices; sourceTriangles=441.6666666666667 is position-count/3 bookkeeping, not triangle topology. Pools are lamp ground-light decals, not foliage crowns.",
+    "Nonzero exit is verified in current source. Retained JSON proves pass:false but contains no shell exit status; the historical exit1 demonstration is builder-reported rather than independently reproduced here.",
+    "No screenshots, temporal-quality judgment, API/save/restage, build, forced-GC memory or official 50fps matrix was independently rerun. Appropriate for diagnosis with unchanged verified product files, not evidence those gates pass."
+  ],
+  "nextPriority": {
+    "owner": "props",
+    "task": "Keep accepted visual source unchanged. Under the reflection-off matched policy, record actual LOD1 bucket distance/top-down/species/castShadow census and separate color versus shadow/depth contributions, with stable paired controls and an ordinary-view check. Select a quality-preserving candidate only after this narrower attribution.",
+    "constraints": [
+      "Keep 168-triangle crown /72 cards,205m normal range,±12m transition,CAP ledger and atlas until evidence supports a specific change.",
+      "Do not infer a generic geometry or Lambert simplification from cost alone; R8z/R8s rejected candidates remain rejected."
+    ]
+  },
+  "imagesInspected": [],
+  "inspectionScope": "All three complete R9l JSON series, verifier, revised builder report, relevant current Props source and prior R9k/R8h/R8z/R8s evidence; no new screenshot claim."
+}

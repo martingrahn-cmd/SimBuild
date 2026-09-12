@@ -1,0 +1,286 @@
+{
+  "module": "democity",
+  "round": "r8w",
+  "reviewType": "Independent raw frontage-slot key diagnostic audit",
+  "decision": "ACCEPT_DIAGNOSTIC",
+  "productDecision": "NO_CHANGE",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "rank1Status": "OPEN",
+  "sourceSha256": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+  "instrumentedSha256": "174c0f1e3b28abdb64d295521a9bcaa5cb9213ed6f68243bd8cf06338c6d12c7",
+  "instrumentedHashIndependentlyReconstructed": true,
+  "replacementMarkerOccurrences": [
+    1,
+    1
+  ],
+  "inspectedFiles": [
+    "docs/builds/democity_r8w_raw_slot_keys.md",
+    "tools/raw-slot-key-profile.mjs",
+    "shots/democity/r8w-raw-slot-keys/profile.json",
+    "src/modules/zoning/grid.js",
+    "src/modules/zoning/palette.js",
+    "src/modules/roads/network.js",
+    "shots/democity/r8v-lot-membership/candidate-contracts.json",
+    "shots/democity/r8v-lot-membership/slot-order-candidate.json"
+  ],
+  "fileHashes": {
+    "docs/builds/democity_r8w_raw_slot_keys.md": "22e12a6dc26e13d0796e205c88655b8956d6552db4e9fd09ee19afa8869d24a3",
+    "tools/raw-slot-key-profile.mjs": "2fcaad1d3e8f43c69cfb25c75e032ffc0b51f92e2f672d6e865bef1e97e25bc6",
+    "shots/democity/r8w-raw-slot-keys/profile.json": "1cf3a83f0563c9e37afdd5c8678f4ea8bad155dd909adca8dc4faec272a4c827",
+    "src/modules/zoning/grid.js": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+    "src/modules/zoning/palette.js": "7e8f79bd84e096310945ac3a32fcca0b32338272671edc09cb3d8cb7d3927b25",
+    "src/modules/roads/network.js": "fb63d41853d360e6a6c79a3cb589f761ae709ec20211af8da467f41558af43e8",
+    "shots/democity/r8v-lot-membership/slot-order-candidate.json": "e2bd7aaa3a911910d8bb981f8ad374065f486a190aebc7620866559e56c3fab9"
+  },
+  "verified": [
+    {
+      "seed": 1337,
+      "counts": {
+        "cells": 9964,
+        "lots": 612,
+        "buildings": 612
+      },
+      "allSummaryFieldsIndependentlyRecomputed": true,
+      "summary": {
+        "edges": 569,
+        "sides": 1098,
+        "slots": 7344,
+        "nullSlots": 0,
+        "unpaintedSlots": 3718,
+        "paintedSlots": 3626,
+        "fullDepthSlots": 2048,
+        "shallowSlots": 1578,
+        "shallowByReason": {
+          "unpainted": 501,
+          "class-change": 221,
+          "prior-claimed": 856,
+          "max-depth": 0
+        },
+        "unpaintedByReason": {
+          "unpainted": 3718,
+          "class-change": 0,
+          "prior-claimed": 0,
+          "max-depth": 0
+        },
+        "runs": 730,
+        "calculatedLots": 612,
+        "nominalLotWidthSlots": 1408,
+        "shortRunSlots": 419,
+        "remainderSlots": 640,
+        "absorbedRemainderSlots": 96,
+        "absorbedShallowSlots": 73,
+        "unabsorbedFullDepthSlots": 544,
+        "preferredKeyReferences": 6535,
+        "uniquePreferredKeys": 6336,
+        "duplicatePreferredKeyReferences": 199,
+        "withinSlotDuplicateKeys": 4,
+        "adjacentSlotOverlapKeys": 3,
+        "adjacentExactColumnPairs": 0,
+        "nonAdjacentRepeatedKeys": 193,
+        "classBreaks": 34,
+        "depthBreaks": 141,
+        "nullBreaks": 392,
+        "expectedLotWidthSlots": 1577,
+        "lotWidthAccountingExact": true,
+        "fullDepthAccountingExact": true
+      },
+      "allRunRowsIndependentlyRecomputed": 730,
+      "allSlotKeysAndBreakReasonsIndependentlyReconstructed": 7344,
+      "reconstructionAuxiliaryEvidence": "R8v candidate-contracts initial painted-cell classes/roads and candidate slot-order edge sequence; all post-lot memberships and available frame fields match accepted R8v",
+      "repeatedKeysIndependentlyRecomputed": 196,
+      "repetitionScope": {
+        "sameEdgeSameSideAdjacent": 3,
+        "sameEdgeSameSideNonAdjacent": 4,
+        "sameEdgeOppositeSide": 0,
+        "differentEdge": 191,
+        "ultimatelyUnclaimed": 135
+      },
+      "strictSameSideNonAdjacentDistinctSlotKeys": 0,
+      "scopeLabelCaveat": "sameEdgeSameSideNonAdjacent counts same-slot (delta0) repetitions4/2 here; no same-edge/same-side delta>=2 repeated key exists. Scope flags can overlap.",
+      "lotWidthSlots": 1577,
+      "globalClaimedUniqueKeys": 4882,
+      "currentLotDuplicates": 0,
+      "currentCrossLotOverlaps": 0,
+      "diagnoseStableRecorded": {
+        "countsEqual": true,
+        "invariantEqual": true
+      },
+      "beforeAfterInvariantIndependentlyRecomputableFromR8wAlone": false,
+      "extras": {
+        "allStops": {
+          "unpainted": 4334,
+          "max-depth": 1878,
+          "class-change": 256,
+          "prior-claimed": 876
+        },
+        "uniqueShallowStopKeys": {
+          "unpainted": 469,
+          "class-change": 212,
+          "prior-claimed": 839
+        },
+        "priorClaimedAtFirstDepth": 419,
+        "classChangeAlsoPriorClaimed": 64,
+        "shortRunCount": 336,
+        "productiveUnabsorbedRemainder": 125
+      },
+      "errors": [],
+      "browserErrors": []
+    },
+    {
+      "seed": 7,
+      "counts": {
+        "cells": 10113,
+        "lots": 648,
+        "buildings": 648
+      },
+      "allSummaryFieldsIndependentlyRecomputed": true,
+      "summary": {
+        "edges": 611,
+        "sides": 1180,
+        "slots": 7852,
+        "nullSlots": 0,
+        "unpaintedSlots": 4073,
+        "paintedSlots": 3779,
+        "fullDepthSlots": 2116,
+        "shallowSlots": 1663,
+        "shallowByReason": {
+          "unpainted": 541,
+          "class-change": 192,
+          "prior-claimed": 930,
+          "max-depth": 0
+        },
+        "unpaintedByReason": {
+          "unpainted": 4073,
+          "class-change": 0,
+          "prior-claimed": 0,
+          "max-depth": 0
+        },
+        "runs": 717,
+        "calculatedLots": 648,
+        "nominalLotWidthSlots": 1505,
+        "shortRunSlots": 394,
+        "remainderSlots": 611,
+        "absorbedRemainderSlots": 105,
+        "absorbedShallowSlots": 76,
+        "unabsorbedFullDepthSlots": 506,
+        "preferredKeyReferences": 6773,
+        "uniquePreferredKeys": 6601,
+        "duplicatePreferredKeyReferences": 172,
+        "withinSlotDuplicateKeys": 2,
+        "adjacentSlotOverlapKeys": 3,
+        "adjacentExactColumnPairs": 0,
+        "nonAdjacentRepeatedKeys": 164,
+        "classBreaks": 31,
+        "depthBreaks": 141,
+        "nullBreaks": 403,
+        "expectedLotWidthSlots": 1686,
+        "lotWidthAccountingExact": true,
+        "fullDepthAccountingExact": true
+      },
+      "allRunRowsIndependentlyRecomputed": 717,
+      "allSlotKeysAndBreakReasonsIndependentlyReconstructed": 7852,
+      "reconstructionAuxiliaryEvidence": "R8v candidate-contracts initial painted-cell classes/roads and candidate slot-order edge sequence; all post-lot memberships and available frame fields match accepted R8v",
+      "repeatedKeysIndependentlyRecomputed": 167,
+      "repetitionScope": {
+        "sameEdgeSameSideAdjacent": 3,
+        "sameEdgeSameSideNonAdjacent": 2,
+        "sameEdgeOppositeSide": 0,
+        "differentEdge": 165,
+        "ultimatelyUnclaimed": 105
+      },
+      "strictSameSideNonAdjacentDistinctSlotKeys": 0,
+      "scopeLabelCaveat": "sameEdgeSameSideNonAdjacent counts same-slot (delta0) repetitions4/2 here; no same-edge/same-side delta>=2 repeated key exists. Scope flags can overlap.",
+      "lotWidthSlots": 1686,
+      "globalClaimedUniqueKeys": 5176,
+      "currentLotDuplicates": 0,
+      "currentCrossLotOverlaps": 0,
+      "diagnoseStableRecorded": {
+        "countsEqual": true,
+        "invariantEqual": true
+      },
+      "beforeAfterInvariantIndependentlyRecomputableFromR8wAlone": false,
+      "extras": {
+        "allStops": {
+          "unpainted": 4710,
+          "max-depth": 1968,
+          "class-change": 221,
+          "prior-claimed": 953
+        },
+        "uniqueShallowStopKeys": {
+          "unpainted": 500,
+          "class-change": 183,
+          "prior-claimed": 910
+        },
+        "priorClaimedAtFirstDepth": 474,
+        "classChangeAlsoPriorClaimed": 63,
+        "shortRunCount": 300,
+        "productiveUnabsorbedRemainder": 112
+      },
+      "errors": [],
+      "browserErrors": []
+    }
+  ],
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "zoning",
+      "supportingOwners": [
+        "democity",
+        "roads",
+        "buildings"
+      ],
+      "title": "Edge-order competition is a reasonable measured hypothesis, not a yield conclusion",
+      "detail": "856/930 prior-claimed shallow samples represent54.2459%/55.9230% of shallow painted slots, but419/474 stop at depth1. Taking those cells earlier can remove an existing other-edge lot.3718/4073 first-cell samples are unpainted, so prior claims are not the largest category across all slots. Compare net complete real lots and state, not gross recovered columns."
+    },
+    {
+      "rank": 2,
+      "owner": "verification tooling",
+      "supportingOwners": [
+        "zoning"
+      ],
+      "title": "Repeated-key scopes and break counts need precise semantics",
+      "detail": "sameEdgeSameSideNonAdjacent includes same-slot delta0 references:4/2 distinct keys here, zero genuinely nonadjacent distinct-slot keys on one edge side. Scope flags overlap. classBreaks/depthBreaks/nullBreaks count transitions after full slots, not all stops or complete run separators."
+    },
+    {
+      "rank": 3,
+      "owner": "verification tooling",
+      "title": "Before/after projection is recorded as booleans, not retained snapshots",
+      "detail": "lotInvariant excludes membership arrays, normal axes and serialized building/economy state; it checks IDs/links/anchor/xyz/w/d/heading/class/corner/t. Before/after strings are discarded. CountsEqual/invariantEqual are source-reviewed results, not separately recomputable raw before/after evidence. Accepted R8v post-state comparison strengthens scope but does not turn R8w into a full save/world contract."
+    },
+    {
+      "rank": 4,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning"
+      ],
+      "title": "Rank1 remains unresolved; raster repetition is not new capacity",
+      "detail": "199/172 excess preferred-key references across prospective slots collapse to196/167 repeated keys, largely across edges.135/105 remain unclaimed. Actual R8v lot union is4882/5176 unique keys with no duplicates/overlaps and612/648 lots; raw repeated candidates do not imply duplicated buildings or a free yield gain."
+    }
+  ],
+  "limits": [
+    "No screenshots requested or inspected. No product change, source write, live browser rerun, build, FPS/memory, API/save or gameplay test was performed by this critic.",
+    "The route changes instrumentation fields/record allocation, not the original sample/control-flow predicates. It executes during startup as well as diagnose, so timing/allocation behavior is altered and is not benchmark evidence.",
+    "Current source and instrumented SHA256 were independently reconstructed. Both replacement markers occur exactly once. This supports exact scope for this source, not future versions with changed marker placement.",
+    "Stop reasons record the first encountered break in order: missing cell, class mismatch, prior claim. A failed next key can satisfy more than one physical constraint;64/63 class-change stops are also prior-claimed. Categories are operationally exclusive, not independent causes.",
+    "Auxiliary accepted R8v saved roads/cell classes were used to reconstruct all slot key sequences and reason precedence, including junction-degree-dependent corner extensions. R8w by itself omits full painted cell metadata and road endpoint graph.",
+    "Preferred references include only the fixed preferred depth of full-depth slots; deeper extra keys and shallow-column keys are outside those repetition totals. Adjacent overlap counts can span a class break, and categories are not an allocation-area partition.",
+    "NonAdjacentRepeatedKeys193/164 means repeated keys without any adjacent pair; it includes cross-edge and same-slot cases. It is not the number of distant same-road collisions.",
+    "The two packing identities account for emitted width and quotient leftovers, not unique world-space area or counterfactual buildable lots. Short-run slots are already inside remainder counts; extension counts are slot uses, not guaranteed unique raster keys.",
+    "diagnose regenerates lots and advances allocation work; disposable pages are appropriate. No evidence of user-save modification. Current before/after equality does not certify allocator purity, object identity, serialized economy or historical import.",
+    "No source-order change is accepted. Any alternative must be assessed for net legal run/lot yield across both seeds, loss to competing roads, stable identity implications, building/economy consequences and restore behavior before product selection."
+  ],
+  "nextOwnerSafePriority": {
+    "owner": "zoning",
+    "supportingOwners": [
+      "roads",
+      "democity",
+      "buildings"
+    ],
+    "task": "A disposable deterministic alternate-order comparison is justified as hypothesis testing. Retain baseline plus every alternative complete lot/owner table and net yield; inspect lost as well as gained lots and identity/building/economy consequences. Do not choose a product order merely from counts of blocked columns."
+  }
+}

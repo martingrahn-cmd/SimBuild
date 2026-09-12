@@ -16,12 +16,18 @@ for (const f of files) {
 for (const [mod, rounds] of Object.entries(byModule)) {
   rounds.sort((a, b) => a.round - b.round);
   const last = rounds[rounds.length - 1];
+  if (mod === 'wholegame') { status.wholeGame = { ...last, report: `docs/critic/wholegame_r${last.round}.md` }; continue; }
   const rec = status.modules[mod] || (status.modules[mod] = { wave: 0, round: 0, score: null, status: 'stub', openIssues: [], history: [] });
   rec.round = last.round;
   rec.score = last.score;
-  rec.pass = !!(last.pass && last.score >= status.passThreshold && last.consoleErrors === 0);
+  rec.pass = !!(last.pass && last.score >= status.passThreshold && last.consoleErrors === 0 && last.apiContractOk !== false);
   rec.status = rec.pass ? 'pass' : (last.round >= status.maxRounds ? 'exhausted' : 'needs-work');
   rec.openIssues = (last.issues || []).map((i) => `[${i.severity}] ${i.title}: ${i.detail}`.slice(0, 300));
+  // Keep complete evidence alongside the compact UI summaries.
+  rec.openIssueDetails = last.issues || [];
+  rec.acceptanceFailed = last.acceptanceFailed || [];
+  rec.criticReport = `docs/critic/${mod}_r${last.round}.md`;
+  rec.criticData = `docs/critic/${mod}_r${last.round}.json`;
   rec.strengths = last.strengths || [];
   rec.consoleErrors = last.consoleErrors;
   rec.maxDrawCalls = last.maxDrawCalls;
@@ -40,6 +46,7 @@ for (const [, rec] of Object.entries(status.modules)) {
   const critRound = rec.round || 0, built = rec.builtRound || 0;
   if (rec.pass) rec.next = null;
   else if (built > critRound) rec.next = { phase: 'critic', round: built };
+  else if (critRound >= status.maxRounds) rec.next = null;
   else rec.next = { phase: 'build', round: critRound + 1 };
 }
 status.updatedAt = new Date().toISOString();

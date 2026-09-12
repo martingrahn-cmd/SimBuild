@@ -1,0 +1,512 @@
+{
+  "module": "services",
+  "round": 2,
+  "score": 6.3,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 162,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "2. Steam and smoke plumes",
+    "6. Every facility is seated in the ground on a graded pad",
+    "7. Civic buildings match the buildings module\u2019s material quality",
+    "9. Parking and service yards, marked",
+    "10. Night: lit, not glowing",
+    "14. Coverage overlay reads like CS2 and is off by default",
+    "15. Budget",
+    "18. Info view desaturation honoured",
+    "19. No tiling, no seams on service ground"
+  ],
+  "acceptanceResults": [
+    {
+      "number": 1,
+      "title": "The four hero silhouettes exist and are unmistakable",
+      "status": "pass",
+      "detail": "All four hero silhouettes are recognizable. Source: 64 m/40-segment cooling towers, throat ratio .561 at .55 height; hub49.5 m/rotor52 m; water tower28 m. New solar layout is20 rows in each of2 separated banks,40 total tilted30 degrees."
+    },
+    {
+      "number": 2,
+      "title": "Steam and smoke plumes",
+      "status": "fail",
+      "detail": "Attachment is materially fixed and particles fade with age. Soft-particle opaque-depth fade is still absent and explicitly deferred by root. Valid transformed plume pin noon mean170.783/255 misses190\u2013235; night59.520/255 gives .348511 of noon, meeting the .35 ratio. Utilities contains no sky, so its plume-to-sky comparison is unmeasurable. No isolated40 px wind-apex pass is claimed."
+    },
+    {
+      "number": 3,
+      "title": "coverage() is correct, fast and allocation-free",
+      "status": "pass with scoped probe limits",
+      "detail": "All20 valid keys plus nonsense/constructor return finite0\u20131;14 Float32Array16384 grids, res128/cell16; six ungridded and unknown keys return null. All14 \u00d720000 query batches pass, max1.7 ms; gridMs unchanged and bilinear query source allocates nothing. Sole coal covers100% of staged buildings >=.9, off-road0; remove+flush0. Unrelated water/clinic keys cannot literally become zero on coal removal; interpreted per category."
+    },
+    {
+      "number": 4,
+      "title": "Road-distance coverage, not a euclidean circle",
+      "status": "pass",
+      "detail": "Disconnected real-road fixture gives power1/0; joining gives1, unlinking0. Clinic accessible sample.909724 versus long road detour0, utility80 m off-road0. Overlay follows roads. Empty-graph fallback warns once; diagnostic API fixture, not ordinary UI completion."
+    },
+    {
+      "number": 5,
+      "title": "Parks and plazas are designed ground, not green rectangles",
+      "status": "partial / numeric unverified",
+      "detail": "70 trees/3 species/26 benches/13 bins/26 lamps, hedge fraction.78;2 curved3 m paths, internal lights, fountain and patterned plaza exist. Lawn mean94.046 vs supplied grass45.620 per255 differs48.426, but grass pin includes tree/shadow contamination: not a clean lawn-material color proof. Design remains sparse with flat hedge and static fountain; no fabricated numeric fail."
+    },
+    {
+      "number": 6,
+      "title": "Every facility is seated in the ground on a graded pad",
+      "status": "fail",
+      "detail": "22\u00d712 perimeter samples: max high-sample error .075948 m; skirts extend at least .45 m below lowest. Continuous district grade fixes r1 road trenches. Abrupt dark intake cut remains beside the water facilities and fails surrounding batter/retaining quality. Three pads retain >1.5 m range, versus four requested in showcase staging."
+    },
+    {
+      "number": 7,
+      "title": "Civic buildings match the buildings module\u2019s material quality",
+      "status": "partial/fail",
+      "detail": "Clinic .32 m reveals, .325 m projecting cap, signed canopy, real head shadows and civic wings/roof objects satisfy geometry subset. Material parity target remains missed: coarse concrete and repeated window/roof kit across civic kinds read plainly synthetic at closeup and civic. Procedural atlas exists; do not label these literally untextured."
+    },
+    {
+      "number": 8,
+      "title": "Distinct plan per civic kind",
+      "status": "pass for prescribed plans",
+      "detail": "School now has fence and two buses; high school has track, university quad/colonnade, hospital H and canopy, clinic L, police mast/yard and fire three doors with15 m tower. All17 kinds staged. Generic kit detail remains a quality weakness without inventing a missing plan."
+    },
+    {
+      "number": 9,
+      "title": "Parking and service yards, marked",
+      "status": "fail",
+      "detail": "Clinic parked cars are now clear of its wall and have parallel painted bays. Other civic/plant grids and four vehicles are present. Marked kerb-to-yard access is still missing: pads stop at a grass verge with no marked connection in civic/street/closeup. No isolated shimmer failure asserted."
+    },
+    {
+      "number": 10,
+      "title": "Night: lit, not glowing",
+      "status": "fail",
+      "detail": "Noon emissive toggle exactly0; night toggle .963616/255 versus >8. Civic260 m facade isolated-horizontal-edge fraction .541712% versus <.2%. Ground pools exist but are weak; plant yard lacks convincing floodlight treatment. Per-window seeded attributes are present; no fract(sin fragment hash. All specified night frames have p1>0,p99<250 and0 clipped-channel pixels. Sixfold window/wall mask comparison remains unverified."
+    },
+    {
+      "number": 11,
+      "title": "Solar panels do not sparkle or blow out",
+      "status": "pass",
+      "detail": "Utilities12/17.5 have0 pixels above245 luma and no clipping. Dark blue linear albedo below .09; roughness .84, no normal map, so no normal amplitude breach. Solar rows remain dark and do not sparkle in inspected frames."
+    },
+    {
+      "number": 12,
+      "title": "Placement validation is real and deterministic",
+      "status": "pass",
+      "detail": "Named water/slope/overlap/no_frontage failures reproduced. Invalid/poor placement null without mutation; small park charged3000 exactly once. Same-seed repeat count/tris/supply/treeHash stable; seed7 placements identical and treeHash2129119487\u2192238951765. Same-frame two removals coalesce and incrementversion2; terrain change correctly advancesversion andupdatedid9."
+    },
+    {
+      "number": 13,
+      "title": "Supply, demand and load are live and drive growth",
+      "status": "pass under resolved load contract",
+      "detail": "Independent actual-rerun Floyd-Warshall oracle agrees with all12 civic loads; duplicate small parks30/58/102, no union-of-kind shortcut. Actual110 steps and controlled population verify refresh; wind/solar/incinerator supply correct, brownout240/320=.75 with0 sampled error, sole-producer deletion yields actual economy/building power0 within110 ticks. Civic load is covered population, not forced below capacity, as root residual explicitly resolves."
+    },
+    {
+      "number": 14,
+      "title": "Coverage overlay reads like CS2 and is off by default",
+      "status": "partial/fail",
+      "detail": "Explicit-only overlay, one draw/128\u00b2 texture, depthWrite false/UI3D200/polygonOffset false/alpha135 satisfy structural subset. Raised courts show interruptions in clinic overlay. Whole-frame 1 m movement diffs3.16281/3.15257 per255 include parallax; no isolated numerical flicker failure asserted. Source/probe overlay=null by default, but official shot JSON does not publish stats.overlay. Component utility field correctly remains flat."
+    },
+    {
+      "number": 15,
+      "title": "Budget",
+      "status": "fail",
+      "detail": "Standard render/idle/init/query budgets pass. Fresh initial grid14.9 ms andseed7 12.8 exceed12. Two removals trigger synchronous113.4 ms geometry rebuild (151.6 ms full next-frame interval).250 ms grid-start throttle now passes actual-class scheduler fixture; this does not prove all CPU work sliced. Fixed14 grids+4aux typed arrays exactly1048576 bytes; dynamic graph/membership excluded, no totalheap claim. SwiftShader setup bound unmeasured on Metal."
+    },
+    {
+      "number": 16,
+      "title": "Catalogue matches the UI contract exactly",
+      "status": "pass",
+      "detail": "All17 keyed catalogues expose required fields. Fresh programmatic UI label/cost/unlock/category diff0. Independent normative-table parser finds0 numeric capacity/radius/footprint/cost/upkeep differences; literal null utility radii preserved."
+    },
+    {
+      "number": 17,
+      "title": "Save/load round-trips",
+      "status": "pass for shipped level1 items",
+      "detail": "Double deserialize restores22 items,32 samplepower values maxdelta0,119202 tris and17 draws; no extra placement cost. Level is omitted from serialized records and owner always restoreslevel1. Current shipped items pass; arbitrary future upgraded levels remain unsupported and are not claimed tested."
+    },
+    {
+      "number": 18,
+      "title": "Info view desaturation honoured",
+      "status": "literal threshold unmet / scope conflict",
+      "detail": "Opaque and owned foliage desaturate with.8 material mix; matching category preserved, emissive suppressed, field and API images exactly equal and clear exactly restores. Whole-frame meanAbs1.137812/255 misses>20. This mixes service and foreign pixels and cannot demonstrate module compliance by itself. No instruction to add a full-screen veil or modify neighboring materials; root should resolve a meaningful owned-mesh measurement."
+    },
+    {
+      "number": 19,
+      "title": "No tiling, no seams on service ground",
+      "status": "fail",
+      "detail": "Non-park pads/aprons terminate in hard rectangular material lines at terrain; .04 m seating is within height band, but no kerb/band/.4 m blend is supplied around every service plate. Park has a perimeter band; r1 path joins improved. Do not count repeated housing textures from the other module as services faults."
+    },
+    {
+      "number": 20,
+      "title": "Wind turbine blades read at every distance",
+      "status": "pass for inspected views/source",
+      "detail": "Three tapered blades remain readable at utilities distance. Root chord1 m exceeds .88 m; four distinct ID phases1.7 rad apart; time and wind speed drive rotation. No automated temporal alias sweep claimed."
+    },
+    {
+      "number": 21,
+      "title": "Contact darkening",
+      "status": "partial / numeric unverified",
+      "detail": "Tree/bench/vehicle/lamp contact shadows exist and trees ground convincingly at noon; clinic parking no longer intersects wall. wall_base pin exists but there is no supplied comparison column at mid-height/5 m out. Paired25% contrast is unmeasured, not a manufactured failure."
+    },
+    {
+      "number": 22,
+      "title": "The props overlap at --showcase all is not left silent",
+      "status": "pass handoff",
+      "detail": "Core request names props inLot/oriented-footprint exclusion. Owner remainingWeaknesses reports101 overlaps in populated22-service integration and honest zero-service exact all limitation. Independent fresh integrated probe reproduces101 of2981 trees. This passes disclosure, not the deferred root integration gate."
+    }
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Civic and industrial material scale still reads as repeated procedural kit",
+      "detail": "At closeup/civic, identical window dimensions and roof boxes repeat across seven kinds; near tower concrete has coarse mottling, blank side walls and sparse industrial detail. Preserve actual reveals and distinct plans while giving civic kinds different facade rhythms, roof functions and believable material scale. Compared with CS2 references2/4/6 at similar framing, this remains competent synthetic work, below good indie/AAA.",
+      "evidence": "shots/services/r2/critic-matrix/closeup_12.png; shots/services/r2/critic-matrix/plant_close_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Yards need actual frontage connections and finished ground boundaries",
+      "detail": "Clinic car-wall collision is fixed. Marked bays now need an access path across the grass verge to the kerb, and every civic/utility plate needs a perimeter band/kerb or blended edge. Keep simple vehicles separate from building walls. Park has a perimeter band but sparse hedge/fountain detail. Root-owned ground clutter is disclosed separately.",
+      "evidence": "shots/services/r2/critic-matrix/street_12.png; shots/services/r2/critic-matrix/civic_12.png; shots/services/r2/critic-matrix/park_12.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "Night windows alias and yard lighting remains weak",
+      "detail": "Fresh pinned civic facade isolated-edge fraction .541712% exceeds.2%; night service toggle moves only.963616/255 versus>8. White window sheets dominate while school/fire/plant yards lack convincing mast-centered pools. Preserve zero noon emission and seeded per-window attributes; improve mip/coverage treatment and grounded light design without global exposure changes.",
+      "evidence": "shots/services/r2/critic-probe/image-metrics.json; shots/services/r2/critic-matrix/night_civic_22.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "The intake cut still breaks the otherwise improved district grade",
+      "detail": "Continuous grade removes r1 interior road trenches, but a dark abrupt intake pit remains beside water facilities. Pump stays groundwater140 against demand256 and only3 pads retain>1.5 m range. Reshape/stage the intake with a stable batter/retaining treatment, preserve actual water proximity, and retain4 meaningful sloped-pad cases. All22 height/skirt samples currently pass.",
+      "evidence": "shots/services/r2/critic-matrix/civic_12_720.png; shots/services/r2/critic-probe/api-probe.json"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "Dirty geometry rebuild blocks a frame",
+      "detail": "Two same-frame removals coalesce correctly but rebuild all static service geometry synchronously in113.4 ms; next frame151.6 ms includes neighbors. Initial grid14.9/12.8 ms also exceeds12. The new250 ms scheduler and1 MiB typed arrays fix real r1 defects; now rebuild only affected chunks or stage CPU work. Required live supply/load version changes must remain and must not trigger geometry work.",
+      "evidence": "shots/services/r2/critic-probe/seams.json; shots/services/r2/critic-probe/cache-fixture.json; shots/services/r2/critic-probe/supplement.json"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "Plume attachment improves, but smoke remains smooth and lacks depth fade",
+      "detail": "Attached age-faded plumes replace the detached r1 slabs. They still read as smooth translucent columns versus billowy reference6. Noon transformed plume pin mean170.783 is below190; night/noon.348511 passes. Safe opaque-depth fade is explicitly deferred by root and cannot be solved by reading a live render target. Keep the correct wind response and disclose absent sky/isolated apex measurements.",
+      "evidence": "shots/services/r2/critic-matrix/utilities_12.png; shots/services/r2/critic-probe/image-metrics.json; docs/core-requests/services.md"
+    },
+    {
+      "rank": 7,
+      "severity": "minor",
+      "title": "Coverage film and calibration still have unresolved limits",
+      "detail": "Clinic film is interrupted on raised courts. Services owned foliage desaturation is fixed, but literal whole-scene diff>20 cannot be proved by this module (actual1.137812/255). Grass reference contains foliage/shadow, utilities has no sky and contact comparison is missing. Supply truthful landmarks/owned-region tests; do not manufacture coverage gradients, whole-screen desaturation or numerical failure claims.",
+      "evidence": "shots/services/r2/critic-probe/coverage_clinic_12.png; shots/services/r2/critic-probe/info_field.png; shots/services/r2/critic-probe/image-metrics.json"
+    }
+  ],
+  "strengths": [
+    "Four hero utility silhouettes, forty solar rows and attached wind-driven plumes.",
+    "Real civic plans, recessed windows, school fence and fixed clinic parking.",
+    "Live per-facility road-reachable population loads, correct version/events and actual brownout/growth response.",
+    "Allocation-free hot queries, exact catalogue, deterministic current saves and seeds.",
+    "Continuous district grade,250 ms coverage scheduling, exact1 MiB fixed typed cache and low draw/triangle counts.",
+    "Owned opaque and foliage infoview behavior, exact field/API parity and reset; honest root handoffs."
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/services_r2.md",
+  "summary": "6.3/10, FAIL. Round2 fixes detached steam, most grade cliffs, school fence, clinic parking, live civic loads/versioning, grid cadence and foliage desaturation. Repetitive materials, unfinished yards, weak/aliased night lighting, intake cliff and113 ms dirty rebuild remain far below CS2.53 fresh images viewed; zero errors; required API behavior passes within declared scope.",
+  "shots": [
+    "shots/services/r2/critic-matrix/utilities_6p5.png",
+    "shots/services/r2/critic-matrix/utilities_12.png",
+    "shots/services/r2/critic-matrix/utilities_17p5.png",
+    "shots/services/r2/critic-matrix/utilities_22.png",
+    "shots/services/r2/critic-matrix/plant_close_6p5.png",
+    "shots/services/r2/critic-matrix/plant_close_12.png",
+    "shots/services/r2/critic-matrix/plant_close_17p5.png",
+    "shots/services/r2/critic-matrix/plant_close_22.png",
+    "shots/services/r2/critic-matrix/civic_6p5.png",
+    "shots/services/r2/critic-matrix/civic_12.png",
+    "shots/services/r2/critic-matrix/civic_17p5.png",
+    "shots/services/r2/critic-matrix/civic_22.png",
+    "shots/services/r2/critic-matrix/park_6p5.png",
+    "shots/services/r2/critic-matrix/park_12.png",
+    "shots/services/r2/critic-matrix/park_17p5.png",
+    "shots/services/r2/critic-matrix/park_22.png",
+    "shots/services/r2/critic-matrix/aerial_6p5.png",
+    "shots/services/r2/critic-matrix/aerial_12.png",
+    "shots/services/r2/critic-matrix/aerial_17p5.png",
+    "shots/services/r2/critic-matrix/aerial_22.png",
+    "shots/services/r2/critic-matrix/street_6p5.png",
+    "shots/services/r2/critic-matrix/street_12.png",
+    "shots/services/r2/critic-matrix/street_17p5.png",
+    "shots/services/r2/critic-matrix/street_22.png",
+    "shots/services/r2/critic-matrix/skyline_6p5.png",
+    "shots/services/r2/critic-matrix/skyline_12.png",
+    "shots/services/r2/critic-matrix/skyline_17p5.png",
+    "shots/services/r2/critic-matrix/skyline_22.png",
+    "shots/services/r2/critic-matrix/closeup_6p5.png",
+    "shots/services/r2/critic-matrix/closeup_12.png",
+    "shots/services/r2/critic-matrix/closeup_17p5.png",
+    "shots/services/r2/critic-matrix/closeup_22.png",
+    "shots/services/r2/critic-matrix/night_civic_22.png",
+    "shots/services/r2/critic-matrix/civic_12_720.png",
+    "shots/services/r2/critic-probe/coverage_12.png",
+    "shots/services/r2/critic-probe/coverage_clinic_12.png",
+    "shots/services/r2/critic-probe/coverage_move_0.png",
+    "shots/services/r2/critic-probe/coverage_move_1.png",
+    "shots/services/r2/critic-probe/coverage_move_2.png",
+    "shots/services/r2/critic-probe/probe_coverage_off.png",
+    "shots/services/r2/critic-probe/toggle_noon_on.png",
+    "shots/services/r2/critic-probe/toggle_noon_off.png",
+    "shots/services/r2/critic-probe/toggle_night_on.png",
+    "shots/services/r2/critic-probe/toggle_night_off.png",
+    "shots/services/r2/critic-probe/wind_plus.png",
+    "shots/services/r2/critic-probe/wind_minus.png",
+    "shots/services/r2/critic-probe/infoview_power.png",
+    "shots/services/r2/critic-probe/probe_play_fixture.png",
+    "shots/services/r2/critic-probe/seed7_park.png",
+    "shots/services/r2/critic-probe/info_off.png",
+    "shots/services/r2/critic-probe/info_field.png",
+    "shots/services/r2/critic-probe/info_clear.png",
+    "shots/services/r2/critic-probe/info_api.png"
+  ],
+  "shotNotes": [
+    {
+      "file": "shots/services/r2/critic-matrix/utilities_6p5.png",
+      "note": "Attached broad steam, long warm tower shadows and four different rotor angles; concrete pads remain bare and sharply edged."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/utilities_12.png",
+      "note": "Two recognizable waisted towers, dark forty-row solar field and attached steam; plain industrial ribs and empty yards remain synthetic."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/utilities_17p5.png",
+      "note": "Warm attached steam and long wind-turbine shadows; no solar glare or interior road trenches."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/utilities_22.png",
+      "note": "Towers and rotors remain visible, steam almost disappears; thin white industrial window strips supply most of the facility light."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/plant_close_6p5.png",
+      "note": "Coarse concrete mottling dominates the close towers; vertical industrial ribs improve shape, but the yard has little process detail."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/plant_close_12.png",
+      "note": "Curved tower silhouette and four parked cars are clear; coarse wall texels and large empty hard-surface pads remain conspicuous."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/plant_close_17p5.png",
+      "note": "Warm tower walls reveal the same broad mottled texture; cars stand clear of the building in this view."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/plant_close_22.png",
+      "note": "Industrial window bars are bright white while the yard remains mostly uniformly cool; no visible convincing plant floodlight pools."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/civic_6p5.png",
+      "note": "Continuous street grades now seat the campuses; school fence/buses read, with an abrupt dark intake cut at the right."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/civic_12.png",
+      "note": "Seven plans distinguish themselves by wings, track, H, quad, mast and tower; identical window sheets and roof boxes remain repetitive."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/civic_17p5.png",
+      "note": "Long warm shadows emphasize the now continuous district grade; intake cliff and bare hard-edged aprons remain."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/civic_22.png",
+      "note": "White window rows dominate the campuses; repetitive elevations and weak yard illumination remain obvious."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/park_6p5.png",
+      "note": "Curved paths, benches, bins and internal lamps surround the fountain; sparse flat hedge strips and coarse leaf cards remain."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/park_12.png",
+      "note": "Strong tree contact shadows ground the park; lawn is visibly a plate and the fountain is a flat pool with a simple cone jet."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/park_17p5.png",
+      "note": "Long tree shadows and curved pale paths read cleanly; perimeter hedge is still a low uniform band."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/park_22.png",
+      "note": "Path lamp heads and soft small pools are visible; fountain and nearby industrial forms remain readable without a black frame."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/aerial_6p5.png",
+      "note": "District reads continuously with all major utility and civic landmarks; plain rectangular pads stand apart from grass."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/aerial_12.png",
+      "note": "No interior street trenches; repeated service elevations, bare aprons and hard rectangular ground boundaries dominate."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/aerial_17p5.png",
+      "note": "Warm long shadows and attached steam improve the overview; intake cut and undetailed service ground remain visible."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/aerial_22.png",
+      "note": "Town remains readable; civic white pinstriped windows contrast with dark roofs, and the ground lighting is sparse."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/street_6p5.png",
+      "note": "Clinic has an L wing, recessed windows and four cars clear of its wall; no marked connection carries the yard across the verge to the road."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/street_12.png",
+      "note": "Clinic wall openings have head shadows; broad blank side walls, coarse foliage and toy-like cars limit realism."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/street_17p5.png",
+      "note": "Warm raking light grounds clinic and vehicles; the yard still ends abruptly at the grass verge."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/street_22.png",
+      "note": "Individual window choices exist, but bright flat window rectangles and a dark featureless roadway give a basic night treatment."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/skyline_6p5.png",
+      "note": "Cooling towers, wind turbines and campus silhouettes establish a district; smooth steam lacks billowy structure."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/skyline_12.png",
+      "note": "Landmarks remain recognizable at distance, while civic blocks and their surroundings have sparse detail."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/skyline_17p5.png",
+      "note": "Backlit site reads clearly against the coast; steam is hard to see against the bright sky and remains narrow/smooth."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/skyline_22.png",
+      "note": "Civic windows form thin luminous dotted rows; industrial mass and terrain are visible, with no empty frame."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/closeup_6p5.png",
+      "note": "Clinic cars now sit parallel outside the facade; recessed window kit and separate wing read, but the frontage has little design."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/closeup_12.png",
+      "note": "Real reveals and cap shadows are visible; repeated window dimensions, blank side walls and apron/verge seam keep the synthetic look."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/closeup_17p5.png",
+      "note": "Warm light exposes the same repeated facade kit and four clear cars; no r1 car-wall intersection remains."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/closeup_22.png",
+      "note": "On/off windows are visible and the canopy is illuminated; rows still read as flat white panels with little interior depth."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/night_civic_22.png",
+      "note": "Hospital fills the foreground with regular white window panels; park pools exist, but the large hospital apron remains sparse and clinic cars are clear of the wall."
+    },
+    {
+      "file": "shots/services/r2/critic-matrix/civic_12_720.png",
+      "note": "At 1280\u00d7720 all campus plans remain visible; no UI overflow in this headless frame. The intake cut and repetitive window grids remain apparent."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/coverage_12.png",
+      "note": "Power overlay follows the connected roads with soft outer transitions; uniform green is correct for full component supply, not a reason to fake distance falloff."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/coverage_clinic_12.png",
+      "note": "Clinic overlay varies red-to-green with road distance; courts have visibly interrupted coating where raised geometry meets the decal."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/coverage_move_0.png",
+      "note": "First power-overlay movement frame: continuous street-following field and discrete exposed roofs."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/coverage_move_1.png",
+      "note": "After 1 m camera motion the same field remains; parallax shifts edges, with no obvious random flash."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/coverage_move_2.png",
+      "note": "Second 1 m movement preserves the field; global pixel differences are not an isolated temporal-flicker measurement."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/probe_coverage_off.png",
+      "note": "The colored film is removed completely; ordinary terrain and roads return, with the intake pit still present."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/toggle_noon_on.png",
+      "note": "Noon civic baseline: recessed windows and bare aprons, with no visible emissive light."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/toggle_noon_off.png",
+      "note": "Visually identical noon image; full-resolution pixel comparison confirms zero difference."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/toggle_night_on.png",
+      "note": "Civic window strips and canopy lights are on; ground pools remain weak and narrow."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/toggle_night_off.png",
+      "note": "Service light disappears while residential light remains; switch is real, though the whole-frame effect is below the specified threshold."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/wind_plus.png",
+      "note": "Positive-wind utility frame shows slanted attached steam; environment and shadow state also respond to the controlled weather change."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/wind_minus.png",
+      "note": "Opposite wind shifts the upper steam in the expected direction; full-frame differences include sky/shadow changes and do not prove an isolated 40 px apex threshold."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/infoview_power.png",
+      "note": "Utility forms retain their color while visible civic material becomes grey; ordinary residential/terrain material remains colored."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/probe_play_fixture.png",
+      "note": "Artificial real-play API fixture shows isolated coal and clinic after road deletion; this empty-road fallback capture is not an ordinary user-created city."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/seed7_park.png",
+      "note": "Park keeps the same facility layout with visibly different seeded tree sizes/placement; curved paths and simple fountain remain."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/info_off.png",
+      "note": "Fresh noon civic baseline after simulation exercise; colored civic brick and park foliage remain visible."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/info_field.png",
+      "note": "Field-driven electricity view greys both owned civic walls and park foliage; selected utilities retain color."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/info_clear.png",
+      "note": "Clearing the field restores the baseline exactly."
+    },
+    {
+      "file": "shots/services/r2/critic-probe/info_api.png",
+      "note": "Explicit API-driven view matches the field-driven grey civic/foliage image exactly."
+    }
+  ],
+  "sourceSha256": {
+    "coverage.js": "b44f756e72f2e80548c1607d6d1113be7e861ad621e3717d1729b63e90da7aa2",
+    "catalog.js": "31dbc94bf805503e526c07066405e3372a160f3840967a784da0942fc55c2ac3",
+    "render.js": "b3b47440d63308285ace2cf6d86e4a03da42ef99f6106a74a5f3de03c85aebae",
+    "index.js": "2d3deb2fe37b9d6602f9bc0672177105a1712781a1b60fa2f77e20d847dd769b",
+    "placement.js": "19571507c29cc08b3aed6ab071aafde061e0f7b5f3def7fd4eb6cbb6c602c2ae",
+    "showcase.js": "bd4cda4a54cc3da2c84be55b9b019b1da3dcc7d37439bd841ad95da6d32369af"
+  },
+  "runtime": {
+    "url": "http://127.0.0.1:5174",
+    "gpu": "ANGLE Metal Apple M4",
+    "chrome": "152.0.7977.76",
+    "seed": 1337,
+    "quality": "high",
+    "independentFreshMatrix": 34,
+    "independentFreshProbeImages": 19,
+    "referencesViewed": [
+      "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+      "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+    ]
+  },
+  "scope": "Independent critic captured every reported PNG freshly and individually viewed all53 plus all8 references. Reviewed owner diagnostic instruments were reused and rerun, not owner evidence; source-table audit and version cadence augmentation independently added. No production edits. Whole-game ordinary UI playability, root forest/clutter/consumer adapters, safe scene depth and full-scene desaturation are not certified."
+}

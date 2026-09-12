@@ -5,3 +5,10 @@ shots/*.png
 shots/**/*.png
 *.log
 .DS_Store
+
+# Local generated evidence and recovery data. The durable findings live in docs/.
+/shots/
+/tmp/
+
+# Accidental nested checkout; the repository root is this directory.
+/SimBuild/

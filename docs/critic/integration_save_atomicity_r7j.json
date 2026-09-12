@@ -1,0 +1,31 @@
+{
+  "scope": "whole-game save restore",
+  "round": "r7j",
+  "decision": "accepted",
+  "score": null,
+  "evidence": [
+    "shots/integration/save-atomicity-r1.json",
+    "shots/integration/r7j-save-atomicity/apicheck.json",
+    "shots/integration/r7j-save-atomicity/restage-cycle.json",
+    "shots/integration/r7j-save-atomicity/smoke.png"
+  ],
+  "verified": {
+    "lateOwnerRejected": "transit",
+    "modulePayloadsExactAfterRollback": "15/15",
+    "terrainExact": true,
+    "timeExact": true,
+    "cameraExact": true,
+    "failedAttemptLoadedEvents": 0,
+    "rolledBackEvents": 1,
+    "validRecovery": true,
+    "democityApiPass": true,
+    "exactRestageCyclePass": true,
+    "smokeErrors": 0,
+    "buildModules": 163
+  },
+  "remaining": [
+    "successful loads may recompute documented derived Transit demand/ridership and route caches",
+    "a rejecting owner during rollback produces an explicit known-good recovery failure",
+    "ordinary long-run progression remains unverified"
+  ]
+}

@@ -1,0 +1,330 @@
+{
+  "module": "transit",
+  "round": 3,
+  "summary": "Added hollow bus cabins with visible seats and transparent glazing, deterministic individual warm/cool/dark night bays, restrained paint roughness and four base pigments, real wheel openings and circular hubs. Retained cheap wheels and light cues at distance. Added shelter timetable rows and line-number geometry, and reframed existing owned stops and bus heroes without modifying props. Continuous routing, real-occupant demand, private drafts and save behavior remain unchanged and pass fresh checks. Visual quality is improved but remains below target.",
+  "drawCalls": 247,
+  "triangles": 2062924,
+  "errors": 0,
+  "selfScore": 6.8,
+  "screenshotsViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/all_aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/bus-smoke2.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/bus-smoke3.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/gauntlet/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/lod-179.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/lod-181.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/night-bus-smoke.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/night-stop-smoke3.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/probe-release.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/quality-stable.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/seams-release.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/smoke.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/stop-smoke.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/stop-smoke2.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/surface-12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/surface-22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_bus_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_bus_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_line_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_line_12_seed99.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_lines_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_lines_12_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_night_stop_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_overlay_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_overlay_12_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_stop_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r3/transit_stop_22.png"
+  ],
+  "acceptanceMet": [
+    "Final 16-camera/time gauntlet and 11 transit preset captures are ready with zero errors; the empty owner startup also has zero errors.",
+    "Fresh owner API checks pass 24/24, integration seam checks 9/9, geometry/render quality checks 9/9 and actual population refresh checks 6/6.",
+    "Continuous cached junctions retain pure hour-based deterministic motion, exact eight-second scheduled dwells and exact ordinary lane poses outside junctions.",
+    "Private draft cancel and validation are atomic; a valid commit emits once; zero fleet serializes a JSON-safe null headway and restores runtime Infinity; exact legacy empty-object saves clear outgoing transit.",
+    "Actual zero occupants produce zero riders. Positive simulation occupancy changes cached demand with one completed event batch and no owner treasury mutation.",
+    "Stable owner attribution matches actual group deltas at 15 to 20 calls including shadows and night layers; maximum observed owned geometry is 147148 triangles. Off-camera owned draws are zero.",
+    "Transit owns no DOM output. Geometry chips retain measured 21 pixel height and HUD exclusion at 720p; line ribbons, chevrons and white stop rings remain intact.",
+    "Day paint roughness is 0.38. Source and surface diagnostics show multiple night bay tints and a dark bay; day light emission is zero. This is a partial material improvement, not full night photometry acceptance.",
+    "All five owned source files have exact byte copies and SHA256 manifests for both r2 and r3."
+  ],
+  "acceptanceMissed": [
+    "1. Full visual and literal image hard gates remain below target despite zero final runtime errors.",
+    "3. Vehicle form and materials improve but the front remains too simple and the literal pinned pixel requirement fails.",
+    "6. Night body contrast and all requested numeric lighting ratios remain missed or unestablished.",
+    "17. Literal all-object shadow flags remain missed; precise ground contact and shadow azimuth are not measured.",
+    "LOD: the isolated two-metre transition image threshold is unestablished; raw comparison is confounded.",
+    "22. Articulated tram stretch is absent."
+  ],
+  "remainingWeaknesses": [
+    "Below the 8.5 visual target. The front and roof remain boxy, seats are simple rectangles and the destination display still says BUS rather than the actual line destination.",
+    "Night windows have distinct warm, cool and dark bays, but the gray night body remains too bright. A projected 12 pixel body patch has median luminance 108.23; sampled warm and cool windows are 164.83 and 168.23. The requested body/window contrast, peak brightness and shelter bench light ratio are not established as passing.",
+    "Literal pinned bus pixel excess still fails: day maximum 109.60 with 2037 pixels above 40; night maximum 132.59 with 1655 pixels above 40. These rectangles include geometry edges, foliage and traffic, so the result is not proof of paint sparkle everywhere.",
+    "The bus hero fits the 1920 pixel HUD-safe frame within 12 metres, and shelter views expose the bench and timetable. A narrow day foreground pole still overlaps the bus; street framing retains foliage on the right. Far routes still lose clarity behind foliage.",
+    "Wheels and essential window/headlamp cues now survive the 180 metre transition. Secondary details and doors still disappear. The 179/181 metre raw crop comparison changes 35.06 percent of pixels above 6 RGB, but moving ambient traffic and camera/background parallax confound it; the isolated 1.5 percent LOD requirement remains unestablished.",
+    "Structural body and wheels cast shadows, but glass, lamp, door and shelter-glass batches do not all cast them. Literal all-object shadow acceptance remains missed. Shelter bench/timetable wash approximates local bounce with a material emissive attribute.",
+    "The composed all showcase costs 530 draws and 3,239,923 triangles at 22.4 fps on Apple M4 Metal. This is a whole-game observation during neighbour democity changes, not an isolated transit regression; it exceeds the desired scene triangle ceiling.",
+    "No articulated tram stretch. The owner still uses one deterministic own fleet because the traffic API does not provide a complete managed fleet contract. Native tool and treasury consumer integration remains root-owned and was unapplied during these captures.",
+    "The user stop boundary ends development after this current round and integration. No r4 or new development scope is started."
+  ],
+  "coreRequestFile": "docs/core-requests/transit.md",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+  "browser": "System Chrome 152.0.7977.76",
+  "server": "http://127.0.0.1:5174",
+  "measurementScope": "Top-level drawCalls and triangles are maxima across final transit presets and the standard gauntlet; composed all and attributable owner counts are reported separately. Shared Metal fps is descriptive, not an isolated benchmark.",
+  "gauntlet": {
+    "maxDrawCalls": 153,
+    "maxTriangles": 1764176,
+    "minFps": 39.7,
+    "totalErrors": 0,
+    "failedShots": []
+  },
+  "finalCaptureMetrics": {
+    "transit_bus_12.json": {
+      "drawCalls": 133,
+      "triangles": 1433423,
+      "fps": 57.4,
+      "errors": []
+    },
+    "transit_bus_22.json": {
+      "drawCalls": 201,
+      "triangles": 2062924,
+      "fps": 59.6,
+      "errors": []
+    },
+    "transit_line_12.json": {
+      "drawCalls": 247,
+      "triangles": 2023152,
+      "fps": 51.9,
+      "errors": []
+    },
+    "transit_line_12_seed99.json": {
+      "drawCalls": 179,
+      "triangles": 1512959,
+      "fps": 55.9,
+      "errors": []
+    },
+    "transit_lines_12.json": {
+      "drawCalls": 209,
+      "triangles": 1468071,
+      "fps": 56.7,
+      "errors": []
+    },
+    "transit_lines_12_720.json": {
+      "drawCalls": 209,
+      "triangles": 1468071,
+      "fps": 60,
+      "errors": []
+    },
+    "transit_night_stop_22.json": {
+      "drawCalls": 105,
+      "triangles": 1684192,
+      "fps": 56.7,
+      "errors": []
+    },
+    "transit_overlay_12.json": {
+      "drawCalls": 190,
+      "triangles": 1374271,
+      "fps": 59.3,
+      "errors": []
+    },
+    "transit_overlay_12_720.json": {
+      "drawCalls": 190,
+      "triangles": 1374271,
+      "fps": 60,
+      "errors": []
+    },
+    "transit_stop_12.json": {
+      "drawCalls": 104,
+      "triangles": 1450286,
+      "fps": 54.4,
+      "errors": []
+    },
+    "transit_stop_22.json": {
+      "drawCalls": 105,
+      "triangles": 1684192,
+      "fps": 57,
+      "errors": []
+    }
+  },
+  "composedAll": {
+    "drawCalls": 530,
+    "triangles": 3239923,
+    "fps": 22.4,
+    "errors": [],
+    "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)"
+  },
+  "checks": {
+    "probe-release.json": {
+      "passed": 24,
+      "failed": 0,
+      "errors": 0
+    },
+    "seams-release.json": {
+      "passed": 9,
+      "failed": 0,
+      "errors": 0
+    },
+    "quality-stable.json": {
+      "passed": 9,
+      "failed": 0,
+      "errors": 0
+    },
+    "population-refresh.json": {
+      "passed": 6,
+      "failed": 0,
+      "errors": 0
+    }
+  },
+  "cpu": {
+    "samples": 100,
+    "meanMs": 0.015,
+    "maxMs": 0.19999998807907104
+  },
+  "junctions": {
+    "maxJoin": 0,
+    "maxBisection": 2.200001745222835e-06,
+    "maxHeading": 8.84751467200573e-07
+  },
+  "ownedRenderSamples": [
+    {
+      "time": 12,
+      "camera": "aerial",
+      "own": 15,
+      "delta": 15,
+      "tris": 137198,
+      "near": 0,
+      "far": 12
+    },
+    {
+      "time": 12,
+      "camera": "street",
+      "own": 18,
+      "delta": 18,
+      "tris": 146878,
+      "near": 3,
+      "far": 9
+    },
+    {
+      "time": 12,
+      "camera": "bus",
+      "own": 17,
+      "delta": 17,
+      "tris": 140294,
+      "near": 3,
+      "far": 9
+    },
+    {
+      "time": 12,
+      "camera": "overlay",
+      "own": 16,
+      "delta": 16,
+      "tris": 143782,
+      "near": 0,
+      "far": 12
+    },
+    {
+      "time": 22,
+      "camera": "aerial",
+      "own": 16,
+      "delta": 16,
+      "tris": 137450,
+      "near": 0,
+      "far": 12
+    },
+    {
+      "time": 22,
+      "camera": "street",
+      "own": 20,
+      "delta": 20,
+      "tris": 147148,
+      "near": 3,
+      "far": 9
+    },
+    {
+      "time": 22,
+      "camera": "bus",
+      "own": 19,
+      "delta": 19,
+      "tris": 140562,
+      "near": 3,
+      "far": 9
+    },
+    {
+      "time": 22,
+      "camera": "overlay",
+      "own": 17,
+      "delta": 17,
+      "tris": 144034,
+      "near": 0,
+      "far": 12
+    }
+  ],
+  "sourceHashes": {
+    "src/modules/transit/graph.js": "207f6e5e6c1cb66d045d0cae2e1306f50aa44a79fbbe5f9f889dcba2e1026d4c",
+    "src/modules/transit/index.js": "af224a0cc97d816c3cdba8785d9971b4ff196d0b199d95b8ed441f5e4e6a6658",
+    "src/modules/transit/labels.js": "49d10ff611c420eb001c4399ac16fc0b95af482a90415977900226e60a4b1932",
+    "src/modules/transit/render.js": "fce60d5e76f6cc6089ac4639d024508d5b4e94d62894daba2db2f8d30c67b5fd",
+    "src/modules/transit/showcase.js": "b36d28a5ba32f8e77bcc8948b78c4c11ee7f0bca7ec08dcc652d7c56a995d31f"
+  },
+  "sourceSnapshot": "shots/transit/r3/source/manifest.json",
+  "previousExactSnapshot": "shots/transit/r2/source/manifest.json",
+  "changedSource": [
+    "src/modules/transit/render.js",
+    "src/modules/transit/showcase.js"
+  ],
+  "unchangedFromR2": [
+    "src/modules/transit/graph.js",
+    "src/modules/transit/index.js",
+    "src/modules/transit/labels.js"
+  ],
+  "evidence": [
+    "shots/transit/r3/gauntlet/summary.json",
+    "shots/transit/r3/probe-release.json",
+    "shots/transit/r3/seams-release.json",
+    "shots/transit/r3/empty-release.json",
+    "shots/transit/r3/population-refresh.json",
+    "shots/transit/r3/quality-stable.json",
+    "shots/transit/r3/surface-probe.json",
+    "shots/transit/r3/surface-statistics.json",
+    "shots/transit/r3/pinned-statistics.json",
+    "shots/transit/r3/all_aerial_12.json"
+  ],
+  "historicalFailedSmokes": {
+    "files": [
+      "shots/transit/r3/bus-smoke2.png",
+      "shots/transit/r3/stop-smoke.png"
+    ],
+    "errorsEach": 8,
+    "cause": "Indexed and nonindexed paint parts could not merge. Normalized the owned merge helper, then reran successful smokes and all final captures. Failed evidence is retained and viewed."
+  },
+  "measurementLimitations": [
+    "The quality probe loaded before the final palette-only adjustment. Geometry, shader structure, path behavior and draw counts were unchanged by that adjustment; final gauntlet, presets and surface captures use the final palette.",
+    "Bus hero selection can choose different actual vehicles at different hours, so day/night panel sample differences are not solely a lighting comparison.",
+    "Projected material samples are approximate 12 by 12 patches, not isolated object/material masks. Border and background contamination is retained explicitly.",
+    "No new pure graph unit fixture was run in this round. Fresh actual-browser graph probes pass, and graph source is byte-identical to r2.",
+    "Independent critic evidence is excluded from builder image and metric enumeration."
+  ],
+  "stopBoundary": "Source frozen; report and workflow completion are the final builder writes. No r4 or new wave."
+}

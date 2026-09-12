@@ -1,0 +1,9 @@
+{
+  "module": "democity", "round": "6m", "review": "local-critical", "score": 6.0, "pass": false,
+  "basis": {"shadowProfile": "shots/democity/r6l-props-shadow-class/mainpass-profile.json", "candidateProfile": "shots/democity/r6m-candidate-furniture-shadow240/mainpass-profile.json", "matrix": "shots/democity/rr6m-candidate-furniture-shadow240/summary.json", "api": "shots/democity/r6m-candidate-furniture-shadow240/apicheck.json", "restage": "shots/democity/r6m-candidate-furniture-shadow240/restage-cycle.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 775, "maxTriangles": 3088020, "minFps": 44.6},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true},
+  "change": {"owner": "props", "scope": "hard-furniture shadow submission", "shadowDistanceM": 240, "renderDistanceM": 420, "visibleGeometryChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept 240 m furniture shadow distance and hold score; do not lower it under the 256 m chunk contract; inspect building shadow distance next"
+}

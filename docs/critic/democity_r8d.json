@@ -1,0 +1,30 @@
+{
+  "module": "democity",
+  "round": "r8d",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "scoreChanged": false,
+  "change": "The same Birch water-tower landmark gains a flared tank, catwalk, ladder, riser and cross-braced support frame.",
+  "verified": {
+    "buildModules": 163,
+    "matrixCapturesInspected": 16,
+    "errors": 0,
+    "maxDrawCalls": 473,
+    "maxTriangles": 2262280,
+    "minFps": 45.0,
+    "landmarks": 13,
+    "landmarkDrawsBefore": 8,
+    "landmarkDrawsAfter": 8,
+    "landmarkTrianglesBefore": 4724,
+    "landmarkTrianglesAfter": 5740,
+    "waterTowerCropMaeNormalized": 0.0286897,
+    "api": true,
+    "exactCrossSeedRestage": true
+  },
+  "remaining": [
+    "Port cranes and silos remain sparse procedural primitives.",
+    "The suburban civic site still has broad lawn gaps.",
+    "Scale,50fps, broad frontage, foliage, grounding and subjective play gates remain failed."
+  ]
+}

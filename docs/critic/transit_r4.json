@@ -1,0 +1,23 @@
+{
+  "module": "transit",
+  "round": 4,
+  "score": 6.8,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 192,
+  "maxTriangles": 1763252,
+  "minFps": 57.3,
+  "apiContractOk": true,
+  "auditScope": "local critical audit; independent review still pending",
+  "issues": [
+    {"rank": 1, "severity": "major", "title": "Bus model remains visibly synthetic", "detail": "W4 preserves readable glazing and warm night cabin light, but the broad rectangular body, block seats, wheel treatment and roof details still read as a simple prop.", "evidence": "shots/transit/r4/bus_12.png"},
+    {"rank": 2, "severity": "major", "title": "Night-stop scenario is incomplete", "detail": "Night paint attenuation improves the bus, but the required night-stop views show an empty shelter, weak floor pool and no nearby docked bus.", "evidence": "shots/transit/r4/night_stop_22.png"},
+    {"rank": 3, "severity": "major", "title": "Required shadow coverage remains incomplete", "detail": "Shelter glass and lamps plus fleet batches 2–4 do not cast shadows; the full-shadow attempt exceeded the owner draw budget and was reverted.", "evidence": "shots/transit/rdev4/verification-final.json"},
+    {"rank": 4, "severity": "minor", "title": "Foliage and sparse landscape obscure the service", "detail": "Street and skyline views repeatedly prioritize trees and grass over routes and vehicles.", "evidence": "shots/transit/r4/street_12.png"},
+    {"rank": 5, "severity": "minor", "title": "Transit operates in a visibly staged low-density grid", "detail": "Three coloured routes and 24 stops read correctly, while the surrounding landscape lacks developed city context.", "evidence": "shots/transit/r4/overlay_12_720p.png"},
+    {"rank": 6, "severity": "minor", "title": "Tram stretch remains absent", "detail": "No articulated tram, rail, catenary or platforms are present.", "evidence": "shots/transit/r4/line_12.png"}
+  ],
+  "strengths": ["All W4 matrix and directed frames are ready with zero console errors.", "Three lines, 24 stops, 12 buses and the live ridership panel remain functional.", "Night paint attenuation makes the bus body recede while warm cabin lights remain visible.", "The transit owner remains at 17 draws and about 140k own triangles.", "The 1280x720 route overlay and panel are readable."],
+  "summary": "6.8 FAIL, unchanged from r3. W4 improves night material readability but does not resolve the simple bus model, incomplete docked night-stop scene, literal shadow failure, foliage obstruction or absent tram.",
+  "shots": ["shots/transit/r4/summary.json", "shots/transit/r4/stop_12.png", "shots/transit/r4/stop_22.png", "shots/transit/r4/bus_12.png", "shots/transit/r4/bus_22.png", "shots/transit/r4/night_stop_22.png", "shots/transit/r4/overlay_12_720p.png", "shots/transit/rdev4/verification-final.json"]
+}

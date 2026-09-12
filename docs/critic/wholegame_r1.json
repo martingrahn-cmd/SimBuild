@@ -1,0 +1,33 @@
+{
+  "round": 1,
+  "score": 6.1,
+  "pass": false,
+  "consoleErrors": 0,
+  "allModulesReady": true,
+  "capturesReviewed": 35,
+  "matrixCaptures": 32,
+  "maxDrawCalls": 469,
+  "maxDrawShot": "shots/democity/rwholegame1/park_17p5.png",
+  "maxTriangles": 2788342,
+  "maxTriangleShot": "shots/democity/rwholegame1/night_downtown_22.png",
+  "minFps": 43.7,
+  "minFpsShot": "shots/democity/rwholegame1/downtown_17p5.png",
+  "budget": { "drawCalls": true, "triangles": true, "fps": false, "errors": true },
+  "issues": [
+    { "rank": 1, "severity": "blocker", "owners": ["democity", "zoning", "buildings", "roads"], "title": "The city is too small and sparse for its camera height", "evidence": "shots/democity/rwholegame1/downtown_12.png" },
+    { "rank": 2, "severity": "blocker", "owners": ["environment", "effects", "terrain", "buildings", "props", "roads"], "title": "50fps whole-frame budget still fails", "evidence": "shots/democity/rwholegame1/summary.json" },
+    { "rank": 3, "severity": "major", "owners": ["buildings", "props", "services", "democity"], "title": "Repeated coarse assets dominate the art direction", "evidence": "shots/democity/rwholegame1/contact-sheet.jpg" },
+    { "rank": 4, "severity": "major", "owners": ["environment", "effects", "buildings", "props", "traffic", "transit"], "title": "Night lacks convincing local illumination and street life", "evidence": "shots/democity/rwholegame1/night_downtown_22.png" },
+    { "rank": 5, "severity": "major", "owners": ["terrain", "roads", "buildings", "services", "props"], "title": "Terrain, roads and objects lack consistent physical contact", "evidence": "shots/democity/rwholegame1/park_12.png" },
+    { "rank": 6, "severity": "major", "owners": ["environment", "effects", "terrain", "roads"], "title": "Weather does not materially transform the frame", "evidence": "shots/democity/rwholegame1/extras-sheet.jpg" },
+    { "rank": 7, "severity": "major", "owners": ["traffic", "transit", "props", "democity"], "title": "Life is numerically present but visually thin", "evidence": "shots/democity/rwholegame1/suburb_12.png" }
+  ],
+  "strengths": [
+    "The districts form one immediately recognisable city.",
+    "Road hierarchy and land-use grouping are readable.",
+    "Day, golden hour and night are distinct.",
+    "HUD fits at 1280x720.",
+    "All captures are ready and error-free; draw and triangle budgets pass."
+  ],
+  "evidence": "shots/democity/rwholegame1; shots/democity/rwholegame1/summary-full.json"
+}

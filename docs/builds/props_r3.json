@@ -1,0 +1,655 @@
+{
+  "module": "props",
+  "round": 3,
+  "summary": "Fixed manual placement and deletion intent across rebuild/serialization, removed associated fence-run points, and corrected terrain-grading event coalescing so a local road edit no longer triggers unrelated forest rebuilding. Shelter glazing, seat and timetable now read clearly. Revised crown geometry, impostors, bark, hedge surfaces and diagnostic crops, but the final visual result remains below target and introduces an aerial props triangle-budget miss. Completed and personally inspected all34 required shots plus a1080p forest22 baseline and21 auxiliary images. This is a candid partial round, not an8.5 pass.",
+  "drawCalls": 141,
+  "triangles": 1652352,
+  "errors": 0,
+  "selfScore": 6.0,
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/forest_22_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/forest_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/busstop_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/avenue_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/lamp_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/forest_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/signal_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/treecloseup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/busstop_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/avenue_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/canopy_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/signal_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/forest_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/lamp_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/avenue_12_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/park_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/park_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/park_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/all_aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/aerial_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/aerial_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/avenue_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/avenue_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/dolly_a.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/dolly_b.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/forest_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/forest_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/lamp_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/lamp_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/park_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/park_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/signal_traffic_stub_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/skyline_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/skyline_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/street_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/street_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/wind_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/wind_12p004.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/wind_zero_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/wind_zero_12p004.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/dev.png",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "acceptanceMet": [
+    "3 baseline placement: all3742 items checked, zero ground-height, asphalt, water or radius-overlap violations in probe/contract.json.",
+    "10 traffic-clock handover and same-phase green-arm lens update preserve geometry counts; standalone/stub signal captures personally inspected. Full housing/lens photometry is not certified.",
+    "12 all12 public kinds present and8 species retained; shelter roof, transparent side/back glazing, seat and timetable identifiable in busstop12/22. Other types remain legible in avenue/signal/park/forest.",
+    "19 measured stable rebuild counts:3742 items,3176 tree instances,104136 API geometry triangles before/after; manual bench ID1000000000 preserved exactly through rebuild; serialization roundtrip retained items. These counts exclude renderer shadow passes.",
+    "21 all34 required shots plus forest22 1080p baseline exist and were individually read, all modules.props ready and errors[]. Full matrix includes16 standard,15 preset,1 integration and2x720p.",
+    "22 no props-owned Light instances; only owned source files modified. Shared5174 server preserved. All probe/capture commands explicitly used SIM_URL5174/SIM_GLmetal/SIMBUILD_REF.",
+    "23 CPU portions: manual bench16.8ms reported/16.9ms bracketed; same90m road edit10.2ms at1497 trees and11.1ms at3176 trees, ratio1.08824 <=1.25, each creates3 lamps and8/9 road trees. Ledger/removal additional regression checks recorded in deletion.json."
+  ],
+  "acceptanceMissed": [
+    "Near foliage still exposes large fern-like leaf fans and angular branches. Distant conifers remain repeated flat silhouettes. Automatic aerial LOD1 removes round caps but creates sparse, noisy crown masses. This is materially below CS2 references 4 and 7.",
+    "Item 9c fails: noon fixed props-mask speckle at 480px is forest 1.58497%, skyline 1.31219%, aerial 3.31950%, against 0.05%. These are not improvements over r2.",
+    "Item 20 has a new measured aerial miss: props-attributable triangles 761822 exceed the 700000 showcase cap. Whole-frame maximum 1654770 remains below 1800000. Budget attribution was sampled in seven noon views, not every matrix frame.",
+    "Hedges still look like green rectangular slabs despite undulating tops, varying width and small leaf cards. Park has no qualifying hedge crop. No precise physical fence-gap or hedge-amplitude pass is claimed.",
+    "Lamp head still clips: full-resolution lamp_22 head p99 254.9957 exceeds 250. Lowering emissive intensity alone did not solve the halo/source composite.",
+    "Pinned crops remain partly mixed. Forest conifer and treecloseup trunk now exist, but avenue has no conifer crop, park no hedge, and several crown rectangles are not sky-backed. Full lamp pool rectangle [235,587,1188,434] is in frame but includes extensive cold unlit ground; raw R-B=-6.77745 is not a valid isolated-pool warmth verdict.",
+    "Lamp preset now uses distance20.5m instead of the specified12m so the full pole, head and pool fit. This is a disclosed preset deviation, not an acceptance exemption.",
+    "Treecloseup bark crop [928,853,64,64] is visibly on the trunk, but std6.09867 is below item1d minimum8. Branch shape remains regular. Crown boundary/hull segmentation, litter-ring contrast and species pairwise-color deltas are not certified.",
+    "Noon broadleaf crop medians are forest67.288, avenue102.63 and park81.4256 versus110 minimum, with mixed crops preventing an isolated foliage-material verdict. Night lamp/park broadleaf crop ratios also exceed.35; no full item5/7 pass is claimed.",
+    "LOD dolly raw full-frame >=40L difference21.0822% includes normal parallax and is not an isolated popping measurement under the residual decisions. A visible near/far representation difference remains.",
+    "Wind-zero frames differ because changing time changes lighting. The raw pair is not byte-identical and does not establish object-only movement; exact sway displacement, foreign-camera water-mask metrics and all per-material photometry remain unverified.",
+    "Integration aerial is an empty new city: ready/no errors is verified, populated integrated-city performance is not. 720p views were inspected and preserve composition but do not establish the stringent aliasing threshold.",
+    "Shelter glass adds a separate merged transparent mesh per occupied chunk beyond the original four-class mesh arithmetic; this is disclosed in the core request. Default top-down LOD1 and the retained620m furniture detail radius also depart from the far-impostor-only arithmetic."
+  ],
+  "remainingWeaknesses": [
+    "Near foliage still exposes large fern-like leaf fans and angular branches. Distant conifers remain repeated flat silhouettes. Automatic aerial LOD1 removes round caps but creates sparse, noisy crown masses. This is materially below CS2 references 4 and 7.",
+    "Item 9c fails: noon fixed props-mask speckle at 480px is forest 1.58497%, skyline 1.31219%, aerial 3.31950%, against 0.05%. These are not improvements over r2.",
+    "Item 20 has a new measured aerial miss: props-attributable triangles 761822 exceed the 700000 showcase cap. Whole-frame maximum 1654770 remains below 1800000. Budget attribution was sampled in seven noon views, not every matrix frame.",
+    "Hedges still look like green rectangular slabs despite undulating tops, varying width and small leaf cards. Park has no qualifying hedge crop. No precise physical fence-gap or hedge-amplitude pass is claimed.",
+    "Lamp head still clips: full-resolution lamp_22 head p99 254.9957 exceeds 250. Lowering emissive intensity alone did not solve the halo/source composite.",
+    "Pinned crops remain partly mixed. Forest conifer and treecloseup trunk now exist, but avenue has no conifer crop, park no hedge, and several crown rectangles are not sky-backed. Full lamp pool rectangle [235,587,1188,434] is in frame but includes extensive cold unlit ground; raw R-B=-6.77745 is not a valid isolated-pool warmth verdict.",
+    "Lamp preset now uses distance20.5m instead of the specified12m so the full pole, head and pool fit. This is a disclosed preset deviation, not an acceptance exemption.",
+    "Treecloseup bark crop [928,853,64,64] is visibly on the trunk, but std6.09867 is below item1d minimum8. Branch shape remains regular. Crown boundary/hull segmentation, litter-ring contrast and species pairwise-color deltas are not certified.",
+    "Noon broadleaf crop medians are forest67.288, avenue102.63 and park81.4256 versus110 minimum, with mixed crops preventing an isolated foliage-material verdict. Night lamp/park broadleaf crop ratios also exceed.35; no full item5/7 pass is claimed.",
+    "LOD dolly raw full-frame >=40L difference21.0822% includes normal parallax and is not an isolated popping measurement under the residual decisions. A visible near/far representation difference remains.",
+    "Wind-zero frames differ because changing time changes lighting. The raw pair is not byte-identical and does not establish object-only movement; exact sway displacement, foreign-camera water-mask metrics and all per-material photometry remain unverified.",
+    "Integration aerial is an empty new city: ready/no errors is verified, populated integrated-city performance is not. 720p views were inspected and preserve composition but do not establish the stringent aliasing threshold.",
+    "Shelter glass adds a separate merged transparent mesh per occupied chunk beyond the original four-class mesh arithmetic; this is disclosed in the core request. Default top-down LOD1 and the retained620m furniture detail radius also depart from the far-impostor-only arithmetic."
+  ],
+  "coreRequestFile": "/Users/martingrahn/Documents/SimBuild/docs/core-requests/props.md",
+  "changedSourceFiles": [
+    "src/modules/props/index.js",
+    "src/modules/props/place.js",
+    "src/modules/props/trees.js",
+    "src/modules/props/chunks.js",
+    "src/modules/props/furniture.js",
+    "src/modules/props/textures.js"
+  ],
+  "implementation": [
+    "Persistent manual ledger with stable high-range IDs; coordinate/kind deletion tombstones prevent rules from recreating removed placements, including another fence variant at the same location. Explicit manual placement bypasses rule tombstones while retaining ordinary placement validation unless force is supplied.",
+    "Remove splits generated fence/hedge runs at deleted points and deletes owned manual runs, associated render records and relevant lamp data; dirty chunks rebuilt together.",
+    "Preserve named road-edit payload while roads is flattening terrain; avoid redundant roads rebuild; cache pool heights between local edits.",
+    "Bowed leaf cluster geometry with varied normals and fewer crossed cards, irregular bark phase, revised lit impostor shapes; automatic top-down uses LOD1 to avoid horizontal caps.",
+    "Merged shelter glass with opacity.18, depthWritefalse and no shadow; front view reveals seat and timetable. Hedge width/top vary, still insufficiently volumetric.",
+    "Compute visible trunk crop separately from offscreen crown; project actual camera-right trunk width; retain only fully in-frame pool boundaries; independent head crop."
+  ],
+  "environment": {
+    "url": "http://127.0.0.1:5174",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "gpu": "Apple M4 / ANGLE Metal",
+    "seed": 1337,
+    "quality": "high",
+    "normalSize": [
+      1920,
+      1080
+    ],
+    "secondarySize": [
+      1280,
+      720
+    ],
+    "singleBrowserAtATime": true,
+    "browserCleanup": "Probe browsers closed in finally; screenshot helper closes its browser. Optional final probe used installed Google Chrome after Playwright cache disappeared; no downloads."
+  },
+  "metrics": {
+    "gauntlet": {
+      "maxDrawCalls": 141,
+      "maxTriangles": 1652352,
+      "minFps": 49.4,
+      "totalErrors": 0
+    },
+    "completeMainMatrix": {
+      "shots": 35,
+      "maxDrawCalls": 141,
+      "maxTriangles": 1654770,
+      "minFps": 46.8,
+      "errors": 0,
+      "allPropsReady": true
+    },
+    "attributableNoonViews": [
+      {
+        "camera": "avenue",
+        "draws": 48,
+        "triangles": 646276,
+        "sceneDraws": 85,
+        "sceneTriangles": 1124684
+      },
+      {
+        "camera": "lamp",
+        "draws": 48,
+        "triangles": 656558,
+        "sceneDraws": 84,
+        "sceneTriangles": 1172251
+      },
+      {
+        "camera": "park",
+        "draws": 29,
+        "triangles": 304160,
+        "sceneDraws": 56,
+        "sceneTriangles": 1318063
+      },
+      {
+        "camera": "street",
+        "draws": 36,
+        "triangles": 608062,
+        "sceneDraws": 99,
+        "sceneTriangles": 1542272
+      },
+      {
+        "camera": "forest",
+        "draws": 23,
+        "triangles": 386116,
+        "sceneDraws": 44,
+        "sceneTriangles": 732346
+      },
+      {
+        "camera": "skyline",
+        "draws": 53,
+        "triangles": 76674,
+        "sceneDraws": 96,
+        "sceneTriangles": 582888
+      },
+      {
+        "camera": "aerial",
+        "draws": 9,
+        "triangles": 761822,
+        "sceneDraws": 66,
+        "sceneTriangles": 1007058
+      }
+    ],
+    "contractStats": {
+      "items": 3742,
+      "byKind": {
+        "streetlamp": 90,
+        "trafficlight": 28,
+        "tree_oak": 2425,
+        "tree_pine": 751,
+        "bench": 14,
+        "bin": 16,
+        "hydrant": 13,
+        "sign": 18,
+        "bus_stop": 4,
+        "fence": 285,
+        "bush": 88,
+        "planter": 10
+      },
+      "instances": 3176,
+      "draws": 15,
+      "tris": 104136,
+      "chunks": 6,
+      "species": 8,
+      "speciesNames": [
+        "birch",
+        "oak",
+        "blossom",
+        "maple",
+        "poplar",
+        "willow",
+        "fir",
+        "spruce"
+      ],
+      "ms": 160.2,
+      "radii": {
+        "streetlamp": 0.25,
+        "trafficlight": 0.3,
+        "tree_oak": 0.6,
+        "tree_pine": 0.5,
+        "bench": 0.9,
+        "bin": 0.3,
+        "hydrant": 0.25,
+        "sign": 0.2,
+        "bus_stop": 2.2,
+        "fence": 0.2,
+        "bush": 0.7,
+        "planter": 0.6
+      }
+    },
+    "manualRebuild": {
+      "id": 1000000000,
+      "before": {
+        "id": 1000000000,
+        "kind": "bench",
+        "x": -138,
+        "y": 18.373765230178833,
+        "z": 145,
+        "heading": 0,
+        "scale": 1,
+        "manual": true
+      },
+      "after": {
+        "id": 1000000000,
+        "kind": "bench",
+        "x": -138,
+        "y": 18.373765230178833,
+        "z": 145,
+        "heading": 0,
+        "scale": 1,
+        "manual": true
+      },
+      "same": true
+    },
+    "manualFenceRemoval": {
+      "id": 1000000000,
+      "removed": true,
+      "present": false,
+      "runsBefore": 15,
+      "runsAfter": 14,
+      "trisBefore": 104136,
+      "trisAfter": 104136
+    },
+    "generatedDeletion": {
+      "bench": {
+        "removed": true,
+        "persisted": true,
+        "replacement": 1000000000,
+        "replacementPersists": true
+      },
+      "generatedFence": {
+        "removed": true,
+        "pointsBefore": 1,
+        "pointsAfter": 0,
+        "persisted": true,
+        "persistedAfterRoundtrip": true
+      },
+      "errors": []
+    },
+    "localRoadEdit": {
+      "rows": [
+        {
+          "density": 0.25,
+          "trees": 1497,
+          "ms": 10.299999999813735,
+          "reportedMs": 10.2,
+          "edgeId": 50,
+          "lamps": 3,
+          "roadTrees": 8
+        },
+        {
+          "density": 1,
+          "trees": 3176,
+          "ms": 11.399999999441206,
+          "reportedMs": 11.1,
+          "edgeId": 53,
+          "lamps": 3,
+          "roadTrees": 9
+        }
+      ],
+      "ratio": 1.0882352941176472,
+      "errors": []
+    },
+    "idleUpdate30Calls": {
+      "medianMs": 0.0,
+      "maxMs": 0.09999999962747097,
+      "note": "Median0 reflects browser timer resolution, not a claim of literally no work."
+    },
+    "fixedMaskStats": {
+      "avenue_12": {
+        "pixels": 39693,
+        "p1": 10.302,
+        "p50": 72.0594,
+        "p99": 166.54472,
+        "std": 37.70624245567041,
+        "mean": 77.41567503086186,
+        "blackPct": 0.39805507268284085,
+        "whitePct": 0.0,
+        "meanBminusR": -17.834051344065703,
+        "speckle35Pct": 2.143954853500617
+      },
+      "avenue_22": {
+        "pixels": 39693,
+        "p1": 4.7272,
+        "p50": 32.224199999999996,
+        "p99": 220.25975200000022,
+        "std": 33.886279017513296,
+        "mean": 40.69234025646839,
+        "blackPct": 0.9170382687123674,
+        "whitePct": 0.020154687224447635,
+        "meanBminusR": 7.377144584687477,
+        "speckle35Pct": 0.6298339757639886
+      },
+      "lamp_12": {
+        "pixels": 30478,
+        "p1": 14.8042,
+        "p50": 74.983,
+        "p99": 159.001198,
+        "std": 35.101103119587314,
+        "mean": 79.40780036091607,
+        "blackPct": 0.20670647680293983,
+        "whitePct": 0.0,
+        "meanBminusR": -14.752903733840803,
+        "speckle35Pct": 2.9463875582387296
+      },
+      "lamp_22": {
+        "pixels": 30478,
+        "p1": 5.651,
+        "p50": 31.379399999999997,
+        "p99": 235.78886599999984,
+        "std": 36.776676765059605,
+        "mean": 41.92176153290898,
+        "blackPct": 0.6824594789684363,
+        "whitePct": 0.009843165562044754,
+        "meanBminusR": 11.029857602204869,
+        "speckle35Pct": 1.086029267012271
+      },
+      "park_12": {
+        "pixels": 38178,
+        "p1": 18.864252,
+        "p50": 64.5953,
+        "p99": 151.58752,
+        "std": 30.372556386137354,
+        "mean": 68.55506040127823,
+        "blackPct": 0.005238619100005238,
+        "whitePct": 0.0,
+        "meanBminusR": -14.202734559170203,
+        "speckle35Pct": 1.796846351301797
+      },
+      "park_17p5": {
+        "pixels": 38178,
+        "p1": 57.99998,
+        "p50": 108.75659999999999,
+        "p99": 186.545506,
+        "std": 27.41730141519487,
+        "mean": 110.3554221645974,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -29.57868405888208,
+        "speckle35Pct": 1.4956257530514956
+      },
+      "park_22": {
+        "pixels": 38178,
+        "p1": 7.51368,
+        "p50": 30.086,
+        "p99": 74.29365400000022,
+        "std": 14.893632114371067,
+        "mean": 33.766394991880134,
+        "blackPct": 0.39027712295039024,
+        "whitePct": 0.0,
+        "meanBminusR": 8.968411126826968,
+        "speckle35Pct": 0.18073235895018075
+      },
+      "street_6p5": {
+        "pixels": 28805,
+        "p1": 42.80259999999999,
+        "p50": 114.99080000000001,
+        "p99": 189.83839999999995,
+        "std": 35.68741293962905,
+        "mean": 108.01410886998784,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -25.986668981079674,
+        "speckle35Pct": 1.353931609095643
+      },
+      "street_12": {
+        "pixels": 28805,
+        "p1": 19.382752000000004,
+        "p50": 68.3654,
+        "p99": 168.122896,
+        "std": 36.11649918600431,
+        "mean": 78.68992424926228,
+        "blackPct": 0.03818781461551814,
+        "whitePct": 0.0,
+        "meanBminusR": -15.155285540704739,
+        "speckle35Pct": 3.6590869640687385
+      },
+      "street_17p5": {
+        "pixels": 28805,
+        "p1": 58.1332,
+        "p50": 117.61659999999998,
+        "p99": 199.75631199999995,
+        "std": 34.2215168544447,
+        "mean": 117.4499112445756,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -32.21624717930915,
+        "speckle35Pct": 2.6384308279812534
+      },
+      "street_22": {
+        "pixels": 28805,
+        "p1": 4.217911999999999,
+        "p50": 28.0132,
+        "p99": 141.30935199999988,
+        "std": 25.34948886794062,
+        "mean": 31.7728768685992,
+        "blackPct": 1.048429092171498,
+        "whitePct": 0.013886478042006597,
+        "meanBminusR": 12.40808887345947,
+        "speckle35Pct": 1.0519007116819996
+      },
+      "forest_12": {
+        "pixels": 90033,
+        "p1": 23.808456000000003,
+        "p50": 62.1424,
+        "p99": 147.40633599999995,
+        "std": 28.488126807340993,
+        "mean": 67.70255222196305,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -12.284240223029334,
+        "speckle35Pct": 1.5849743982761875
+      },
+      "forest_17p5": {
+        "pixels": 90033,
+        "p1": 66.5034,
+        "p50": 113.03699999999999,
+        "p99": 182.538816,
+        "std": 22.903282979033705,
+        "mean": 111.72005697910767,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -27.16441749136428,
+        "speckle35Pct": 0.7663856585918496
+      },
+      "forest_22": {
+        "pixels": 90033,
+        "p1": 9.4384,
+        "p50": 26.736399999999996,
+        "p99": 58.721199999999996,
+        "std": 7.782822317122953,
+        "mean": 27.48467501693823,
+        "blackPct": 0.1277309430986416,
+        "whitePct": 0.0,
+        "meanBminusR": 12.760665533748737,
+        "speckle35Pct": 0.02665689247275999
+      },
+      "skyline_6p5": {
+        "pixels": 7316,
+        "p1": 61.20657,
+        "p50": 90.52799999999999,
+        "p99": 125.38090000000005,
+        "std": 14.827722919320854,
+        "mean": 91.40166741388738,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -33.03307818480044,
+        "speckle35Pct": 0.17769272826681246
+      },
+      "skyline_12": {
+        "pixels": 7316,
+        "p1": 23.518799999999995,
+        "p50": 45.00280000000001,
+        "p99": 92.76537000000002,
+        "std": 13.673917953451967,
+        "mean": 46.596281137233454,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -8.116457080371788,
+        "speckle35Pct": 1.3121924548933843
+      },
+      "skyline_17p5": {
+        "pixels": 7316,
+        "p1": 63.592690000000005,
+        "p50": 94.81880000000001,
+        "p99": 135.31376000000003,
+        "std": 15.939035733415874,
+        "mean": 95.8726272006561,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -34.1029250956807,
+        "speckle35Pct": 0.8337889557135045
+      },
+      "skyline_22": {
+        "pixels": 7316,
+        "p1": 7.931799999999999,
+        "p50": 20.4384,
+        "p99": 52.0098,
+        "std": 8.094620002918214,
+        "mean": 21.20662780207764,
+        "blackPct": 0.30071077091306725,
+        "whitePct": 0.0,
+        "meanBminusR": 7.787452159650082,
+        "speckle35Pct": 0.3280481137233461
+      },
+      "aerial_6p5": {
+        "pixels": 12773,
+        "p1": 78.48692799999999,
+        "p50": 118.39,
+        "p99": 169.21030400000004,
+        "std": 19.036422645716463,
+        "mean": 119.37029942848197,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -35.42433257652861,
+        "speckle35Pct": 4.642605495968058
+      },
+      "aerial_12": {
+        "pixels": 12773,
+        "p1": 50.669304,
+        "p50": 92.1304,
+        "p99": 145.36393600000002,
+        "std": 21.046332692637275,
+        "mean": 93.14957247318563,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -22.80450951225241,
+        "speckle35Pct": 3.319502074688797
+      },
+      "aerial_17p5": {
+        "pixels": 12773,
+        "p1": 75.934384,
+        "p50": 116.7382,
+        "p99": 171.57584000000008,
+        "std": 20.061008338824873,
+        "mean": 117.89561919674313,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": -35.434118844437485,
+        "speckle35Pct": 4.564315352697095
+      },
+      "aerial_22": {
+        "pixels": 12773,
+        "p1": 17.703799999999998,
+        "p50": 31.9422,
+        "p99": 66.17764000000004,
+        "std": 12.070239113752496,
+        "mean": 33.96260441556408,
+        "blackPct": 0.0,
+        "whitePct": 0.0,
+        "meanBminusR": 8.18625225084162,
+        "speckle35Pct": 0.2975025444296563
+      }
+    },
+    "imageDiffs": {
+      "dolly_a": {
+        "percentOver40L": 21.08222415123457,
+        "percentAnyRGBChange": 92.36670524691358,
+        "meanDeltaL": 22.697379956693673
+      },
+      "wind_12": {
+        "percentOver40L": 5.754002700617284,
+        "percentAnyRGBChange": 52.873263888888886,
+        "meanDeltaL": 7.3042814468557085
+      },
+      "wind_zero_12": {
+        "percentOver40L": 0.005063657407407407,
+        "percentAnyRGBChange": 32.29755015432099,
+        "meanDeltaL": 1.2058808891782409
+      },
+      "avenue_720": {
+        "percentOver40L": 0.6978081597222222,
+        "meanDeltaL": 3.0873101019965277
+      },
+      "forest_720": {
+        "percentOver40L": 0.057074652777777776,
+        "meanDeltaL": 1.8141037884114586
+      }
+    }
+  },
+  "evidenceFiles": [
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/summary.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/matrix-summary.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/contract.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/deletion.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/dirty-region.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/evidence.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r3/probe/measurements.json"
+  ],
+  "visualInspectionNotes": {
+    "standard16": "All16 individually viewed at full image size. Golden-hour shadows and night pools are readable; aerial and skyline foliage remain synthetic. No loading overlay, water confetti or console failures observed.",
+    "forest": "Forest12/17.5/22 show distinct orange, pale broadleaf and blue conifer classes near camera, but obvious layered flat conifer templates farther away and excessive fine gaps.",
+    "avenue": "Both verges, seated furniture, mast signals and warm night pools read; foliage fans and slab hedges remain apparent at1080 and720.",
+    "signal": "Modeled three-lens housings, visors and collars; stub changes visible lenses. Exact lens clipping not measured for every head.",
+    "lamp": "Complete head and pool now fit20.5m view. Head remains clipped; pool rectangle still too broad for material isolation.",
+    "park": "Benches, bins, planters, ornamental lanterns and two fence types form an organized plaza. Hedge crop missing and green wall silhouette weak.",
+    "treecloseup": "Trunk and branch whorls plainly visible, revised bark still low contrast; large leaf fans persist.",
+    "busstop": "Glazing is see-through; seat and timetable clearly visible day/night.",
+    "canopy": "No circular caps or flat horizontal impostor cards; sparse fragmented crowns and irregular shrub/fence edges remain.",
+    "integration": "Empty city with UI, terrain and water; all modules ready. No populated-city performance inference.",
+    "auxiliary21": "Personally viewed all seven on/off pairs, dolly pair, wind pair, zero-wind pair and traffic-stub frame. Used for reproducible approximate masks and raw diffs, with residual measurement limitations."
+  },
+  "limitations": [
+    "Manual fence trisBefore/After API count is unchanged because that test fence is outside the forest view; run metadata15\u219214 and item deletion are verified, not a claimed pixel-area reduction.",
+    "The initially denied replacement in deletion probe was blocked by normal collision rules after regeneration. Final replacement test intentionally supplies force:true to verify tombstone override, then removes it; this is not evidence of general overlap acceptance.",
+    "The final tombstone fix only changes nonempty deletion/edit state. Main showcase captures have no deletion intents and remain representative of final baseline rendering.",
+    "System python lacked Pillow; metrics ran successfully with bundled Python. No source outside props, no assets fetched, no commits/pushes, no server restart."
+  ]
+}

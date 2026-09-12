@@ -1,0 +1,31 @@
+{
+  "round": "r7y",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accept",
+  "consoleErrors": 0,
+  "apiContractOk": true,
+  "exactRestage": true,
+  "buildModules": 163,
+  "maxDirectedDrawCalls": 433,
+  "maxDirectedTriangles": 2463928,
+  "minDirectedFps": 46.2,
+  "weatherContract": true,
+  "standardWeatherPreserved": true,
+  "capturesViewed": 4,
+  "evidence": [
+    "shots/integration/r7y-democity-weather-contract.json",
+    "shots/democity/r7y-weather/weather-diff.json",
+    "shots/democity/r7y-weather/apicheck.json",
+    "shots/democity/r7y-weather/restage-cycle.json",
+    "shots/democity/r7y-weather/aerial_default_12.png",
+    "shots/democity/r7y-weather/aerial_cloudy_12.png",
+    "shots/democity/r7y-weather/aerial_rain_12.png",
+    "shots/democity/r7y-weather/night_downtown_rain_12.png"
+  ],
+  "remaining": [
+    "Whole-game50fps gate still fails.",
+    "Primitive landmarks/service proxies, sparse frontage, foliage, night depth and grounding remain.",
+    "Rain streak art remains coarse."
+  ]
+}

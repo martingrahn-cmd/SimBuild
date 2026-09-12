@@ -1,0 +1,13 @@
+{
+  "module": "democity",
+  "round": "6e",
+  "review": "local-critical",
+  "score": 6.0,
+  "pass": false,
+  "basis": {"profile": "shots/democity/r6e-candidate-shadow600/mainpass-profile.json", "matrix": "shots/democity/rr6e-candidate-shadow600/summary.json", "api": "shots/democity/r6e-candidate-shadow600/apicheck.json", "restage": "shots/democity/r6e-candidate-shadow600/restage-cycle.json", "bridge": "shots/democity/r6e-candidate-shadow600/bridge-clearance.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 799, "maxTriangles": 3312992, "minFps": 35.4},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true, "bridgeClearanceM": [4.280000, 4.144197]},
+  "change": {"owner": "roads", "distanceM": 600, "scope": "render-only concrete shadow submission", "visibleGeometryChanged": false, "pavementChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept concrete shadow distance and hold score; re-profile accepted owners next"
+}

@@ -1,23 +1,24 @@
 {
   "module": "buildings",
   "round": "2",
-  "at": "2026-09-06T07:03:42.906Z",
+  "at": "2026-09-06T11:59:19.925Z",
   "shots": [
     {
       "png": "shots/buildings/r2/suburb_6p5.png",
       "camera": "suburb",
       "time": 6.5,
       "ok": true,
-      "fps": 11.6,
+      "fps": 60.1,
       "drawCalls": 187,
       "triangles": 1108434,
       "errors": 0,
       "moduleStatus": "ready"
     }
   ],
+  "failedShots": [],
   "maxDrawCalls": 187,
   "maxTriangles": 1108434,
-  "minFps": 11.6,
+  "minFps": 60.1,
   "totalErrors": 0,
   "uniqueErrors": []
 }

@@ -1,0 +1,31 @@
+{
+  "module": "democity",
+  "round": "r8e",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "scoreChanged": false,
+  "change": "The same two Northbank crane landmarks gain four-legged portal frames, bracing, boom stays, cabs and real hoist assemblies.",
+  "verified": {
+    "buildModules": 163,
+    "matrixCapturesInspected": 16,
+    "directedBridgeCapturesInspected": 2,
+    "errors": 0,
+    "maxDrawCalls": 473,
+    "maxTriangles": 2264008,
+    "minFps": 48.4,
+    "landmarks": 13,
+    "landmarkDrawsBefore": 8,
+    "landmarkDrawsAfter": 8,
+    "landmarkTrianglesBefore": 5740,
+    "landmarkTrianglesAfter": 6172,
+    "craneCropMaeNormalized": 0.0250345,
+    "api": true,
+    "exactCrossSeedRestage": true
+  },
+  "remaining": [
+    "Port silos, apron and working-yard context remain sparse and procedural.",
+    "Whole-game flat foliage and grounding remain prominent.",
+    "Scale,50fps, broad frontage, night depth and subjective play gates remain failed."
+  ]
+}

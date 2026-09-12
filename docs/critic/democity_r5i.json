@@ -1,0 +1,19 @@
+{
+  "module": "democity",
+  "round": "5i",
+  "review": "local-critical",
+  "score": 6.0,
+  "pass": false,
+  "basis": {
+    "matrix": "shots/democity/r5i/summary.json",
+    "api": "shots/democity/r5i/apicheck.json",
+    "restage": "shots/democity/r5i/restage-cycle.json"
+  },
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 812, "maxTriangles": 3909080, "minFps": 29.2},
+  "comparison": {"r5gMaxTriangles": 3943946, "reductionTriangles": 34866, "reductionPercent": 0.88},
+  "contracts": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "invalidTour": false, "sameSeed1337": true, "sameSeed7": true},
+  "rejectedCandidate": {"distanceM": 480, "reason": "visible monolithic service proxies in inspected aerial noon"},
+  "acceptedStrategy": {"distanceM": 800, "scope": "services render geometry only", "stateAndCoverageChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "seating/clearance", "fresh-seed lifecycle"],
+  "decision": "hold score and continue only from measured, ownership-safe bottlenecks"
+}

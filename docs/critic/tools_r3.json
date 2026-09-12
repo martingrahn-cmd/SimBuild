@@ -1,0 +1,75 @@
+{
+  "module": "tools",
+  "round": 3,
+  "score": 8.0,
+  "consoleErrors": 0,
+  "maxDrawCalls": 8,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "2. Ghost ribbon conforms to terrain, never z-fights, never floats \u2014 literal raw-terrain lift band",
+    "13. Draw calls and per-frame cost \u2014 continuous-drag average"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "A continuous road drag exceeds the live-frame target",
+      "detail": "Fresh 60-frame avenue drag from (0,0) to (96+i*0.02,34+i*0.01), aerial, averages 1.771666667 ms, maximum 2.300000001 ms against acceptance 13 average <=1.2 ms and architecture 2 ms hard ceiling. A shorter different path averages 1.001666667 ms, so this is geometry/path dependent, not every frame. Static six-pose average 0.0216667 ms and idle 0.0083333 ms pass; geometry allocation delta is zero. Cache/precompute repeated paved-surface sampling or reduce invalidated work without hiding the cost or changing the metric.",
+      "evidence": "shots/tools/r3/critic-probe/dynamic-repeat.mjs; dynamic-repeat.json; supplement.json; apicheck.json"
+    },
+    {
+      "rank": 2,
+      "severity": "minor",
+      "title": "The literal raw-terrain lift band remains unmet over pavement",
+      "detail": "Every unique indexed live ghost vertex was sampled. Raw terrain lift is 0.149999142\u20130.560679765 m, with 2718 vertices outside 0.10\u20130.20 m; stats report the actual range. Lift above max(terrain,pavement) is 0.149999137\u20130.150000869 m, and the roadtool/closeup images show continuous previews without prior asphalt holes. At (73,10), pavement is 0.408883079 m above terrain: these two vertical constraints cannot both hold there. Acceptance 2 is literally unmet, but this is not evidence of visible floating above pavement. Preserve the penetration fix; resolve the contract with the integrator instead of returning to the broken terrain-only geometry.",
+      "evidence": "shots/tools/r3/critic-probe/supplement.json pose; roadtool_12.png; closeup_12.png; docs/core-requests/roads.md"
+    }
+  ],
+  "strengths": [
+    "All six previews and the full tools API are present; 41 edges, 36 nodes, 440 zoned cells, 34 buildings and 28 history entries are staged through command surfaces.",
+    "Two fresh eight-action traces restore every one of 263169 terrain heights and all four counters exactly through undo and redo.",
+    "Neutral white road paint remains continuous over pavement at 1080p; night luminance/contrast and dawn saturation pass, with readable 26 px chips at 720p.",
+    "Bulldoze now removes exactly four buildings and fourteen props and marks victims with kind-sized volumes; sculpt maximum 2 m step is 1.316046119 m.",
+    "Tools attribution is 8 calls and 8940 triangles, well below target. No geometry growth, clean cancellation, in-place selection, event deduplication, actual HUD operation and unavailable-neighbour failures pass."
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/tools_r3.md",
+  "summary": "8.0/10, FAIL. The major round-2 functional and visual defects are fixed. Continuous road dragging remains over its frame-time target, and the raw-terrain lift requirement conflicts with the elevated pavement it must cover. No console errors; API passes.",
+  "shots": [
+    "shots/tools/r3/critic-probe/aerial_6p5.png",
+    "shots/tools/r3/critic-probe/aerial_12.png",
+    "shots/tools/r3/critic-probe/aerial_17p5.png",
+    "shots/tools/r3/critic-probe/aerial_22.png",
+    "shots/tools/r3/critic-probe/street_6p5.png",
+    "shots/tools/r3/critic-probe/street_12.png",
+    "shots/tools/r3/critic-probe/street_17p5.png",
+    "shots/tools/r3/critic-probe/street_22.png",
+    "shots/tools/r3/critic-probe/skyline_6p5.png",
+    "shots/tools/r3/critic-probe/skyline_12.png",
+    "shots/tools/r3/critic-probe/skyline_17p5.png",
+    "shots/tools/r3/critic-probe/skyline_22.png",
+    "shots/tools/r3/critic-probe/closeup_6p5.png",
+    "shots/tools/r3/critic-probe/closeup_12.png",
+    "shots/tools/r3/critic-probe/closeup_17p5.png",
+    "shots/tools/r3/critic-probe/closeup_22.png",
+    "shots/tools/r3/critic-probe/roadtool_12.png",
+    "shots/tools/r3/critic-probe/roadtool_22.png",
+    "shots/tools/r3/critic-probe/zonetool_12.png",
+    "shots/tools/r3/critic-probe/zonetool_22.png",
+    "shots/tools/r3/critic-probe/sculpt_12.png",
+    "shots/tools/r3/critic-probe/sculpt_22.png",
+    "shots/tools/r3/critic-probe/bulldoze_12.png",
+    "shots/tools/r3/critic-probe/bulldoze_22.png",
+    "shots/tools/r3/critic-probe/service_12.png",
+    "shots/tools/r3/critic-probe/service_22.png",
+    "shots/tools/r3/critic-probe/invalid_12.png",
+    "shots/tools/r3/critic-probe/invalid_22.png",
+    "shots/tools/r3/critic-probe/roadtool_6p5.png",
+    "shots/tools/r3/critic-probe/roadtool_12_720.png",
+    "shots/tools/r3/critic-probe/roadtool_22_720.png",
+    "shots/tools/r3/critic-probe/closeup_12_720.png",
+    "shots/tools/r3/critic-probe/closeup_22_720.png",
+    "shots/tools/r3/critic-probe/all_aerial_12.png",
+    "shots/tools/r3/critic-probe/all_night_street_22.png"
+  ],
+  "pass": false
+}

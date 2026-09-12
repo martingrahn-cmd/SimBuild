@@ -1,0 +1,134 @@
+{
+  "module": "buildings",
+  "round": 2,
+  "score": 6.2,
+  "consoleErrors": 0,
+  "maxDrawCalls": 240,
+  "apiContractOk": false,
+  "acceptanceFailed": [
+    "3. Night windows are per-window, baked, and dark between.",
+    "8. The building is seated in the ground.",
+    "14. Emissive is off by day, and never clips.",
+    "15. No specular sparkle, no wet-plastic facades.",
+    "19. API contract and events.",
+    "23. Growth reads as growth."
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "Window state corrupts daylight facades",
+      "detail": "At noon, holding buildings.update only during the prescribed downtown setLit(0)/setLit(1) A/B gives mean absolute RGB difference 27.6011/255, versus <0.5 required. setLit(1) produces large black facade quads. The ordinary closeup_12 also contains conspicuous black rectangles (0.20081% of the whole frame has all RGB channels <=2). Gate all window-state contributions correctly in daylight and remove the black-quad artifact. The ordinary updating A/B also fails at 2.08844/255; it is less diagnostic because update overwrites the setter.",
+      "evidence": "shots/buildings/r2/day_exact0.png; shots/buildings/r2/day_exact1.png; shots/buildings/r2/extra.mjs; shots/buildings/r2/closeup_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Night lighting becomes large flat luminous panels",
+      "detail": "Night street and tower views show many adjacent bays/floors lighting as one flat panel, losing the individual interior-window read in cs2_8. LOD1 maps the facade through ceil(bays/3) columns and at most 10 vertical divisions, baking a state per coarse quad rather than per actual window. Keep pane-level state and dark mullion/spandrel separation through LOD1. Bright panels also exceed the specified p99<250: night_downtown_22=253.7152 and block_22=254. Late-afternoon street clipping is 0.39511% of pixels with a 255 channel, exceeding 0.3%.",
+      "evidence": "shots/buildings/r2/night_downtown_22.png; shots/buildings/r2/street_22.png; shots/buildings/r2/block_22.png; shots/buildings/r2/measurements.json; src/modules/buildings/generate.js"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "Repeated painted reflections and early LOD erase architectural texture",
+      "detail": "The same diagonal reflection sweeps repeat down nearly every glazed bay in closeup and block. At the 64 m chunk LOD switch, the facade changes into stretched broad stripes, and much of the industrial and roof detail disappears. This keeps the image visibly synthetic against the reference material variety and layered architecture despite much better massing. Preserve readable material and floor frequency farther from the camera. The whole-frame LOD metric passes (2.69339/255); this is a visual-quality finding, not a fabricated failure of its unpinned 2 px clause.",
+      "evidence": "shots/buildings/r2/closeup_12.png; shots/buildings/r2/block_12.png; shots/buildings/r2/lod0.png; shots/buildings/r2/lod1.png; shots/buildings/r2/industry_12.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "Terrain changes rebuild geometry without reseating the item",
+      "detail": "For building 105, temporarily raising terrain.getHeight by 1 m, emitting terrain:changed around the building, and flushing leaves y=16.318078489 instead of 17.318078489. The consumed event contract explicitly requires reseating. Recompute the affected base and skirt before rebuilding. The test restores terrain and reloads before subsequent image comparisons.",
+      "evidence": "shots/buildings/r2/extra.json; shots/buildings/r2/extra.mjs; src/modules/buildings/index.js"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "Lot paving still intersects terrain clutter",
+      "detail": "Grass tufts visibly pierce the foreground paving in street and block views, and lawn/parking surfaces carry conspicuous repeated pale marks. Published surfaces exist for 347/347 buildings, so preserve them and integrate the terrain/props consumers. Parent integrator was notified after every capture and probe completed and is applying the lot-clutter-mask fix after this evidence; that later patch is not judged here. This visual issue is not treated as missing lotSurface publication or as a props-owned boundary failure.",
+      "evidence": "shots/buildings/r2/street_12.png; shots/buildings/r2/block_12.png; shots/buildings/r2/suburb_12.png; shots/buildings/r2/apicheck.json"
+    },
+    {
+      "rank": 6,
+      "severity": "minor",
+      "title": "Thirteen bases miss the specified perimeter seating tolerance",
+      "detail": "13/347 staged building bases are more than 0.25 m above the highest of the eight specified footprint perimeter samples. Maximum error is +0.707009 m on building 327; building 47 is +0.483505 m. Use the required perimeter basis consistently. Skirts largely conceal the gap visually; their private depth and slab height are advisory per residual.json and are not failed.",
+      "evidence": "shots/buildings/r2/apicheck.json: day.seat"
+    },
+    {
+      "rank": 7,
+      "severity": "minor",
+      "title": "Growth moves the footprint origin",
+      "detail": "At the block preset, building 105 grows visibly and monotonically, but its z changes from 274.900000 to 278.594611 between levels 2 and 3, a 3.694611 m translation. Keep the building centre fixed across level changes. Heights [8.7,12.01,20.955,30.005,45.055] pass every high-density increment; restored geometry differs by only 0.0111%, within tolerance.",
+      "evidence": "shots/buildings/r2/apicheck.json: growth; shots/buildings/r2/growth_2.png; shots/buildings/r2/growth_3.png"
+    },
+    {
+      "rank": 8,
+      "severity": "minor",
+      "title": "Diagnostics do not describe the rendered landmarks and meshes",
+      "detail": "farTower points into building 124 only 101.681 m from the camera instead of 250\u2013400 m; nightFacade also hits 124 although the tallest selected building is 122. Thus the reported far-crop static statistic is not a valid measurement of the required far tower. stats.draws/visible report all 52 allocated visible-flag chunks while onBeforeRender records 11 ordinary building draws (one observed auxiliary pass gives 21). features.litCells reports 2954 lit cells at noon despite 0/347 items lit. Return actual rendered draw counts, current lighting, and visible required landmark rectangles. Relief minima are taken from plan parameters rather than independently derived generated geometry.",
+      "evidence": "shots/buildings/r2/extra.json; shots/buildings/r2/apicheck.json; shots/buildings/r2/crops_nightdt_22.crops.json; src/modules/buildings/index.js"
+    },
+    {
+      "rank": 9,
+      "severity": "minor",
+      "title": "Plain glass is below the required roughness floor",
+      "detail": "paintGlassPlain writes roughness 0.06 (metalness 0.85) into glass_plain, used for entrances, glazed railings and roof elements. Glass must be at least 0.30. Fix that atlas tile and audit every material class; normalScale 0.55 itself passes. Building-surface sparkle segmentation remains advisory under residual.json, so no whole-frame bright-pixel estimate is substituted for it.",
+      "evidence": "src/modules/buildings/tiles.js:379; src/modules/buildings/generate.js; shots/buildings/r2/block_12.png"
+    }
+  ],
+  "strengths": [
+    "Nine downtown crown keys, 22 roof heights separated by at least 4 m, zero downtown adjacent twins and 32 unique tall-building styles give a much stronger skyline than round 1.",
+    "Real piers, floor bands, projecting balconies, wrapped retail signs and varied pitched roofs are visible; preserve this geometry while fixing materials.",
+    "All 40 classes are populated, catalogue floor progression passes, 347 buildings span 52 chunks, and lotSurface publishes every staged building.",
+    "Spawn, level-up, demolition, version/event payloads and serialization round-trip pass; seed determinism and info-view restoration pass.",
+    "Zero console errors and ready status in all 28 required captures; the complete scene remains within draw, triangle, texture and timing budgets."
+  ],
+  "summary": "6.2/10, FAIL: stronger crowns, relief and lot coverage than round 1, but black daylight facade quads, coarse overbright night windows and repetitive material/LOD treatment remain far below the CS2 bar; terrain reseating, growth origin and diagnostic contracts also fail.",
+  "shots": [
+    "shots/buildings/r2/aerial_12.png",
+    "shots/buildings/r2/aerial_17p5.png",
+    "shots/buildings/r2/aerial_22.png",
+    "shots/buildings/r2/aerial_6p5.png",
+    "shots/buildings/r2/all_12.png",
+    "shots/buildings/r2/all_22.png",
+    "shots/buildings/r2/block_12.png",
+    "shots/buildings/r2/block_22.png",
+    "shots/buildings/r2/catalog_12.png",
+    "shots/buildings/r2/closeup_12.png",
+    "shots/buildings/r2/closeup_17p5.png",
+    "shots/buildings/r2/closeup_22.png",
+    "shots/buildings/r2/closeup_6p5.png",
+    "shots/buildings/r2/crops_nightdt_22.png",
+    "shots/buildings/r2/day_exact0.png",
+    "shots/buildings/r2/day_exact1.png",
+    "shots/buildings/r2/day_lit0.png",
+    "shots/buildings/r2/day_lit1.png",
+    "shots/buildings/r2/downtown_12.png",
+    "shots/buildings/r2/growth_1.png",
+    "shots/buildings/r2/growth_2.png",
+    "shots/buildings/r2/growth_3.png",
+    "shots/buildings/r2/growth_4.png",
+    "shots/buildings/r2/growth_5.png",
+    "shots/buildings/r2/industry_12.png",
+    "shots/buildings/r2/info_off.png",
+    "shots/buildings/r2/info_on.png",
+    "shots/buildings/r2/info_restored.png",
+    "shots/buildings/r2/lod0.png",
+    "shots/buildings/r2/lod1.png",
+    "shots/buildings/r2/night_downtown_22.png",
+    "shots/buildings/r2/skyline_12.png",
+    "shots/buildings/r2/skyline_17p5.png",
+    "shots/buildings/r2/skyline_22.png",
+    "shots/buildings/r2/skyline_6p5.png",
+    "shots/buildings/r2/street_12.png",
+    "shots/buildings/r2/street_17p5.png",
+    "shots/buildings/r2/street_22.png",
+    "shots/buildings/r2/street_6p5.png",
+    "shots/buildings/r2/suburb_12.png",
+    "shots/buildings/r2/suburb_6p5.png",
+    "shots/buildings/r2_720/block_12.png"
+  ],
+  "pass": false
+}

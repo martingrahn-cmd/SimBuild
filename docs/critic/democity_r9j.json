@@ -1,0 +1,227 @@
+{
+  "module": "democity",
+  "round": "r9j",
+  "decision": "ACCEPT",
+  "decisionScope": "Qualified rejection record",
+  "candidateDecision": "REJECT",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "productChange": false,
+  "source": {
+    "path": "src/modules/democity/plan.js",
+    "sha256": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+    "baselineRoutedSha256": "438f6cda4fba1158eec65c87af52b4c5dbf8401fc85456d977af73f8e23c7bff",
+    "candidateRoutedSha256": "6e4139f428a1b85fb4616a509a9cc69b5dbe05593a88d014bc26639e7905a125"
+  },
+  "evidenceHashes": {
+    "shots/democity/r9j-legal-frontage-owner/final-v1/summary.json": "e0b90e3ab0d3986559b9ccb1f06553f2a8d30512f7eb249c0455603136dbdfe4",
+    "shots/democity/r9j-legal-frontage-screen/final-v3/tool-validity.json": "a73f77f5b09c807b12427729d98254ff158f66ceb585b64cb85e7613fe5f4098"
+  },
+  "inspection": {
+    "summaryBytes": 13083739,
+    "fullJsonRead": [
+      "shots/democity/r9j-legal-frontage-owner/final-v1/summary.json",
+      "shots/democity/r9j-legal-frontage-screen/final-v2/tool-validity.json",
+      "shots/democity/r9j-legal-frontage-screen/tool-validity.json",
+      "shots/democity/r8y-local-frontage/opportunities.json",
+      "shots/democity/r9j-legal-frontage-screen/final-v3/tool-validity.json"
+    ],
+    "originals": [
+      "shots/democity/r9j-legal-frontage-owner/final-v1/baseline_seed1337_aerial.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/baseline_seed1337_directed.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/candidate_seed1337_aerial.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/candidate_seed1337_directed.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/baseline_seed7_aerial.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/baseline_seed7_directed.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/candidate_seed7_aerial.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/candidate_seed7_directed.png",
+      "shots/democity/r9j-legal-frontage-screen/final-v3/tool_draft_seed1337.png",
+      "shots/democity/r9j-legal-frontage-screen/final-v3/tool_draft_seed7.png"
+    ],
+    "differences": [
+      "shots/democity/r9j-legal-frontage-owner/final-v1/seed1337_aerial_difference_x4.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/seed1337_directed_difference_x4.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/seed7_aerial_difference_x4.png",
+      "shots/democity/r9j-legal-frontage-owner/final-v1/seed7_directed_difference_x4.png"
+    ],
+    "all14ImagesIndividuallyViewed": true,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "browserRerun": false,
+    "supersededDraftsAlsoViewed": [
+      "shots/democity/r9j-legal-frontage-screen/final-v2/tool_draft_seed1337.png",
+      "shots/democity/r9j-legal-frontage-screen/final-v2/tool_draft_seed7.png"
+    ],
+    "totalImagesViewedIncludingSuperseded": 16
+  },
+  "verification": {
+    "ownerWorlds": 6,
+    "readyModulesEach": 16,
+    "recordedErrors": 0,
+    "membershipDuplicates": 0,
+    "membershipOverlaps": 0,
+    "buildingLotBijections": 6,
+    "sourceHashesReconstructed": 3,
+    "repeatProjectionExact": true,
+    "edgePayloadPrefixExact": true,
+    "pixelMetricPairs": 4,
+    "differenceImagesExact": 4,
+    "screenVersion": "final-v3"
+  },
+  "seeds": [
+    {
+      "seed": 1337,
+      "publicDraftValid": true,
+      "publicGradePercent": 9.730517864227295,
+      "toolCost": 106,
+      "netLots": 0,
+      "netPaintedCells": -23,
+      "netClaimedCells": -3,
+      "gained": [
+        "1073:left:108,61"
+      ],
+      "lost": [
+        "350:right:100,59"
+      ],
+      "retained": 611,
+      "retainedPlanarMembershipExact": true,
+      "sameLotId": 80,
+      "sameBuildingId": 247,
+      "baselineEndpointDegrees": [
+        2,
+        2
+      ]
+    },
+    {
+      "seed": 7,
+      "publicDraftValid": true,
+      "publicGradePercent": 7.355146408081055,
+      "toolCost": 102,
+      "netLots": 1,
+      "netPaintedCells": -19,
+      "netClaimedCells": 13,
+      "gained": [
+        "1140:left:108,60"
+      ],
+      "lost": [],
+      "retained": 648,
+      "retainedPlanarMembershipExact": true,
+      "sameLotId": 634,
+      "sameBuildingId": 382,
+      "baselineEndpointDegrees": [
+        2,
+        2
+      ]
+    }
+  ],
+  "imageMetrics": [
+    {
+      "seed": 1337,
+      "view": "aerial",
+      "metric": {
+        "normalizedRgbMae": 0.012200068208867909,
+        "changedPixels": 367322,
+        "strongPixelsGE8": 210553,
+        "maxChannelDelta": 226
+      },
+      "differenceX4": "shots/democity/r9j-legal-frontage-owner/final-v1/seed1337_aerial_difference_x4.png"
+    },
+    {
+      "seed": 1337,
+      "view": "directed",
+      "metric": {
+        "normalizedRgbMae": 0.01013934907810861,
+        "changedPixels": 292796,
+        "strongPixelsGE8": 142689,
+        "maxChannelDelta": 223
+      },
+      "differenceX4": "shots/democity/r9j-legal-frontage-owner/final-v1/seed1337_directed_difference_x4.png"
+    },
+    {
+      "seed": 7,
+      "view": "aerial",
+      "metric": {
+        "normalizedRgbMae": 0.029621332354958445,
+        "changedPixels": 739043,
+        "strongPixelsGE8": 479551,
+        "maxChannelDelta": 227
+      },
+      "differenceX4": "shots/democity/r9j-legal-frontage-owner/final-v1/seed7_aerial_difference_x4.png"
+    },
+    {
+      "seed": 7,
+      "view": "directed",
+      "metric": {
+        "normalizedRgbMae": 0.00823936080347777,
+        "changedPixels": 251995,
+        "strongPixelsGE8": 108520,
+        "maxChannelDelta": 223
+      },
+      "differenceX4": "shots/democity/r9j-legal-frontage-owner/final-v1/seed7_directed_difference_x4.png"
+    }
+  ],
+  "supersededHarness": {
+    "priorPass": false,
+    "finalPass": true,
+    "rowsExactExceptImagePath": true,
+    "unaryCoercionCause": "Builder provenance; old executable snapshot not retained in inspected evidence.",
+    "intermediateV2Limitation": "Boolean type check did not require true; superseded.",
+    "acceptedV3": "Current verifier requires draft.valid === true; both replacement originals viewed, exact row/grade recomputation passes."
+  },
+  "r8yExhaustion": {
+    "positiveActualGaps1337": [
+      "-8,-11->-7,-11",
+      "-2,-7->-1,-7"
+    ],
+    "positiveActualGaps7": [
+      "8,-7->9,-7",
+      "-2,-7->-1,-7",
+      "-8,-11->-7,-11",
+      "1,3->1,4"
+    ],
+    "common": [
+      "-8,-11->-7,-11",
+      "-2,-7->-1,-7"
+    ],
+    "scope": "Only these two common heuristic-positive straight cardinal alley candidates; not all localized designs."
+  },
+  "limitations": [
+    "Preview validity is not committed native gameplay, payment, undo or maximum driven-grade evidence.",
+    "Count invariance is not a full-world nonmutation oracle.",
+    "Fresh-start identities do not establish incremental restore failure.",
+    "Repeat proof is the declared serialized projection with phase/stage timings excluded and terrain represented by digest.",
+    "Camera target matching is source-supported; actual resolved matrices are not retained.",
+    "Full-frame pixel differences contain procedural building, traffic and environmental changes.",
+    "No new performance/build/full-matrix/save-load pass.",
+    "Painted-cell loss alone is not a universal defect; zero net seed-1337 lot gain fails this round-specific requirement.",
+    "Exhausting the shortlist does not prove broader redesign is the only possible solution."
+  ],
+  "rankedOpenIssues": [
+    {
+      "rank": 1,
+      "issue": "Sparse urban fabric",
+      "owners": [
+        "democity",
+        "zoning",
+        "roads",
+        "buildings"
+      ],
+      "status": "OPEN; tested common positive shortlist closed"
+    },
+    {
+      "rank": 2,
+      "issue": "Planar foliage and distance-class inconsistency",
+      "owners": [
+        "props"
+      ],
+      "status": "OPEN",
+      "next": "Attribute visible normal-view crown defects to current actual LOD/class before one bounded owner-local candidate; preserve accepted range/band/cap and closed containment result."
+    }
+  ],
+  "nextPriority": "Rank 2 foliage attribution on current accepted-source ordinary views; treat rank 1 broader layout work as a separate design effort."
+}

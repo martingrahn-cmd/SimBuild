@@ -73,3 +73,28 @@ Not applied:
 - `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
   (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
   until then, since that contract now holds by documentation.
+
+## Integrator decision (local continuation, 2026-09-06)
+
+Fixed a real Metal/WebGL2 shader link failure: terrain's detail samplers plus environment/shadows exceeded the minimum 16 fragment texture units. Albedo and normal maps now use two texture arrays with repeat wrapping, mipmaps, original orientation, correct sRGB/linear color spaces, and disposal hooks. `shots/smoke.png` was visually inspected with `errors=[]` on Apple M4 / ANGLE Metal. This is a compatibility repair, not a new terrain critic round.
+
+## Integrator decision (local wave 2, exact terrain writes)
+
+Added `world.terrain.setHeights(ix0, iz0, ix1, iz1, values, {restore:true})` with inclusive bounds, full input validation before mutation, derived normal/AO texture refresh, exact chunk/global bounds, water invalidation and a tagged region event. `shots/integration/w2_terrain_restore_unit.json` verifies exact writes, rejection without partial mutation, full restoration and min/max refresh. The full tools undo chain is verified separately.
+
+## Integrator resolution — exact save/load terrain, 2026-09-06
+A populated-city roundtrip changed terrain by 3.5358896 m because terrain heights were not serialized and roads graded again during restore. Terrain now serializes the full float32 height grid as validated little-endian base64 and restores through `setHeights(...,{restore:true})`. Roads preserve node/edge IDs, sampled design heights and the restored ground during deserialization. Independent `shots/integration/w2_roundtrip_probe.mjs` after-fix evidence reports exact height equality (max difference 0), matching roads/nodes/buildings/props/cells/vehicles and stable world-section identity, with no console errors.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Applied the translation-free sky vertex transform so the 10m dome is centred for each rendering camera, including water reflections; the isolated secondary-camera probe previously rendered0 covered pixels at displaced dome positions and now covers all16384 with matching radiance. Retained existing exact setHeights/save restoration, texture-array sampler repair and capture timeout/HMR fixes. Deferred the cosmetic cached Raycaster: tools' latest drag average passes and the isolated maximum outlier does not establish this allocation as its cause. Rejected reordering initialization by WAVES: registry already sorts declared dependencies and terrain declares environment. Deferred broad noon/fog recalibration to whole-game evidence; modules continue reading the shared environment rig. Road coverage/version masking remains intact.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+Applied shared service-footprint clutter exclusion and versioned native display-surface publication for the infoview consumer. Physical getHeight, world references, terrain ownership and ordinary inactive LOD remain unchanged. Reflection invalidation follows infoview change, and obsolete display descriptors expire after disposal/re-init. Existing exact setHeights restoration remains. Deferred broad fog/exposure recalibration and optional Raycaster caching; this integration does not change the environment rig.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Retained exact terrain restoration, road/lot/service exclusions and rendering-camera sky fix. No terrain seed/height internals were modified by democity integration. Deferred coordinated public regeneration and broad noon/shore/ground polish; full-world contract required before a reset. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.

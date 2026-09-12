@@ -1,0 +1,628 @@
+{
+  "module": "democity",
+  "round": 3,
+  "summary": "Fixed all-mode startup through an explicit public initial-building spawn before deterministic pre-simulation. Both aliases now produce the same real 8,047-resident city with 30 paid facilities, positive cash and retained loan. Expanded legitimate civic coverage and cleared obstructing native foreground trees. Visual/scale/budget/cross-seed targets still fail; final bounded r3, then freeze.",
+  "verdict": "FAIL",
+  "apiSurfaceOK": false,
+  "selfScore": 5.7,
+  "scoreBasis": "Builder self-assessment only, below passing threshold; no independent score claimed. Runtime/startup improves, but scale, geometry budget and visual blockers remain.",
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/smoke-all-12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/smoke-night-street.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/smoke-night-street-final.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/roadmask-on.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/roadmask-off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3s7/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/downtown_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/interchange_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/night_downtown_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/night_street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/bridge_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/industry_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/overview_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/suburb_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/aerial_12_720p.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/all_aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/all_aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/closeup_12_repeat.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/park_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/suburb_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3/waterfront_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3s7/bridge_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3s7/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3s7/interchange_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3s7/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/rdev3s7/street_12.png"
+  ],
+  "referenceImagesViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "acceptance": [
+    {
+      "item": 1,
+      "status": "FAIL",
+      "evidence": "468 nodes,604 edges and 36.486 km roads retain all required types.10,017 cells and 611 real lots/buildings fail 11,000/1,400/1,200; built 64 m-cell union 1.806336 km\u00b2<2.0.30 civic facilities consume formerly zonable land; this stock regression is explicit."
+    },
+    {
+      "item": 2,
+      "status": "FAIL",
+      "evidence": "Public 40\u00d740 aerial ground grid:97.16% city and 82.02% hard surface pass. Only 11 central towers>60 m,one building on each street side and 9 nearby night towers fail. Closeup 6 and signalised intersection pass. Clearing the physical night forecourt improves visibility but still frames lawn and a wall."
+    },
+    {
+      "item": 3,
+      "status": "FAIL",
+      "evidence": "Night skyline mean 59.521 > 55, p 50 48.529 > 42, p 99/p 50 3.434 < 4 and bright fraction 0.599% < 0.8%. Aerial night has 597 full-resolution bright clusters distributed over all 16 tiles; near night whole-frame rows pass. Pinned lamp head peak 54.14 and pool mean 24.38 are weak; no lights-off pool comparison was performed. The former tree obstruction is reduced, but lawn and a wall still dominate night_street."
+    },
+    {
+      "item": 4,
+      "status": "PASS",
+      "evidence": "All four noon default views meet p 1, p 50, p 99, clipping, saturation and aerial contrast limits. Full-resolution public pinned sun/shadow patches have means 94.0647 / 5.6553 = 16.633:1. Closeup repeat has unchanged framing; the native pinned shadow patch is very dark, but the whole-frame p 1 remains 10.236."
+    },
+    {
+      "item": 5,
+      "status": "FAIL",
+      "evidence": "Golden skyline has 21.596% pixels above luma 235 and a 28.111% largest flat patch. Full-width projected horizon band std 82.037 passes, yet the right horizon visibly clips and distant detail washes out. Same-session shadow-road visibility mask gives saturation 0.4358 > 0.28 over 24,130 pixels, hue 212.04 degrees. No weather/grade changes in this bounded round."
+    },
+    {
+      "item": 6,
+      "status": "FAIL",
+      "evidence": "Nine districts and all kinds. Ring height medians 51.05,30.22,17.83,9.05,5.72 decrease monotonically. Industry/suburb mean footprint ratio 343.047/165.013=2.079<2.2; suburb/downtown spacing 25.453/33.908=.751<2."
+    },
+    {
+      "item": 7,
+      "status": "PARTIAL",
+      "evidence": "32 highway segments total 2376.414 m and within-segment turn.13438\u00b0/m pass, with three real one-way ramps and native 16-node roundabout. Abrupt mountain approaches remain visibly implausible. Grade separation stays explicitly ungraded under the public height-API exception."
+    },
+    {
+      "item": 8,
+      "status": "FAIL",
+      "evidence": "Avenue 982 and street 983 are 480 m apart. Forty samples per bridge give minimum water clearance 2.320576 / 4.317209 m; avenue fails 3.5 m. End gaps are approximately 0.25 m. Fresh seed 7 bridges give 3.877824 / 3.727394 m and pass clearance; complete developed-bank fraction remains unmeasured."
+    },
+    {
+      "item": 9,
+      "status": "FAIL",
+      "evidence": "Deterministic hashed-ID 200-building samples give maximum highest-corner gaps.711996 m(seed 1337) and.540365 m(seed 7). Own hospital gap.488396 m remains. Exact samples/landmark corners are saved. No private heights or selective sample removal used; zero own props makes 100-own-prop samples inapplicable."
+    },
+    {
+      "item": 10,
+      "status": "FAIL",
+      "evidence": "183 low houses in two actual suburb districts<250. All 183 have driveway and hedge/fence,7 roof values and 12 styles. Seven nearby footprint/roof duplicate pairs remain. Historical two-garden-tree contract is obsolete and recorded without fabricated enforcement."
+    },
+    {
+      "item": 11,
+      "status": "FAIL",
+      "evidence": "31 actual industrial buildings inside industry<40,39 street/gravel edges and 697.57 m distance from centre. Three silos,two stacks,two cranes,one apron retained; cranes 44/26 m from water. Simple fixtures and oversized power silhouettes remain visible."
+    },
+    {
+      "item": 12,
+      "status": "PARTIAL",
+      "evidence": "Park 38,400 m\u00b2 has 126 actual trees,8 species and 5 lamps, with no near-identical heading/scale pair. Two boundary lots remain.77 native trees removed from real forecourts/pads,27 park trees planted; public props owns all records. Promenade 1003.195 m; complete green-edge continuity is not numerically graded."
+    },
+    {
+      "item": 13,
+      "status": "FAIL",
+      "evidence": "30 real facilities across 11 kinds,502,000 native placement cost.507/511 homes have nonzero power+water(99.22%);302/511 have bothhealth+education(59.10%<60). This improves 15.41% but is not rounded into a pass. Power 2040/water 1600/sewage 1600/garbage 1400 remain below some actual demand. University has no valid site and is not forced."
+    },
+    {
+      "item": 14,
+      "status": "PARTIAL",
+      "evidence": "Actual transit API creates one closed 3305.298 m route,eight stops andfour native buses. No democity duplicate fleet. Saved line colour is blue; requested teal is not falsely claimed accepted. Shelters/buses are visually reviewed but exact prescribed street/downtown bus visibility remains ungraded."
+    },
+    {
+      "item": 15,
+      "status": "PASS real owners; absent branches UNGRADED",
+      "evidence": "All four capability tests find real owners; all fallback flags false. Own trees/lamps/parked/vehicles/buses 0. Public props count distinguishes deferred first build before landscaping. No missing-owner injection or invented dormant fallback completeness."
+    },
+    {
+      "item": 16,
+      "status": "FAIL",
+      "evidence": "Native census finds 5 vehicles,4 kinds and 8 pedestrians within 150 m of street target. Pedestrians pass; vehicles/kinds do not. Traffic owner populates its own fleet; no duplicate unmanaged population was created."
+    },
+    {
+      "item": 17,
+      "status": "PASS measured repeat; other seams PARTIAL",
+      "evidence": "Full-resolution closeup repeat RGB mean absolute difference is 0.004104 / 255, with no excluded rectangles. No camera-tour drift or visible repeated-frame flicker. Some terrain/road edges remain visually rough; seating is separately failed under item 9. Own ground placement generally uses 0.045 m clearance, with sloped landmark exceptions disclosed."
+    },
+    {
+      "item": 18,
+      "status": "FAIL",
+      "evidence": "Full-resolution detrended overlap-Pearson maximum |r| is 0.565299 in aerial noon columns, above 0.55; its rows are 0.360784. Aerial golden maxima 0.346041 / 0.404408 and overview 0.205080 / 0.313814 pass. Own roughness 0.88 and normalScale 0.18 pass. Non-window-only specular mask remains ungraded under residual notes."
+    },
+    {
+      "item": 19,
+      "status": "FAIL",
+      "evidence": "Across all 37 official captures: max 942 draws, 5,061,897 triangles, 1,000.7 MB heap, 74 textures; min observed Metal fps 12.4. Overview has 2,935,963 triangles > 2.2 M. Draw and texture limits pass; whole-scene triangles and heap fail. Direct instrumented owned-object rendering over 100 frames / five views peaks 37 all-pass calls and 17,472 triangles (native landmark geometry 8 draws / 3,600 triangles). Idle 0 ms; sustained tour timing unmeasured. No neighbouring-owner scene subtraction is claimed."
+    },
+    {
+      "item": 20,
+      "status": "PASS supported paths",
+      "evidence": "All 37 official captures have zero errors and all 16 modules ready. The 720 p frame and final all-mode noon/night images were individually viewed. Exact all/democity startup comparison passes every building, facility, count and pre-roll field in aliases.json; the former 1-resident all startup failure is fixed."
+    },
+    {
+      "item": 21,
+      "status": "FAIL cross-seed; same-seed/save PASS",
+      "evidence": "Two own deserializes andtwo same-seed restages preserve counts and exact native centres; awaited native IDB save/load passes. Freshseed 7 has 654 buildings vs cross-seedrestage 622. None of nine district centres moves>50 m. Whole-terrain public reset remains absent; no private seed mutation."
+    },
+    {
+      "item": 22,
+      "status": "PASS API; full timed tour UNGRADED",
+      "evidence": "Eight 7-second stops; all valid gotoStop calls apply native camera/hour,invalid 100 rejects,events emit,startTour uses flyTo 2 seconds andstop cancels the flight. No automatic capture drift. Full 56-second loop unmeasured."
+    },
+    {
+      "item": 23,
+      "status": "PASS measured population/economy; land-value maximum UNGRADED",
+      "evidence": "Both aliases have 8047 real residents after 120340 deterministic public ticks,20243 job capacity,cash 25848.0004,net+10247.5019/day,tax 12%,retained 231000 principal loan. C/I demands>.15,happiness.6858 andnativegrids. This pre-simulation is distinct from an organically earned player city. Transit fiscal integration remains unapplied in these formal measurements."
+    },
+    {
+      "item": 24,
+      "status": "PASS measured Metal; degradation UNGRADED",
+      "evidence": "Fresh seed 1337 stage 5657.9 ms,initial settlement 1333.1 ms;deterministic 240-tick batches cap 144000 andfinal 100 ticks. Init lightweight,play-mode stage remains empty,assets settle. Actual SystemChrome 152/AppleM 4 Metal/shared 5174;no SwiftShader claim. Missing-owner branches not injected."
+    }
+  ],
+  "acceptanceMet": [
+    "4: PASS \u2014 All four noon default views meet p 1, p 50, p 99, clipping, saturation and aerial contrast limits. Full-resolution public pinned sun/shadow patches have means 94.0647 / 5.6553 = 16.633:1. Closeup repeat has unchanged framing; the native pinned shadow patch is very dark, but the whole-frame p 1 remains 10.236.",
+    "15: PASS real owners; absent branches UNGRADED \u2014 All four capability tests find real owners; all fallback flags false. Own trees/lamps/parked/vehicles/buses 0. Public props count distinguishes deferred first build before landscaping. No missing-owner injection or invented dormant fallback completeness.",
+    "17: PASS measured repeat; other seams PARTIAL \u2014 Full-resolution closeup repeat RGB mean absolute difference is 0.004104 / 255, with no excluded rectangles. No camera-tour drift or visible repeated-frame flicker. Some terrain/road edges remain visually rough; seating is separately failed under item 9. Own ground placement generally uses 0.045 m clearance, with sloped landmark exceptions disclosed.",
+    "20: PASS supported paths \u2014 All 37 official captures have zero errors and all 16 modules ready. The 720 p frame and final all-mode noon/night images were individually viewed. Exact all/democity startup comparison passes every building, facility, count and pre-roll field in aliases.json; the former 1-resident all startup failure is fixed.",
+    "22: PASS API; full timed tour UNGRADED \u2014 Eight 7-second stops; all valid gotoStop calls apply native camera/hour,invalid 100 rejects,events emit,startTour uses flyTo 2 seconds andstop cancels the flight. No automatic capture drift. Full 56-second loop unmeasured.",
+    "23: PASS measured population/economy; land-value maximum UNGRADED \u2014 Both aliases have 8047 real residents after 120340 deterministic public ticks,20243 job capacity,cash 25848.0004,net+10247.5019/day,tax 12%,retained 231000 principal loan. C/I demands>.15,happiness.6858 andnativegrids. This pre-simulation is distinct from an organically earned player city. Transit fiscal integration remains unapplied in these formal measurements.",
+    "24: PASS measured Metal; degradation UNGRADED \u2014 Fresh seed 1337 stage 5657.9 ms,initial settlement 1333.1 ms;deterministic 240-tick batches cap 144000 andfinal 100 ticks. Init lightweight,play-mode stage remains empty,assets settle. Actual SystemChrome 152/AppleM 4 Metal/shared 5174;no SwiftShader claim. Missing-owner branches not injected."
+  ],
+  "acceptanceMissed": [
+    "1: FAIL \u2014 468 nodes,604 edges and 36.486 km roads retain all required types.10,017 cells and 611 real lots/buildings fail 11,000/1,400/1,200; built 64 m-cell union 1.806336 km\u00b2<2.0.30 civic facilities consume formerly zonable land; this stock regression is explicit.",
+    "2: FAIL \u2014 Public 40\u00d740 aerial ground grid:97.16% city and 82.02% hard surface pass. Only 11 central towers>60 m,one building on each street side and 9 nearby night towers fail. Closeup 6 and signalised intersection pass. Clearing the physical night forecourt improves visibility but still frames lawn and a wall.",
+    "3: FAIL \u2014 Night skyline mean 59.521 > 55, p 50 48.529 > 42, p 99/p 50 3.434 < 4 and bright fraction 0.599% < 0.8%. Aerial night has 597 full-resolution bright clusters distributed over all 16 tiles; near night whole-frame rows pass. Pinned lamp head peak 54.14 and pool mean 24.38 are weak; no lights-off pool comparison was performed. The former tree obstruction is reduced, but lawn and a wall still dominate night_street.",
+    "5: FAIL \u2014 Golden skyline has 21.596% pixels above luma 235 and a 28.111% largest flat patch. Full-width projected horizon band std 82.037 passes, yet the right horizon visibly clips and distant detail washes out. Same-session shadow-road visibility mask gives saturation 0.4358 > 0.28 over 24,130 pixels, hue 212.04 degrees. No weather/grade changes in this bounded round.",
+    "6: FAIL \u2014 Nine districts and all kinds. Ring height medians 51.05,30.22,17.83,9.05,5.72 decrease monotonically. Industry/suburb mean footprint ratio 343.047/165.013=2.079<2.2; suburb/downtown spacing 25.453/33.908=.751<2.",
+    "7: PARTIAL \u2014 32 highway segments total 2376.414 m and within-segment turn.13438\u00b0/m pass, with three real one-way ramps and native 16-node roundabout. Abrupt mountain approaches remain visibly implausible. Grade separation stays explicitly ungraded under the public height-API exception.",
+    "8: FAIL \u2014 Avenue 982 and street 983 are 480 m apart. Forty samples per bridge give minimum water clearance 2.320576 / 4.317209 m; avenue fails 3.5 m. End gaps are approximately 0.25 m. Fresh seed 7 bridges give 3.877824 / 3.727394 m and pass clearance; complete developed-bank fraction remains unmeasured.",
+    "9: FAIL \u2014 Deterministic hashed-ID 200-building samples give maximum highest-corner gaps.711996 m(seed 1337) and.540365 m(seed 7). Own hospital gap.488396 m remains. Exact samples/landmark corners are saved. No private heights or selective sample removal used; zero own props makes 100-own-prop samples inapplicable.",
+    "10: FAIL \u2014 183 low houses in two actual suburb districts<250. All 183 have driveway and hedge/fence,7 roof values and 12 styles. Seven nearby footprint/roof duplicate pairs remain. Historical two-garden-tree contract is obsolete and recorded without fabricated enforcement.",
+    "11: FAIL \u2014 31 actual industrial buildings inside industry<40,39 street/gravel edges and 697.57 m distance from centre. Three silos,two stacks,two cranes,one apron retained; cranes 44/26 m from water. Simple fixtures and oversized power silhouettes remain visible.",
+    "12: PARTIAL \u2014 Park 38,400 m\u00b2 has 126 actual trees,8 species and 5 lamps, with no near-identical heading/scale pair. Two boundary lots remain.77 native trees removed from real forecourts/pads,27 park trees planted; public props owns all records. Promenade 1003.195 m; complete green-edge continuity is not numerically graded.",
+    "13: FAIL \u2014 30 real facilities across 11 kinds,502,000 native placement cost.507/511 homes have nonzero power+water(99.22%);302/511 have bothhealth+education(59.10%<60). This improves 15.41% but is not rounded into a pass. Power 2040/water 1600/sewage 1600/garbage 1400 remain below some actual demand. University has no valid site and is not forced.",
+    "14: PARTIAL \u2014 Actual transit API creates one closed 3305.298 m route,eight stops andfour native buses. No democity duplicate fleet. Saved line colour is blue; requested teal is not falsely claimed accepted. Shelters/buses are visually reviewed but exact prescribed street/downtown bus visibility remains ungraded.",
+    "16: FAIL \u2014 Native census finds 5 vehicles,4 kinds and 8 pedestrians within 150 m of street target. Pedestrians pass; vehicles/kinds do not. Traffic owner populates its own fleet; no duplicate unmanaged population was created.",
+    "18: FAIL \u2014 Full-resolution detrended overlap-Pearson maximum |r| is 0.565299 in aerial noon columns, above 0.55; its rows are 0.360784. Aerial golden maxima 0.346041 / 0.404408 and overview 0.205080 / 0.313814 pass. Own roughness 0.88 and normalScale 0.18 pass. Non-window-only specular mask remains ungraded under residual notes.",
+    "19: FAIL \u2014 Across all 37 official captures: max 942 draws, 5,061,897 triangles, 1,000.7 MB heap, 74 textures; min observed Metal fps 12.4. Overview has 2,935,963 triangles > 2.2 M. Draw and texture limits pass; whole-scene triangles and heap fail. Direct instrumented owned-object rendering over 100 frames / five views peaks 37 all-pass calls and 17,472 triangles (native landmark geometry 8 draws / 3,600 triangles). Idle 0 ms; sustained tour timing unmeasured. No neighbouring-owner scene subtraction is claimed.",
+    "21: FAIL cross-seed; same-seed/save PASS \u2014 Two own deserializes andtwo same-seed restages preserve counts and exact native centres; awaited native IDB save/load passes. Freshseed 7 has 654 buildings vs cross-seedrestage 622. None of nine district centres moves>50 m. Whole-terrain public reset remains absent; no private seed mutation."
+  ],
+  "drawCalls": 942,
+  "triangles": 5061897,
+  "errors": 0,
+  "remainingWeaknesses": [
+    "City stock and enclosure still fail: 611 buildings/lots, 10,017 cells, 1.806 km\u00b2 developed union, sparse street foreground and too few central towers. Added paid civic sites reduce stock from r2.",
+    "Whole scene exceeds triangle and heap budgets: 5,061,897 triangles and 1,000.7 MB maximum; overview 2,935,963 triangles. Minimum observed Apple M4 Metal fps is 12.4.",
+    "Avenue bridge clearance is 2.3206 m; highest-corner building seating gap reaches 0.712 m and the own hospital gap is 0.488 m.",
+    "Night skyline remains too bright overall and insufficiently articulated by its lights; lamp pools and lawn-heavy night framing are weak. Golden skyline clipping and saturated shadow asphalt remain.",
+    "Civic health-and-education coverage is 59.0998%, below the literal 60% target, with some utility capacity below demand. University placement remains rejected.",
+    "District grain, 183 suburb houses, 31 industrial buildings, seven nearby duplicate house pairs, and limited local traffic fail their targets.",
+    "Cross-seed restaging differs from a fresh seed-7 boot; no district centre changes by more than 50 m. Public terrain lifecycle and owner layout variation remain separate unsolved issues.",
+    "Aerial-noon detrended column autocorrelation 0.5653 exceeds 0.55. Missing-owner fallbacks, complete timed tour, lights-off pool comparison and some asset masks remain ungraded.",
+    "Core camera aliases, legacy-save democity clearing, public transient-notification dismissal and transit fiscal integration remain pending root integration; these formal measurements precede that integration."
+  ],
+  "coreRequestFile": "docs/core-requests/democity.md",
+  "evidenceDirectory": "shots/democity/rdev3",
+  "sourceSnapshot": "shots/democity/r3/source/SHA256.json",
+  "sourceValidation": "shots/democity/rdev3/source-after.json",
+  "runtime": {
+    "url": "http://127.0.0.1:5174",
+    "gpu": "ANGLE Metal Renderer: Apple M4",
+    "browser": "System Chrome 152.0.7977.76",
+    "quality": "high",
+    "officialCaptures": 37,
+    "all16Ready": true,
+    "maxHeapMB": 1000.7,
+    "maxTextures": 74,
+    "minFPS": 12.4
+  },
+  "city": {
+    "stats": {
+      "stageMs": 5657.9000000059605,
+      "phaseMs": {
+        "plan": 19.099999994039536,
+        "assets": 34.69999998807907,
+        "roads": 902.4000000059605,
+        "serviceReservations": 871.5,
+        "zones": 75.2000000178814,
+        "settlementGrowth": 1333.0999999940395,
+        "buildings": 507.59999999403954,
+        "landmarksServices": 246.30000001192093,
+        "transit": 27.599999994039536,
+        "propsTraffic": 1627.199999988079,
+        "simulation": 12.700000017881393,
+        "finish": 0.5
+      },
+      "districts": 9,
+      "landmarks": 13,
+      "roads": {
+        "nodes": 468,
+        "edges": 604,
+        "lengthM": 36485.98482706707,
+        "byType": {
+          "street": 433,
+          "avenue": 85,
+          "highway": 32,
+          "alley": 41,
+          "gravel": 10,
+          "ramp": 3
+        },
+        "bridges": 16,
+        "ramps": 3
+      },
+      "zones": {
+        "cells": 10017,
+        "lots": 611,
+        "byType": {
+          "residential": 7247,
+          "commercial": 402,
+          "industrial": 1823,
+          "office": 545
+        }
+      },
+      "buildings": 611,
+      "services": 30,
+      "transitLines": 1,
+      "transitStops": 8,
+      "own": {
+        "drawCalls": 8,
+        "triangles": 3600,
+        "trees": 0,
+        "lamps": 0,
+        "parked": 0,
+        "vehicles": 0,
+        "buses": 0
+      },
+      "fallbacks": {
+        "props": false,
+        "traffic": false,
+        "services": false,
+        "transit": false
+      },
+      "preroll": {
+        "method": "public simulation.step; deterministic initial settlement before final service expansion",
+        "steps": 120340,
+        "population": 8047,
+        "jobs": 20243,
+        "money": 25848.00040515682,
+        "net": 10247.501903073804,
+        "taxRate": 0.12,
+        "loans": [
+          {
+            "id": 1,
+            "principal": 231000,
+            "remaining": 249451.52054794427,
+            "dailyPayment": 683.5068493150686,
+            "daysLeft": 364.95833333333053,
+            "day": 51
+          }
+        ]
+      },
+      "serviceAttempts": [
+        {
+          "kind": "power_coal",
+          "x": 72,
+          "z": -532,
+          "id": 1,
+          "cost": 32000,
+          "before": 527422.0253442223,
+          "after": 495422.0253442223
+        },
+        {
+          "kind": "power_coal",
+          "x": 156,
+          "z": -552,
+          "id": 2,
+          "cost": 32000,
+          "before": 495422.0253442223,
+          "after": 463422.0253442223
+        },
+        {
+          "kind": "power_coal",
+          "x": -84,
+          "z": -532,
+          "id": 3,
+          "cost": 32000,
+          "before": 463422.0253442223,
+          "after": 431422.0253442223
+        },
+        {
+          "kind": "water_pump",
+          "x": -86,
+          "z": -344,
+          "id": 4,
+          "cost": 9000,
+          "before": 431422.0253442223,
+          "after": 422422.0253442223
+        },
+        {
+          "kind": "sewage",
+          "x": 160,
+          "z": -96,
+          "id": 5,
+          "cost": 7000,
+          "before": 422422.0253442223,
+          "after": 415422.0253442223
+        },
+        {
+          "kind": "water_pump",
+          "x": 536,
+          "z": -252.8,
+          "id": 6,
+          "cost": 9000,
+          "before": 415422.0253442223,
+          "after": 406422.0253442223
+        },
+        {
+          "kind": "sewage",
+          "x": -410,
+          "z": -344,
+          "id": 7,
+          "cost": 7000,
+          "before": 406422.0253442223,
+          "after": 399422.0253442223
+        },
+        {
+          "kind": "water_pump",
+          "x": -188,
+          "z": -424,
+          "id": 8,
+          "cost": 9000,
+          "before": 399422.0253442223,
+          "after": 390422.0253442223
+        },
+        {
+          "kind": "sewage",
+          "x": -80,
+          "z": -96,
+          "id": 9,
+          "cost": 7000,
+          "before": 390422.0253442223,
+          "after": 383422.0253442223
+        },
+        {
+          "kind": "water_pump",
+          "x": 8.000000000000004,
+          "z": -96,
+          "id": 10,
+          "cost": 9000,
+          "before": 383422.0253442223,
+          "after": 374422.0253442223
+        },
+        {
+          "kind": "sewage",
+          "x": 587.68,
+          "z": -264,
+          "id": 11,
+          "cost": 7000,
+          "before": 374422.0253442223,
+          "after": 367422.0253442223
+        },
+        {
+          "kind": "incinerator",
+          "x": 476.8,
+          "z": -568,
+          "id": 12,
+          "cost": 38000,
+          "before": 367422.0253442223,
+          "after": 329422.0253442223
+        },
+        {
+          "kind": "incinerator",
+          "x": 456,
+          "z": -499.84,
+          "id": 13,
+          "cost": 38000,
+          "before": 329422.0253442223,
+          "after": 291422.0253442223
+        },
+        {
+          "kind": "hospital",
+          "x": -248,
+          "z": 78,
+          "id": 14,
+          "cost": 45000,
+          "before": 291422.0253442223,
+          "after": 246422.02534422232
+        },
+        {
+          "kind": "hospital",
+          "x": 72,
+          "z": 234,
+          "id": 15,
+          "cost": 45000,
+          "before": 246422.02534422232,
+          "after": 201422.02534422232
+        },
+        {
+          "kind": "clinic",
+          "x": -324.8,
+          "z": 514,
+          "id": 16,
+          "cost": 12000,
+          "before": 201422.02534422232,
+          "after": 189422.02534422232
+        },
+        {
+          "kind": "clinic",
+          "x": 322,
+          "z": 557.12,
+          "id": 17,
+          "cost": 12000,
+          "before": 189422.02534422232,
+          "after": 177422.02534422232
+        },
+        {
+          "kind": "clinic",
+          "x": 2.6942229581241772e-15,
+          "z": 142,
+          "id": 18,
+          "cost": 12000,
+          "before": 177422.02534422232,
+          "after": 165422.02534422232
+        },
+        {
+          "kind": "high_school",
+          "x": 168,
+          "z": -410,
+          "id": 19,
+          "cost": 26000,
+          "before": 165422.02534422232,
+          "after": 139422.02534422232
+        },
+        {
+          "kind": "school",
+          "x": -342,
+          "z": 368,
+          "id": 20,
+          "cost": 14000,
+          "before": 139422.02534422232,
+          "after": 125422.02534422232
+        },
+        {
+          "kind": "school",
+          "x": 162,
+          "z": 536,
+          "id": 21,
+          "cost": 14000,
+          "before": 125422.02534422232,
+          "after": 111422.02534422232
+        },
+        {
+          "kind": "school",
+          "x": -262,
+          "z": 545.6,
+          "id": 22,
+          "cost": 14000,
+          "before": 111422.02534422232,
+          "after": 97422.02534422232
+        },
+        {
+          "kind": "school",
+          "x": 546,
+          "z": 545.6,
+          "id": 23,
+          "cost": 14000,
+          "before": 97422.02534422232,
+          "after": 83422.02534422232
+        },
+        {
+          "kind": "school",
+          "x": 74,
+          "z": 160,
+          "id": 24,
+          "cost": 14000,
+          "before": 83422.02534422232,
+          "after": 69422.02534422232
+        },
+        {
+          "kind": "school",
+          "x": -342,
+          "z": 160,
+          "id": 25,
+          "cost": 14000,
+          "before": 69422.02534422232,
+          "after": 55422.02534422232
+        },
+        {
+          "kind": "police",
+          "x": 3.184081677783118e-15,
+          "z": 226,
+          "id": 26,
+          "cost": 11000,
+          "before": 55422.02534422232,
+          "after": 44422.02534422232
+        },
+        {
+          "kind": "fire",
+          "x": -70,
+          "z": 168,
+          "id": 27,
+          "cost": 10000,
+          "before": 44422.02534422232,
+          "after": 34422.02534422232
+        },
+        {
+          "kind": "park_small",
+          "x": 296,
+          "z": 88,
+          "id": 28,
+          "cost": 3000,
+          "before": 34422.02534422232,
+          "after": 31422.02534422232
+        },
+        {
+          "kind": "park_small",
+          "x": 8,
+          "z": 448,
+          "id": 29,
+          "cost": 3000,
+          "before": 31422.02534422232,
+          "after": 28422.02534422232
+        },
+        {
+          "kind": "park_small",
+          "x": -264,
+          "z": 152,
+          "id": 30,
+          "cost": 3000,
+          "before": 28422.02534422232,
+          "after": 25422.02534422232
+        }
+      ],
+      "warnings": [
+        "No valid reserved university site"
+      ]
+    },
+    "economy": {
+      "population": 8047,
+      "jobs": 20243,
+      "money": 25848.00040515682,
+      "happiness": 0.6857862867205796,
+      "demand": {
+        "residential": 5.347795993247751e-40,
+        "commercial": 0.9460689067708459,
+        "industrial": 0.9599999999999334,
+        "office": 0.059999999999995834
+      },
+      "grids": true,
+      "net": 10247.501903073804,
+      "loans": [
+        {
+          "id": 1,
+          "principal": 231000,
+          "remaining": 249451.52054794427,
+          "dailyPayment": 683.5068493150686,
+          "daysLeft": 364.95833333333053,
+          "day": 51
+        }
+      ],
+      "taxRate": 0.12
+    }
+  },
+  "provenance": "Population and treasury arise from 120,340 deterministic public simulation ticks, real placement costs and native retained debt/reward history. This is authored pre-simulation, not proof of ordinary UI play. Root independently maintains earned player-city evidence. Transit fiscal integration is unapplied in this report.",
+  "scope": "Production changes only src/modules/democity/index.js; verification scripts in the owned module. No other-owner source edits, private economy writes, fabricated capacity or population. Current cycle stops after r3 integration; no r4 or next wave authorized."
+}

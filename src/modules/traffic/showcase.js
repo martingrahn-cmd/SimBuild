@@ -1,37 +1,37 @@
-// Traffic showcase: stage the roads module's own demo network (grid + avenue + roundabout + highway
-// with an on-ramp + river bridge) and let the traffic module populate it. Reusing the roads staging
-// keeps the two modules honest about the same lane geometry.
-import { stage as stageRoads } from '../roads/showcase.js';
-
+// A dedicated traffic network, staged only through the public road contract.
 export const CAMERAS = {
-  // the signalised crossroads where the avenue meets the x=40 street: queues, turns, crosswalks
-  junction: { position: [76, 21, 88], target: [40, 1.2, 44] },
-  // dual carriageway sweep + on-ramp merge, framed low for headlight cones at night
-  highway_night: { position: [318, 19, 264], target: [168, 9, 277] },
-  // eye level on the avenue
-  boulevard: { position: [-22, 9, 62], target: [90, 2, 40] },
-  // roundabout from above
-  circle: { position: [-152, 46, 12], target: [-200, 2, -40] },
+  junction: {position:[96,34,100],target:[40,1,40]},
+  queue: {position:[40,2.2,86],target:[40,1.2,30]},
+  merge: {position:[470,30,130],target:[345,12,222]},
+  roundabout: {position:[-200,62,46],target:[-200,1,-40]},
+  crossing: {position:[62,6,66],target:[40,1.2,40]},
+  headlights: {position:[150,3,44],target:[-40,1.4,40]},
+  fleet: {position:[-260,16,66],target:[-260,1,40]},
 };
-
 export async function stage(ctx) {
-  const R = ctx.world.roads;
-  if (R.edges.size === 0) {
-    try {
-      stageRoads(ctx);
-    } catch (e) {
-      ctx.log.warn(`roads staging failed (${e?.message || e}); falling back to a simple grid`);
-      fallbackGrid(ctx);
-    }
+  const r = ctx.world.roads;
+  if (!r.edges.size) {
+    const nodes = new Map();
+    const node = (x,z) => { const k = `${x.toFixed(4)},${z.toFixed(4)}`; if (!nodes.has(k)) nodes.set(k,r.addNode(x,z)); return nodes.get(k); };
+    const edge = (x,z,xx,zz,type='street',opts={}) => r.addEdge(node(x,z),node(xx,zz),type,opts);
+    const xs=[-300,-200,-120,-40,40,120,200,300];
+    for(let i=1;i<xs.length;i++) edge(xs[i-1],40,xs[i],40,'avenue');
+    const zs=[-140,-40,40,120,200];
+    for(const x of [-120,-40,40,120,200]) for(let i=1;i<zs.length;i++) edge(x,zs[i-1],x,zs[i]);
+    for(const z of [-40,120]) for(const x of [-120,-40,40,120]) edge(x,z,x+80,z);
+    const ring=[];
+    // Negative angle in the x/z plane circulates anticlockwise from above.
+    for(let i=0;i<8;i++){const a=-i*Math.PI/4;ring.push([-200+28*Math.cos(a),-40+28*Math.sin(a)]);}
+    for(let i=0;i<8;i++){const a=ring[i],b=ring[(i+1)%8];edge(...a,...b,'street',{oneWay:true,lanes:1});}
+    edge(-200,-12,-200,40); edge(-172,-40,-120,-40);
+    edge(-200,-68,-200,-140);edge(-200,-140,-120,-140);
+    edge(-228,-40,-980,-40,'avenue');
+    edge(-1000,340,345,222,'highway',{ctrl:{x:-320,z:390}});
+    edge(345,222,1000,140,'highway',{ctrl:{x:680,z:155}});
+    edge(300,40,345,222,'ramp',{oneWay:true,ctrl:{x:170,z:258}});
+    edge(40,-140,40,-1000,'avenue');
+    edge(160,100,160,160,'alley');
   }
-  try { ctx.modules.roads?.rebuild?.(); } catch (e) { ctx.log.warn(`roads rebuild failed: ${e?.message || e}`); }
-  for (const [name, p] of Object.entries(CAMERAS)) ctx.camera.registerPreset(name, p);
-}
-
-function fallbackGrid(ctx) {
-  const R = ctx.world.roads;
-  const node = (x, z) => R.addNode(x, z);
-  const XS = [-160, -80, 0, 80, 160], ZS = [-160, -80, 0, 80, 160];
-  for (const x of XS) { let prev = node(x, ZS[0]); for (let i = 1; i < ZS.length; i++) { const n = node(x, ZS[i]); R.addEdge(prev, n, 'street'); prev = n; } }
-  for (const z of ZS) { let prev = node(XS[0], z); for (let i = 1; i < XS.length; i++) { const n = node(XS[i], z); R.addEdge(prev, n, 'street'); prev = n; } }
+  ctx.modules.roads?.rebuild?.();
+  for(const [name,p] of Object.entries(CAMERAS)) ctx.camera.registerPreset(name,p);
 }

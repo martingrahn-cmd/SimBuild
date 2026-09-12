@@ -1,0 +1,23 @@
+{
+  "id": "human-playtest-r9u-2026-09-10",
+  "createdAt": "2026-09-10T12:20:00+02:00",
+  "state": "paused-for-human-playtest",
+  "source": "accepted R9u; rejected R9v reverted",
+  "archive": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r9u-2026-09-10/source-docs-tools-evidence.tar.gz",
+  "manifest": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r9u-2026-09-10/manifest.json",
+  "verification": {
+    "build": "vite 8.2.2; 163 modules; pass",
+    "normalEntry": "shots/playtest-checkpoint-2026-09-10/verification.json",
+    "normalEntryPass": true
+  },
+  "frozenSourceHashes": {
+    "src/modules/tools/index.js": "923ca9c86e65f3ca5c92e69c11d98b874c677dfdab2f74f2073ce2e47409741c",
+    "src/modules/tools/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+    "src/modules/tools/tools.js": "e8a5cd984ca18d32edd5576c3623d0a487c87058f2c81e5291a7a6e9734a7f84",
+    "src/modules/roads/index.js": "10236c24ec7042e6798b15bcd70c4cfb8d839cef2edc364e73f4590280fda2ad",
+    "docs/STATUS.json": "911bdbe9f71268fab24b8ef2684576949f4a6205f073ceab558c968384f35982",
+    "docs/HANDOFF.md": "ca9d9a9aac0aab6819166ce35b36be4adfe930443e6e7373f3062ce26d22fe0a"
+  },
+  "r9uManifest": "shots/democity/r9u-road-demolition-history/source/source-hashes.json",
+  "r9vDisposition": "docs/history/R9V-UNVERIFIED-CANDIDATE.md"
+}

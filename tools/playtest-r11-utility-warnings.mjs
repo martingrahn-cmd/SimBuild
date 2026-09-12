@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+import { chromium } from 'playwright';import fs from 'node:fs';
+const base=process.env.SIM_URL||'http://127.0.0.1:5180',dir='shots/playtest-fixes-r11';fs.mkdirSync(dir,{recursive:true});
+const out={url:`${base}/?showcase=democity&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0`,errors:[],pass:false};
+const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--use-angle=metal','--use-gl=angle','--enable-webgl','--enable-gpu','--ignore-gpu-blocklist','--no-sandbox']});
+try{const page=await browser.newPage({viewport:{width:1600,height:1000}});page.on('pageerror',e=>out.errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')out.errors.push(m.text())});await page.goto(out.url,{waitUntil:'domcontentloaded',timeout:240000});await page.waitForFunction(()=>window.__sim?.ready===true,null,{timeout:240000});
+ out.fixture=await page.evaluate(()=>{const s=window.__sim,sim=s.registry.apis.simulation,bs=[...s.world.buildings.items.values()].filter(b=>!b.construction).sort((a,b)=>Math.hypot(a.x,a.z)-Math.hypot(b.x,b.z)).slice(0,3);for(let i=0;i<bs.length;i++){const r=sim.building(bs[i].id);if(r){r.power=i!==0?1:0;r.water=i!==1?1:0;}}const b=bs[0];if(b)s.setCamera({target:[b.x,b.y,b.z],yaw:.72,pitch:.58,distance:165});return bs.map(b=>b.id);});
+ await page.waitForTimeout(700);out.markers=await page.evaluate(()=>[...document.querySelectorAll('.sb-utility-warning')].map(x=>({label:x.getAttribute('aria-label'),visible:getComputedStyle(x).display!=='none'})));
+ await page.screenshot({path:`${dir}/utility-warning-markers.png`,type:'png',timeout:180000});
+ for(const name of['Electricity','Water & Sewage','Garbage']){await page.getByRole('button',{name,exact:true}).click();await page.waitForTimeout(100);out[name]=await page.locator('.sb-service-guide').innerText();if(name==='Electricity')await page.screenshot({path:`${dir}/utility-road-guide.png`,type:'png',timeout:180000});await page.getByRole('button',{name,exact:true}).click();}
+ out.runtime=await page.evaluate(()=>({imports:{...window.__sim.world.economy.utilityImports},errors:window.__sim.errors.slice()}));
+ out.pass=out.errors.length===0&&out.runtime.errors.length===0&&out.markers.filter(x=>x.visible).length>=2&&out.markers.some(x=>x.label==='No power')&&out.markers.some(x=>x.label==='No water')&&out.Electricity.includes('connected roads')&&out.Electricity.includes('no separate cables')&&out['Water & Sewage'].includes('no separate pipes')&&out.Garbage.includes('connected roads');
+}finally{await browser.close();fs.writeFileSync(`${dir}/utility-warning-contract.json`,JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2));}

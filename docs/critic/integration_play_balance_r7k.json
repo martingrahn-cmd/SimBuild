@@ -1,0 +1,32 @@
+{
+  "scope": "ordinary-play economy",
+  "round": "r7k",
+  "decision": "accepted",
+  "score": null,
+  "evidence": [
+    "shots/integration/r7k-play-balance.json",
+    "shots/integration/r7k-play-balance-candidate-scaled.json",
+    "shots/integration/r7k-play-balance-candidate-scaled-90d.json",
+    "shots/integration/r7k-play-balance-determinism-a.json",
+    "shots/integration/r7k-play-balance-determinism-b.json",
+    "shots/integration/r7k-balance-final/aerial_12.png"
+  ],
+  "verified": {
+    "oldFirstNegativeDays": { "tax10": 8, "tax15": 10, "tax20": 12 },
+    "newFirstNegativeDays30": { "tax10": null, "tax15": null, "tax20": null },
+    "day90Money": { "tax10": -48513.930854674705, "tax15": 13713.979563421713, "tax20": 75941.65540112635 },
+    "day90Happiness": { "tax10": 0.6655721028987731, "tax15": 0.5953865970602825, "tax20": 0.46537247762243383 },
+    "populationChange90": 61,
+    "determinismExact": true,
+    "apiPass": true,
+    "restagePass": true,
+    "saveRollbackPass": true,
+    "smokeErrors": 0,
+    "buildModules": 163
+  },
+  "remaining": [
+    "default 10% unattended city becomes negative on day 33",
+    "growth stops at 465 because all existing lots are occupied; player zoning is required",
+    "human pacing and decision clarity remain a subjective playtest gate"
+  ]
+}

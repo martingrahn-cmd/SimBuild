@@ -90,6 +90,40 @@ export class Network {
     this.events.emit('roads:changed', payload);
   }
 
+  /** Restore stable graph identifiers before dependent modules restore their references. */
+  restore(data, { resetIds = false } = {}) {
+    if (!Array.isArray(data?.nodes) || !Array.isArray(data?.edges)) throw new Error('invalid road save');
+    const ids = new Set(), nodes = new Map();
+    for (const n of data.nodes) {
+      if (!Number.isInteger(n.id) || n.id < 1 || ids.has(n.id) || !Number.isFinite(n.x) || !Number.isFinite(n.z)) throw new Error('invalid saved road node');
+      ids.add(n.id); nodes.set(n.id, n);
+    }
+    for (const e of data.edges) {
+      if (!Number.isInteger(e.id) || e.id < 1 || ids.has(e.id) || !nodes.has(e.a) || !nodes.has(e.b) || e.a === e.b) throw new Error('invalid saved road edge');
+      if (e.ctrl && (!Number.isFinite(e.ctrl.x) || !Number.isFinite(e.ctrl.z))) throw new Error('invalid saved road curve');
+      if (e.design && (!Array.isArray(e.design) || !e.design.every(Number.isFinite))) throw new Error('invalid saved road profile');
+      ids.add(e.id);
+    }
+    const removed = [...this.edges.keys()];
+    this.nodes.clear(); this.edges.clear(); this.cache.clear();
+    for (const n of data.nodes) {
+      const y = Number.isFinite(n.y) ? n.y : this.world.terrain.getHeight(n.x, n.z);
+      this.nodes.set(n.id, { id: n.id, x: n.x, z: n.z, y, designY: Number.isFinite(n.designY) ? n.designY : y, edges: new Set() });
+    }
+    for (const raw of data.edges) {
+      const type = this.R.types[raw.type] ? raw.type : 'street', T = this.typeOf(type);
+      const e = { id: raw.id, a: raw.a, b: raw.b, type, lanes: raw.lanes ?? T.lanes, width: T.width, oneWay: raw.oneWay ?? !!T.oneWay,
+        ctrl: raw.ctrl ? { ...raw.ctrl } : null, length: 0, elevation: raw.elevation ?? 0, trimA: 0, trimB: 0, bridge: false };
+      this.edges.set(e.id, e); this.nodes.get(e.a).edges.add(e.id); this.nodes.get(e.b).edges.add(e.id);
+      this._samplePolyline(e);
+      const p = this.cache.get(e.id); if (raw.design?.length === p.n) p.design.set(raw.design);
+    }
+    this._nextId = resetIds
+      ? Math.max(data.nextId || 1, ...[...ids].map(id => id + 1))
+      : Math.max(this._nextId, data.nextId || 1, ...[...ids].map(id => id + 1));
+    this.dirty = true; this._bump({ added: [...this.edges.keys()], removed, nodes: [...this.nodes.keys()] });
+  }
+
   // ------------------------------------------------------------------ curve sampling
   /** Point on the (possibly bezier) edge curve at parameter t (NOT arc length). */
   curveAt(e, t, out = {}) {
@@ -181,6 +215,12 @@ export class Network {
     // height: the builder's smoothed profile blended analytically into the node plateaus (exact at the trims,
     // so strips meet intersection polygons without a step); before any rebuild, the design heights
     out.y = c.blend ? this.blendY(c, d, c.smooth[lo] + (c.smooth[hi] - c.smooth[lo]) * k) : c.ys[lo] + (c.ys[hi] - c.ys[lo]) * k;
+    // `blendY` correctly joins a deck to its node plateaus, but can otherwise lower
+    // a water row below the bridge profile minimum after profileBlend established it.
+    // Keep the floor in the network sampler so every roads consumer (render, lanes,
+    // surface queries and public samples) observes the same authoritative deck height.
+    const water = (k < 0.5 ? c.water?.[lo] : c.water?.[hi]) === 1;
+    if (water && c.bridgeFloor != null) out.y = Math.max(out.y, c.bridgeFloor);
     let tx = c.tx[lo] + (c.tx[hi] - c.tx[lo]) * k, tz = c.tz[lo] + (c.tz[hi] - c.tz[lo]) * k;
     const l = Math.hypot(tx, tz) || 1; out.tx = tx / l; out.tz = tz / l;
     return out;

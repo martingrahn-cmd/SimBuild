@@ -1,0 +1,3724 @@
+{
+  "module": "zoning",
+  "round": 3,
+  "summary": "Corrected lattice registration, reduced sunset outline peaks and minified contrast, restored the specified night coefficient, staged all high-density probes in close views, and refreshed shoreline/junction evidence. Completed32 Metal captures with zero errors. Remaining numerical and measurement limitations are explicit; this is not a claimed pass.",
+  "screenshotsViewed": [
+    "shots/zoning/r3/sessionA_on.png",
+    "shots/zoning/r3/sessionB_on.png",
+    "shots/zoning/r3/sessionC_on.png",
+    "shots/zoning/r3/sessionF_0.png",
+    "shots/zoning/r3/aerial_22.png",
+    "shots/zoning/r3/street_12.png",
+    "shots/zoning/r3/skyline_12.png",
+    "shots/zoning/r3/skyline_22.png",
+    "shots/zoning/r3/street_22.png",
+    "shots/zoning/r3/sessionE_0.png",
+    "shots/zoning/r3/sessionE_1.png",
+    "shots/zoning/r3/sessionF_1.png",
+    "shots/zoning/r3/river_run_12.png",
+    "shots/zoning/r3/closeup_12.png",
+    "shots/zoning/r3/closeup_22.png",
+    "shots/zoning/r3/zones_12.png",
+    "shots/zoning/r3/zones_17p5.png",
+    "shots/zoning/r3/zonesclose_12.png",
+    "shots/zoning/r3/zonesclose_22.png",
+    "shots/zoning/r3/zoneswide_12.png",
+    "shots/zoning/r3/zoneswide_22.png",
+    "shots/zoning/r3/all12.png",
+    "shots/zoning/r3/degrade_noroads.png",
+    "shots/zoning/r3/degrade_noterrain.png",
+    "shots/zoning/r3/crops_zones_12.png",
+    "shots/zoning/r3/crops_zoneswide_12.png",
+    "shots/zoning/r3/zoneslope_12.png",
+    "shots/zoning/r3/zoneslope_17p5.png",
+    "shots/zoning/r3/zoneslope_22.png",
+    "shots/zoning/r3/sessionA_off.png",
+    "shots/zoning/r3/sessionB_off.png",
+    "shots/zoning/r3/sessionC_off.png"
+  ],
+  "acceptanceMet": [
+    "1: Fill alpha 0.52; all eight paired noon crops retain terrain detail (luminance std ratio 1.034–1.958; mean rise −4.88 to 28.75).",
+    "2: Eight identifiable palette classes; all 28 between-hatch 40px patch distances >=40, minimum 42.706 (commercial-high/office-high).",
+    "3 partial: World hatch remains 3.0m, 45 degrees, 18% darkening; all four high-density probe subjects are now visible in zones and zonesclose.",
+    "4 partial: Required night coefficient restored to 0.42; zones_22 full-frame p99 85.503 and brightest pixel outside overlay.",
+    "5 partial: Corrected the four-metre lattice phase error; lines now register with the true x/z=8k cell borders.",
+    "6 partial: Shared uTime advances 0.9994 per second; painted materials expose uPulseAmp=0.30; still outlines remain visible after limiting peak white.",
+    "7–8 geometric: 5347 frontage vertices have 1.54787–1.55000m paved-edge clearance; maximum within-run deviation 0.002003m. Road markings remain unobscured in viewed street and closeup images.",
+    "9 spatial: Worst eligible wholly zoned 100px stipple crop is 0.13%, below 2%; no eligible wholly zoned 100px windows exist in several distant presets, which is reported rather than counted as visual proof.",
+    "10–12: 1728 cells, 143 valid lots, 1269 claimed cells (73.4375%); preferred sizes and corner frames pass; zero oversized unclaimed junction notches across the refreshed 45-node list.",
+    "13 exclusion: Zero cells violate sampled water/slope/height-range constraints. Declared river loop has 21 cells/14 direction changes; hillside loop has 58 cells/33 changes. River-loop qualification limitation is retained below.",
+    "14–15: Zero highway/ramp frontage; all 143 existing lot identities and buildingId values survive unrelated road refresh.",
+    "16 functional: Correct all-page settled toggle contributes 0 draws/0 triangles; tool events fade overlay in and out to invisible.",
+    "18: Empty-band RGB distance to bare ground 47.432 and nearest painted patch 58.830; empty fill alpha 0.13.",
+    "19 material: All overlay materials enable shared fog, tone mapping and color-space chunks. Named wide crop far/near saturation ratio 0.645858; prescribed distance caveat is retained.",
+    "20: Settled toggle and restored-toggle both measure 5 draws/19376 triangles, geometry delta 0, max captured zoning frame update 0.1ms; logged max rebuild 18ms.",
+    "21–22: Seed replay/persistence restores 143 lots; no-roads yields empty hidden ready overlay; no-terrain yields flat y=0.16 ready overlay. Both degradation pages report zero errors.",
+    "24–26: All32 matrix shots and paired sessions/crop/all/degradation pages report zero errors; lot frames and lookup tests pass; bulk emits once, five paint calls emit five times, burst causes three band rebuilds.",
+    "Section8 sunset ceiling: Overlay-mask p99 at 17.5 is 181.940 zones, 180.785 zonesclose, 187.163 zoneslope, all below235."
+  ],
+  "acceptanceMissed": [
+    "3: Industrial-low zoneswide 100px on/off std ratio is 1.615181, slightly above1.6. The other seven pass.",
+    "4: Required signed mean(on-off) night/noon ratios are [0.2716,0.0895,0.2613,0.8069,0.2048,-0.0539,0.1530,0.8809]; none lies in0.35–0.55 despite coefficient0.42. This estimator depends on underlying ground and can have a negative/near-zero denominator. Pending spec proposal is not a waiver.",
+    "5: The phase correction is proven, but full numerical width compliance is not certified: the broad low-density border ridge sampler gives FWHM medians3.0px street,3.0px closeup,4.2px zonesclose,2.0px zoneswide, with large outliers where outlines/terrain overlap. These mixed ridges require an independent isolated-line check; no width pass is claimed.",
+    "9: SessionE masked temporal maximum21 exceeds12 at23 of436083 pixels; mean0.04289 passes2. There is no obvious flicker in the inspected image pair, but the literal maximum fails.",
+    "23: SessionF masked temporal maximum12.2126 exceeds12 at1 of187535 pixels; mean0.20967 passes2. Do not round the maximum down to a pass.",
+    "6 completeness: The numerical >=35% boundary-to-fill contrast was not independently re-isolated after reducing outline peak; animation and visual boundary legibility were checked.",
+    "13 qualification: The recorded 21-cell river loop reaches14 turns but includes its inland return edge, not solely a water-cut contour; the extension lies outside the fixed east-facing zoneslope frame. river_run_12.png shows the actual shoreline subject. Independent critic should judge this limitation."
+  ],
+  "drawCalls": 5,
+  "triangles": 19376,
+  "errors": 0,
+  "remainingWeaknesses": [
+    "Night attenuation remains uneven under the required signed crop estimator; correct coefficient and dark full-frame appearance do not satisfy that ratio gate.",
+    "One wide-view contrast crop narrowly exceeds the ceiling; line widths need a cleaner isolated ridge measurement.",
+    "Temporal maxima contain very sparse threshold outliers. Source and capture state were frozen before the complete matrix; no late shader changes are hidden.",
+    "River extension provides a longer visible shoreline subject, but its declared closed run includes inland return and therefore is not a pure shoreline contour test.",
+    "Literal fade timing and heap/texture-memory rows are advisory per residual.json; current sampling stalls prevent certifying fade crossing time. Whole-scene heap124.9MB is not zoning contribution.",
+    "The showcase remains a technical planning overlay with sparse undeveloped interiors; it does not match the richness of populated CS2 reference cities."
+  ],
+  "coreRequestFile": "docs/core-requests/zoning.md",
+  "selfScore": 8.1,
+  "referenceImagesViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg"
+  ],
+  "changedFiles": [
+    "src/modules/zoning/overlay.js",
+    "src/modules/zoning/palette.js",
+    "src/modules/zoning/showcase.js",
+    "src/modules/zoning/index.js"
+  ],
+  "budget": {
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "drawCallsAttributable": 5,
+    "trianglesAttributable": 19376,
+    "restoredToggleDrawCalls": 5,
+    "restoredToggleTriangles": 19376,
+    "sceneMaxDrawCalls": 49,
+    "sceneMaxTriangles": 769300,
+    "minFps": 56.3,
+    "maxModuleMs": 0.10000000055879354,
+    "maxLoggedRebuildMs": 18,
+    "initMs": 1,
+    "helperTextures": 0,
+    "geometryDeltaOver60IdleFrames": 0,
+    "heapContributionMB": null
+  },
+  "stats": {
+    "cells": 1728,
+    "zonable": 2423,
+    "lots": 143,
+    "claimed": 1269,
+    "per": {
+      "residential": 694,
+      "commercial": 328,
+      "industrial": 286,
+      "office": 420
+    },
+    "overlay": {
+      "cells": 1728,
+      "lots": 143,
+      "tris": 19376,
+      "draws": 5,
+      "ms": 10.099999999627471
+    },
+    "claimedPct": 73.4375
+  },
+  "staging": {
+    "zoneslopeTarget": [
+      241,
+      0,
+      -121
+    ],
+    "hillsideStreet": {
+      "start": [
+        218,
+        -156.5
+      ],
+      "peak": [
+        264,
+        -86,
+        0.505
+      ],
+      "end": [
+        289.3,
+        -54.3
+      ]
+    },
+    "waterfrontRun": [
+      [
+        -320,
+        -160
+      ],
+      [
+        -240,
+        -160
+      ],
+      [
+        -200,
+        -160
+      ],
+      [
+        -160,
+        -159.5
+      ],
+      [
+        -80,
+        -152
+      ],
+      [
+        0,
+        -129.2
+      ],
+      [
+        80,
+        -120.7
+      ],
+      [
+        160,
+        -142.5
+      ],
+      [
+        240,
+        -156.5
+      ],
+      [
+        320,
+        -160
+      ]
+    ],
+    "riverExtension": {
+      "start": [
+        -480,
+        -329.5199966430664
+      ],
+      "control": [
+        -400,
+        -365.8789520263672
+      ],
+      "end": [
+        -320,
+        -160
+      ]
+    },
+    "highway": [
+      [
+        -470,
+        -220
+      ],
+      [
+        -300,
+        -216
+      ],
+      [
+        -140,
+        -210
+      ]
+    ],
+    "junctionCount": 45,
+    "junctionNodeIds": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      24,
+      25,
+      26,
+      27,
+      29,
+      30,
+      31,
+      32,
+      43,
+      44,
+      50,
+      51,
+      52,
+      57,
+      58,
+      59,
+      64,
+      65,
+      68,
+      69,
+      70,
+      75,
+      76,
+      77,
+      82,
+      83,
+      84,
+      89,
+      90,
+      91,
+      96,
+      97,
+      103,
+      111,
+      121
+    ],
+    "junctions": [
+      {
+        "id": 2,
+        "x": -320,
+        "z": 0
+      },
+      {
+        "id": 3,
+        "x": -240,
+        "z": 0
+      },
+      {
+        "id": 4,
+        "x": -160,
+        "z": 0
+      },
+      {
+        "id": 5,
+        "x": -80,
+        "z": 0
+      },
+      {
+        "id": 6,
+        "x": 0,
+        "z": 0
+      },
+      {
+        "id": 7,
+        "x": 40,
+        "z": 0
+      },
+      {
+        "id": 8,
+        "x": 80,
+        "z": 0
+      },
+      {
+        "id": 9,
+        "x": 160,
+        "z": 0
+      },
+      {
+        "id": 10,
+        "x": 240,
+        "z": 0
+      },
+      {
+        "id": 11,
+        "x": 320,
+        "z": 0
+      },
+      {
+        "id": 24,
+        "x": -320,
+        "z": -160
+      },
+      {
+        "id": 25,
+        "x": -240,
+        "z": -160
+      },
+      {
+        "id": 26,
+        "x": -200,
+        "z": -160
+      },
+      {
+        "id": 27,
+        "x": -160,
+        "z": -159.51402282714844
+      },
+      {
+        "id": 29,
+        "x": 0,
+        "z": -129.16371414184573
+      },
+      {
+        "id": 30,
+        "x": 80,
+        "z": -120.689565032959
+      },
+      {
+        "id": 31,
+        "x": 160,
+        "z": -142.48293330078124
+      },
+      {
+        "id": 32,
+        "x": 240,
+        "z": -156.49658666015625
+      },
+      {
+        "id": 43,
+        "x": -320,
+        "z": -80
+      },
+      {
+        "id": 44,
+        "x": -320,
+        "z": 80
+      },
+      {
+        "id": 50,
+        "x": -240,
+        "z": -80
+      },
+      {
+        "id": 51,
+        "x": -240,
+        "z": 80
+      },
+      {
+        "id": 52,
+        "x": -240,
+        "z": 160
+      },
+      {
+        "id": 57,
+        "x": -160,
+        "z": -80
+      },
+      {
+        "id": 58,
+        "x": -160,
+        "z": 80
+      },
+      {
+        "id": 59,
+        "x": -160,
+        "z": 160
+      },
+      {
+        "id": 64,
+        "x": -80,
+        "z": 80
+      },
+      {
+        "id": 65,
+        "x": -80,
+        "z": 160
+      },
+      {
+        "id": 68,
+        "x": 0,
+        "z": -80
+      },
+      {
+        "id": 69,
+        "x": 0,
+        "z": 80
+      },
+      {
+        "id": 70,
+        "x": 0,
+        "z": 160
+      },
+      {
+        "id": 75,
+        "x": 80,
+        "z": -80
+      },
+      {
+        "id": 76,
+        "x": 80,
+        "z": 80
+      },
+      {
+        "id": 77,
+        "x": 80,
+        "z": 160
+      },
+      {
+        "id": 82,
+        "x": 160,
+        "z": -80
+      },
+      {
+        "id": 83,
+        "x": 160,
+        "z": 80
+      },
+      {
+        "id": 84,
+        "x": 160,
+        "z": 160
+      },
+      {
+        "id": 89,
+        "x": 240,
+        "z": -80
+      },
+      {
+        "id": 90,
+        "x": 240,
+        "z": 80
+      },
+      {
+        "id": 91,
+        "x": 240,
+        "z": 160
+      },
+      {
+        "id": 96,
+        "x": 320,
+        "z": -80
+      },
+      {
+        "id": 97,
+        "x": 320,
+        "z": 80
+      },
+      {
+        "id": 103,
+        "x": -200,
+        "z": -80
+      },
+      {
+        "id": 111,
+        "x": 120,
+        "z": 80
+      },
+      {
+        "id": 121,
+        "x": 120,
+        "z": 160
+      }
+    ],
+    "riverFrontageRun": {
+      "first": "71,81",
+      "last": "70,82",
+      "cells": 21,
+      "directionChanges": 14,
+      "keys": [
+        "71,81",
+        "72,82",
+        "73,82",
+        "73,83",
+        "74,84",
+        "75,83",
+        "76,83",
+        "76,84",
+        "75,85",
+        "74,85",
+        "73,84",
+        "72,84",
+        "71,84",
+        "70,84",
+        "69,84",
+        "68,84",
+        "67,85",
+        "67,84",
+        "68,83",
+        "69,82",
+        "70,82"
+      ]
+    },
+    "hillsideRun": {
+      "first": "169,109",
+      "last": "169,110",
+      "cells": 58,
+      "directionChanges": 33,
+      "keys": [
+        "169,109",
+        "170,109",
+        "171,109",
+        "171,110",
+        "171,111",
+        "171,112",
+        "170,112",
+        "169,113",
+        "170,114",
+        "170,115",
+        "171,116",
+        "172,115",
+        "173,115",
+        "172,116",
+        "173,117",
+        "174,117",
+        "175,117",
+        "176,118",
+        "177,118",
+        "178,118",
+        "179,118",
+        "179,119",
+        "179,120",
+        "180,121",
+        "181,121",
+        "180,122",
+        "181,123",
+        "181,124",
+        "180,125",
+        "180,126",
+        "180,127",
+        "180,128",
+        "180,129",
+        "180,130",
+        "180,129",
+        "180,128",
+        "180,127",
+        "180,126",
+        "179,125",
+        "179,124",
+        "179,123",
+        "178,122",
+        "177,121",
+        "176,120",
+        "176,119",
+        "175,118",
+        "174,117",
+        "173,118",
+        "172,117",
+        "171,117",
+        "170,116",
+        "169,116",
+        "169,115",
+        "169,114",
+        "169,113",
+        "169,112",
+        "169,111",
+        "169,110"
+      ]
+    }
+  },
+  "probePoints": [
+    {
+      "type": "residential",
+      "density": "low",
+      "x": -20,
+      "z": 28
+    },
+    {
+      "type": "residential",
+      "density": "high",
+      "x": -292,
+      "z": -36
+    },
+    {
+      "type": "commercial",
+      "density": "low",
+      "x": -100,
+      "z": 44
+    },
+    {
+      "type": "commercial",
+      "density": "high",
+      "x": -212,
+      "z": -36
+    },
+    {
+      "type": "industrial",
+      "density": "low",
+      "x": 100,
+      "z": 28
+    },
+    {
+      "type": "industrial",
+      "density": "high",
+      "x": -140,
+      "z": -36
+    },
+    {
+      "type": "office",
+      "density": "low",
+      "x": 20,
+      "z": 28
+    },
+    {
+      "type": "office",
+      "density": "high",
+      "x": -52,
+      "z": -28
+    }
+  ],
+  "measurements": {
+    "classes": [
+      {
+        "class": "residential-low",
+        "pixel": [
+          814,
+          569,
+          0.9960723657401384
+        ],
+        "stdRatio": 1.8812867121582626,
+        "meanRise": 21.0884975,
+        "nightDelta": 5.728207739999999,
+        "nightRatio": 0.27162711520818394
+      },
+      {
+        "class": "residential-high",
+        "pixel": [
+          323,
+          136,
+          0.997495820213423
+        ],
+        "stdRatio": 1.1969310581242347,
+        "meanRise": 6.026386874999999,
+        "nightDelta": 0.5392573849999999,
+        "nightRatio": 0.08948270268493175
+      },
+      {
+        "class": "commercial-low",
+        "pixel": [
+          518,
+          472,
+          0.9963923757048833
+        ],
+        "stdRatio": 1.60819681286241,
+        "meanRise": 13.33364499,
+        "nightDelta": 3.4834969999999985,
+        "nightRatio": 0.26125616833300724
+      },
+      {
+        "class": "commercial-high",
+        "pixel": [
+          479,
+          208,
+          0.9972787812957101
+        ],
+        "stdRatio": 1.0342925085607872,
+        "meanRise": -3.5617579999999993,
+        "nightDelta": -2.873947285,
+        "nightRatio": 0.8068901045494951
+      },
+      {
+        "class": "industrial-low",
+        "pixel": [
+          1317,
+          825,
+          0.9951546260849268
+        ],
+        "stdRatio": 1.9576742966024026,
+        "meanRise": 28.748556665,
+        "nightDelta": 5.888943855000001,
+        "nightRatio": 0.20484311346904974
+      },
+      {
+        "class": "industrial-high",
+        "pixel": [
+          642,
+          285,
+          0.9970546493893604
+        ],
+        "stdRatio": 1.070296569936068,
+        "meanRise": 3.552824645,
+        "nightDelta": -0.19141373999999986,
+        "nightRatio": -0.053876495218918935
+      },
+      {
+        "class": "office-low",
+        "pixel": [
+          960,
+          649,
+          0.9958250036745129
+        ],
+        "stdRatio": 1.24078343903081,
+        "meanRise": 6.78768637,
+        "nightDelta": 1.0383713850000003,
+        "nightRatio": 0.1529786923552274
+      },
+      {
+        "class": "office-high",
+        "pixel": [
+          860,
+          403,
+          0.9966630075632783
+        ],
+        "stdRatio": 1.0568530407701537,
+        "meanRise": -4.882268024999999,
+        "nightDelta": -4.300697905,
+        "nightRatio": 0.8808811566628402
+      }
+    ],
+    "aliasRatios": [
+      1.488592761428411,
+      1.0306990367598932,
+      1.3495519204190483,
+      1.0165070541132604,
+      1.6151805632098817,
+      1.0027491124793964,
+      1.1031146925855064,
+      0.985704698035194
+    ],
+    "empty": {
+      "rgb": [
+        136.69611111111112,
+        133.09409722222222,
+        109.45729166666666
+      ],
+      "bareRGB": [
+        107.91180555555556,
+        104.76875,
+        84.57979166666667
+      ],
+      "toBare": 47.431545914349435,
+      "toPaintedMin": 58.83035307172964
+    },
+    "fog": {
+      "farSat": 0.18741740564699777,
+      "nearSat": 0.2901837493621302,
+      "ratio": 0.6458576886506253
+    },
+    "frames": [
+      {
+        "file": "aerial_6p5",
+        "p1": 53.918600000000005,
+        "p50": 98.83160000000001,
+        "p99": 147.39059999999998,
+        "overlayP99": 156.8344,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "aerial_12",
+        "p1": 54.06419999999999,
+        "p50": 102.43889999999999,
+        "p99": 149.0722,
+        "overlayP99": 158.07211999999996,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "aerial_17p5",
+        "p1": 55.480199999999996,
+        "p50": 102.75779999999999,
+        "p99": 153.086,
+        "overlayP99": 157.49835999999982,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "aerial_22",
+        "p1": 28.302,
+        "p50": 54.71939999999999,
+        "p99": 79.93141200000001,
+        "overlayP99": 75.64899999999999,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "street_6p5",
+        "p1": 53.706,
+        "p50": 113.67320000000001,
+        "p99": 201.42120000000003,
+        "overlayP99": 172.7674,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "street_12",
+        "p1": 56.77419999999999,
+        "p50": 117.3154,
+        "p99": 176.43839999999997,
+        "overlayP99": 172.339,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "street_17p5",
+        "p1": 60.55236000000001,
+        "p50": 131.3018,
+        "p99": 235.25560000000002,
+        "overlayP99": 183.22643599999998,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "street_22",
+        "p1": 25.302,
+        "p50": 61.2696,
+        "p99": 125.8126,
+        "overlayP99": 78.56840000000001,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "skyline_6p5",
+        "p1": 43.71,
+        "p50": 122.25919999999999,
+        "p99": 200.8424,
+        "overlayP99": 151.236704,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "skyline_12",
+        "p1": 48.2808,
+        "p50": 122.62139999999998,
+        "p99": 183.71920000000003,
+        "overlayP99": 150.97023999999996,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "skyline_17p5",
+        "p1": 43.930176,
+        "p50": 147.4608,
+        "p99": 246.7662,
+        "overlayP99": 179.32964,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "skyline_22",
+        "p1": 18.9358,
+        "p50": 66.73079999999999,
+        "p99": 115.8166,
+        "overlayP99": 76.148,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "closeup_6p5",
+        "p1": 54.4974,
+        "p50": 103.6964,
+        "p99": 193.99319999999997,
+        "overlayP99": 177.58565199999938,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "closeup_12",
+        "p1": 55.1364,
+        "p50": 109.6302,
+        "p99": 170.0906,
+        "overlayP99": 177.99239999999998,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "closeup_17p5",
+        "p1": 58.062999999999995,
+        "p50": 110.5336,
+        "p99": 211.6768,
+        "overlayP99": 179.69599999999997,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "closeup_22",
+        "p1": 26.161599999999996,
+        "p50": 55.98479999999999,
+        "p99": 116.1696,
+        "overlayP99": 78.6418,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zones_6p5",
+        "p1": 51.709999999999994,
+        "p50": 96.7328,
+        "p99": 156.622006,
+        "overlayP99": 181.012,
+        "brightestIsOverlay": true
+      },
+      {
+        "file": "zones_12",
+        "p1": 53.1364,
+        "p50": 99.8518,
+        "p99": 159.27679999999998,
+        "overlayP99": 181.86759999999998,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zones_17p5",
+        "p1": 56.1312,
+        "p50": 100.49739999999998,
+        "p99": 160.740428,
+        "overlayP99": 181.93979999999996,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zones_22",
+        "p1": 27.229799999999997,
+        "p50": 50.1304,
+        "p99": 85.5026,
+        "overlayP99": 78.5922,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zonesclose_6p5",
+        "p1": 53.203399999999995,
+        "p50": 97.3474,
+        "p99": 194.71239999999997,
+        "overlayP99": 179.99759999999998,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zonesclose_12",
+        "p1": 53.208600000000004,
+        "p50": 98.63419999999999,
+        "p99": 162.53949200000008,
+        "overlayP99": 179.78499999999997,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zonesclose_17p5",
+        "p1": 51.075,
+        "p50": 107.84719999999999,
+        "p99": 229.90728200000063,
+        "overlayP99": 180.785,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zonesclose_22",
+        "p1": 26.302,
+        "p50": 52.8788,
+        "p99": 110.8166,
+        "overlayP99": 76.88080000000001,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneswide_6p5",
+        "p1": 54.059,
+        "p50": 97.9748,
+        "p99": 140.12479999999996,
+        "overlayP99": 146.2372079999999,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneswide_12",
+        "p1": 54.136399999999995,
+        "p50": 102.0478,
+        "p99": 145.30802200000002,
+        "overlayP99": 151.57844799999995,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneswide_17p5",
+        "p1": 55.059,
+        "p50": 101.4678,
+        "p99": 145.3398,
+        "overlayP99": 144.62464799999992,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneswide_22",
+        "p1": 28.4808,
+        "p50": 54.806599999999996,
+        "p99": 79.13999999999999,
+        "overlayP99": 74.43119999999999,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneslope_6p5",
+        "p1": 41.1616,
+        "p50": 111.54119999999999,
+        "p99": 178.6654,
+        "overlayP99": 187.231,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneslope_12",
+        "p1": 48.995999999999995,
+        "p50": 100.62379999999999,
+        "p99": 159.1376,
+        "overlayP99": 186.0906,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneslope_17p5",
+        "p1": 35.1616,
+        "p50": 126.1892,
+        "p99": 203.55759999999998,
+        "overlayP99": 187.16279999999998,
+        "brightestIsOverlay": false
+      },
+      {
+        "file": "zoneslope_22",
+        "p1": 25.514599999999998,
+        "p50": 56.626,
+        "p99": 91.1186,
+        "overlayP99": 80.0642,
+        "brightestIsOverlay": false
+      }
+    ],
+    "stipple": [
+      {
+        "file": "aerial_6p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "aerial_12",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "aerial_17p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "aerial_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "street_6p5",
+        "worstPct": 0.05,
+        "rect": [
+          989,
+          555,
+          100,
+          100
+        ],
+        "eligibleWindows": 51034
+      },
+      {
+        "file": "street_12",
+        "worstPct": 0.04,
+        "rect": [
+          989,
+          555,
+          100,
+          100
+        ],
+        "eligibleWindows": 51034
+      },
+      {
+        "file": "street_17p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 51034
+      },
+      {
+        "file": "street_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 51034
+      },
+      {
+        "file": "skyline_6p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "skyline_12",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "skyline_17p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "skyline_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "closeup_6p5",
+        "worstPct": 0.02,
+        "rect": [
+          617,
+          641,
+          100,
+          100
+        ],
+        "eligibleWindows": 118326
+      },
+      {
+        "file": "closeup_12",
+        "worstPct": 0.01,
+        "rect": [
+          866,
+          525,
+          100,
+          100
+        ],
+        "eligibleWindows": 118326
+      },
+      {
+        "file": "closeup_17p5",
+        "worstPct": 0.01,
+        "rect": [
+          866,
+          525,
+          100,
+          100
+        ],
+        "eligibleWindows": 118326
+      },
+      {
+        "file": "closeup_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 118326
+      },
+      {
+        "file": "zones_6p5",
+        "worstPct": 0.05,
+        "rect": [
+          683,
+          866,
+          100,
+          100
+        ],
+        "eligibleWindows": 800
+      },
+      {
+        "file": "zones_12",
+        "worstPct": 0.04,
+        "rect": [
+          690,
+          858,
+          100,
+          100
+        ],
+        "eligibleWindows": 800
+      },
+      {
+        "file": "zones_17p5",
+        "worstPct": 0.05,
+        "rect": [
+          683,
+          866,
+          100,
+          100
+        ],
+        "eligibleWindows": 800
+      },
+      {
+        "file": "zones_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 800
+      },
+      {
+        "file": "zonesclose_6p5",
+        "worstPct": 0.06,
+        "rect": [
+          944,
+          769,
+          100,
+          100
+        ],
+        "eligibleWindows": 66261
+      },
+      {
+        "file": "zonesclose_12",
+        "worstPct": 0.06,
+        "rect": [
+          944,
+          769,
+          100,
+          100
+        ],
+        "eligibleWindows": 66261
+      },
+      {
+        "file": "zonesclose_17p5",
+        "worstPct": 0.06,
+        "rect": [
+          944,
+          769,
+          100,
+          100
+        ],
+        "eligibleWindows": 66261
+      },
+      {
+        "file": "zonesclose_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 66261
+      },
+      {
+        "file": "zoneswide_6p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "zoneswide_12",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "zoneswide_17p5",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "zoneswide_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 0
+      },
+      {
+        "file": "zoneslope_6p5",
+        "worstPct": 0.13,
+        "rect": [
+          1012,
+          647,
+          100,
+          100
+        ],
+        "eligibleWindows": 54846
+      },
+      {
+        "file": "zoneslope_12",
+        "worstPct": 0.13,
+        "rect": [
+          1012,
+          647,
+          100,
+          100
+        ],
+        "eligibleWindows": 54846
+      },
+      {
+        "file": "zoneslope_17p5",
+        "worstPct": 0.1,
+        "rect": [
+          1012,
+          646,
+          100,
+          100
+        ],
+        "eligibleWindows": 54846
+      },
+      {
+        "file": "zoneslope_22",
+        "worstPct": 0,
+        "rect": null,
+        "eligibleWindows": 54846
+      }
+    ],
+    "lineWidths": {
+      "street": {
+        "n": 83,
+        "median": 3,
+        "range": [
+          0.4,
+          10.3
+        ],
+        "samples": [
+          {
+            "key": "90,110",
+            "point": [
+              746.6581047096684,
+              320.4285829108984
+            ],
+            "fwhm": 2.3,
+            "contrast": 20.08
+          },
+          {
+            "key": "91,110",
+            "point": [
+              758.7356481923324,
+              322.22153472262846
+            ],
+            "fwhm": 1.3,
+            "contrast": 8.35
+          },
+          {
+            "key": "93,110",
+            "point": [
+              783.9628173323299,
+              326.68880353794293
+            ],
+            "fwhm": 6.6,
+            "contrast": 50.71
+          },
+          {
+            "key": "94,110",
+            "point": [
+              797.11780459108,
+              328.3067308623892
+            ],
+            "fwhm": 5.3,
+            "contrast": 51.85
+          },
+          {
+            "key": "95,110",
+            "point": [
+              810.665750285959,
+              329.8410927092435
+            ],
+            "fwhm": 3.9,
+            "contrast": 46.84
+          },
+          {
+            "key": "90,111",
+            "point": [
+              725.2718168938975,
+              320.9042305482318
+            ],
+            "fwhm": 0.9,
+            "contrast": 7.43
+          },
+          {
+            "key": "94,111",
+            "point": [
+              775.0347227934797,
+              327.9429373869582
+            ],
+            "fwhm": 8.8,
+            "contrast": 27.12
+          },
+          {
+            "key": "95,111",
+            "point": [
+              788.4016117770775,
+              328.99985437344577
+            ],
+            "fwhm": 5.6,
+            "contrast": 52.74
+          },
+          {
+            "key": "90,112",
+            "point": [
+              703.3866315268164,
+              321.1334787575205
+            ],
+            "fwhm": 3.5,
+            "contrast": 12.57
+          },
+          {
+            "key": "95,112",
+            "point": [
+              765.5757027632401,
+              328.01221549221225
+            ],
+            "fwhm": 8.2,
+            "contrast": 24.98
+          },
+          {
+            "key": "90,113",
+            "point": [
+              680.9777098736794,
+              320.97223446541636
+            ],
+            "fwhm": 1.8,
+            "contrast": 16.5
+          },
+          {
+            "key": "95,113",
+            "point": [
+              742.177084255902,
+              327.25736209495983
+            ],
+            "fwhm": 9,
+            "contrast": 26.42
+          },
+          {
+            "key": "90,114",
+            "point": [
+              658.042173176504,
+              320.8746198197788
+            ],
+            "fwhm": 4.6,
+            "contrast": 11.75
+          },
+          {
+            "key": "91,114",
+            "point": [
+              669.3446606858283,
+              321.7813157136478
+            ],
+            "fwhm": 4.7,
+            "contrast": 14.73
+          },
+          {
+            "key": "94,114",
+            "point": [
+              705.390597396672,
+              325.08128676630645
+            ],
+            "fwhm": 0.9,
+            "contrast": 6.85
+          }
+        ]
+      },
+      "closeup": {
+        "n": 75,
+        "median": 3,
+        "range": [
+          0.6,
+          11.1
+        ],
+        "samples": [
+          {
+            "key": "90,110",
+            "point": [
+              394.0940863494342,
+              171.99785120707267
+            ],
+            "fwhm": 0.6,
+            "contrast": 10.83
+          },
+          {
+            "key": "91,110",
+            "point": [
+              409.80402128800756,
+              174.8225147419998
+            ],
+            "fwhm": 10.3,
+            "contrast": 24.03
+          },
+          {
+            "key": "92,110",
+            "point": [
+              425.8857196050767,
+              178.0721567178251
+            ],
+            "fwhm": 9.9,
+            "contrast": 15.6
+          },
+          {
+            "key": "93,110",
+            "point": [
+              442.30296836310185,
+              181.43196760730282
+            ],
+            "fwhm": 3.2,
+            "contrast": 41.1
+          },
+          {
+            "key": "94,110",
+            "point": [
+              458.9595060054679,
+              184.06953675862655
+            ],
+            "fwhm": 3.4,
+            "contrast": 30
+          },
+          {
+            "key": "95,110",
+            "point": [
+              475.95371314448533,
+              186.62129969077964
+            ],
+            "fwhm": 7.4,
+            "contrast": 33.49
+          },
+          {
+            "key": "90,111",
+            "point": [
+              370.58981136780193,
+              173.97748964387273
+            ],
+            "fwhm": 6.3,
+            "contrast": 12.66
+          },
+          {
+            "key": "91,111",
+            "point": [
+              386.32612754973167,
+              177.02696521273623
+            ],
+            "fwhm": 8.5,
+            "contrast": 20.05
+          },
+          {
+            "key": "90,112",
+            "point": [
+              346.302695936673,
+              175.73459631029579
+            ],
+            "fwhm": 5.3,
+            "contrast": 33.3
+          },
+          {
+            "key": "90,113",
+            "point": [
+              321.1652641056595,
+              177.10831114595697
+            ],
+            "fwhm": 3.2,
+            "contrast": 28.99
+          },
+          {
+            "key": "90,114",
+            "point": [
+              295.21582245044044,
+              178.6025088274352
+            ],
+            "fwhm": 1.8,
+            "contrast": 28.33
+          },
+          {
+            "key": "91,114",
+            "point": [
+              310.7133789900909,
+              180.59818185358426
+            ],
+            "fwhm": 10.9,
+            "contrast": 22.69
+          },
+          {
+            "key": "94,114",
+            "point": [
+              359.4101637118937,
+              187.30921156930407
+            ],
+            "fwhm": 0.8,
+            "contrast": 23.38
+          },
+          {
+            "key": "95,114",
+            "point": [
+              376.41307450625237,
+              189.7799520206582
+            ],
+            "fwhm": 9.4,
+            "contrast": 15.05
+          },
+          {
+            "key": "90,115",
+            "point": [
+              268.32166689732946,
+              179.69355161321118
+            ],
+            "fwhm": 7.8,
+            "contrast": 21.13
+          }
+        ]
+      },
+      "zonesclose": {
+        "n": 43,
+        "median": 4.2,
+        "range": [
+          0.7,
+          11
+        ],
+        "samples": [
+          {
+            "key": "90,110",
+            "point": [
+              753.3418141282616,
+              139.38537874989845
+            ],
+            "fwhm": 9.7,
+            "contrast": 30.13
+          },
+          {
+            "key": "91,110",
+            "point": [
+              767.558569323968,
+              144.99214553056976
+            ],
+            "fwhm": 2.4,
+            "contrast": 9.58
+          },
+          {
+            "key": "94,110",
+            "point": [
+              813.1890384697446,
+              163.47460593590475
+            ],
+            "fwhm": 4.2,
+            "contrast": 15.32
+          },
+          {
+            "key": "95,110",
+            "point": [
+              829.4362327499881,
+              169.28329521102583
+            ],
+            "fwhm": 3.3,
+            "contrast": 17.11
+          },
+          {
+            "key": "90,111",
+            "point": [
+              726.3107750882102,
+              142.3307010457355
+            ],
+            "fwhm": 9.7,
+            "contrast": 26.59
+          },
+          {
+            "key": "90,112",
+            "point": [
+              698.5921237571941,
+              145.0209541510089
+            ],
+            "fwhm": 9.7,
+            "contrast": 30.86
+          },
+          {
+            "key": "90,113",
+            "point": [
+              670.1356009378251,
+              147.27513487715441
+            ],
+            "fwhm": 10.6,
+            "contrast": 39
+          },
+          {
+            "key": "90,114",
+            "point": [
+              640.9599466436076,
+              149.6727679423683
+            ],
+            "fwhm": 10.8,
+            "contrast": 31.98
+          },
+          {
+            "key": "94,114",
+            "point": [
+              695.4232289112936,
+              170.5969272565194
+            ],
+            "fwhm": 1.1,
+            "contrast": 12.72
+          },
+          {
+            "key": "95,114",
+            "point": [
+              710.3511426044255,
+              176.52331940619342
+            ],
+            "fwhm": 1.7,
+            "contrast": 9.42
+          },
+          {
+            "key": "90,115",
+            "point": [
+              610.9724930265745,
+              151.61818990447597
+            ],
+            "fwhm": 3.9,
+            "contrast": 24.39
+          },
+          {
+            "key": "92,115",
+            "point": [
+              636.446147787736,
+              161.54015289996073
+            ],
+            "fwhm": 1.3,
+            "contrast": 15.33
+          },
+          {
+            "key": "93,115",
+            "point": [
+              649.950753153172,
+              167.32843791761093
+            ],
+            "fwhm": 5.4,
+            "contrast": 6.21
+          },
+          {
+            "key": "94,115",
+            "point": [
+              663.9776228458499,
+              173.48189606700174
+            ],
+            "fwhm": 0.7,
+            "contrast": 8.57
+          },
+          {
+            "key": "95,115",
+            "point": [
+              678.5262135687935,
+              179.6932978103043
+            ],
+            "fwhm": 0.8,
+            "contrast": 6.43
+          }
+        ]
+      },
+      "zoneswide": {
+        "n": 91,
+        "median": 2,
+        "range": [
+          1.2,
+          9.1
+        ],
+        "samples": [
+          {
+            "key": "93,110",
+            "point": [
+              651.0278644739594,
+              163.6592990549308
+            ],
+            "fwhm": 5.9,
+            "contrast": 7.65
+          },
+          {
+            "key": "94,110",
+            "point": [
+              662.465851353441,
+              168.33821766052336
+            ],
+            "fwhm": 5.7,
+            "contrast": 14.17
+          },
+          {
+            "key": "94,111",
+            "point": [
+              655.2114064174275,
+              176.8205822337376
+            ],
+            "fwhm": 2.2,
+            "contrast": 7.86
+          },
+          {
+            "key": "95,111",
+            "point": [
+              666.6707525259366,
+              181.32043498872935
+            ],
+            "fwhm": 2.5,
+            "contrast": 7.75
+          },
+          {
+            "key": "90,112",
+            "point": [
+              602.025134291873,
+              166.41268285810318
+            ],
+            "fwhm": 6.8,
+            "contrast": 6.98
+          },
+          {
+            "key": "90,113",
+            "point": [
+              594.4951930667658,
+              175.01557655412296
+            ],
+            "fwhm": 9.1,
+            "contrast": 12.07
+          },
+          {
+            "key": "95,113",
+            "point": [
+              651.9294703622202,
+              198.24754139405402
+            ],
+            "fwhm": 4,
+            "contrast": 15
+          },
+          {
+            "key": "90,114",
+            "point": [
+              586.9024485562317,
+              183.7264633274006
+            ],
+            "fwhm": 2,
+            "contrast": 13.64
+          },
+          {
+            "key": "92,115",
+            "point": [
+              602.1042810594031,
+              201.50824072369915
+            ],
+            "fwhm": 2.5,
+            "contrast": 10.08
+          },
+          {
+            "key": "94,115",
+            "point": [
+              625.323828865352,
+              211.0797341355177
+            ],
+            "fwhm": 3.9,
+            "contrast": 11.18
+          },
+          {
+            "key": "121,131",
+            "point": [
+              847.2110184106541,
+              521.1751974351055
+            ],
+            "fwhm": 1.5,
+            "contrast": 9.58
+          },
+          {
+            "key": "123,131",
+            "point": [
+              875.0527867147548,
+              532.7221213927156
+            ],
+            "fwhm": 2.2,
+            "contrast": 9.38
+          },
+          {
+            "key": "124,131",
+            "point": [
+              889.1157252159334,
+              538.8023251231754
+            ],
+            "fwhm": 3.7,
+            "contrast": 6.67
+          },
+          {
+            "key": "121,132",
+            "point": [
+              839.6322333418136,
+              532.8586070091793
+            ],
+            "fwhm": 1.9,
+            "contrast": 10.96
+          },
+          {
+            "key": "125,132",
+            "point": [
+              895.9674443143465,
+              557.1987735443505
+            ],
+            "fwhm": 2,
+            "contrast": 8.93
+          }
+        ]
+      }
+    },
+    "colorsBetweenHatch": [
+      [
+        96.784375,
+        159.16,
+        62.643125
+      ],
+      [
+        60.643377001455605,
+        117.14847161572052,
+        70.33187772925764
+      ],
+      [
+        71.01912568306011,
+        143.41712204007285,
+        153.2559198542805
+      ],
+      [
+        61.11970802919708,
+        90.31970802919707,
+        126.42919708029197
+      ],
+      [
+        180.31125,
+        144.259375,
+        44.031875
+      ],
+      [
+        128.9203413940256,
+        82.26315789473684,
+        38.05832147937411
+      ],
+      [
+        149.02625,
+        102.1125,
+        157.925
+      ],
+      [
+        95.52374301675978,
+        66.29469273743017,
+        118.49162011173185
+      ]
+    ],
+    "pairs": [
+      {
+        "a": "commercial-high",
+        "b": "office-high",
+        "distance": 42.706487930136426
+      },
+      {
+        "a": "residential-low",
+        "b": "residential-high",
+        "distance": 55.94870125432382
+      },
+      {
+        "a": "commercial-low",
+        "b": "commercial-high",
+        "distance": 60.30760233436907
+      },
+      {
+        "a": "residential-high",
+        "b": "commercial-high",
+        "distance": 62.18455342930016
+      },
+      {
+        "a": "office-low",
+        "b": "office-high",
+        "distance": 75.50115906396896
+      },
+      {
+        "a": "residential-high",
+        "b": "office-high",
+        "distance": 78.24389781899876
+      },
+      {
+        "a": "industrial-low",
+        "b": "industrial-high",
+        "distance": 80.74800161226482
+      },
+      {
+        "a": "residential-high",
+        "b": "industrial-high",
+        "distance": 83.188409127054
+      },
+      {
+        "a": "residential-low",
+        "b": "industrial-low",
+        "distance": 86.86280043389547
+      },
+      {
+        "a": "residential-low",
+        "b": "industrial-high",
+        "distance": 86.8922161415365
+      },
+      {
+        "a": "residential-high",
+        "b": "commercial-low",
+        "distance": 87.60191161255108
+      },
+      {
+        "a": "commercial-low",
+        "b": "office-high",
+        "distance": 88.07327579238746
+      },
+      {
+        "a": "commercial-low",
+        "b": "office-low",
+        "distance": 88.39108300885864
+      },
+      {
+        "a": "industrial-high",
+        "b": "office-high",
+        "distance": 88.5428720537941
+      },
+      {
+        "a": "commercial-high",
+        "b": "office-low",
+        "distance": 94.12021921610817
+      },
+      {
+        "a": "residential-low",
+        "b": "commercial-low",
+        "distance": 95.51107197665176
+      },
+      {
+        "a": "residential-low",
+        "b": "commercial-high",
+        "distance": 100.39729707614582
+      },
+      {
+        "a": "residential-low",
+        "b": "office-high",
+        "distance": 108.37254676445419
+      },
+      {
+        "a": "commercial-high",
+        "b": "industrial-high",
+        "distance": 111.67473097891872
+      },
+      {
+        "a": "residential-low",
+        "b": "office-low",
+        "distance": 122.7284256530705
+      },
+      {
+        "a": "industrial-high",
+        "b": "office-low",
+        "distance": 123.1513887962724
+      },
+      {
+        "a": "residential-high",
+        "b": "office-low",
+        "distance": 125.34020803813438
+      },
+      {
+        "a": "industrial-low",
+        "b": "office-low",
+        "distance": 125.4063563761074
+      },
+      {
+        "a": "residential-high",
+        "b": "industrial-low",
+        "distance": 125.48741392612426
+      },
+      {
+        "a": "industrial-low",
+        "b": "office-high",
+        "distance": 137.1556293516258
+      },
+      {
+        "a": "commercial-low",
+        "b": "industrial-high",
+        "distance": 142.6984400154502
+      },
+      {
+        "a": "commercial-low",
+        "b": "industrial-low",
+        "distance": 154.5165680504451
+      },
+      {
+        "a": "commercial-high",
+        "b": "industrial-low",
+        "distance": 154.61380933248546
+      }
+    ],
+    "sessionE": {
+      "max": 21.00000000000003,
+      "mean": 0.04288863450306478,
+      "pixels": 436083,
+      "over12": 23
+    },
+    "sessionF": {
+      "max": 12.21259999999998,
+      "mean": 0.2096653328711974,
+      "pixels": 187535,
+      "over12": 1
+    }
+  },
+  "apiChecks": {
+    "lotSizeBad": [],
+    "lotFrameBad": [],
+    "roadApproachBad": [],
+    "lotAtCentreMismatch": [],
+    "invalid": [],
+    "unclaimedNear": [],
+    "forbiddenFrontage": 0,
+    "front": {
+      "vertices": 5347,
+      "nonzero": 5247,
+      "asphalt": 336,
+      "maxDev": 0.002002464900471068,
+      "minClear": 1.547869799780626,
+      "maxClear": 1.5500000000000576,
+      "maxGap": 1.8771983345642351,
+      "runs": [
+        {
+          "edge": 13,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 16,
+          "dev": 0
+        },
+        {
+          "edge": 13,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 16,
+          "dev": 0
+        },
+        {
+          "edge": 14,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 14,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 15,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 15,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 16,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 22,
+          "dev": 0
+        },
+        {
+          "edge": 16,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 21,
+          "dev": 0
+        },
+        {
+          "edge": 17,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 34,
+          "dev": 0
+        },
+        {
+          "edge": 17,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 18,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 18,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 8,
+          "dev": 0
+        },
+        {
+          "edge": 19,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 19,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 8,
+          "dev": 0
+        },
+        {
+          "edge": 20,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 20,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 21,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 21,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 22,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 22,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 23,
+          "type": "avenue",
+          "curve": false,
+          "side": "left",
+          "n": 16,
+          "dev": 0
+        },
+        {
+          "edge": 23,
+          "type": "avenue",
+          "curve": false,
+          "side": "right",
+          "n": 16,
+          "dev": 0
+        },
+        {
+          "edge": 34,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 34,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 35,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 35,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 36,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 13,
+          "dev": 1.7763568394002505e-15
+        },
+        {
+          "edge": 36,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 12,
+          "dev": 1.7763568394002505e-15
+        },
+        {
+          "edge": 37,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 41,
+          "dev": 2.842170943040401e-14
+        },
+        {
+          "edge": 37,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 41,
+          "dev": 2.842170943040401e-14
+        },
+        {
+          "edge": 38,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 46,
+          "dev": 3.019806626980426e-14
+        },
+        {
+          "edge": 38,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 46,
+          "dev": 2.3092638912203256e-14
+        },
+        {
+          "edge": 39,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 2.4868995751603507e-14
+        },
+        {
+          "edge": 39,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 1.4210854715202004e-14
+        },
+        {
+          "edge": 40,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 36,
+          "dev": 2.1316282072803006e-14
+        },
+        {
+          "edge": 40,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 36,
+          "dev": 2.6645352591003757e-14
+        },
+        {
+          "edge": 41,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 26,
+          "dev": 2.842170943040401e-14
+        },
+        {
+          "edge": 41,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 28,
+          "dev": 3.375077994860476e-14
+        },
+        {
+          "edge": 42,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 2.4868995751603507e-14
+        },
+        {
+          "edge": 42,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 2.842170943040401e-14
+        },
+        {
+          "edge": 46,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 46,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 47,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 47,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 48,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 48,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 49,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 49,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 53,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 53,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 54,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 54,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 55,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 55,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 56,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 56,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 60,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 34,
+          "dev": 0
+        },
+        {
+          "edge": 60,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 34,
+          "dev": 0
+        },
+        {
+          "edge": 61,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 61,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 62,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 23,
+          "dev": 0
+        },
+        {
+          "edge": 62,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 23,
+          "dev": 0
+        },
+        {
+          "edge": 63,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 63,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 66,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 25,
+          "dev": 0
+        },
+        {
+          "edge": 66,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 25,
+          "dev": 0
+        },
+        {
+          "edge": 67,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 67,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 71,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 15,
+          "dev": 0
+        },
+        {
+          "edge": 71,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 15,
+          "dev": 0
+        },
+        {
+          "edge": 72,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 72,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 73,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 73,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 74,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 74,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 78,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 11,
+          "dev": 0
+        },
+        {
+          "edge": 78,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 11,
+          "dev": 0
+        },
+        {
+          "edge": 79,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 79,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 80,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 80,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 81,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 81,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 85,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 22,
+          "dev": 0
+        },
+        {
+          "edge": 85,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 22,
+          "dev": 0
+        },
+        {
+          "edge": 86,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 86,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 87,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 87,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 88,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 88,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 92,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 10,
+          "dev": 0
+        },
+        {
+          "edge": 92,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 17,
+          "dev": 0
+        },
+        {
+          "edge": 93,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 93,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 94,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 94,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 95,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 95,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 99,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 34,
+          "dev": 0
+        },
+        {
+          "edge": 99,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 34,
+          "dev": 0
+        },
+        {
+          "edge": 100,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 31,
+          "dev": 0
+        },
+        {
+          "edge": 100,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 31,
+          "dev": 0
+        },
+        {
+          "edge": 101,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 101,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 33,
+          "dev": 0
+        },
+        {
+          "edge": 102,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 102,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 104,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 104,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 105,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 105,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 106,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 106,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 107,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 107,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 108,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 108,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 109,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 109,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 110,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 22,
+          "dev": 0
+        },
+        {
+          "edge": 110,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 112,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 112,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 113,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 113,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 114,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 25,
+          "dev": 0
+        },
+        {
+          "edge": 114,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 25,
+          "dev": 0
+        },
+        {
+          "edge": 115,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 115,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 116,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 116,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 117,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 117,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 118,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 118,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 119,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 119,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 120,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 120,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 122,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 122,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 123,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 123,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 124,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 124,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 125,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 125,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 126,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 126,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 127,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 127,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 128,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 12,
+          "dev": 0
+        },
+        {
+          "edge": 128,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 13,
+          "dev": 0
+        },
+        {
+          "edge": 129,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 129,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 130,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 130,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 35,
+          "dev": 0
+        },
+        {
+          "edge": 131,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 34,
+          "dev": 2.1316282072803006e-14
+        },
+        {
+          "edge": 131,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 34,
+          "dev": 1.5987211554602254e-14
+        },
+        {
+          "edge": 133,
+          "type": "street",
+          "curve": true,
+          "side": "left",
+          "n": 84,
+          "dev": 0.0015217389016211058
+        },
+        {
+          "edge": 133,
+          "type": "street",
+          "curve": true,
+          "side": "right",
+          "n": 84,
+          "dev": 0.0016251119411201387
+        },
+        {
+          "edge": 134,
+          "type": "alley",
+          "curve": false,
+          "side": "left",
+          "n": 37,
+          "dev": 0
+        },
+        {
+          "edge": 134,
+          "type": "alley",
+          "curve": false,
+          "side": "right",
+          "n": 37,
+          "dev": 0
+        },
+        {
+          "edge": 135,
+          "type": "alley",
+          "curve": false,
+          "side": "left",
+          "n": 37,
+          "dev": 0
+        },
+        {
+          "edge": 135,
+          "type": "alley",
+          "curve": false,
+          "side": "right",
+          "n": 37,
+          "dev": 0
+        },
+        {
+          "edge": 137,
+          "type": "alley",
+          "curve": false,
+          "side": "left",
+          "n": 20,
+          "dev": 0
+        },
+        {
+          "edge": 137,
+          "type": "alley",
+          "curve": false,
+          "side": "right",
+          "n": 20,
+          "dev": 0
+        },
+        {
+          "edge": 141,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 25,
+          "dev": 5.5067062021407764e-14
+        },
+        {
+          "edge": 141,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 17,
+          "dev": 3.019806626980426e-14
+        },
+        {
+          "edge": 142,
+          "type": "street",
+          "curve": false,
+          "side": "left",
+          "n": 7,
+          "dev": 4.085620730620576e-14
+        },
+        {
+          "edge": 142,
+          "type": "street",
+          "curve": false,
+          "side": "right",
+          "n": 17,
+          "dev": 2.6645352591003757e-14
+        },
+        {
+          "edge": 144,
+          "type": "street",
+          "curve": true,
+          "side": "left",
+          "n": 112,
+          "dev": 0.0015589635250297107
+        },
+        {
+          "edge": 144,
+          "type": "street",
+          "curve": true,
+          "side": "right",
+          "n": 106,
+          "dev": 0.002002464900471068
+        }
+      ]
+    },
+    "events": {
+      "bulk": 1,
+      "paint": 5,
+      "payloadOk": true,
+      "versionOk": true,
+      "identityLost": [],
+      "identityEvents": [],
+      "oldCount": 143,
+      "newCount": 143
+    },
+    "burst": {
+      "logs": [
+        "[zoning] zonable band rebuilt (event): 2423 cells, 143 lots, 4 ms",
+        "[zoning] overlay 1728 cells / 143 lots -> 5 draws, 19376 tris, 6 ms (rebuild total 10 ms)",
+        "[roads] rebuilt 91 edges / 64 nodes -> 16 meshes, 56646 tris, 5 bridge edges, 334 terrain vertices cut/filled, 203 ms",
+        "[zoning] zonable band rebuilt (event): 2429 cells, 143 lots, 6 ms",
+        "[zoning] overlay 1728 cells / 143 lots -> 5 draws, 19424 tris, 6 ms (rebuild total 12 ms)",
+        "[roads] rebuilt 100 edges / 82 nodes -> 16 meshes, 61292 tris, 11 bridge edges, 601 terrain vertices cut/filled, 191 ms",
+        "[zoning] zonable band rebuilt (event): 2428 cells, 143 lots, 5 ms",
+        "[zoning] overlay 1728 cells / 143 lots -> 5 draws, 19416 tris, 5 ms (rebuild total 10 ms)"
+      ],
+      "rebuilds": 3
+    },
+    "determinism": {
+      "sameBefore": true,
+      "restored": true,
+      "lotsAfter": 143,
+      "lotsBefore": 143
+    },
+    "paintedMaterialUniforms": [
+      {
+        "fill": 0.52,
+        "pulse": 0.3
+      },
+      {
+        "fill": 0.52,
+        "pulse": 0.3
+      },
+      {
+        "fill": 0.52,
+        "pulse": 0.3
+      },
+      {
+        "fill": 0.52,
+        "pulse": 0.3
+      },
+      {
+        "fill": 0.13,
+        "pulse": 0
+      }
+    ],
+    "all": {
+      "url": "http://127.0.0.1:5174/?headless=1&speed=0&time=12&showcase=all",
+      "draws": 0,
+      "triangles": 0,
+      "samples": {
+        "zone": [
+          {
+            "ms": 0,
+            "opacity": 0,
+            "visible": true
+          },
+          {
+            "ms": 310.69999999925494,
+            "opacity": 0.0759090909090901,
+            "visible": true
+          },
+          {
+            "ms": 600,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 651.1999999992549,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 702.0999999996275,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 753.7999999998137,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 815,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 865.8999999994412,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 917.3999999994412,
+            "opacity": 1,
+            "visible": true
+          }
+        ],
+        "road": [
+          {
+            "ms": 0,
+            "opacity": 1,
+            "visible": true
+          },
+          {
+            "ms": 432.6000000005588,
+            "opacity": 0.05181818181987896,
+            "visible": true
+          },
+          {
+            "ms": 501.30000000074506,
+            "opacity": 0,
+            "visible": false
+          },
+          {
+            "ms": 589.3000000007451,
+            "opacity": 0,
+            "visible": false
+          },
+          {
+            "ms": 650.5,
+            "opacity": 0,
+            "visible": false
+          },
+          {
+            "ms": 720.1000000005588,
+            "opacity": 0,
+            "visible": false
+          },
+          {
+            "ms": 800.6000000005588,
+            "opacity": 0,
+            "visible": false
+          },
+          {
+            "ms": 866.7000000001863,
+            "opacity": 0,
+            "visible": false
+          },
+          {
+            "ms": 928.7000000001863,
+            "opacity": 0,
+            "visible": false
+          }
+        ]
+      },
+      "status": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 1
+      },
+      "errors": []
+    },
+    "noRoads": {
+      "stats": {
+        "cells": 0,
+        "zonable": 0,
+        "lots": 0,
+        "claimed": 0,
+        "per": {
+          "residential": 0,
+          "commercial": 0,
+          "industrial": 0,
+          "office": 0
+        },
+        "overlay": {
+          "cells": 0,
+          "lots": 0,
+          "tris": 0,
+          "draws": 0,
+          "ms": 0.10000000055879354
+        }
+      },
+      "visible": false,
+      "minY": null,
+      "maxY": null,
+      "status": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 1
+      },
+      "errors": []
+    },
+    "noTerrain": {
+      "stats": {
+        "cells": 1977,
+        "zonable": 2545,
+        "lots": 174,
+        "claimed": 1648,
+        "per": {
+          "residential": 640,
+          "commercial": 389,
+          "industrial": 395,
+          "office": 553
+        },
+        "overlay": {
+          "cells": 1977,
+          "lots": 174,
+          "tris": 20360,
+          "draws": 5,
+          "ms": 10.699999999254942
+        }
+      },
+      "visible": true,
+      "minY": 0.1599999964237213,
+      "maxY": 0.1599999964237213,
+      "status": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 1
+      },
+      "errors": []
+    }
+  },
+  "evidence": {
+    "matrix": "shots/zoning/r3/summary.json",
+    "pairsAndAPI": "shots/zoning/r3/apicheck.json",
+    "correctedGroupBudget": "shots/zoning/r3/final-probe.json",
+    "correctedAllDegradationGeometry": "shots/zoning/r3/extra-probe.json",
+    "imageMetrics": "shots/zoning/r3/imgstats.json",
+    "river": "shots/zoning/r3/river_run_12.json",
+    "captureRecovery": "Initial matrix stopped at ENOSPC. After root removed regenerable npm cache, resume-matrix.mjs reused all successful unchanged-source captures and captured only missing/corrupt images. Final summary includes32 successful PNG+JSON pairs.",
+    "visuallyInspectedMatrixCount": 16
+  },
+  "measurementCaveats": [
+    "Inherited apicheck budget29draws/112624triangles was unsettled renderer state; final-probe uses60 frames before each read and reproduces5/19376 in both directions.",
+    "Inherited apicheck anim.amp=0 selected the empty-band material. extra-probe.uniforms records all four painted materials at0.30.",
+    "Inherited apicheck.all had a duplicate showcase query and remained in zoning mode; use extra-probe.all with its explicit correct URL.",
+    "Linewidth sampling was moved from cell centre to true border for the new phase but overlaps other rendered structure; broad FWHM results are disclosed, not treated as authoritative isolated widths.",
+    "Spatial masks use projected zoning triangles and three-pixel region-boundary dilation. Distant views with zero eligible wholly zoned100px windows cannot prove absence of every smaller artifact.",
+    "Item8 coarse roads.isRoad returns nonzero at5247/5347 vertices and asphalt1 at336; geometric frontage clearance remains authoritative under documented raster-mask conflict.",
+    "Item9 bilinear-curvature check is algebraically vacuous on aligned4m nodes; zero reported curvature does not prove all between-node surface attachment.",
+    "Fog crop ratio is measured on prescribed cropRects; their nearest/farthest selection changes with camera. The requested150m near distance cannot occur in zoneswide, whose camera is572m above ground.",
+    "residual.json lists heap, texture-megabyte and fade-sampling requirements as unmeasurable; no fabricated pass/fail is assigned to these.",
+    "Night differential incompatibility is a proposal pending review, not one of the listed unmeasurable residuals; literal result is retained as missed."
+  ]
+}

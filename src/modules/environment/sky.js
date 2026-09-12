@@ -59,7 +59,8 @@ const DOME_VERT = /* glsl */`
 varying vec3 vDir;
 void main() {
   vDir = position;
-  vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  // Ignore translation so reflections and secondary cameras see the same infinite sky.
+  vec4 p = projectionMatrix * mat4(mat3(modelViewMatrix)) * vec4(position, 1.0);
   gl_Position = p.xyww;
 }
 `;
@@ -289,7 +290,20 @@ void main() {
     vec3 hd = normalize(vec3(dir.x, 0.004, dir.z));
     vec3 hz = texture2D(tSky, equirectUv(hd)).rgb + fogInScatter(hd);
     col = mix(col, hz, domeFogAmount(hd, 7000.0));
+    // The far-plane fallback represents progressively more ground haze below the geometric horizon.
+    // Retain a gentle vertical gradient instead of extending one horizon sample as a flat colour field.
+    col *= mix(0.78, 1.0, smoothstep(-0.10, 0.004, dir.y));
   }
+  // Compress only the visible sunward dome when the sun is low. The PMREM LUT and direct scene light
+  // keep their physical values; this prevents the sky/horizon composition from consuming the city's
+  // tonal range without darkening the city-facing side of the frame.
+  float lowSunDisplay = (1.0 - smoothstep(0.12, 0.32, uSunDir.y)) * smoothstep(-0.02, 0.05, uSunDir.y);
+  float sunwardDisplay = smoothstep(0.0, 0.80, max(dot(dir, uSunDir), 0.0));
+  col *= 1.0 - 0.96 * lowSunDisplay * sunwardDisplay;
+  // Preserve the LUT's night floor for PMREM scene lighting, but expose the complete visible dome
+  // like a night sky. Applying this after clouds and horizon fog keeps ground/facade separation
+  // while preventing those layers from lifting the skyline into a blue-grey daytime value.
+  col *= mix(1.0, 0.25, uNight);
   gl_FragColor = vec4(col, 1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

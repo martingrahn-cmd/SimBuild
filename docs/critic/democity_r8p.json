@@ -1,0 +1,612 @@
+{
+  "module": "democity",
+  "round": "r8p",
+  "reviewType": "Independent bounded signal-key CPU audit",
+  "decision": "ACCEPT",
+  "acceptedScope": "Traffic scalar signal key and Props consumer fast path only",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "sourceSha256": {
+    "src/modules/traffic/index.js": "32406d9f7eba3a71ec55b6c9b96cb51104647fb17d7d584463628523fcb24cf2",
+    "src/modules/props/index.js": "be80cb25874c65a14b90f50702ae2e544850ee430e7f6af7c7400e6062b2156b"
+  },
+  "sourceDiffCheckPass": true,
+  "sourceVerification": "Traffic retains ownership of derived signal state; Props consumes public scalar with legacy fallback. Signal timing, detailed public accessor and full lens-color update algorithm remain as inspected. No new RNG, persisted state, scene geometry or camera branch in the bounded change. Read-only means no authoritative gameplay mutation; updateSignals refreshes derived fields.",
+  "all21OriginalsIndividuallyInspected": true,
+  "inspectionRegister": [
+    {
+      "png": "shots/democity/r8p-signal-key-final/bridge_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/bridge_12.json",
+      "individuallyInspected": true,
+      "fps": 50.1,
+      "drawCalls": 301,
+      "triangles": 1583059,
+      "rawHeapMB": 647.3,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/bridge_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/bridge_22.json",
+      "individuallyInspected": true,
+      "fps": 39.9,
+      "drawCalls": 294,
+      "triangles": 1983739,
+      "rawHeapMB": 493.3,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/downtown_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/downtown_12.json",
+      "individuallyInspected": true,
+      "fps": 34,
+      "drawCalls": 425,
+      "triangles": 1892580,
+      "rawHeapMB": 481.8,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/downtown_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/downtown_22.json",
+      "individuallyInspected": true,
+      "fps": 57.2,
+      "drawCalls": 410,
+      "triangles": 2271574,
+      "rawHeapMB": 489.8,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/industry_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/industry_12.json",
+      "individuallyInspected": true,
+      "fps": 58,
+      "drawCalls": 204,
+      "triangles": 1155506,
+      "rawHeapMB": 479.7,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/industry_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/industry_22.json",
+      "individuallyInspected": true,
+      "fps": 60,
+      "drawCalls": 202,
+      "triangles": 1550180,
+      "rawHeapMB": 637.6,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/interchange_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/interchange_12.json",
+      "individuallyInspected": true,
+      "fps": 54.2,
+      "drawCalls": 388,
+      "triangles": 1812476,
+      "rawHeapMB": 517.1,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/interchange_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/interchange_22.json",
+      "individuallyInspected": true,
+      "fps": 58.7,
+      "drawCalls": 400,
+      "triangles": 2194778,
+      "rawHeapMB": 657.6,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/night_downtown_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/night_downtown_12.json",
+      "individuallyInspected": true,
+      "fps": 55.6,
+      "drawCalls": 418,
+      "triangles": 2460494,
+      "rawHeapMB": 500.8,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/night_downtown_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/night_downtown_22.json",
+      "individuallyInspected": true,
+      "fps": 57.9,
+      "drawCalls": 343,
+      "triangles": 2814092,
+      "rawHeapMB": 672.4,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/park_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/park_12.json",
+      "individuallyInspected": true,
+      "fps": 50.2,
+      "drawCalls": 469,
+      "triangles": 1822002,
+      "rawHeapMB": 612.1,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/park_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/park_22.json",
+      "individuallyInspected": true,
+      "fps": 50.9,
+      "drawCalls": 443,
+      "triangles": 2189364,
+      "rawHeapMB": 536.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/riverfront_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/riverfront_12.json",
+      "individuallyInspected": true,
+      "fps": 57.5,
+      "drawCalls": 246,
+      "triangles": 1312596,
+      "rawHeapMB": 622.7,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/riverfront_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/riverfront_22.json",
+      "individuallyInspected": true,
+      "fps": 59.5,
+      "drawCalls": 212,
+      "triangles": 1681158,
+      "rawHeapMB": 614.5,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/suburb_12.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/suburb_12.json",
+      "individuallyInspected": true,
+      "fps": 52.2,
+      "drawCalls": 364,
+      "triangles": 1756810,
+      "rawHeapMB": 504.8,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-final/suburb_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-final/suburb_22.json",
+      "individuallyInspected": true,
+      "fps": 58.2,
+      "drawCalls": 329,
+      "triangles": 2137674,
+      "rawHeapMB": 484.6,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-controls/bridge_22_repeat1.png",
+      "sidecar": "shots/democity/r8p-signal-key-controls/bridge_22_repeat1.json",
+      "individuallyInspected": true,
+      "fps": 55,
+      "drawCalls": 299,
+      "triangles": 1983919,
+      "rawHeapMB": 466.6,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-controls/downtown_12_repeat1.png",
+      "sidecar": "shots/democity/r8p-signal-key-controls/downtown_12_repeat1.json",
+      "individuallyInspected": true,
+      "fps": 54.5,
+      "drawCalls": 425,
+      "triangles": 1892940,
+      "rawHeapMB": 692.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-candidate/interchange_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-candidate/interchange_22.json",
+      "individuallyInspected": true,
+      "fps": 36.4,
+      "drawCalls": 400,
+      "triangles": 2194778,
+      "rawHeapMB": 513.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-candidate/night_downtown_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-candidate/night_downtown_22.json",
+      "individuallyInspected": true,
+      "fps": 29.2,
+      "drawCalls": 343,
+      "triangles": 2814092,
+      "rawHeapMB": 641.1,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8p-signal-key-candidate/park_22.png",
+      "sidecar": "shots/democity/r8p-signal-key-candidate/park_22.json",
+      "individuallyInspected": true,
+      "fps": 50.3,
+      "drawCalls": 443,
+      "triangles": 2189364,
+      "rawHeapMB": 624.6,
+      "allReady": true,
+      "errors": 0
+    }
+  ],
+  "rawEvidenceRead": [
+    "shots/democity/r8p-current-owner-profile/interchange22-module-static.json",
+    "shots/democity/r8p-current-owner-profile/interchange22-paired.json",
+    "shots/democity/r8p-current-owner-profile/interchange22-pools-paired.json",
+    "shots/democity/r8p-current-owner-profile/park22.json",
+    "shots/democity/r8p-current-owner-profile/props-visible/interchange_22.json",
+    "shots/democity/r8p-current-owner-profile/props-visible/park_22.json",
+    "shots/democity/r8p-signal-key-candidate/apicheck.json",
+    "shots/democity/r8p-signal-key-candidate/interchange22-ab.json",
+    "shots/democity/r8p-signal-key-candidate/interchange22-module-static.json",
+    "shots/democity/r8p-signal-key-candidate/interchange22-moving-ab.json",
+    "shots/democity/r8p-signal-key-candidate/matched-r8n-diff.json",
+    "shots/democity/r8p-signal-key-candidate/restage-cycle.json",
+    "shots/democity/r8p-signal-key-candidate/signal-key-contract.json",
+    "shots/democity/r8p-signal-key-candidate/source/source-hashes.json",
+    "shots/democity/r8p-signal-key-final/summary.json",
+    "shots/democity/r8p-signal-key-candidate/source/source-hashes.json"
+  ],
+  "directCallback": {
+    "framesEach": 1200,
+    "legacyMeanMs": 1.647416667068998,
+    "candidateMeanMs": 0.03016666680574417,
+    "deltaMs": -1.617250000263254,
+    "deltaPercent": -98.16885021204652,
+    "legacyP95Ms": 2.2999999821186066,
+    "candidateP95Ms": 0.10000002384185791,
+    "meanIndependentlyRecomputed": true
+  },
+  "ab": {
+    "static": {
+      "file": "shots/democity/r8p-signal-key-candidate/interchange22-ab.json",
+      "summaryIndependentlyRecomputed": true,
+      "summary": {
+        "legacy": {
+          "runs": 3,
+          "medianFps": 25.603459311846763,
+          "medianPropsMeanMs": 1.565000000016557,
+          "medianPropsP95Ms": 2.5999999940395355,
+          "averageDrawCallsRange": [
+            281,
+            281
+          ],
+          "averageTrianglesRange": [
+            1800995.375,
+            1801065.175
+          ]
+        },
+        "candidate": {
+          "runs": 3,
+          "medianFps": 27.567195037904895,
+          "medianPropsMeanMs": 0.044166666352086596,
+          "medianPropsP95Ms": 0.10000002384185791,
+          "averageDrawCallsRange": [
+            281,
+            281
+          ],
+          "averageTrianglesRange": [
+            1801014.675,
+            1801054.875
+          ]
+        },
+        "delta": {
+          "fps": 1.9637357260581325,
+          "fpsPct": 7.6698062638336895,
+          "propsMeanMs": -1.5208333336644704,
+          "propsMeanPct": -97.17784879542369
+        }
+      },
+      "runs": [
+        {
+          "variant": "legacy",
+          "frames": 360,
+          "meanMs": 1.68500000031458,
+          "p95Ms": 2.5999999940395355,
+          "fps": 28.767320324070702
+        },
+        {
+          "variant": "candidate",
+          "frames": 360,
+          "meanMs": 0.041944444759024514,
+          "p95Ms": 0.10000002384185791,
+          "fps": 28.12434083580095
+        },
+        {
+          "variant": "candidate",
+          "frames": 360,
+          "meanMs": 0.044166666352086596,
+          "p95Ms": 0.10000002384185791,
+          "fps": 27.567195037904895
+        },
+        {
+          "variant": "legacy",
+          "frames": 360,
+          "meanMs": 1.565000000016557,
+          "p95Ms": 2.5,
+          "fps": 25.603459311846763
+        },
+        {
+          "variant": "legacy",
+          "frames": 360,
+          "meanMs": 1.3958333336644702,
+          "p95Ms": 2.699999988079071,
+          "fps": 24.40313987063378
+        },
+        {
+          "variant": "candidate",
+          "frames": 360,
+          "meanMs": 0.06277777809235785,
+          "p95Ms": 0.19999998807907104,
+          "fps": 26.248441498797416
+        }
+      ]
+    },
+    "moving": {
+      "file": "shots/democity/r8p-signal-key-candidate/interchange22-moving-ab.json",
+      "summaryIndependentlyRecomputed": true,
+      "summary": {
+        "legacy": {
+          "runs": 3,
+          "medianFps": 23.221611579870427,
+          "medianPropsMeanMs": 1.4949999994287888,
+          "medianPropsP95Ms": 2.300000011920929,
+          "averageDrawCallsRange": [
+            392.45,
+            392.45
+          ],
+          "averageTrianglesRange": [
+            2186731.675,
+            2186802.925
+          ]
+        },
+        "candidate": {
+          "runs": 3,
+          "medianFps": 22.29012454608324,
+          "medianPropsMeanMs": 0.059583333258827524,
+          "medianPropsP95Ms": 0.20000001788139343,
+          "averageDrawCallsRange": [
+            392.45,
+            392.45
+          ],
+          "averageTrianglesRange": [
+            2186793.925,
+            2186814.925
+          ]
+        },
+        "delta": {
+          "fps": -0.9314870337871852,
+          "fpsPct": -4.01129366316092,
+          "propsMeanMs": -1.4354166661699612,
+          "propsMeanPct": -96.01449275708407
+        }
+      },
+      "runs": [
+        {
+          "variant": "legacy",
+          "frames": 240,
+          "meanMs": 1.5541666672875485,
+          "p95Ms": 2.300000011920929,
+          "fps": 24.061356458970373
+        },
+        {
+          "variant": "candidate",
+          "frames": 240,
+          "meanMs": 0.06583333437641462,
+          "p95Ms": 0.20000001788139343,
+          "fps": 23.18303002207727
+        },
+        {
+          "variant": "candidate",
+          "frames": 240,
+          "meanMs": 0.059583333258827524,
+          "p95Ms": 0.20000001788139343,
+          "fps": 21.998166819431713
+        },
+        {
+          "variant": "legacy",
+          "frames": 240,
+          "meanMs": 1.4825000007947287,
+          "p95Ms": 2.300000011920929,
+          "fps": 21.957512213830245
+        },
+        {
+          "variant": "legacy",
+          "frames": 240,
+          "meanMs": 1.4949999994287888,
+          "p95Ms": 2.300000011920929,
+          "fps": 23.221611579870427
+        },
+        {
+          "variant": "candidate",
+          "frames": 240,
+          "meanMs": 0.05708333365619182,
+          "p95Ms": 0.20000001788139343,
+          "fps": 22.29012454608324
+        }
+      ]
+    }
+  },
+  "signalContract": {
+    "hourSamples": [
+      0,
+      0.025,
+      0.05,
+      0.075,
+      0.1,
+      0.475,
+      0.5,
+      0.525,
+      0.575,
+      0.6,
+      0.675,
+      1.075,
+      1.1,
+      1.125,
+      1.175,
+      1.2
+    ],
+    "signalsPerSample": 189,
+    "keysReplayedFromDigestAndGraphClockFormula": true,
+    "sweeps": 2,
+    "exactSecondSweep": true,
+    "observedStateKeyAndLensTransitions": 6,
+    "expectedAndActualLensInstances": 3858,
+    "repeatKeysStable": true,
+    "noProbeErrors": true,
+    "perLensLegacyOracle": false
+  },
+  "api": {
+    "doubleDeserialize": [
+      true,
+      true
+    ],
+    "censusEqual": true,
+    "tourValid": 8,
+    "invalidTourRejected": true,
+    "seed1337DigestExact": true,
+    "seed7DigestExact": true,
+    "restageDigestScope": [
+      "buildings",
+      "services",
+      "transit"
+    ]
+  },
+  "matchedPixelMetrics": {
+    "interchange_22.png": {
+      "meanAbsRGB": 0.12741528420781892,
+      "changedPctGt2": 0.8264853395061729,
+      "changedPctGt8": 0.25829475308641975,
+      "p95": 1.0,
+      "max": 234
+    },
+    "night_downtown_22.png": {
+      "meanAbsRGB": 0.00010432741769547325,
+      "changedPctGt2": 0.0010127314814814814,
+      "changedPctGt8": 0.0003858024691358025,
+      "p95": 0.0,
+      "max": 33
+    },
+    "park_22.png": {
+      "meanAbsRGB": 0.01862236368312757,
+      "changedPctGt2": 0.11381172839506172,
+      "changedPctGt8": 0.025752314814814815,
+      "p95": 0.0,
+      "max": 176
+    }
+  },
+  "matchedPixelMetricsIndependentlyRecomputedExactly": true,
+  "finalMatrix": {
+    "images": 16,
+    "ready": 16,
+    "errors": 0,
+    "maxDrawCalls": 469,
+    "maxTriangles": 2814092,
+    "minFps": 34.0,
+    "below50": 2,
+    "maxRawHeapMB": 672.4,
+    "summaryRowsMatchSidecars": true
+  },
+  "all21CaptureEvidence": {
+    "minFps": 29.2,
+    "maxRawHeapMB": 692.9,
+    "errors": 0,
+    "notOneControlledTimingSeries": true
+  },
+  "gates": {
+    "visual": "FAIL",
+    "sustained50fps": "FAIL/unresolved",
+    "memory": "NOT VERIFIED; raw only",
+    "boundedCpuChange": "ACCEPT"
+  },
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "props",
+      "supportingOwner": "core",
+      "title": "Remaining render cost needs owner-local attribution",
+      "status": "OPEN",
+      "evidence": "Same-page Props mask +21.592388% with0.515212% control drift; pools-only +1.992836% despite381692.55 fewer average submitted triangles. Interchange has2540 LOD1 trees and zero visible furniture.",
+      "action": "Repeat paired render-only component masks on accepted source, distinguish canopy overdraw/shading, lens/pool passes and reflection cadence before any mesh reduction. Keep world state, LOD, density, camera path and lighting fixed. Treat this as next measured investigation, not proof of a particular GPU bottleneck."
+    },
+    {
+      "rank": 2,
+      "owner": "core",
+      "supportingOwner": "all rendering owners",
+      "title": "Sustained frame-rate gate remains failed",
+      "status": "OPEN",
+      "evidence": "Final minimum34.0FPS; bridge22=39.9 and downtown12=34.0. Repeats55.0/54.5 do not establish sustained performance. Directed candidate night_downtown22=29.2. Moving A/B median22.290FPS.",
+      "action": "Use repeatable warmed sustained traces with host controls to resolve timing variability; do not select best samples."
+    },
+    {
+      "rank": 3,
+      "owner": "democity",
+      "supportingOwner": "buildings, props, terrain, environment",
+      "title": "Whole-game visual hierarchy unchanged",
+      "status": "OPEN",
+      "evidence": "All21 originals retain sparse open parcels, repetitive building/window organization, planar foliage, abrupt site/landscape relationships and broad artificial mountain materials. CPU optimization supplies no visual score increase.",
+      "action": "Preserve whole-game ranks1\u20138: city fabric, foliage, night depth, site integration, landmark grounds, environment/landscape, human activity and performance. No rank is closed."
+    },
+    {
+      "rank": 4,
+      "owner": "core",
+      "supportingOwner": "props, traffic",
+      "title": "Allocation and retained-memory claims remain unmeasured",
+      "status": "OPEN",
+      "evidence": "Final matrix max raw672.4MB; downtown12 repeat692.9MB. Profile processes and GC phases are unmatched.",
+      "action": "If memory is selected next, measure same-process allocation or forced-GC retained memory; do not infer allocation-rate improvements from these heap endpoints."
+    }
+  ],
+  "nextOwnerSafePriority": {
+    "rank": 1,
+    "owner": "props",
+    "supportingOwner": "core",
+    "title": "Remaining render cost needs owner-local attribution",
+    "status": "OPEN",
+    "evidence": "Same-page Props mask +21.592388% with0.515212% control drift; pools-only +1.992836% despite381692.55 fewer average submitted triangles. Interchange has2540 LOD1 trees and zero visible furniture.",
+    "action": "Repeat paired render-only component masks on accepted source, distinguish canopy overdraw/shading, lens/pool passes and reflection cadence before any mesh reduction. Keep world state, LOD, density, camera path and lighting fixed. Treat this as next measured investigation, not proof of a particular GPU bottleneck."
+  },
+  "limits": [
+    "Independent review of supplied original images, sidecars, aggregate timing records, probe implementation and current source. No new browser captures, build, gameplay, save or live signal tests were run by this critic. Build163 is a builder result, not independently rerun.",
+    "Profile JSON retains total/count and quantiles, not individual callback samples. Means, FPS arithmetic, run medians and deltas were independently recomputed; within-run p95 values cannot be reconstructed from absent samples. Timings near 0.1 ms reflect timer granularity.",
+    "The signal probe samples 16 hour values between 0 and 1.2, twice, on one189-signal layout. It does not cover every topology, edit event, clock boundary or hash collision. Lens buffer hashes prove deterministic changes and instance presence, not an independent expected color for each lens or exact legacy/candidate color equality.",
+    "The defensive-copy probe mutates traffic.signals()[0].greenArms, then checks signalState. It directly verifies no leaked mutation through signals(), while source inspection verifies signalState also uses slice().",
+    "The 32-bit aggregate hash is not collision-proof and omits node IDs. No collision failure is observed. Existing Props rebuild and deserialize paths force lens refresh; topology mutation is not specifically tested by this probe.",
+    "The supplied reconstructed pre-R8p/current source snapshots differ only by the13-line Traffic block and one Props line. All four hashes and byte lengths verify, and current snapshots equal production. This checks the reconstruction and exact bounded diff; it is not independent historical provenance of a contemporaneous pre-change snapshot.",
+    "Public API double-deserialize verifies selected census equality, and restage compares selected building/service/transit fields. Neither is a byte-exact whole-save or arbitrary gameplay determinism proof.",
+    "Owner visibility masks leave update callbacks running and alter reflections/render work. Their FPS deltas are sensitivity evidence, not pure GPU timings or additive costs. The Props visible inventory classifies every instanced mesh as trees, including lenses/pools; its total is not a tree-only triangle count.",
+    "Fresh-page A/B runs are interleaved but use short samples and show host/run-order drift. Static and moving whole-frame FPS disagree; repeat screenshots do not cancel original low samples. No sustained50FPS gate pass is granted.",
+    "Raw endpoint heap is not forced-GC retained heap or measured allocation rate. Removing explicit public return-object/array copies does not prove literally zero JavaScript allocations, including engine iterator behavior.",
+    "No fresh full32-frame day/night/weather whole-game matrix, eight-reference recalibration or blind A/B judging. Existing6.0FAIL and visual ranking remain unchanged. No gameplay improvement is claimed."
+  ],
+  "sourceSnapshots": {
+    "directory": "shots/democity/r8p-signal-key-candidate/source",
+    "allFourHashesAndByteLengthsVerified": true,
+    "currentFilesMatchProductionExactly": true,
+    "preR8pTrafficSha256": "12e26088699da457d27aa03b66c892ee4c3b06f65dc8e9a4f3894c00050a7684",
+    "preR8pPropsSha256": "d4c8ddfa3fdc5890e12c616f320edcd7ad7bb18d6c2f56b4a309b177834f5525",
+    "diff": "Only the 13-line Traffic comment/method block and one Props consumer line are added.",
+    "provenance": "Pre-R8p files reconstructed by builder; verified mechanically, not contemporaneous historical snapshots."
+  }
+}

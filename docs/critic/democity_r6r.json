@@ -1,0 +1,11 @@
+{
+  "module": "democity", "round": "6r", "review": "local-critical", "score": 6.0, "pass": false,
+  "basis": {"baselineMemory": "shots/democity/r6q-frame-heap-profile/memory-inventory.json", "candidateMemory": "shots/democity/r6r-candidate-building-shared-buffer/memory-inventory.json", "candidateHeap": "shots/democity/r6r-candidate-building-shared-buffer/heap-profile.json", "lodProbe": "shots/democity/r6r-candidate-building-shared-buffer/lod-probe.json", "matrix": "shots/democity/rr6r-candidate-building-shared-buffer/summary.json", "api": "shots/democity/r6r-candidate-building-shared-buffer/apicheck.json", "restage": "shots/democity/r6r-candidate-building-shared-buffer/restage-cycle.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 532, "maxTriangles": 2997270, "minFps": 45.8},
+  "memory": {"buildingCpuBufferMBBefore": 220.9, "buildingCpuBufferMBAfter": 176.7, "backingStorageMBBefore": 519.6, "backingStorageMBAfter": 475.4, "cleanReportedHeapMBAfter": 510.0, "postRestageForcedGcReportedHeapMBAfter": 541.7},
+  "contract": {"lod0Triangles": 977816, "lod1Triangles": 200332, "apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true},
+  "change": {"owner": "buildings", "scope": "CPU geometry storage", "visibleGeometryChanged": false, "sharedBetweenMutuallyExclusiveLods": true},
+  "passedGates": ["3M composed triangles", "clean-load 512 MB reported heap"],
+  "failedGates": ["post-restage 512 MB heap", "50 fps", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept shared immutable building buffer and hold score; profile frame time by owner next"
+}

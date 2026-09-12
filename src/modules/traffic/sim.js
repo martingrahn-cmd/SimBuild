@@ -1,3 +1,4 @@
+import {buildMeshes,render,dispose} from './render.js';
 // Traffic simulation: IDM car-following, lane assignment, signal compliance, junction yielding,
 // outside connections, pedestrians on sidewalks, congestion grid. Instanced rendering lives here too
 // so the per-frame loop writes matrices straight into the InstancedMesh buffers (no allocations).
@@ -13,17 +14,15 @@ const A_CAR = 1.5, A_BIG = 0.85;
 const B_COMF = 2.4, S0 = 2.2, T_HEAD = 1.25;
 const GRID = 256;
 const NO_STOP = 1e9;
-let SHADOW_CASTING = false;
+let SHADOW_CASTING = true;
 
 // class mix: [kind, weight, big?]
-const MIX = [
-  ['sedan', 24], ['hatchback', 21], ['suv', 16], ['taxi', 5],
-  ['pickup', 9], ['van', 10], ['truck', 9], ['bus', 6],
-];
+const MIX = [ ['sedan',23],['hatchback',22],['suv',16],['taxi',5],['pickup',8],['van',10],['box_truck',5],['bus',4],['semi',3],['motorbike',3],['police',1] ];
 
 export class Traffic {
   constructor(ctx, graph) {
     this.ctx = ctx;
+    this.mix = MIX;
     this.g = graph;
     this.rng = ctx.rng.fork('sim');
     this.world = ctx.world;
@@ -36,7 +35,7 @@ export class Traffic {
     this.pedTarget = 90;
     this.flow = new Float32Array(GRID * GRID);
     this.flowCell = ctx.world.size / GRID;
-    this.stats = { count: 0, avgSpeed: 0, congestion: 0 };
+    this.stats = { count: 0, avgSpeed: 0, congestion: 0,queued:0,pedestrians:0,byKind:Object.fromEntries(MIX.map(m=>[m[0],0])),spawned:0,despawned:0 };
     this._p = { x: 0, y: 0, z: 0, tx: 0, tz: 0 };
     this._q = { x: 0, y: 0, z: 0, tx: 0, tz: 0 };
     this._sortFn = (a, b) => a.s - b.s;
@@ -49,126 +48,19 @@ export class Traffic {
     this.tris = 0;
   }
 
-  // ------------------------------------------------------------------ setup
-  buildMeshes(maxVehicles, maxPeds) {
-    const vehMat = createVehicleMaterial();
-    const lightMat = createLightMaterial();
-    const contactMat = createContactMaterial(0.85);
-    this.vehMat = vehMat; this.lightMat = lightMat; this.contactMat = contactMat;
-    const totalW = MIX.reduce((a, m) => a + m[1], 0);
-    for (let ci = 0; ci < MIX.length; ci++) {
-      const [kind, w] = MIX[ci];
-      const cap = Math.max(6, Math.ceil((maxVehicles * w / totalW) * 1.5));
-      const { geometry, spec, lamps, tris } = buildVehicleGeometry(kind);
-      this.tris += tris;
-      const paint = new THREE.InstancedBufferAttribute(new Float32Array(cap * 3), 3);
-      const lights = new THREE.InstancedBufferAttribute(new Float32Array(cap * 2), 2);
-      const spin = new THREE.InstancedBufferAttribute(new Float32Array(cap), 1);
-      geometry.setAttribute('aPaint', paint);
-      geometry.setAttribute('aLights', lights);
-      geometry.setAttribute('aSpin', spin);
-      const mesh = new THREE.InstancedMesh(geometry, vehMat, cap);
-      mesh.name = `traffic:${kind}`;
-      mesh.count = 0;
-      mesh.frustumCulled = false;
-      // CSM here drops occluders under ~3 m (see docs/core-requests/traffic.md): vehicle shadows never
-      // reach the ground, so paying 3 cascades x 9 meshes for car-on-car self shadowing is not worth
-      // ~0.8 M triangles. The soft contact decal grounds them instead;
-      // api.setShadowCasting(true) turns real casting back on once the core bias is fixed.
-      mesh.castShadow = SHADOW_CASTING;
-      mesh.receiveShadow = true;
-      mesh.layers.enable(LAYERS.VEHICLES);
-      mesh.renderOrder = RENDER_ORDER.VEHICLES;
-      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      this.group.add(mesh);
-
-      const rigGeo = buildLightRig(kind, lamps, spec);
-      rigGeo.setAttribute('aLights', lights);
-      const rig = new THREE.InstancedMesh(rigGeo, lightMat, cap);
-      rig.name = `traffic:${kind}:lights`;
-      rig.count = 0;
-      rig.frustumCulled = false;
-      rig.castShadow = false; rig.receiveShadow = false;
-      rig.layers.enable(LAYERS.VEHICLES);
-      rig.renderOrder = RENDER_ORDER.TRANSPARENT + 2;
-      rig.instanceMatrix = mesh.instanceMatrix; // same transforms, shared buffer
-      this.group.add(rig);
-
-      const shGeo = buildContactShadow(spec);
-      shGeo.setAttribute('aLights', lights);
-      const shadow = new THREE.InstancedMesh(shGeo, contactMat, cap);
-      shadow.name = `traffic:${kind}:contact`;
-      shadow.count = 0;
-      shadow.frustumCulled = false;
-      shadow.castShadow = false; shadow.receiveShadow = false;
-      shadow.layers.enable(LAYERS.VEHICLES);
-      shadow.renderOrder = RENDER_ORDER.MARKINGS + 4;
-      shadow.instanceMatrix = mesh.instanceMatrix;
-      this.group.add(shadow);
-
-      this.classes.push({ kind, spec, mesh, rig, shadow, paint, lights, spin, cap, count: 0, big: kind === 'truck' || kind === 'bus' });
-      this.capacity.push(cap);
-    }
-    this.counters = new Int32Array(this.classes.length);
-
-    // pedestrians
-    const pedMat = createPedestrianMaterial();
-    this.pedMat = pedMat;
-    const { geometry: pg, tris: ptris } = buildPedestrianGeometry();
-    this.tris += ptris;
-    const pcap = maxPeds;
-    const shirt = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 3), 3);
-    const pants = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 3), 3);
-    const tone = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 2), 2);
-    const walk = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 2), 2);
-    pg.setAttribute('aShirt', shirt);
-    pg.setAttribute('aPants', pants);
-    pg.setAttribute('aTone', tone);
-    pg.setAttribute('aWalk', walk);
-    const pmesh = new THREE.InstancedMesh(pg, pedMat, pcap);
-    pmesh.name = 'traffic:pedestrians';
-    pmesh.count = 0;
-    pmesh.frustumCulled = false;
-    pmesh.castShadow = SHADOW_CASTING;
-    pmesh.receiveShadow = true;
-    pmesh.layers.enable(LAYERS.VEHICLES);
-    pmesh.renderOrder = RENDER_ORDER.PROPS;
-    pmesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    this.group.add(pmesh);
-    const pShadowGeo = buildPedShadow();
-    const pLights = new THREE.InstancedBufferAttribute(new Float32Array(pcap * 2), 2);
-    pShadowGeo.setAttribute('aLights', pLights);
-    const pcontact = createContactMaterial(0.80);
-    this.pedContactMat = pcontact;
-    const pshadow = new THREE.InstancedMesh(pShadowGeo, pcontact, pcap);
-    pshadow.name = 'traffic:pedestrians:contact';
-    pshadow.count = 0;
-    pshadow.frustumCulled = false;
-    pshadow.castShadow = false; pshadow.receiveShadow = false;
-    pshadow.layers.enable(LAYERS.VEHICLES);
-    pshadow.renderOrder = RENDER_ORDER.MARKINGS + 4;
-    pshadow.instanceMatrix = pmesh.instanceMatrix;
-    this.group.add(pshadow);
-    this.pedMesh = { mesh: pmesh, shadow: pshadow, pLights, shirt, pants, tone, walk, cap: pcap };
-  }
+  buildMeshes(...args){return buildMeshes.apply(this,args);}
 
   // ------------------------------------------------------------------ spawning
-  pickClass(bigBias = 0) {
-    let total = 0;
-    for (const m of MIX) total += m[1];
-    let r = this.rng.float() * total;
-    for (let i = 0; i < MIX.length; i++) {
-      r -= MIX[i][1];
-      if (r <= 0) {
-        if (bigBias > 0 && this.rng.float() < bigBias && i < 6) return 6 + (this.rng.float() < 0.6 ? 0 : 1);
-        return i;
-      }
-    }
-    return 0;
+  pickClass() {
+    const h=this.world.time.hour,freight=h<9?.24:h>15&&h<20?.055:.10;
+    if(this.rng.float()<freight)return this.rng.float()<.7?6:8;
+    let total=0;for(let i=0;i<MIX.length;i++)if(i!==6&&i!==8)total+=MIX[i][1];
+    let r=this.rng.float()*total;for(let i=0;i<MIX.length;i++){if(i===6||i===8)continue;r-=MIX[i][1];if(r<=0)return i;}return 0;
   }
 
   paintFor(ci) {
     const kind = MIX[ci][0];
+    if (kind === 'police') return [0.04,0.055,0.085];
     if (kind === 'taxi') return [0.86, 0.62, 0.05];
     if (kind === 'bus') {
       const p = [[0.10, 0.28, 0.52], [0.50, 0.14, 0.10], [0.14, 0.36, 0.26], [0.72, 0.60, 0.10]];
@@ -201,16 +93,25 @@ export class Traffic {
 
   makeRoute(rec, dir) {
     const startNode = this.g.nodeAhead(rec, dir);
+    // A border is a valid destination: the final road need not have a successor.
+    if(this.g.portals.some(p=>p.nodeId===startNode))return [{edgeId:rec.id,dir}];
     const dest = this.randomDestNode(startNode);
     let tail = dest >= 0 ? this.g.route(startNode, dest, rec.id) : null;
     if (!tail || !tail.length) {
       const nd = this.g.nodes.get(startNode);
       if (!nd) return null;
       const opts = nd.outs.filter((o) => o.edgeId !== rec.id);
-      if (!opts.length) return null;
+      // A two-way ordinary dead end is a valid route terminus only when the vehicle can visibly
+      // turn around. Reusing the same edge in the opposite direction lets beginTurn() construct the
+      // lane-to-lane U-turn curve. One-way dead ends remain invalid local spawn routes.
+      if (!opts.length) {
+        if (rec.oneWay || this.g.laneCount(rec, -dir) < 1) return null;
+        tail = [{ edgeId: rec.id, dir: -dir }];
+      } else {
       tail = [{ edgeId: opts[this.rng.int(0, opts.length - 1)].edgeId, dir: 0 }];
       const o = nd.outs.find((x) => x.edgeId === tail[0].edgeId);
       tail[0].dir = o.dir;
+      }
     }
     const route = [{ edgeId: rec.id, dir }];
     for (const s of tail) route.push(s);
@@ -224,7 +125,10 @@ export class Traffic {
       for (let i = 0; i < 12 && !rec; i++) {
         const cand = g.randomEdge(this.rng);
         if (!cand) break;
-        const d = cand.oneWay ? 1 : (this.rng.bool() ? 1 : -1);
+        let d = cand.oneWay ? 1 : (this.rng.bool() ? 1 : -1);
+        if(!cand.oneWay&&cand.type==='highway'&&(this.world.time.hour>=21||this.world.time.hour<5)&&this.rng.float()<.8){
+          if(g.nodes.get(cand.a)?.arms===1)d=-1;else if(g.nodes.get(cand.b)?.arms===1)d=1;
+        }
         const [, n] = g.laneRange(cand, d);
         if (n > 0) { rec = cand; dir = d; }
       }
@@ -238,23 +142,35 @@ export class Traffic {
     if (!route) return null;
     const [l0, ln] = g.laneRange(rec, dir);
     if (ln <= 0) return null;
-    const lane = l0 + (cls.big ? 0 : this.rng.int(0, ln - 1));
+    const lane = opts.lane ?? (l0 + (cls.big ? 0 : this.rng.int(0, ln - 1)));
     const spec = cls.spec;
+    if(!opts.restore){
+      const lo=(dir>0?rec.trimA:rec.trimB)+spec.L/2+1.5,hi=rec.len-(dir>0?rec.trimB:rec.trimA)-spec.L/2-1.5;
+      if(hi<lo)return null;s=Math.max(lo,Math.min(hi,s));
+    }
     const paint = this.paintFor(ci);
+    if(!opts.restore)for(const other of this.vehicles.values()){
+      if(other.rec.id===rec.id&&other.lane===lane&&Math.abs(other.s-s)<(other.len+spec.L)*.5+Math.max(2.3,rec.speed*.7))return null;
+      if(other.turn.active&&other.turn.rec.id===rec.id&&other.turn.lane===lane&&Math.abs(other.turn.start-s)<(other.len+spec.L)*.5+rec.speed)return null;
+    }
+    if(!opts.restore && ['alley','gravel'].includes(rec.type)){let n=0;for(const other of this.vehicles.values())if(other.rec.id===rec.id)n++;if(n>=Math.floor(rec.len/100))return null;}
+
     const v = {
-      id: this.nextId++, kind: cls.kind, ci, slot: -1,
+      id: this.nextId++, kind: cls.kind, ci, slot: -1,laneChoice:this.rng.int(0,10),
       edgeId: rec.id, rec, dir, lane, prevLane: lane, blend: 1, blendLen: 1,
       s: Math.min(s, rec.len - 0.5), t: 0, v: rec.speed * 0.55,
-      v0: rec.speed * this.rng.range(0.86, 1.06) * (cls.big ? 0.86 : 1),
-      len: spec.L, half: spec.L * 0.5, wheelR: spec.wheelR,
-      route, ri: 0, external: !!opts.external,
-      paint, spin: this.rng.float() * 6.28, brake: 0, pitch: 0,
-      x: 0, y: 0, z: 0, heading: 0, lightsOn: 0, claim: -1, wait: 0,
+      v0: rec.speed * (this.world.time.hour>=21||this.world.time.hour<5 ? (this.rng.float()<.2?this.rng.range(.76,.84):this.rng.range(1.04,1.14)) : this.rng.range(.76,1)*(cls.big?.86:1)),
+      speedFactor:0, len: spec.L, half: spec.L * 0.5, wheelR: spec.wheelR,
+      route, ri: 0, explicit:!!opts.explicit,loop:!!opts.loop,loopRoute:opts.loop?route.slice():null, external: !!opts.external||g.portals.some(p=>p.nodeId===g.nodeAhead(rec,dir)),
+      paint, spin: 0, brake: 0, pitch: 0,
+      x: 0, y: 0, z: 0, heading: 0, lightsOn: 0, claim: -1, wait: 0, turn:{active:false,u:0,len:1,points:new Float64Array(12),rec:null,lane:0,dir:1,start:0},
     };
+    v.speedFactor=v.v0/rec.speed;
+    if(this.world.time.hour>=21||this.world.time.hour<5)v.v=Math.min(rec.speed*1.05,v.v0);
     g.laneAt(rec, lane, dir, v.s, this._p);
-    v.x = this._p.x; v.y = this._p.y; v.z = this._p.z;
+    v.x = this._p.x; v.y = this._p.y+.08; v.z = this._p.z;v.heading=Math.atan2(this._p.tx,-this._p.tz);v.speed=v.v;v.t=dir>0?v.s/rec.len:1-v.s/rec.len;
     this.vehicles.set(v.id, v);
-    cls.count++;
+    cls.count++; this.stats.spawned++;
     this.world.traffic.vehicles.set(v.id, v);
     return v;
   }
@@ -265,21 +181,22 @@ export class Traffic {
     if (v.claim >= 0) { const nd = this.g.nodes.get(v.claim); if (nd && nd.busy === v.id) nd.busy = -1; }
     this.vehicles.delete(id);
     this.world.traffic.vehicles.delete(id);
-    this.classes[v.ci].count--;
+    this.classes[v.ci].count--; this.stats.despawned++;
     return true;
   }
 
   spawnExternal() {
-    const ports = this.g.portals;
+    const motorway=this.g.portals.filter(p=>this.g.edges.get(p.out.edgeId)?.type==='highway');
+    const ports = (this.world.time.hour>=21||this.world.time.hour<5)&&motorway.length?motorway:this.g.portals;
     if (!ports.length) return null;
     const p = ports[this.rng.int(0, ports.length - 1)];
     const rec = this.g.edges.get(p.out.edgeId);
     if (!rec) return null;
-    const dir = p.out.dir;
+    const dir = this.seeding&&(this.world.time.hour>=21||this.world.time.hour<5)?-p.out.dir:p.out.dir;
     const [, ln] = this.g.laneRange(rec, dir);
     if (ln <= 0) return null;
-    const ci = this.rng.float() < (p.big ? 0.42 : 0.2) ? 6 : this.pickClass(0);
-    return this.spawn({ rec, dir, s: this.rng.range(1, 12), ci, external: true });
+    const ci = this.pickClass();
+    return this.spawn({ rec, dir, s: this.seeding ? this.rng.range(20,rec.len-20):1, ci, external: true });
   }
 
   // ------------------------------------------------------------------ pedestrians
@@ -287,13 +204,13 @@ export class Traffic {
     const g = this.g;
     if (this.peds.length >= this.pedMesh.cap) return null;
     if (!g.sidewalks.length) return null;
-    const w = opts.w || g.sidewalks[this.rng.int(0, g.sidewalks.length - 1)];
+    const w = opts.w || g.randomSidewalk(this.rng);
     const rec = g.edges.get(w.id);
     if (!rec) return null;
     const p = {
-      rec, side: w.side, dir: this.rng.bool() ? 1 : -1,
+      rec, sideNum:w.side, side:w.side>0?'right':'left',kind:'adult',state:'walk',edgeId:rec.id,t:0,speed:0, dir: this.rng.bool() ? 1 : -1,
       s: opts.s !== undefined ? opts.s : this.rng.float() * rec.len,
-      v: this.rng.range(1.05, 1.55), phase: this.rng.float() * 6.28,
+      v: this.rng.range(1.1, 1.5), phase: this.rng.float(),
       jitter: this.rng.range(-0.5, 0.5),
       shirt: SHIRTS[this.rng.int(0, SHIRTS.length - 1)],
       pants: PANTS[this.rng.int(0, PANTS.length - 1)],
@@ -308,41 +225,26 @@ export class Traffic {
   }
 
   stepPeds(dt) {
-    const g = this.g;
-    const out = this._p;
-    for (let i = 0; i < this.peds.length; i++) {
-      const p = this.peds[i];
-      p.s += p.v * dt;
-      const endTrim = (p.dir > 0 ? p.rec.trimB : p.rec.trimA) + 2.5;
-      if (p.s >= p.rec.len - endTrim) {
-        const nodeId = p.dir > 0 ? p.rec.b : p.rec.a;
-        const nd = g.nodes.get(nodeId);
-        let next = null;
-        if (nd) {
-          const cands = [];
-          for (const mv of nd.ins) { const r = g.edges.get(mv.edgeId); if (r && r.swR && r.id !== p.rec.id) cands.push(r); }
-          for (const mv of nd.outs) { const r = g.edges.get(mv.edgeId); if (r && r.swR && r.id !== p.rec.id && !cands.includes(r)) cands.push(r); }
-          if (cands.length) next = cands[this.rng.int(0, cands.length - 1)];
-        }
-        if (!next) { p.dir = -p.dir; p.s = (p.dir > 0 ? p.rec.trimA : p.rec.trimB) + 2.5; continue; }
-        const ndir = next.a === nodeId ? 1 : -1;
-        const startTrim = (ndir > 0 ? next.trimA : next.trimB) + 2.5;
-        // pick the side whose start point is closest to where we are now
-        let bestSide = 1, bestD = Infinity;
-        for (const side of [1, -1]) {
-          if (!g.walkAt(next, side, ndir, startTrim, out)) continue;
-          const d = Math.hypot(out.x - p.x, out.z - p.z);
-          if (d < bestD) { bestD = d; bestSide = side; }
-        }
-        p.rec = next; p.dir = ndir; p.side = bestSide; p.s = startTrim;
+    const out=this._p;let crossing=0;for(const p of this.peds)if(p.state==='cross')crossing++;
+    for(const p of this.peds){
+      const r=p.rec,end=r.len-(p.dir>0?r.trimB:r.trimA)-2.5;
+      const nodeId=p.dir>0?r.b:r.a,signal=this.g.signals.get(nodeId);
+      if(p.state==='cross'){
+        p.crossU=Math.min(1,p.crossU+p.v*dt/p.crossLen);
+        p.x=p.crossX+(p.crossEndX-p.crossX)*p.crossU;p.z=p.crossZ+(p.crossEndZ-p.crossZ)*p.crossU;p.y=p.crossY+.08;p.speed=p.v;
+        if(p.crossU>=1){p.sideNum=-p.sideNum;p.side=p.sideNum>0?'right':'left';p.dir=-p.dir;p.s=r.len-p.s;p.state='walk';this.g.walkAt(r,p.sideNum,p.dir,p.s,out);p.x=out.x-out.tz*p.jitter;p.z=out.z+out.tx*p.jitter;p.y=out.y+.21;p.heading=Math.atan2(out.tx,-out.tz);}
+      }else{
+        const green=signal?.greenArms.includes(r.id);
+        if(p.s>=end){
+          if(signal&&green){p.state='wait';p.speed=0;}
+          else if(signal&&crossing<Math.floor(this.peds.length*.1)){
+            p.s=end;this.g.walkAt(r,p.sideNum,p.dir,p.s,out);p.crossX=out.x;p.crossZ=out.z;p.crossY=out.y;
+            this.g.walkAt(r,-p.sideNum,p.dir,p.s,out);p.crossEndX=out.x;p.crossEndZ=out.z;p.crossLen=Math.hypot(out.x-p.crossX,out.z-p.crossZ);p.crossU=0;p.state='cross';p.x=p.crossX;p.z=p.crossZ;p.y=p.crossY+.08;crossing++;p.heading=Math.atan2(out.x-p.crossX,-(out.z-p.crossZ));p.speed=p.v;
+          }else if(!signal){p.dir=-p.dir;p.s=r.len-p.s;p.state='walk';this.g.walkAt(r,p.sideNum,p.dir,p.s,out);p.x=out.x-out.tz*p.jitter;p.z=out.z+out.tx*p.jitter;p.y=out.y+.21;p.heading=Math.atan2(out.tx,-out.tz);}
+        }else{p.s+=p.v*dt;p.state='walk';p.speed=p.v;}
+        if(p.state!=='cross'){this.g.walkAt(r,p.sideNum,p.dir,p.s,out);p.x=out.x-out.tz*p.jitter;p.z=out.z+out.tx*p.jitter;p.y=out.y+.21;p.heading=Math.atan2(out.tx,-out.tz);}
       }
-      g.walkAt(p.rec, p.side, p.dir, p.s, out);
-      p.x = out.x - out.tz * p.jitter;
-      p.z = out.z + out.tx * p.jitter;
-      p.y = out.y;
-      p.heading = Math.atan2(out.tx, -out.tz);
-      p.phase += (p.v / 0.72) * dt;
-      if (p.phase > 1e6) p.phase -= 1e6;
+      p.edgeId=r.id;p.t=Math.max(0,Math.min(1,p.dir>0?p.s/r.len:1-p.s/r.len));p.phase=(p.phase+p.speed*dt/1.4)%1;
     }
   }
 
@@ -357,8 +259,13 @@ export class Traffic {
   step(dt) {
     const g = this.g;
     this.time += dt;
+    for(const v of this.vehicles.values()){
+      v.advanced=false;this.pose(v);const p=v.previous??(v.previous={});
+      p.x=v.x;p.y=v.y;p.z=v.z;p.heading=v.heading;p.pitch=v.pitch;
+    }
     g.updateSignals(dt);
 
+    for(const v of this.vehicles.values())if(v.turn.active){this.advanceTurn(v,dt);v.advanced=true;}
     // ---- bucket vehicles by (edge, lane)
     const buckets = g.buckets;
     for (let i = 0; i < buckets.length; i++) buckets[i].length = 0;
@@ -372,8 +279,9 @@ export class Traffic {
     dead.length = 0;
     for (let bi = 0; bi < buckets.length; bi++) {
       const arr = buckets[bi];
-      for (let k = 0; k < arr.length; k++) {
+      for (let k = arr.length - 1; k >= 0; k--) {
         const v = arr[k];
+        if(v.turn.active||v.advanced)continue;
         const rec = v.rec;
         const A = this.classes[v.ci].big ? A_BIG : A_CAR;
         let acc = this.idm(v.v, v.v0, 1e6, v.v, A);
@@ -385,15 +293,23 @@ export class Traffic {
         }
 
         // distance to the node ahead and to its stop line (the road's trim = edge of the junction box)
-        const trimEnd = v.dir > 0 ? rec.trimB : rec.trimA;
+        const trimEnd = ((v.dir > 0 ? rec.trimB : rec.trimA)||Math.min(8,rec.len*.2));
         const dEnd = rec.len - v.s - v.half;
-        const dStop = rec.len - trimEnd - 1.0 - v.s - v.half;
+        const ringNode=g.nodes.get(g.nodeAhead(rec,v.dir))?.roundabout;
+        const dStop = rec.len-trimEnd-(ringNode?1+v.half:Math.max(5.3,1+v.half))-v.s;
         const nodeId = g.nodeAhead(rec, v.dir);
         const nd = g.nodes.get(nodeId);
+        if(v.explicit&&v.loop&&!v.route[v.ri+1]){v.route.push(...v.loopRoute);}
+        if(v.loopRoute&&v.ri>=v.loopRoute.length){v.route.splice(0,v.loopRoute.length);v.ri-=v.loopRoute.length;}
+        const atPortal=g.portals.some(p=>p.nodeId===nodeId);
+        if(atPortal)v.external=true;
         let nxt = v.route[v.ri + 1];
-        if (!nxt && dEnd < 80) {
-          if (v.external) { if (this.extendToPortal(v)) nxt = v.route[v.ri + 1]; }
-          else if (this.extendRoute(v)) nxt = v.route[v.ri + 1];
+        if (!nxt && dEnd < 80 && !v.explicit) {
+          // A portal is the only legal invisible lifecycle boundary. Once an external journey
+          // reaches one, keep the route finished so the normal end-of-edge path despawns it.
+          if (v.external) {
+            if (!atPortal && this.extendToPortal(v)) nxt = v.route[v.ri + 1];
+          } else if (this.extendRoute(v)) nxt = v.route[v.ri + 1];
         }
         let stop = NO_STOP;
 
@@ -405,7 +321,7 @@ export class Traffic {
             const nb = buckets[nrec.bucket + this.pickLane(nrec, nxt.dir, v, v.route[v.ri + 2])];
             const first = nb && nb.length ? nb[0] : null;
             if (first) {
-              nextGap = first.s - first.half;
+              nextGap = first.s - first.half - (nxt.dir>0?nrec.trimA:nrec.trimB);
               if (!lead) acc = Math.min(acc, this.idm(v.v, v.v0, dEnd + nextGap, first.v, A));
             }
           }
@@ -413,10 +329,18 @@ export class Traffic {
 
         if (nd) {
           let block = false;
+          if(nxt)for(const other of this.vehicles.values())if(other.id!==v.id&&other.turn.active&&other.turn.rec.id===nxt.edgeId&&other.turn.dir===nxt.dir&&other.turn.lane===this.pickLane(other.turn.rec,nxt.dir,v,v.route[v.ri+2])){block=true;break;}
+
           const st = g.approachState(nodeId, rec.id, v.dir);
           if (st === 'red') block = true;
-          else if (st === 'yellow' && dStop > 2 + v.v * 1.0) block = true;
-          else if (st === 'none' && nd.arms >= 3) {
+          else if (st === 'yellow') block = true;
+          else if (st === 'none' && nd.roundabout && !rec.ring) {
+            if(dStop<12){
+              let circulating=false;for(const other of this.vehicles.values())if(other.id!==v.id&&other.rec.ring&&Math.hypot(other.x-nd.x,other.z-nd.z)<18){circulating=true;break;}
+              if(v.v<1)v.yieldWait=(v.yieldWait??0)+dt;
+              block=block||circulating||(v.yieldWait??0)<.5;
+            }
+          } else if (st === 'none' && !nd.roundabout && nd.arms >= 3 && !rec.big) {
             if (dStop < 11) {
               if (nd.busy === -1 || nd.busy === v.id || this.time > nd.busyUntil) {
                 nd.busy = v.id; nd.busyUntil = this.time + 6; v.claim = nodeId; v.wait = 0;
@@ -429,17 +353,25 @@ export class Traffic {
           }
           // never enter a junction we cannot clear
           if (nd.arms >= 3 && nextGap < v.len + 3.5) block = true;
-          if (block && dStop > -0.6) stop = dStop;
+          if(block){
+            const publicRemaining=rec.len-(v.dir>0?rec.trimB:rec.trimA)-5.2-v.s;
+            if(!ringNode&&publicRemaining>=0)stop=Math.max(0,Math.min(dStop,publicRemaining-.01));
+            else if(dStop>-.6)stop=dStop;
+          }
           if (!nxt && !v.external && dEnd < 30) stop = Math.min(stop, dEnd - 1.5);
         }
         if (stop < NO_STOP) acc = Math.min(acc, this.idm(v.v, v.v0, stop, 0, A));
 
         // integrate
         v.v += acc * dt;
+        v.v=Math.min(v.v,rec.speed*1.05);
         if (v.v < 0) v.v = 0;
         if (stop < 0.4 && v.v < 0.7) v.v = 0;
         const moved = v.v * dt;
         v.s += moved;
+        if(stop<NO_STOP&&stop>=0&&moved>stop){v.s-=moved-stop;v.v=0;}
+        if(lead){const cap=lead.s-lead.half-v.half-Math.max(1.25,.55*v.v);if(v.s>cap){v.s=Math.max(v.s-moved,cap);v.v=Math.min(v.v,lead.v,Math.max(0,(lead.s-lead.half-v.half-v.s)/.55));}}
+
         v.spin += moved / v.wheelR;
         if (v.spin > 1e6) v.spin -= 1e6;
         v.brake += ((acc < -1.1 ? 1 : 0) - v.brake) * Math.min(1, dt * 7);
@@ -453,8 +385,14 @@ export class Traffic {
           v.claim = -1;
         }
 
+        // Connect the two trimmed lane endpoints through the junction on a cubic curve.
+        if(nxt && v.s>=rec.len-trimEnd){
+          this.beginTurn(v,nxt);if(v.turn.active)continue;
+          v.s=Math.min(v.s,rec.len-trimEnd);v.v=0;
+        }
         // advance along the route
         if (v.s >= rec.len) {
+          if (!v.route[v.ri + 1] && v.explicit && v.loop) {v.route.push(...v.route.slice(0,v.ri+1));}
           if (!v.route[v.ri + 1]) { dead.push(v.id); continue; }
           const step = v.route[v.ri + 1];
           const nrec = g.edges.get(step.edgeId);
@@ -470,12 +408,68 @@ export class Traffic {
           const entry = nl0 + Math.min(nln - 1, prevIdxFromRight);
           v.prevLane = entry;
           v.lane = target;
-          v.blend = entry === target ? 1 : 0;
+          v.blend = 1;
           v.blendLen = Math.max(10, Math.min(30, nrec.len * 0.5));
         }
       }
     }
     for (const id of dead) this.despawn(id);
+    for(const v of this.vehicles.values()){this.pose(v);if(v.kind==='semi'){const dh=Math.atan2(Math.sin(v.heading-(v.trailerHeading??v.heading)),Math.cos(v.heading-(v.trailerHeading??v.heading)));v.trailerHeading=(v.trailerHeading??v.heading)+Math.sin(dh)*v.v*dt/8.1;v.articulation=Math.max(-1.1,Math.min(1.1,Math.atan2(Math.sin(v.heading-v.trailerHeading),Math.cos(v.heading-v.trailerHeading))));}}
+  }
+
+  steerHeading(v,target){
+    if(!v.previous)return target;
+    const from=v.previous.heading,delta=Math.atan2(Math.sin(target-from),Math.cos(target-from));
+    return from+Math.max(-.12,Math.min(.12,delta));
+  }
+  pose(v){
+    if(v.turn.active)return;
+    const out=this._p,rec=v.rec;this.g.laneAt(rec,v.lane,v.dir,v.s,out);
+    v.x=out.x;v.y=out.y+.08;v.z=out.z;v.heading=this.steerHeading(v,Math.atan2(out.tx,-out.tz));v.speed=v.v;
+    v.t=Math.max(0,Math.min(1,v.dir>0?v.s/rec.len:1-v.s/rec.len));
+    this.g.laneAt(rec,v.lane,v.dir,Math.min(rec.len,v.s+v.half),out);const front=out.y;
+    this.g.laneAt(rec,v.lane,v.dir,Math.max(0,v.s-v.half),out);v.pitch=(front-out.y)/Math.max(.1,Math.min(rec.len,v.s+v.half)-Math.max(0,v.s-v.half));
+  }
+  beginTurn(v,next){
+    const r=this.g.edges.get(next.edgeId);if(!r)return;
+    const t=v.turn,start=((next.dir>0?r.trimA:r.trimB)||Math.min(8,r.len*.2)),end=v.rec.len-((v.dir>0?v.rec.trimB:v.rec.trimA)||Math.min(8,v.rec.len*.2));
+    const lane=this.pickLane(r,next.dir,v,v.route[v.ri+2]);if(this.g.laneCount(r,next.dir)<1)return;
+    // Reserve the receiving lane before committing to a junction curve. A spawn or
+    // another approach cannot fill this interval while the vehicle is crossing.
+    for(const other of this.vehicles.values()){
+      if(other.id===v.id)continue;
+      if(other.turn.active&&other.turn.rec.id===r.id&&other.turn.lane===lane)return;
+      if(!other.turn.active&&other.rec.id===r.id&&other.lane===lane&&Math.abs(other.s-start)<other.half+v.half+Math.max(2.3,.55*v.v))return;
+    }
+    const a=this._p,b=this._q;this.g.laneAt(v.rec,v.lane,v.dir,end,a);this.g.laneAt(r,lane,next.dir,start,b);
+    const handle=Math.max(1,Math.hypot(b.x-a.x,b.z-a.z)*.42),p=t.points;
+    p[0]=a.x;p[1]=a.y+.08;p[2]=a.z;p[3]=a.x+a.tx*handle;p[4]=a.y+.08;p[5]=a.z+a.tz*handle;
+    p[6]=b.x-b.tx*handle;p[7]=b.y+.08;p[8]=b.z-b.tz*handle;p[9]=b.x;p[10]=b.y+.08;p[11]=b.z;
+    t.arc??=new Float64Array(65);t.arc[0]=0;let px=a.x,pz=a.z;
+    for(let i=1;i<=64;i++){const u=i/64,k=1-u,x=k*k*k*p[0]+3*k*k*u*p[3]+3*k*u*u*p[6]+u*u*u*p[9],z=k*k*k*p[2]+3*k*k*u*p[5]+3*k*u*u*p[8]+u*u*u*p[11];t.arc[i]=t.arc[i-1]+Math.hypot(x-px,z-pz);px=x;pz=z;}
+    t.len=t.arc[64];t.distance=Math.max(0,v.s-end);t.rec=r;t.lane=lane;t.dir=next.dir;t.start=start;t.sourceEnd=end;t.active=true;v.edgeId=null;this.advanceTurn(v,0);
+  }
+  advanceTurn(v,dt){
+    const t=v.turn,p=t.points;let idx=1;while(idx<64&&t.arc[idx]<t.distance)idx++;
+    const u=(idx-1+(t.distance-t.arc[idx-1])/Math.max(.001,t.arc[idx]-t.arc[idx-1]))/64,k=1-u;
+    const dx=3*k*k*(p[3]-p[0])+6*k*u*(p[6]-p[3])+3*u*u*(p[9]-p[6]),dz=3*k*k*(p[5]-p[2])+6*k*u*(p[8]-p[5])+3*u*u*(p[11]-p[8]);
+    const ddx=6*k*(p[6]-2*p[3]+p[0])+6*u*(p[9]-2*p[6]+p[3]),ddz=6*k*(p[8]-2*p[5]+p[2])+6*u*(p[11]-2*p[8]+p[5]);
+    const curvature=Math.abs(dx*ddz-dz*ddx)/Math.max(.001,Math.hypot(dx,dz)**3);
+    v.v=Math.min(v.rec.speed*1.05, v.v+1.5*dt,curvature>.001?1.8/curvature:Infinity);
+    if(dt>0){
+      let cap=t.len;
+      for(const other of this.vehicles.values()){
+        if(other.id===v.id||other.turn.active||other.rec.id!==t.rec.id||other.lane!==t.lane||other.s<t.start)continue;
+        const remaining=t.len-t.distance+other.s-t.start-other.half-v.half;
+        v.v=Math.min(v.v,Math.max(0,(remaining-1.25)/Math.max(.55,dt)));
+        cap=Math.min(cap,t.len+other.s-t.start-other.half-v.half-Math.max(1.25,.55*v.v));
+      }
+      const before=t.distance;t.distance=Math.max(before,Math.min(cap,t.len,before+v.v*dt));
+      v.spin+=(t.distance-before)/v.wheelR;v.s=t.sourceEnd+t.distance;
+      this.advanceTurn(v,0);return;
+    }
+    v.x=k*k*k*p[0]+3*k*k*u*p[3]+3*k*u*u*p[6]+u*u*u*p[9];v.y=k*p[1]+u*p[10];v.z=k*k*k*p[2]+3*k*k*u*p[5]+3*k*u*u*p[8]+u*u*u*p[11];v.heading=this.steerHeading(v,Math.atan2(dx,-dz));v.speed=v.v;
+    if(t.distance>=t.len){v.rec=t.rec;v.v0=t.rec.speed*v.speedFactor;v.v=Math.min(v.v,t.rec.speed*1.05);v.edgeId=t.rec.id;v.dir=t.dir;v.lane=t.lane;v.prevLane=t.lane;v.s=t.start;v.ri++;t.active=false;}
   }
 
   /** Lane on `rec` in `dir` appropriate for the turn recorded in `next`. index 0 of the range = rightmost. */
@@ -483,6 +477,7 @@ export class Traffic {
     const g = this.g;
     const l0 = g.laneFirst(rec, dir), ln = g.laneCount(rec, dir);
     if (ln <= 1) return l0;
+    if(rec.big&&v.rec.big)return l0+Math.max(0,Math.min(ln-1,v.lane-g.laneFirst(v.rec,v.dir)));
     const big = this.classes[v.ci].big;
     if (next) {
       const nrec = g.edges.get(next.edgeId);
@@ -493,7 +488,7 @@ export class Traffic {
       }
     }
     if (big) return l0;
-    return l0 + (v.id % ln);
+    return l0 + (v.laneChoice % ln);
   }
 
   /** External traffic leaves the map again: route on toward any outside connection. */
@@ -511,6 +506,11 @@ export class Traffic {
 
   extendRoute(v) {
     const node = this.g.nodeAhead(v.rec, v.dir);
+    const nd = this.g.nodes.get(node);
+    if (nd?.degree === 1 && !v.rec.oneWay && this.g.laneCount(v.rec,-v.dir)>0) {
+      v.route.push({edgeId:v.rec.id,dir:-v.dir});
+      return true;
+    }
     const dest = this.randomDestNode(node);
     if (dest < 0) return false;
     const tail = this.g.route(node, dest, v.rec.id);
@@ -518,6 +518,27 @@ export class Traffic {
     for (const s of tail) v.route.push(s);
     if (v.route.length > 60 && v.ri > 0) { v.route.splice(0, v.ri); v.ri = 0; }
     return true;
+  }
+
+  seedToTarget(){
+    let attempts=0;
+    this.seeding=true;
+    // Retain local overnight journeys alongside the departing motorway traffic.
+    if(this.world.time.hour>=21||this.world.time.hour<5){
+      const local=[...this.g.edges.values()].filter(r=>r.type==='avenue'&&r.len<200).sort((a,b)=>{const d=r=>{const n=this.g.nodes.get(r.a),m=this.g.nodes.get(r.b);return Math.hypot((n.x+m.x)/2-40,(n.z+m.z)/2-40);};return d(a)-d(b);});
+      for(const [i,rec] of local.slice(0,2).entries())this.spawn({rec,dir:1,ci:i,s:rec.len*.5});
+    }
+    // Feed each real radial so ring-priority decisions are visible after a density reset.
+    if(this.target>=80)for(const node of this.g.nodes.values())if(node.roundabout)for(const arm of node.ins){
+      const rec=this.g.edges.get(arm.edgeId);if(rec.ring)continue;
+      const dir=rec.b===node.id?1:-1;
+      this.spawn({rec,dir,ci:1,s:rec.len-(dir>0?rec.trimB:rec.trimA)-14});
+    }
+    for(let ci=0;ci<MIX.length&&this.vehicles.size<this.target;ci++)for(let n=0;n<40;n++)if(this.spawn({ci}))break;
+    while(this.vehicles.size<this.target&&attempts++<this.target*40){if(this.g.portals.length&&this.rng.float()<.23)this.spawnExternal();else this.spawn();}
+    this.seeding=false;
+    while(this.peds.length<this.pedTarget){if(!this.spawnPed())break;}
+    this.stepPeds(0);this.render(0);
   }
 
   // ------------------------------------------------------------------ population control
@@ -528,187 +549,17 @@ export class Traffic {
     while (n < need && guard++ < 6) {
       const ext = this.g.portals.length && this.rng.float() < 0.22;
       const v = ext ? this.spawnExternal() : this.spawn();
-      if (!v) break;
+      if (!v) continue;
       n++;
     }
-    if (n > need + 4) {
-      for (const v of this.vehicles.values()) { this.despawn(v.id); break; }
-    }
+    while(n>need){const v=this.vehicles.values().next().value;this.despawn(v.id);n--;}
     const pneed = Math.round(this.pedTarget);
     guard = 0;
     while (this.peds.length < pneed && guard++ < 8) { if (!this.spawnPed()) break; }
-    while (this.peds.length > pneed + 3) { const p = this.peds.pop(); this.world.traffic.pedestrians.delete(p.id); }
+    while (this.peds.length > pneed) { const p = this.peds.pop(); this.world.traffic.pedestrians.delete(p.id); }
   }
 
-  // ------------------------------------------------------------------ write instances
-  render(dt) {
-    const g = this.g;
-    const out = this._p, out2 = this._q;
-    const counters = this.counters;
-    counters.fill(0);
-    let speedSum = 0, congSum = 0;
-    const flow = this.flow, cell = this.flowCell, half = this.world.size * 0.5;
-    this._flowAcc = (this._flowAcc || 0) + dt;
-    if (this._flowAcc > 0.25) {
-      const decay = Math.max(0, 1 - this._flowAcc * 0.35);
-      for (let i = 0; i < flow.length; i++) flow[i] *= decay;
-      this._flowAcc = 0;
-    }
-
-    // contact-shadow direction: away from the sun, length from its elevation
-    {
-      const sd = this.world.weather.sunDir;
-      if (sd) {
-        const sy = Math.max(0.20, sd.y);
-        const set = (mat, h, cap) => {
-          if (!mat) return;
-          let ox = -(sd.x / sy) * h, oz = -(sd.z / sy) * h;
-          const mm = Math.hypot(ox, oz);
-          if (mm > cap) { ox *= cap / mm; oz *= cap / mm; }
-          mat.userData.uSun.value.set(ox, 0, oz);
-        };
-        set(this.contactMat, 1.15, 2.2);
-        set(this.pedContactMat, 0.80, 1.0);
-      }
-    }
-
-    for (const v of this.vehicles.values()) {
-      const rec = v.rec;
-      g.laneAt(rec, v.lane, v.dir, v.s, out);
-      let px = out.x, py = out.y, pz = out.z, tx = out.tx, tz = out.tz;
-      if (v.blend < 1) {
-        g.laneAt(rec, v.prevLane, v.dir, v.s, out2);
-        const k = v.blend * v.blend * (3 - 2 * v.blend);
-        px = out2.x + (px - out2.x) * k;
-        py = out2.y + (py - out2.y) * k;
-        pz = out2.z + (pz - out2.z) * k;
-        const lx = out2.tx + (tx - out2.tx) * k, lz = out2.tz + (tz - out2.tz) * k;
-        const ll = Math.hypot(lx, lz) || 1;
-        tx = lx / ll; tz = lz / ll;
-      }
-      // grade -> pitch (smoothed)
-      const dy = py - v.y;
-      if (v.v > 0.2) {
-        const grade = Math.max(-0.35, Math.min(0.35, dy / Math.max(0.05, v.v * dt)));
-        v.pitch += (grade - v.pitch) * Math.min(1, dt * 2.5);
-      }
-      v.x = px; v.y = py; v.z = pz;
-      v.heading = Math.atan2(tx, -tz);
-      v.t = v.s / rec.len;
-      v.lightsOn = this.lightsOn;
-
-      const cls = this.classes[v.ci];
-      const slot = counters[v.ci]++;
-      if (slot >= cls.cap) { counters[v.ci]--; continue; }
-      v.slot = slot;
-      // basis: forward f (with pitch), X = right, Y = up, Z = -f
-      const fy = v.pitch;
-      const fl = Math.hypot(tx, tz);
-      const nx = tx / (fl || 1), nz = tz / (fl || 1);
-      const inv = 1 / Math.hypot(1, fy);
-      const fxx = nx * inv, fyy = fy * inv, fzz = nz * inv;
-      const h = Math.hypot(fxx, fzz) || 1;
-      const Xx = -fzz / h, Xy = 0, Xz = fxx / h;
-      const Yx = -fxx * fyy / h, Yy = h, Yz = -fzz * fyy / h;
-      const m = cls.mesh.instanceMatrix.array;
-      const o = slot * 16;
-      m[o] = Xx; m[o + 1] = Xy; m[o + 2] = Xz; m[o + 3] = 0;
-      m[o + 4] = Yx; m[o + 5] = Yy; m[o + 6] = Yz; m[o + 7] = 0;
-      m[o + 8] = -fxx; m[o + 9] = -fyy; m[o + 10] = -fzz; m[o + 11] = 0;
-      m[o + 12] = px; m[o + 13] = py + 0.085; m[o + 14] = pz; m[o + 15] = 1;
-      const pa = cls.paint.array;
-      pa[slot * 3] = v.paint[0]; pa[slot * 3 + 1] = v.paint[1]; pa[slot * 3 + 2] = v.paint[2];
-      const la = cls.lights.array;
-      la[slot * 2] = this.lightsOn;
-      la[slot * 2 + 1] = v.brake;
-      cls.spin.array[slot] = v.spin;
-
-      speedSum += v.v;
-      const cong = Math.max(0, 1 - v.v / Math.max(3, v.v0));
-      congSum += cong;
-      const gx = ((px + half) / cell) | 0, gz = ((pz + half) / cell) | 0;
-      if (gx >= 0 && gx < GRID && gz >= 0 && gz < GRID) {
-        const idx = gz * GRID + gx;
-        flow[idx] = Math.min(1.5, flow[idx] + 0.12 + cong * 0.5);
-      }
-    }
-
-    for (let ci = 0; ci < this.classes.length; ci++) {
-      const c = this.classes[ci];
-      c.mesh.count = counters[ci];
-      c.rig.count = this.lightsOn > 0.02 ? counters[ci] : 0;
-      c.shadow.count = counters[ci];
-      c.mesh.instanceMatrix.needsUpdate = true;
-      c.paint.needsUpdate = true;
-      c.lights.needsUpdate = true;
-      c.spin.needsUpdate = true;
-    }
-
-    // pedestrians
-    const pm = this.pedMesh;
-    const pa = pm.mesh.instanceMatrix.array;
-    let pn = 0;
-    for (let i = 0; i < this.peds.length && pn < pm.cap; i++) {
-      const p = this.peds[i];
-      const c = Math.cos(p.heading), s = Math.sin(p.heading);
-      // heading 0 = -Z; local +Z is the pedestrian's back
-      const o = pn * 16;
-      const sc = p.scale;
-      pa[o] = c * sc; pa[o + 1] = 0; pa[o + 2] = s * sc; pa[o + 3] = 0;
-      pa[o + 4] = 0; pa[o + 5] = sc; pa[o + 6] = 0; pa[o + 7] = 0;
-      pa[o + 8] = -s * sc; pa[o + 9] = 0; pa[o + 10] = c * sc; pa[o + 11] = 0;
-      pa[o + 12] = p.x; pa[o + 13] = p.y + 0.21; pa[o + 14] = p.z; pa[o + 15] = 1;
-      pm.shirt.array[pn * 3] = p.shirt[0]; pm.shirt.array[pn * 3 + 1] = p.shirt[1]; pm.shirt.array[pn * 3 + 2] = p.shirt[2];
-      pm.pants.array[pn * 3] = p.pants[0]; pm.pants.array[pn * 3 + 1] = p.pants[1]; pm.pants.array[pn * 3 + 2] = p.pants[2];
-      pm.tone.array[pn * 2] = p.tone[0]; pm.tone.array[pn * 2 + 1] = p.tone[1];
-      pm.walk.array[pn * 2] = p.phase; pm.walk.array[pn * 2 + 1] = 0.52;
-      pm.pLights.array[pn * 2] = this.lightsOn;
-      pn++;
-    }
-    pm.mesh.count = pn;
-    pm.shadow.count = pn;
-    pm.pLights.needsUpdate = true;
-    pm.mesh.instanceMatrix.needsUpdate = true;
-    pm.shirt.needsUpdate = true; pm.pants.needsUpdate = true;
-    pm.tone.needsUpdate = true; pm.walk.needsUpdate = true;
-
-    const n = this.vehicles.size || 1;
-    this.stats.count = this.vehicles.size;
-    this.stats.avgSpeed = speedSum / n;
-    this.stats.congestion = Math.min(1, congSum / n);
-    const wt = this.world.traffic;
-    wt.stats.count = this.stats.count;
-    wt.stats.avgSpeed = this.stats.avgSpeed;
-    wt.stats.congestion = this.stats.congestion;
-  }
-
-  dispose() {
-    for (const c of this.classes) {
-      c.mesh.geometry.dispose();
-      c.rig.geometry.dispose();
-      c.shadow.geometry.dispose();
-      this.group.remove(c.mesh); this.group.remove(c.rig); this.group.remove(c.shadow);
-    }
-    this.pedMesh?.mesh.geometry.dispose();
-    this.vehMat?.dispose(); this.lightMat?.dispose(); this.pedMat?.dispose();
-    this.contactMat?.dispose(); this.pedContactMat?.dispose();
-    this.classes.length = 0;
-    this.vehicles.clear();
-    this.peds.length = 0;
-    this.world.traffic.vehicles.clear();
-    this.world.traffic.pedestrians.clear();
-    this.ctx.group.remove(this.group);
-  }
+  render(dt){return render.call(this,dt);}
+  dispose(){return dispose.call(this);}
 }
-
 export { MIX, GRID };
-
-/** Turn real shadow casting on/off for every vehicle + pedestrian mesh (see core-requests/traffic.md). */
-export function setShadowCasting(on, traffic) {
-  SHADOW_CASTING = !!on;
-  if (traffic) {
-    for (const c of traffic.classes) c.mesh.castShadow = SHADOW_CASTING;
-    if (traffic.pedMesh) traffic.pedMesh.mesh.castShadow = SHADOW_CASTING;
-  }
-  return SHADOW_CASTING;
-}

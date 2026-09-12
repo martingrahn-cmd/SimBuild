@@ -3,8 +3,9 @@
 const DEG = Math.PI / 180;
 
 export class LaneGraph {
-  constructor(world, log) {
+  constructor(world, log, roadsApi) {
     this.world = world;
+    this.roadsApi = roadsApi;
     this.log = log;
     this.version = -1;
     this.edges = new Map();     // edgeId -> EdgeRec
@@ -14,6 +15,7 @@ export class LaneGraph {
     this.signals = new Map();   // nodeId -> signal record
     this.driveEdges = [];       // edge ids weighted for spawning
     this.sidewalks = [];        // {edgeId, side}
+    this.activityVersion = -1;  // real occupants/jobs, refreshed lazily on spawn
     this._open = [];
     this._g = new Map();
     this._came = new Map();
@@ -26,13 +28,14 @@ export class LaneGraph {
     this.version = R.version;
     this.edges.clear(); this.nodes.clear(); this.signals.clear();
     this.buckets.length = 0; this.portals.length = 0; this.driveEdges.length = 0; this.sidewalks.length = 0;
+    this.activityVersion = -1;
     let bucketBase = 0;
 
     for (const e of R.edges.values()) {
       const T = R.types[e.type] || R.types.street;
       const len = e.length;
       if (!(len > 4)) continue;
-      const n = Math.max(2, Math.min(512, Math.ceil(len / 4) + 1));
+      const n = Math.max(2, Math.min(12000, Math.ceil(len / 0.25) + 1));
       const ds = len / (n - 1);
       const lanes = Math.max(1, e.lanes | 0);
       const per = e.oneWay ? lanes : Math.max(1, Math.floor(lanes / 2));
@@ -63,7 +66,7 @@ export class LaneGraph {
         }
       }
       const rec = {
-        id: e.id, a: e.a, b: e.b, type: e.type, len, n, ds, lanes, per, oneWay: !!e.oneWay,
+        id: e.id, a: e.a, b: e.b, type: e.type, ring:!!e.ring, len, n, ds, lanes, per, oneWay: !!e.oneWay,
         speed: (T.speed || 50) / 3.6, lx, ly, lz, cx, cy, cz, swR, swL, bucket: bucketBase,
         trimA: e.trimA || 0, trimB: e.trimB || 0,
         dirA: { x: 0, z: 0 }, dirB: { x: 0, z: 0 }, big: e.type === 'highway' || e.type === 'ramp',
@@ -74,8 +77,8 @@ export class LaneGraph {
       this.edges.set(e.id, rec);
       bucketBase += lanes;
       const w = e.type === 'highway' ? 2.4 : e.type === 'avenue' ? 1.6 : e.type === 'alley' ? 0.35 : 1;
-      this.driveEdges.push({ id: e.id, w: len * w });
-      if (swR) { this.sidewalks.push({ id: e.id, side: 1 }); this.sidewalks.push({ id: e.id, side: -1 }); }
+      this.driveEdges.push({ id: e.id, w: len * w, active: 0 });
+      if (swR) { this.sidewalks.push({ id: e.id, side: 1, w: len, active: 0 }); this.sidewalks.push({ id: e.id, side: -1, w: len, active: 0 }); }
     }
     for (let i = 0; i < bucketBase; i++) this.buckets.push([]);
 
@@ -88,11 +91,11 @@ export class LaneGraph {
         if (!rec) continue;
         if (rec.a === nd.id) {
           outs.push({ edgeId: eid, dir: 1, to: rec.b, len: rec.len, speed: rec.speed, ang: Math.atan2(rec.dirA.z, rec.dirA.x) });
-          if (!rec.oneWay) ins.push({ edgeId: eid, dir: -1, from: rec.b, ang: Math.atan2(rec.dirA.z, rec.dirA.x) });
+          if (!rec.oneWay && rec.lanes > rec.per) ins.push({ edgeId: eid, dir: -1, from: rec.b, ang: Math.atan2(rec.dirA.z, rec.dirA.x) });
         }
         if (rec.b === nd.id) {
           ins.push({ edgeId: eid, dir: 1, from: rec.a, ang: Math.atan2(rec.dirB.z, rec.dirB.x) });
-          if (!rec.oneWay) outs.push({ edgeId: eid, dir: -1, to: rec.a, len: rec.len, speed: rec.speed, ang: Math.atan2(rec.dirB.z, rec.dirB.x) });
+          if (!rec.oneWay && rec.lanes > rec.per) outs.push({ edgeId: eid, dir: -1, to: rec.a, len: rec.len, speed: rec.speed, ang: Math.atan2(rec.dirB.z, rec.dirB.x) });
         }
       }
       this.nodes.set(nd.id, {
@@ -108,36 +111,21 @@ export class LaneGraph {
 
   /** Signalise 3+ arm intersections that are not roundabouts. */
   buildSignals() {
-    const R = this.world.roads;
-    for (const nd of this.nodes.values()) {
-      if (nd.arms < 3) continue;
-      let ring = false, major = false;
-      for (const m of nd.ins) {
-        const rec = this.edges.get(m.edgeId);
-        if (!rec) continue;
-        const e = R.edges.get(m.edgeId);
-        if (e && e.ring) ring = true;
-        // only crossings with a big road get lights; plain street crossings are priority-controlled
-        if (rec.type === 'avenue' || rec.type === 'highway') major = true;
-      }
-      if (ring || !major) continue;
-      // group approaches into two phases by axis
-      const base = nd.ins[0].ang;
-      const arms = [];
-      for (const m of nd.ins) {
-        let d = (m.ang - base) % Math.PI;
-        if (d < 0) d += Math.PI;
-        const phase = (d < Math.PI * 0.25 || d > Math.PI * 0.75) ? 0 : 1;
-        arms.push({ edgeId: m.edgeId, dir: m.dir, phase, key: m.edgeId * 2 + (m.dir > 0 ? 1 : 0) });
-      }
-      const has0 = arms.some((a) => a.phase === 0), has1 = arms.some((a) => a.phase === 1);
-      if (!has0 || !has1) continue;
-      const green = 9 + (nd.id % 5) * 1.6;
-      this.signals.set(nd.id, {
-        id: nd.id, x: nd.x, y: nd.y, z: nd.z, arms,
-        phase: nd.id % 2, t: (nd.id * 3.7) % (green + 3), green, yellow: 3.0, state: 'green',
+    for (const info of this.roadsApi?.intersections?.() || []) {
+      const node=this.nodes.get(info.id);if(node)node.roundabout=!!info.roundabout;
+      if (info.arms.length < 3 || info.roundabout) continue;
+      const nd = this.nodes.get(info.id); if (!nd) continue;
+      const base = Math.atan2(info.arms[0].dir.z, info.arms[0].dir.x);
+      const arms = info.arms.map(a => {
+        const angle = Math.atan2(a.dir.z,a.dir.x);
+        const d = ((angle-base)%Math.PI+Math.PI)%Math.PI;
+        const phase = d < Math.PI/4 || d > Math.PI*3/4 ? 1 : 0;
+        const dir = a.atA ? -1 : 1;
+        return {...a,phase,dir,key:a.edgeId*2+(dir>0?1:0)};
       });
+      this.signals.set(info.id,{id:info.id,x:info.x,y:info.y,z:info.z,arms,phase:0,t:0,green:1814.4,yellow:345.6,state:'green',since:0,cycle:4320,greenArms:[]});
     }
+    this.updateSignals();
   }
 
   /** Dead-end nodes on big roads (or near the map border) become outside connections. */
@@ -147,18 +135,23 @@ export class LaneGraph {
       if (nd.arms !== 1 || nd.outs.length === 0) continue;
       const rec = this.edges.get(nd.outs[0].edgeId);
       if (!rec) continue;
-      const border = Math.min(half - Math.abs(nd.x), half - Math.abs(nd.z)) < 120;
-      if (!(rec.big || border || rec.type === 'avenue')) continue;
+      const border = Math.min(half - Math.abs(nd.x), half - Math.abs(nd.z)) <= 60;
+      if (!border || !['highway','avenue'].includes(rec.type)) continue;
       this.portals.push({ nodeId: nd.id, x: nd.x, z: nd.z, out: nd.outs[0], big: rec.big });
     }
   }
 
   updateSignals(dt) {
+    const clock = this.world.time;
+    const seconds = ((clock.day * 24 + clock.hour) * 3600) % 4320;
     for (const s of this.signals.values()) {
-      s.t += dt;
-      const cycle = s.green + s.yellow;
-      if (s.t >= cycle) { s.t -= cycle; s.phase ^= 1; }
-      s.state = s.t < s.green ? 'green' : 'yellow';
+      const local = (seconds + (s.id % 4) * 270) % 4320;
+      s.phase = local < 2160 ? 0 : 1;
+      s.t = local % 2160;
+      s.state = s.t < 1814.4 ? 'green' : 'yellow';
+      s.since = s.state === 'green' ? s.t : s.t - 1814.4;
+      s.greenArms.length = 0;
+      if (s.state === 'green') for (const a of s.arms) if(a.phase === s.phase) s.greenArms.push(a.edgeId);
     }
   }
 
@@ -184,7 +177,10 @@ export class LaneGraph {
     out.x = x0 + (x1 - x0) * k;
     out.y = y0 + (y1 - y0) * k;
     out.z = z0 + (z1 - z0) * k;
-    let tx = (x1 - x0) * dir, tz = (z1 - z0) * dir;
+    // A 4 m steering chord smooths authored polyline corners without moving off the lane.
+    const f0=Math.max(0,(p-2)/rec.ds),f1=Math.min(rec.n-1,(p+2)/rec.ds),j0=Math.min(rec.n-2,Math.floor(f0)),j1=Math.min(rec.n-2,Math.floor(f1));
+    let tx = (X[j1]+(X[j1+1]-X[j1])*(f1-j1)-X[j0]-(X[j0+1]-X[j0])*(f0-j0))*dir;
+    let tz = (Z[j1]+(Z[j1+1]-Z[j1])*(f1-j1)-Z[j0]-(Z[j0+1]-Z[j0])*(f0-j0))*dir;
     const l = Math.hypot(tx, tz) || 1;
     out.tx = tx / l; out.tz = tz / l;
     return out;
@@ -296,11 +292,50 @@ export class LaneGraph {
   }
 
   randomEdge(rng) {
+    this.refreshActivityWeights();
     let total = 0;
-    for (const d of this.driveEdges) total += d.w;
+    const night=this.world.time.hour>=21||this.world.time.hour<5;
+    // Ordinary traffic must start at a real occupied/job frontage. A length-only base weight made
+    // a brand-new road in an empty map instantly fill with cars. Outside traffic has its own portal
+    // spawn path and does not need inactive local streets in this pool.
+    const weight=d=>d.active>0 ? d.w*.08*(night&&this.edges.get(d.id).type==='highway'?2:1)+d.active : 0;
+    for (const d of this.driveEdges) total += weight(d);
+    if (!(total > 0)) return null;
     let r = rng.float() * total;
-    for (const d of this.driveEdges) { r -= d.w; if (r <= 0) return this.edges.get(d.id); }
-    return this.edges.get(this.driveEdges[this.driveEdges.length - 1]?.id);
+    for (const d of this.driveEdges) { r -= weight(d); if (r <= 0) return this.edges.get(d.id); }
+    for (let i=this.driveEdges.length-1;i>=0;i--) if (weight(this.driveEdges[i])>0) return this.edges.get(this.driveEdges[i].id);
+    return null;
+  }
+
+  randomSidewalk(rng) {
+    this.refreshActivityWeights();
+    let total = 0;
+    const weight = sidewalk => sidewalk.w + sidewalk.active * .1;
+    for (const sidewalk of this.sidewalks) total += weight(sidewalk);
+    let r = rng.float() * total;
+    for (const sidewalk of this.sidewalks) {
+      r -= weight(sidewalk);
+      if (r <= 0) return sidewalk;
+    }
+    return this.sidewalks[this.sidewalks.length - 1];
+  }
+
+  refreshActivityWeights() {
+    const buildings = this.world.buildings;
+    // Occupancy changes without incrementing Buildings' geometry version. Include the public
+    // economy totals so a growing/emptying city refreshes the frontage weights deterministically.
+    const version = `${buildings?.version ?? buildings?.items?.size ?? 0}:${this.world.economy?.population ?? 0}:${this.world.economy?.jobs ?? 0}`;
+    if (version === this.activityVersion) return;
+    this.activityVersion = version;
+    const byEdge = new Map();
+    for (const building of buildings?.items?.values?.() || []) {
+      const lot = this.world.zones?.lots?.get?.(building.lotId);
+      if (!lot || !this.edges.has(lot.edgeId)) continue;
+      const active = Math.max(0, building.occupants || 0) + Math.max(0, building.jobs || 0);
+      byEdge.set(lot.edgeId, (byEdge.get(lot.edgeId) || 0) + active);
+    }
+    for (const edge of this.driveEdges) edge.active = byEdge.get(edge.id) || 0;
+    for (const sidewalk of this.sidewalks) sidewalk.active = byEdge.get(sidewalk.id) || 0;
   }
 }
 

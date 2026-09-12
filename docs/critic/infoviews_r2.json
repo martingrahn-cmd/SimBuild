@@ -1,0 +1,432 @@
+{
+  "module": "infoviews",
+  "round": 2,
+  "score": 6.0,
+  "consoleErrors": 0,
+  "maxDrawCalls": 182,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "2 No degenerate grid",
+    "3 Data colour does not change with the sun",
+    "4 Ground conformance: default visual surface integration fails, numeric geometry checks pass",
+    "7 Building films: roof/wall contrast",
+    "10 Water/land alpha: small exact-waterline jump",
+    "20 Frame cost: cold recompute"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Ground colour still hides streets and breaks against rendered terrain",
+      "detail": "The new mesh passes the prescribed vertex test: 235 flat samples, all within band; 1765 steep samples, maximum lift 0.703997 m. Independent 1964 dry triangle-centre samples now have zero below the actual heightfield, fixing the r1 interior defect. Nevertheless default aerial/skyline captures retain conspicuous hillside holes, dashed road wedges and lost kerbs. Builder diagnostic attributes hillside gaps to the host terrain LOD surface; that is a core integration request, not evidence that the default visual passes. Keep the conformance fix and solve the rendered-surface/road integration without forcing all terrain to maximum detail.",
+      "evidence": "shots/infoviews/r2/critic-matrix/skyline_12.png; shots/infoviews/r2/critic-matrix/degraded_roads.png; shots/infoviews/r2/critic-probe/supplement-live.json; docs/core-requests/infoviews.md"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Night data colours still exceed the 8/255 drift ceiling",
+      "detail": "Fresh 1080p frozen on/off masks yield top-2000 pollution channel deltas 14.1265/19.0800/14.6780 and landvalue 8.7940/11.0920/11.0970. Night p99 luma is 197.123 and 214.117, below 235. Preserve readable nights while stabilizing data colour; do not brighten the global environment to satisfy this.",
+      "evidence": "shots/infoviews/r2/critic-probe/pixel-analysis.json"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "Building films flatten roof and wall separation",
+      "detail": "All ten pinned landvalue roof/wall mean-luma differences remain below 25/255, ranging 0.941668\u201320.656981. Callback coverage is 246/246 with alpha 0.70, but visual film is weakly shaded. Density crops no longer expand to the full frame; its measured 1.39\u201313.20 differences are confirming only because foreground occlusion and untinted equipment can contaminate projected rectangles. The clear landvalue evidence alone fails the required contrast.",
+      "evidence": "shots/infoviews/r2/critic-masks/iv_landvalue_12.png; shots/infoviews/r2/critic-probe/pixel-analysis.json"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "Three fixed-domain distributions remain degenerate",
+      "detail": "Over the exact 21671-cell mask, pollution p95\u2212p5 is 0.186521; garbage range is 0 with 97.5313% near its mean; density range is 0.029940 with 94.7487% near its mean. All twelve grids match an independent derivation within 2.3842e\u22127. Do not fabricate populations, rescale grids or change source formulas. Preserve honest staged simulation data and document any mandated pre-roll/specification conflict.",
+      "evidence": "shots/infoviews/r2/critic-probe/data-api.json"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "Cold synchronous recompute still exceeds budget",
+      "detail": "First explicit recompute measured 21.2 ms, above 12 ms. Ten subsequent calls take 4.5\u20138.4 ms, a substantial real improvement. Average active update is 0.005 ms and inactive 0.001667 ms; three idle game hours trigger three rebuilds and a 20-event burst triggers one. Preserve caching and synchronous publication; investigate the remaining cold path without hiding the first sample.",
+      "evidence": "shots/infoviews/r2/critic-probe/api.json; shots/infoviews/r2/critic-probe/contracts.json"
+    },
+    {
+      "rank": 6,
+      "severity": "minor",
+      "title": "A small exact-waterline alpha discontinuity remains",
+      "detail": "The coast inset improves the old maximum sampled jump from 0.3980 to 0.027570. Ten transects remain monotonic, water samples are exactly zero and inland samples reach one. One transect is already 0.02757 immediately landward of the exact water boundary, so the literal no-hard-cut clause is only partially met. Transects are not shore-normal and cannot establish the exact eight-metre width.",
+      "evidence": "shots/infoviews/r2/critic-probe/settled-probe.json"
+    }
+  ],
+  "strengths": [
+    "All twelve data grids match independent formulas; real utility kind queries work.",
+    "Native-heightfield conformance, near-plane crop bounds and warm recompute are improved.",
+    "Synchronous dispatch, deterministic sums, persistence and readable 720p legends work.",
+    "Useful industrial hotspot and utility coverage fields, no water fill.",
+    "Owned 2\u20133 draw calls and 238998 maximum triangles remain within budget."
+  ],
+  "summary": "6.0/10 FAIL. Correct deterministic data, improved mesh conformance and crop bounds, but default terrain/street integration, night colour and building readability remain visibly synthetic. Cold recompute and three distribution gates still fail.",
+  "shots": [
+    {
+      "file": "shots/infoviews/r2/critic-matrix/aerial_12.png",
+      "note": "Broad orange field retains overall districts but erases road surfaces; dark intersection islands and triangular gaps remain.",
+      "drawCalls": 155,
+      "triangles": 817576,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/aerial_22.png",
+      "note": "Broad orange field retains overall districts but erases road surfaces; dark intersection islands and triangular gaps remain. Night remains readable but data colours drift.",
+      "drawCalls": 160,
+      "triangles": 828976,
+      "fps": 60.1,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/skyline_12.png",
+      "note": "Hill perforations remain conspicuous and the broad orange landscape dominates weakly separated building forms.",
+      "drawCalls": 171,
+      "triangles": 1142496,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/skyline_22.png",
+      "note": "Hill perforations remain conspicuous and the broad orange landscape dominates weakly separated building forms. Night remains readable but data colours drift.",
+      "drawCalls": 165,
+      "triangles": 1125628,
+      "fps": 59.8,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/street_12.png",
+      "note": "Pale olive film leaves window lines visible, but kerbs disappear and grass protrudes through the colour surface.",
+      "drawCalls": 120,
+      "triangles": 1370832,
+      "fps": 59.9,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/street_22.png",
+      "note": "Pale olive film leaves window lines visible, but kerbs disappear and grass protrudes through the colour surface. Night remains readable but data colours drift.",
+      "drawCalls": 127,
+      "triangles": 1385748,
+      "fps": 59.9,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/closeup_12.png",
+      "note": "Building film flattens repeated volumes; rooftop equipment stays conspicuously untinted.",
+      "drawCalls": 120,
+      "triangles": 1122956,
+      "fps": 59.8,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/closeup_22.png",
+      "note": "Building film flattens repeated volumes; rooftop equipment stays conspicuously untinted. Night remains readable but data colours drift.",
+      "drawCalls": 126,
+      "triangles": 1131914,
+      "fps": 60.3,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/skyline_17p5.png",
+      "note": "Hill perforations remain conspicuous and the broad orange landscape dominates weakly separated building forms.",
+      "drawCalls": 182,
+      "triangles": 1163202,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/street_6p5.png",
+      "note": "Pale olive film leaves window lines visible, but kerbs disappear and grass protrudes through the colour surface.",
+      "drawCalls": 129,
+      "triangles": 1383396,
+      "fps": 60.3,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_pollution_12.png",
+      "note": "Clear industrial hotspot surrounded by broad cyan field; road fringes and terrain gaps remain.",
+      "drawCalls": 166,
+      "triangles": 866510,
+      "fps": 60.2,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_pollution_22.png",
+      "note": "Clear industrial hotspot surrounded by broad cyan field; road fringes and terrain gaps remain. Night remains readable but data colours drift.",
+      "drawCalls": 165,
+      "triangles": 860956,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_traffic_12.png",
+      "note": "Purple facades occlude most of the prescribed ribbon framing; separate intersection geometry probe passes.",
+      "drawCalls": 115,
+      "triangles": 1192080,
+      "fps": 59.9,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_traffic_22.png",
+      "note": "Purple facades occlude most of the prescribed ribbon framing; separate intersection geometry probe passes. Night remains readable but data colours drift.",
+      "drawCalls": 122,
+      "triangles": 1206452,
+      "fps": 59.7,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_landvalue_12.png",
+      "note": "Legible value gradient with weak roof/wall distinction, hard dark intersections and hillside gaps.",
+      "drawCalls": 169,
+      "triangles": 1121044,
+      "fps": 60.2,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_landvalue_22.png",
+      "note": "Legible value gradient with weak roof/wall distinction, hard dark intersections and hillside gaps. Night remains readable but data colours drift.",
+      "drawCalls": 161,
+      "triangles": 1101262,
+      "fps": 59.9,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_density_12.png",
+      "note": "Almost uniform magenta field and protruding grass; foreground roof remains visually untinted. Near-plane crop explosion is fixed.",
+      "drawCalls": 123,
+      "triangles": 991994,
+      "fps": 60.1,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_density_22.png",
+      "note": "Almost uniform magenta field and protruding grass; foreground roof remains visually untinted. Near-plane crop explosion is fixed. Night remains readable but data colours drift.",
+      "drawCalls": 167,
+      "triangles": 1362860,
+      "fps": 55.7,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_power_12.png",
+      "note": "Supplied region clearly distinguishable against broad unpowered magenta; exposed intersection fragments and hillside holes persist.",
+      "drawCalls": 181,
+      "triangles": 865416,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_power_22.png",
+      "note": "Supplied region clearly distinguishable against broad unpowered magenta; exposed intersection fragments and hillside holes persist. Night remains readable but data colours drift.",
+      "drawCalls": 181,
+      "triangles": 865416,
+      "fps": 60.1,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_legend_12.png",
+      "note": "Readable picker and crime legend, stepped grid boundaries and one floating fallback marker.",
+      "drawCalls": 135,
+      "triangles": 1012152,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_legend_22.png",
+      "note": "Readable picker and crime legend, stepped grid boundaries and one floating fallback marker. Night remains readable but data colours drift.",
+      "drawCalls": 134,
+      "triangles": 1007922,
+      "fps": 60.1,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_legend_12_720.png",
+      "note": "Readable picker and crime legend, stepped grid boundaries and one floating fallback marker. Panel fits at 1280\u00d7720.",
+      "drawCalls": 135,
+      "triangles": 1012152,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/iv_power_22_720.png",
+      "note": "Supplied region clearly distinguishable against broad unpowered magenta; exposed intersection fragments and hillside holes persist. Night remains readable but data colours drift. Panel fits at 1280\u00d7720.",
+      "drawCalls": 181,
+      "triangles": 865416,
+      "fps": 60,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/all_aerial_12.png",
+      "note": "Empty democity stub, terrain and HUD only; this is not a populated whole-game check.",
+      "drawCalls": 35,
+      "triangles": 182390,
+      "fps": 55.5,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/all_street_22.png",
+      "note": "Empty democity stub at night; no populated-city claim. Night remains readable but data colours drift.",
+      "drawCalls": 38,
+      "triangles": 998686,
+      "fps": 52.6,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/degraded_terrain.png",
+      "note": "Nonempty fallback heatmap and readable legend; no buildings or roads, a few terrain fragments remain.",
+      "drawCalls": 11,
+      "triangles": 398135,
+      "fps": 59.7,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-matrix/degraded_roads.png",
+      "note": "Fallback remains ready; strongly visible road masking and wedges remain.",
+      "drawCalls": 40,
+      "triangles": 599188,
+      "fps": 60.1,
+      "consoleErrors": 0,
+      "status": "ready"
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_density_12.png",
+      "note": "Almost uniform magenta field and protruding grass; foreground roof remains visually untinted. Near-plane crop explosion is fixed. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_density_12_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_landvalue_12.png",
+      "note": "Legible value gradient with weak roof/wall distinction, hard dark intersections and hillside gaps. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_landvalue_12_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_landvalue_22.png",
+      "note": "Legible value gradient with weak roof/wall distinction, hard dark intersections and hillside gaps. Night remains readable but data colours drift. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_landvalue_22_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_pollution_12.png",
+      "note": "Clear industrial hotspot surrounded by broad cyan field; road fringes and terrain gaps remain. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_pollution_12_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_pollution_22.png",
+      "note": "Clear industrial hotspot surrounded by broad cyan field; road fringes and terrain gaps remain. Night remains readable but data colours drift. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_pollution_22_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_power_12.png",
+      "note": "Supplied region clearly distinguishable against broad unpowered magenta; exposed intersection fragments and hillside holes persist. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/iv_power_12_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/skyline_12.png",
+      "note": "Hill perforations remain conspicuous and the broad orange landscape dominates weakly separated building forms. Fresh frozen on/off measurement pair."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-masks/skyline_12_off.png",
+      "note": "Off plate: normal road and facade detail returns. Distant water reflections retain some previous overlay colour after two frames."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-probe/play_ui_landvalue_12.png",
+      "note": "Ordinary toolbar clicks show one HUD legend and the Info Views picker over an empty play city; green foliage protrudes through purple land."
+    },
+    {
+      "file": "shots/infoviews/r2/critic-probe/all_aerial_12.png",
+      "note": "All-mode activation shows one HUD legend over an empty city, without duplicate module panel."
+    }
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/infoviews_r2.md",
+  "measurements": {
+    "checks": [
+      "1 PASS: all 12 IDs synchronously publish 65536 Float32 data, legend and one activation event; invalid selection is a no-op.",
+      "2 FAIL: pollution, garbage and density distributions above. All grids finite in [0,1], independently derived formulas agree.",
+      "3 FAIL: both night channel-drift tests exceed 8/255; night p99 clipping gate passes.",
+      "4 PARTIAL/FAIL: prescribed vertex/material and independent native-heightfield interior tests pass; default rendered terrain/road confirming images fail. Host LOD request remains unresolved.",
+      "5 PASS: pollution top-decile saturation 0.522157; power 0.531446. Non-overlay saturation ratios are diagnostics, not grounds to penalize external modules.",
+      "6 PASS: adjacent ramp-stop max channel differences 60/125/129/224; landvalue deciles occupy 5 of 8 L* buckets.",
+      "7 FAIL: all 246 callback tints alpha 0.70; all ten landvalue face contrasts fail. Previous full-frame density crop API defect is fixed.",
+      "8 PARTIAL: callback directly follows fixed ramp and sample. Inverse-ramp Spearman not separately measured; no penalty for residual-unmeasurable colour count.",
+      "9 PASS: 65 arms at the first 20 ID-ordered intersections, 4 m strip geometry, maximum uncovered gap zero.",
+      "10 PARTIAL: water alpha zero, inland one, monotonic ten transects; small exact-waterline jump remains. Exact shore-normal width unmeasured.",
+      "11 UNMEASURED: iv_power and fallback skyline each supply zero near \u2264200 m overlay pixels; required 2000/2000 near/far comparison cannot be formed. fog:true; no failure assigned.",
+      "12 PASS: specified fallback service fields remain populated and unchanged; independent live wind turbine gives real supply-limited coverage, not a fictitious radial result.",
+      "13 PASS: legend 316\u00d7211.4375 px, 12 px font; within 380\u00d7300.",
+      "14 PASS: twelve tiles, 316\u00d7134 px picker, 12 px font; no 720p overflow.",
+      "15 PASS: actual play toolbar click publishes active/data/legend synchronously, zero module panels and one HUD legend; all-mode also one legend.",
+      "16 PASS for owned state: two frames after deactivation all owned meshes hidden, draws zero, active/data/legend null, desaturation zero and callback cleared. Cached terrain water reflections can linger: external integration issue.",
+      "17 PASS: settled landvalue 2 draws/238934 triangles, power 3/238998, traffic 2/6864. Some raw deltas mix host CSM/LOD changes and are retained, not attributed to overlay cost. Maximum owned triangles remain below 260000.",
+      "18 PASS: both required reduced-dependency captures ready, zero errors, visible fallback maps.",
+      "19 PASS: two fresh same-seed runs agree for all twelve sums to six decimals; no Math.random or Date.now in module.",
+      "20 PARTIAL/FAIL: frame averages, coalescing and observed heap pass; cold 21.2 ms recompute fails. Warm 4.5\u20138.4 ms calls pass. Whole-page 300-frame heap change \u22121.287 MiB is an observation, not zero-allocation proof.",
+      "21 PASS in sampled API trace: monotonic 0\u21921 transition reaches one at 316.6 ms, no overshoot. No separate per-frame white-flash PNG measurement claimed.",
+      "22 PASS: fresh-page crime deserialization restores full grid and Crime legend within two frames; unknown value leaves selection unchanged.",
+      "23 PASS: all 28 official captures ready with zero errors; all 44 independent PNG viewed individually. All-mode remains an empty democity stub."
+    ],
+    "maxTriangles": 1385748,
+    "fpsRange": [
+      52.6,
+      60.3
+    ],
+    "independentImagesViewed": 44,
+    "gpu": "ANGLE Metal Apple M4",
+    "sourceHashes": {
+      "src/modules/infoviews/crops.js": "0c74965cb2a5a2064bc447c4e5971ab13adda19bace470715b9ce69494540cdb",
+      "src/modules/infoviews/data.js": "4835c577b45f53ba9de1a520b5c6d6635ee9aec63331e403fe7acd2f0535ff22",
+      "src/modules/infoviews/ground.js": "1771a9518c0ecac6fa2934ede12edbb01a1546bfe580ea8a19cfcff55d89276c",
+      "src/modules/infoviews/index.js": "6cb778d2f485b3ab9444716c9d19f3443f85c5117ab6c76797f552eaf500ed9e",
+      "src/modules/infoviews/panel.js": "f25d71b0edc83faf3c0d8aafffbc8f5e3100cd9204637e228ca6c343108d419e",
+      "src/modules/infoviews/render.js": "26f3f1135afebd88da5ed8351b7b2081323d401aee3ea98b250e0113cdda54f8",
+      "src/modules/infoviews/showcase.js": "c03041d25f35584969b2cf24e3630604298f63672ad4a4b042ab1eb02596cb8f",
+      "src/modules/infoviews/views.js": "5f211b25c62f446908ae0e4ccd23362be9775ef346af7800f524c91f0dd07d6d"
+    }
+  },
+  "pass": false
+}

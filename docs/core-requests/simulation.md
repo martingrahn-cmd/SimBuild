@@ -49,3 +49,21 @@ Not applied:
 - `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
   (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
   until then, since that contract now holds by documentation.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Retained honest Metal/wall-clock performance reporting and exact save/load integration. Render budget0 applies to gameplay, not the standalone synthetic plaza; no budget inflation. New-game initial money is supplied before simulation initializes. Wave2b will preserve service management after the last facility is deleted while retaining first-city bootstrap, with a simulation-owned saved latch and actual coverage checks; this is deferred until services exists, not declared implemented here.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+Applied persistent managed-services state, including reconciliation after all successfully restored owners; new untouched cities retain bootstrap supply, while managed cities with zero facilities retain shortages. Daily upkeep follows catalog once and service loads use current component data. Paused zoning no longer instantiates occupied buildings immediately: ordinary growth belongs to simulation. Validate simulation save data before clearing live economy, preserving supported legacy negative cash, RNG and virtual-building records. No growth-rate, cash reward or population injection was used for the ordinary UI progression test. Ambient traffic and external-job assumptions remain simulation limitations.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Applied daily transit revenue/upkeep reader from public owner forecast, version/Map/size invalidation and once-per-tick booking; paused clock overrides speed override. Native41tick ledger and isolated14finance checks pass. Deferred ordinary-game balance, long-run stability and save-derived-demand continuity. No synthetic money, demo-equity adjustment or capacity-as-occupants substitution. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.
+
+## Integrator decision — R9s2 owner reconciliation (2026-09-10)
+
+Added `simulation.reconcileWorld() -> bool`: synchronize current Roads and Buildings, redistribute occupancy, mirror it to the world, and emit `sim:reconciled` without rewinding tick, treasury, demand or RNG. Zoning invokes this after a changed road-derived lot journal; Tools invokes it after inverse restoration and compensation. Transit listens at this boundary so ordinary settlement and history restoration converge on the same deterministic demand projection.

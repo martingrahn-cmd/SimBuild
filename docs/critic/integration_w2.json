@@ -1,0 +1,132 @@
+{
+  "summary": "Wave 2 exhausted its four-round gate honestly. All eleven final integration captures are ready with zero errors; the current all-mode is still an empty democity stub, not a full-city visual or performance pass.",
+  "coreChanges": [
+    "Seven files: translation-free secondary-camera sky, finite nonnegative new-play money, real procedural-map menu fallback, infoview buildingShellActive legacy tint bypass, and eight-draw infoview declaration/documentation.",
+    "Earlier wave corrections retained: Metal sampler arrays, capture/fps reliability, HUD dispatch, exact terrain/network save and undo, road pavement height query, props identity handoff and material synchronization."
+  ],
+  "coreRequestsRejected": [
+    "Deferred lane-specific graded road authoring and curved splits to roads; highest paved surface is unsafe as lane identity.",
+    "Rejected a global shadow retune: controlled casters visibly shadow.",
+    "Deferred native unlit RGBA film and scene-depth publication; infoview fallback shell is supported and soft particle intersections remain disclosed.",
+    "Deferred service consumer adapters until actual wave 2b implementation."
+  ],
+  "seamsFixed": [
+    "Secondary camera sky now covers all 16384 pixels at 0, 100 and 1000 m offsets, previously black at displaced positions.",
+    "Native building tint bypass restores every baseline pixel while published active health remains intact; legacy tint changes 504405 pixels.",
+    "Real 720p new-game click starts seed 99 with 50000 budget; all three budgets and zero work, invalid values retain default.",
+    "Composer order and physical dimensions match both resize targets; environment remains sole global lighting owner.",
+    "World-section identities and all 263169 terrain heights survive save/load exactly."
+  ],
+  "crossCuttingOpen": [
+    "Democity, services, infoviews and transit implementation and populated whole-city budget remain pending.",
+    "Wave 2 scores remain zoning 8.0, buildings 7.4, props 6.4, traffic 7.2, tools 8.0, all FAIL. Integration does not rescore them.",
+    "Repeated facade/roof assets, forest speckle/LOD, bright night sky, dark foliage and coarse terrain remain visible.",
+    "Services spending, validation, inspector, forest masking and exact undo must integrate in 2b; world-only infoview desaturation remains an effects seam."
+  ],
+  "errorsRemaining": [],
+  "drawCalls": 41,
+  "evidence": {
+    "viewed": [
+      {
+        "png": "shots/integration/w2_final/w2_all_aerial_12.png",
+        "note": "Bare river terrain, clouds reflected, HUD fits.",
+        "fps": 57.4,
+        "drawCalls": 32,
+        "triangles": 163894,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_all_aerial_12_720.png",
+        "note": "HUD fits narrow width; bare landscape.",
+        "fps": 60.2,
+        "drawCalls": 32,
+        "triangles": 163894,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_all_closeup_6p5.png",
+        "note": "Coarse shoreline steps and repeated ground pattern remain.",
+        "fps": 59.9,
+        "drawCalls": 38,
+        "triangles": 995022,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_all_skyline_22.png",
+        "note": "Empty city; bright blue night sky and low terrain contrast remain.",
+        "fps": 58.8,
+        "drawCalls": 37,
+        "triangles": 458794,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_all_street_17p5.png",
+        "note": "Warm haze, coarse foreground tufts; no city yet.",
+        "fps": 58.8,
+        "drawCalls": 41,
+        "triangles": 1018718,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_all_street_22_720.png",
+        "note": "HUD fits; night ground remains dark and sky comparatively bright.",
+        "fps": 60.2,
+        "drawCalls": 38,
+        "triangles": 998686,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_buildings_aerial_12.png",
+        "note": "Dense staged towers render; repeating roof and facade modules remain.",
+        "fps": 60.1,
+        "drawCalls": 203,
+        "triangles": 1005574,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_props_aerial_12.png",
+        "note": "Forest strongly speckled with sparse individual crowns; prior critique remains.",
+        "fps": 59.9,
+        "drawCalls": 65,
+        "triangles": 757848,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_tools_aerial_12.png",
+        "note": "Six visible labelled poses, trees occlude some ribbon; service metadata is still old fallback pending 2b.",
+        "fps": 60,
+        "drawCalls": 119,
+        "triangles": 644910,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_traffic_aerial_12.png",
+        "note": "Vehicles visible on network; tall bridge and terrain obstruction remain.",
+        "fps": 60.1,
+        "drawCalls": 79,
+        "triangles": 434778,
+        "errors": []
+      },
+      {
+        "png": "shots/integration/w2_final/w2_zoning_aerial_12.png",
+        "note": "Readable eight-class lots follow roads; existing striped repetition remains.",
+        "fps": 60.4,
+        "drawCalls": 43,
+        "triangles": 353216,
+        "errors": []
+      }
+    ],
+    "extraViewed": [
+      "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/sky-after.png",
+      "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/tint-after-baseline.png",
+      "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/tint-after-legacy.png",
+      "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/tint-after-bypass.png",
+      "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/tint-after-restored.png",
+      "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/newgame-after-720.png"
+    ],
+    "allMaxDraws": 41,
+    "maxDraws": 203,
+    "maxTriangles": 1018718,
+    "minFps": 57.4
+  }
+}

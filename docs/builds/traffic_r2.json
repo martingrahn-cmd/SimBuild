@@ -1,0 +1,206 @@
+{
+  "module": "traffic",
+  "round": 2,
+  "summary": "Traffic r2 adds the required flat API surface, road-height publication, deterministic hour-based fleets, 11 vehicle classes with three LODs, pedestrians, native lamps/pools/contact shadows, and traffic-owned fallback signals. All 16 standard Metal frames are ready with zero errors (max 143 draws, 1128914 triangles, min 50.2 FPS). Extended behavior and visual checks still fail; this is an incomplete 5.8/10 build for independent critique.",
+  "screenshotsViewed": [
+    "shots/traffic/dev2_early.png",
+    "shots/traffic/dev2_junction.png",
+    "shots/traffic/dev2_fleet.png",
+    "shots/traffic/dev2_night.png",
+    "shots/traffic/rdev2/aerial_12.png",
+    "shots/traffic/rdev2/aerial_22.png",
+    "shots/traffic/rdev2/street_17p5.png",
+    "shots/traffic/rdev2/street_22.png",
+    "shots/traffic/rdev2/skyline_12.png",
+    "shots/traffic/rdev2/closeup_6p5.png",
+    "shots/traffic/rdev2extras/junction_12.png",
+    "shots/traffic/rdev2extras_queue/queue_17p5.png",
+    "shots/traffic/rdev2extras_crossing/crossing_12.png",
+    "shots/traffic/rdev2extras_day/merge_12.png",
+    "shots/traffic/rdev2extras_day/fleet_12.png",
+    "shots/traffic/rdev2extras_day/roundabout_12.png",
+    "shots/traffic/rdev2extras_night/headlights_22.png",
+    "shots/traffic/rdev2extras_night/night_street_22.png",
+    "shots/traffic/dev2/all_12.png",
+    "shots/traffic/dev2/all_22.png",
+    "shots/traffic/dev2/street720.png",
+    "shots/traffic/dev2/queue_final.png",
+    "shots/traffic/dev2/plate_A.png",
+    "shots/traffic/dev2/lod0.png",
+    "shots/traffic/dev2/lod1.png"
+  ],
+  "acceptanceMet": [
+    "17: traffic ready with zero browser/GL errors at all_12, all_22, and street720; integrated all frames are empty terrain and prove boot compatibility only.",
+    "1/4 measured subclauses: worst sampled vehicle surface-height error 0.001623 m and lateral lane error 0.001430 m across four pinned hours; directed single-lane edges are respected by graph construction.",
+    "8 measured density: vehicles 86/157/240/39 and pedestrians 63/186/260/35 at 6.5/12/17.5/22; morning box-truck plus semi share 18.60%, peak share 5.00%.",
+    "9 measured sidewalk height subclause: maximum sampled pedestrian road-height error 0.000638 m; LOD0 pedestrians 223 triangles and LOD1 70 triangles.",
+    "10 source and image subclauses: body and pedestrian meshes cast and receive shadows; contact-darkening patches render; caster-off plate changes 0.434% of pixels at >12 RGB difference, without proving each required long-shadow ratio.",
+    "12 implementation subclauses: three vehicle LODs, 1200 m vehicle and 220 m pedestrian culling; LOD2 28 triangles, LOD1 180-316 versus LOD0 1248-1564.",
+    "16 measured subclauses: all 36 final captures <=172 whole-frame draws, traffic update <=0.5 ms; extended fixed-step maximum 0.8 ms; no traffic-owned textures and declared budget 60 draws/300000 triangles.",
+    "18 API surface exists, including fixed step/freeze, density, forceLod, debug, cropRects, flowGrid, outsideConnections and signalState; save/load count and by-kind roundtrip passed.",
+    "21 pinned reproducibility: density-zero drain followed by refill and 600+ fixed steps reproduces first 20 positions, headings, and by-kind counts; IDs intentionally remain monotonic.",
+    "6/15/22 measured subclauses: four outside ports; all 16 signal green-arm sets change at half cycle; mast emissive becomes null when a props trafficlight is published."
+  ],
+  "acceptanceMissed": [
+    "5/6/13 fail extended behavior probe: minimum same-lane bumper gap -4.941 m, maximum excess positional jump 30.810 m, maximum heading rate 62.766 rad/s, and junction edgeId-null fraction 12.025%; queue count stays 9-29 during measured cycle rather than draining below 2.",
+    "3: semi uses a rigid extended truck body rather than articulated tractor/trailer; class proportions, wheel placement and motorbike/rider need substantial art work.",
+    "12/18/19: fleet catalogue specimens are rendered outside the live agent maps; exact agent-to-instance accounting is incomplete. Mast gating hides geometry but reported draw totals do not drop.",
+    "9/14/22: pedestrians remain mannequin-like, some crossings miss the zebra, foreground figures can obstruct queue framing, and fallback pedestrian heads lack lit walk/stop lenses.",
+    "10: long shadow length and per-vehicle core/contact luminance thresholds have not been established with the required masks; do not infer a current global CSM dead zone.",
+    "11: noon junction far_asphalt horizontal speckle fraction 0.2976% exceeds the 0.2% threshold in the measured crop; skyline camera returns no valid far_asphalt crop.",
+    "12/13: render interpolation is missing; forced-LOD whole-frame mean absolute difference is 0.491/255 but the required per-vehicle two-pixel bounding-box limit remains unverified.",
+    "14/showcase: steep terrain-derived road profile obstructs the prescribed merge view; fleet and queue art remain below the CS2 reference bar.",
+    "18/20: explicit routes starting in the reverse direction and road-edit continuity were not fully exercised in this bounded round.",
+    "7: nighttime lenses and pools are visible in captured frames, but the full masked radiance/halo/body-colour numeric gate was not completed; synchronous setTime probe does not advance environment night uniforms.",
+    "6 integration: all-showcase screenshots contain no roads, vehicles or props masts, so traffic-owned signal direction agreement in a populated integrated city remains unverified."
+  ],
+  "drawCalls": 143,
+  "triangles": 1128914,
+  "errors": 0,
+  "remainingWeaknesses": [
+    "Junction transitions still jump and overlap; measured queue does not drain. These are real acceptance failures, not residual-spec exemptions.",
+    "Rigid semi, crude motorcycle and mannequin pedestrians; fleet specimens are separate from simulation agents.",
+    "Highway/merge grading depends on public road profile support; prescribed merge camera is obstructed by terrain-derived bridge geometry.",
+    "Shadow/contact ratio, nighttime masked measurements, per-agent LOD bounds, 30-second heap drift and full road-edit behavior remain unverified.",
+    "No far_asphalt landmark at skyline; measured noon junction asphalt speckle is above threshold.",
+    "Mast visibility gating works, but its draw-accounting reduction and pedestrian lens states are incomplete.",
+    "Integrated all shots are clean empty-world boot checks; populated traffic/props agreement needs a separate integrated scene."
+  ],
+  "coreRequestFile": "docs/core-requests/traffic.md",
+  "selfScore": 5.8,
+  "measurements": {
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "gauntlet": "shots/traffic/rdev2/summary.json",
+    "standardFrames": 16,
+    "minFps": 50.2,
+    "allCaptureCount": 36,
+    "allCaptureMaxDrawCalls": 172,
+    "allCaptureMaxTriangles": 1178919,
+    "allCaptureErrors": 0,
+    "allCaptureMaxTrafficMs": 0.5,
+    "heightAndApiProbe": "shots/traffic/dev2/probe.json",
+    "behaviorProbe": "shots/traffic/dev2/plates.json",
+    "pixelProbe": "shots/traffic/dev2/pixels.json",
+    "signalHalfCycleChangedAll": true,
+    "behavior": {
+      "maxJump": 30.809506282299434,
+      "maxRate": 62.76550225281776,
+      "maxNull": 0.12025316455696203,
+      "minGap": -4.941457555655531,
+      "maxStep": 0.7999999998137355,
+      "queueCycle": [
+        9,
+        9,
+        9,
+        11,
+        13,
+        14,
+        17,
+        21,
+        24,
+        24,
+        27,
+        29,
+        29,
+        26,
+        24,
+        21,
+        20,
+        19,
+        20,
+        25
+      ]
+    },
+    "pixelStatistics": {
+      "plate_A": {
+        "p1": 34.8688,
+        "p50": 104.86999999999999,
+        "p99": 168.4172,
+        "whiteClippedFraction": 0.0
+      },
+      "plate_B": {
+        "p1": 46.995999999999995,
+        "p50": 104.13239999999999,
+        "p99": 161.38459999999998,
+        "whiteClippedFraction": 0.0,
+        "changedFraction": 0.025201581790123457
+      },
+      "plate_C": {
+        "p1": 42.0814,
+        "p50": 104.8986,
+        "p99": 169.0642,
+        "whiteClippedFraction": 0.0,
+        "changedFraction": 0.004337866512345679
+      },
+      "plate_D": {
+        "p1": 34.8688,
+        "p50": 104.86999999999999,
+        "p99": 168.4172,
+        "whiteClippedFraction": 0.0,
+        "changedFraction": 0.0
+      },
+      "lod0": {
+        "p1": 34.5066,
+        "p50": 104.8902,
+        "p99": 169.1364,
+        "whiteClippedFraction": 0.0
+      },
+      "lod1": {
+        "p1": 34.8688,
+        "p50": 104.9572,
+        "p99": 170.349,
+        "whiteClippedFraction": 0.0
+      },
+      "lodMeanAbsolute": 0.4908333420753479,
+      "shots/traffic/dev2/skyline_crops_12.png:traffic.lead_vehicle": {
+        "p1": 36.0814,
+        "p50": 67.8642,
+        "p99": 118.77701000000003,
+        "horizontalSpeckleFraction": 0.0
+      },
+      "shots/traffic/dev2/junction_crops_22.png:traffic.lead_vehicle": {
+        "p1": 7.659,
+        "p50": 34.233799999999995,
+        "p99": 152.5358,
+        "horizontalSpeckleFraction": 0.002740167633784655
+      },
+      "shots/traffic/dev2/junction_crops_22.png:traffic.far_asphalt": {
+        "p1": 34.306,
+        "p50": 58.090199999999996,
+        "p99": 113.02519999999998,
+        "horizontalSpeckleFraction": 0.00018601190476190475
+      },
+      "shots/traffic/dev2/junction_crops_12.png:traffic.lead_vehicle": {
+        "p1": 4.651,
+        "p50": 84.8768,
+        "p99": 189.2808,
+        "horizontalSpeckleFraction": 0.004174030759974429
+      },
+      "shots/traffic/dev2/junction_crops_12.png:traffic.far_asphalt": {
+        "p1": 36.715796000000005,
+        "p50": 94.28999999999999,
+        "p99": 145.29399999999998,
+        "horizontalSpeckleFraction": 0.002976190476190476
+      }
+    },
+    "trafficOwnedSampledMainPassMaxDraws": 22,
+    "trafficOwnedSampledMainPassMaxTriangles": 18538,
+    "costCaveat": "Whole-frame totals include roads and terrain. Traffic API submission totals describe the main pass; cascade shadow work is not separately attributed. Mast-hidden accounting remains inaccurate.",
+    "latestCodeCheck": "All nine traffic JavaScript files pass node --check; git diff --check passed for traffic and its core request.",
+    "sequence": "Standard matrix precedes final bounded seed/entry spacing tweaks; queue_final and final probe/plates exercise those latest simulation tweaks."
+  },
+  "referenceScreenshotsViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "residualHandling": [
+    "Pool metre dimensions and peak-to-lens ratios lack the prescribed image instrument: source dimensions are not claimed as a measured pass or fail.",
+    "Temporal flicker and silhouette naming are advisory visual judgments; no still-image proof is asserted.",
+    "No prescribed spawn/despawn log: near-camera popping exemption is recorded as unmeasured, not failed.",
+    "Texture attribution is added as traffic stats textures=0; whole-renderer texture totals are not charged to traffic.",
+    "22:00 congestion arithmetic conflicts with permitted free-flow speeds and signal stops; the <=0.10 threshold is not used to fail this build.",
+    "Undefined pedestrian 160-220 m band is resolved by extending LOD1 to 220 m.",
+    "Catch-up cost arithmetic is noted; actual captured traffic update maximum is 0.5 ms."
+  ]
+}

@@ -1,0 +1,398 @@
+{
+  "module": "democity",
+  "round": "r8u",
+  "reviewType": "Independent actual slot/claim-order diagnostic audit",
+  "decision": "ACCEPT_DIAGNOSTIC",
+  "productDecision": "NO_CHANGE",
+  "boundedZoningDedupeCandidate": "SUPPORTED_FOR_TESTING_ONLY; preserve last ownership and first-key identity",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "rank1Status": "OPEN",
+  "inspectedFiles": [
+    "docs/builds/democity_r8u_slot_order.md",
+    "tools/parcel-slot-order-profile.mjs",
+    "shots/democity/r8u-slot-order/profile.json",
+    "src/modules/zoning/grid.js",
+    "src/modules/zoning/palette.js",
+    "src/modules/zoning/index.js",
+    "docs/critic/democity_r8t.md"
+  ],
+  "sourceHashes": {
+    "docs/builds/democity_r8u_slot_order.md": "5af79010f7009b39102fec660496ea094fe8e263382a1e659d90be369aae38f6",
+    "tools/parcel-slot-order-profile.mjs": "ca9c9a13e3b72be78b356d4a4d968bf7822a3f2fe0221b01143781b88af8227b",
+    "shots/democity/r8u-slot-order/profile.json": "a1627bc1b9ac8128351b9b34f049d1cb861ab7e8ec32c2dfc72626e9ac3a4b7c",
+    "src/modules/zoning/grid.js": "7e027c0fb9cb1ebb9b77cf10b5f77126e59f1615589e0ca0464f7855ab609eab",
+    "src/modules/zoning/palette.js": "7e8f79bd84e096310945ac3a32fcca0b32338272671edc09cb3d8cb7d3927b25",
+    "src/modules/zoning/index.js": "4d0d515eb4d89de5454563bb725fd9935d6ec27093084b58b99570645abfbdc5",
+    "docs/critic/democity_r8t.md": "e1c339ceec0e16dd21180cbc045532a1217735ab569d99b6cd6b66bc5801896d"
+  },
+  "verified": [
+    {
+      "seed": 1337,
+      "counts": {
+        "cells": 9964,
+        "lots": 612,
+        "buildings": 612
+      },
+      "orderedEdges": 569,
+      "slotTokensReparsed": 7344,
+      "runSummary": {
+        "runs": 730,
+        "eligibleSlots": 2048,
+        "shortRunSlots": 419,
+        "remainderSlots": 640,
+        "nullSlots": 3718,
+        "shallowSlots": 1578
+      },
+      "calculatedLots": 612,
+      "allRunRowsMatch": true,
+      "everyEdgeCountMatches": true,
+      "membershipSummary": {
+        "lots": 612,
+        "rawCellReferences": 4889,
+        "uniqueCellReferences": 4884,
+        "duplicateCellsWithinLots": 5,
+        "mixedOwnerCells": 1361,
+        "mixedSideCells": 754,
+        "classMismatchCells": 0,
+        "beyondPreferredCells": 0,
+        "lotsBelowMinUniqueArea": 1,
+        "overlapCellsAcrossLots": 2
+      },
+      "allMembershipRowsAndRepeatedMetadataMatch": true,
+      "globalUniqueCellCount": 4882,
+      "duplicateLots": [
+        {
+          "id": 227,
+          "raw": 6,
+          "unique": 5,
+          "minimum": 6,
+          "duplicateKeys": [
+            "102,208"
+          ]
+        },
+        {
+          "id": 609,
+          "raw": 15,
+          "unique": 13,
+          "minimum": 12,
+          "duplicateKeys": [
+            "86,64",
+            "87,63"
+          ]
+        },
+        {
+          "id": 610,
+          "raw": 7,
+          "unique": 6,
+          "minimum": 6,
+          "duplicateKeys": [
+            "165,88"
+          ]
+        },
+        {
+          "id": 612,
+          "raw": 8,
+          "unique": 7,
+          "minimum": 6,
+          "duplicateKeys": [
+            "187,93"
+          ]
+        }
+      ],
+      "belowNominalUniqueAreaLotIds": [
+        227
+      ],
+      "overlaps": [
+        {
+          "key": "63,98",
+          "ids": [
+            235,
+            236
+          ]
+        },
+        {
+          "key": "64,98",
+          "ids": [
+            235,
+            236
+          ]
+        }
+      ],
+      "firstWinnerWouldChangeFirstCellLotIds": [
+        236
+      ],
+      "offlineLastWinnerChanges": [
+        {
+          "id": 227,
+          "beforeRaw": 6,
+          "beforeUnique": 5,
+          "afterUnique": 5,
+          "minimum": 6,
+          "firstPreserved": true
+        },
+        {
+          "id": 235,
+          "beforeRaw": 8,
+          "beforeUnique": 8,
+          "afterUnique": 6,
+          "minimum": 6,
+          "firstPreserved": true
+        },
+        {
+          "id": 609,
+          "beforeRaw": 15,
+          "beforeUnique": 13,
+          "afterUnique": 13,
+          "minimum": 12,
+          "firstPreserved": true
+        },
+        {
+          "id": 610,
+          "beforeRaw": 7,
+          "beforeUnique": 6,
+          "afterUnique": 6,
+          "minimum": 6,
+          "firstPreserved": true
+        },
+        {
+          "id": 612,
+          "beforeRaw": 8,
+          "beforeUnique": 7,
+          "afterUnique": 7,
+          "minimum": 6,
+          "firstPreserved": true
+        }
+      ],
+      "offlineLastWinnerPreservesAllFirstCellsAndUnion": true,
+      "diagnoseMutationRecorded": {
+        "before": {
+          "lots": 612,
+          "buildings": 612
+        },
+        "after": {
+          "lots": 612,
+          "buildings": 612
+        },
+        "publicLotDigestEqual": true
+      },
+      "publicDigestEqualityIndependentlyRecomputable": false,
+      "errors": [],
+      "browserErrors": []
+    },
+    {
+      "seed": 7,
+      "counts": {
+        "cells": 10113,
+        "lots": 648,
+        "buildings": 648
+      },
+      "orderedEdges": 611,
+      "slotTokensReparsed": 7852,
+      "runSummary": {
+        "runs": 717,
+        "eligibleSlots": 2116,
+        "shortRunSlots": 394,
+        "remainderSlots": 611,
+        "nullSlots": 4073,
+        "shallowSlots": 1663
+      },
+      "calculatedLots": 648,
+      "allRunRowsMatch": true,
+      "everyEdgeCountMatches": true,
+      "membershipSummary": {
+        "lots": 648,
+        "rawCellReferences": 5184,
+        "uniqueCellReferences": 5178,
+        "duplicateCellsWithinLots": 6,
+        "mixedOwnerCells": 1496,
+        "mixedSideCells": 773,
+        "classMismatchCells": 0,
+        "beyondPreferredCells": 0,
+        "lotsBelowMinUniqueArea": 1,
+        "overlapCellsAcrossLots": 2
+      },
+      "allMembershipRowsAndRepeatedMetadataMatch": true,
+      "globalUniqueCellCount": 5176,
+      "duplicateLots": [
+        {
+          "id": 200,
+          "raw": 6,
+          "unique": 5,
+          "minimum": 6,
+          "duplicateKeys": [
+            "99,208"
+          ]
+        },
+        {
+          "id": 643,
+          "raw": 14,
+          "unique": 12,
+          "minimum": 12,
+          "duplicateKeys": [
+            "85,62",
+            "87,61"
+          ]
+        },
+        {
+          "id": 647,
+          "raw": 12,
+          "unique": 10,
+          "minimum": 9,
+          "duplicateKeys": [
+            "107,82",
+            "107,84"
+          ]
+        },
+        {
+          "id": 648,
+          "raw": 15,
+          "unique": 14,
+          "minimum": 12,
+          "duplicateKeys": [
+            "91,64"
+          ]
+        }
+      ],
+      "belowNominalUniqueAreaLotIds": [
+        200
+      ],
+      "overlaps": [
+        {
+          "key": "125,85",
+          "ids": [
+            63,
+            64
+          ]
+        },
+        {
+          "key": "12,146",
+          "ids": [
+            379,
+            380
+          ]
+        }
+      ],
+      "firstWinnerWouldChangeFirstCellLotIds": [
+        64,
+        380
+      ],
+      "offlineLastWinnerChanges": [
+        {
+          "id": 63,
+          "beforeRaw": 10,
+          "beforeUnique": 10,
+          "afterUnique": 9,
+          "minimum": 9,
+          "firstPreserved": true
+        },
+        {
+          "id": 200,
+          "beforeRaw": 6,
+          "beforeUnique": 5,
+          "afterUnique": 5,
+          "minimum": 6,
+          "firstPreserved": true
+        },
+        {
+          "id": 379,
+          "beforeRaw": 7,
+          "beforeUnique": 7,
+          "afterUnique": 6,
+          "minimum": 6,
+          "firstPreserved": true
+        },
+        {
+          "id": 643,
+          "beforeRaw": 14,
+          "beforeUnique": 12,
+          "afterUnique": 12,
+          "minimum": 12,
+          "firstPreserved": true
+        },
+        {
+          "id": 647,
+          "beforeRaw": 12,
+          "beforeUnique": 10,
+          "afterUnique": 10,
+          "minimum": 9,
+          "firstPreserved": true
+        },
+        {
+          "id": 648,
+          "beforeRaw": 15,
+          "beforeUnique": 14,
+          "afterUnique": 14,
+          "minimum": 12,
+          "firstPreserved": true
+        }
+      ],
+      "offlineLastWinnerPreservesAllFirstCellsAndUnion": true,
+      "diagnoseMutationRecorded": {
+        "before": {
+          "lots": 648,
+          "buildings": 648
+        },
+        "after": {
+          "lots": 648,
+          "buildings": 648
+        },
+        "publicLotDigestEqual": true
+      },
+      "publicDigestEqualityIndependentlyRecomputable": false,
+      "errors": [],
+      "browserErrors": []
+    }
+  ],
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "zoning",
+      "title": "Small real membership overlap supports a bounded correctness candidate",
+      "detail": "Two globally duplicated cell keys per seed, all within same-edge same-side adjacent-ID pairs;5/6 repeated references inside4/4 lot arrays. Generation buffers an entire edge before regenLots commits claims. Cells are appended without uniqueness checks. No rank1 capacity benefit follows."
+    },
+    {
+      "rank": 2,
+      "owner": "zoning",
+      "supportingOwners": [
+        "buildings",
+        "democity"
+      ],
+      "title": "First-winner dedupe would change stable lot keys",
+      "detail": "Later lots236(seed1337),64 and380(seed7) begin with an overlapping key. Removing later ownership changes _lotKey. Offline last-winner normalization preserves all first keys and current union; it removes excess earlier membership while agreeing with current claimed-map overwrite semantics. This is candidate direction only, not tested product acceptance."
+    },
+    {
+      "rank": 3,
+      "owner": "zoning",
+      "title": "Unique raster count is not guaranteed by nominal dimensions",
+      "detail": "Seed1337 lot227 and seed7 lot200 have5 distinct keys for nominal6-cell residential-low lots. Dedupe cannot recover a missing distinct cell and should not silently delete or resize these lots. Keep this limitation separate from overlap correction."
+    },
+    {
+      "rank": 4,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning"
+      ],
+      "title": "Public digest and topology scope remain narrower than builder wording",
+      "detail": "Only equality boolean is retained, not before/after digest strings. Compared projection is id/buildingId/edgeId/side/cells; geometry, class, all building state, economy and allocator are absent. Complete lot membership and observed class/depth slot strings are retained, but not every raw slot key, road curve or unclaimed painted-cell map. This supports quotient replay and membership audit, not independent geometric regeneration."
+    }
+  ],
+  "limits": [
+    "No screenshots requested or inspected; no new live browser, source changes, build, rendering/performance, memory, gameplay or API/restage tests. All saved JSON arrays were traversed and checked offline.",
+    "Digest strings are computed in-page then discarded. Equality is a recorded boolean and source-reviewed projection comparison, not an independently recomputable saved before/after state.",
+    "diagnose() calls regenLots(), replacing lot objects/maps and advancing nextLot even when IDs/cells match. It is correctly isolated to disposable pages; it is not a pure getter or a general state-preservation contract.",
+    "Run quotient equality holds for both observed claim passes and per edge, not every possible road/order/sampling/class configuration. Short-run slots are included in remainder slots; they must not be added as independent recoverable capacity.",
+    "Slot strings contain class and available-depth counts, not each sampled raster key or full road/cell geometry. Full membership is retained for emitted lots only; complete raw topology is an overstatement.",
+    "Mixed edge/side totals count raw references, including within-lot duplicates; they are not distinct physical-cell counts. Global unique totals4882/5176 match R8t.",
+    "Offline last-winner normalization assumes the documented same-edge generation order for affected adjacent pairs; it does not execute or approve a product implementation. Current first-cell identity preservation must also be validated on load, repeated regen and additional layouts.",
+    "Nominal-area shortfall is already present in one lot per seed and does not alone prove wrong world-space dimensions. Membership-only normalization should not claim to repair geometry or city density."
+  ],
+  "nextOwnerSafePriority": {
+    "owner": "zoning",
+    "task": "Test owner-local normalization of repeated cell references and same-edge overlap, preserving existing last-claim winner, all first keys, fixed geometric lot frames, IDs/building links and union. Reject changes to city/building/economy state beyond the intended corrected membership. Verify repeated regen, save/load/restage, two seeds and directed zoning boundaries; do not claim density or visual score progress."
+  }
+}

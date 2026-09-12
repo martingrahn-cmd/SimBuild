@@ -60,8 +60,9 @@ class Tile {
   eRoom(x, y, w, h, top = 1, bottom = 0.34) {
     const g = this.E, gr = g.createLinearGradient(0, y, 0, y + h);
     const c = (v) => `rgb(${(v * 255) | 0},${(v * 255) | 0},${(v * 255) | 0})`;
-    gr.addColorStop(0, c(top * 0.82)); gr.addColorStop(0.16, c(top));
-    gr.addColorStop(0.62, c(top * 0.72)); gr.addColorStop(1, c(bottom));
+    gr.addColorStop(0, c(top * 0.35)); gr.addColorStop(0.10, c(top * 0.9));
+    gr.addColorStop(0.18, c(top * 0.9)); gr.addColorStop(0.23, c(top * 0.25));
+    gr.addColorStop(0.7, c(top * 0.16)); gr.addColorStop(1, c(bottom * 0.3));
     g.fillStyle = gr; g.fillRect(x, y, w, h);
   }
   /** vertical gradient fill on the albedo */
@@ -345,15 +346,25 @@ export function drawBay(t, def, x0, w0, y0, h0, variant) {
   t.gradA(wx, wy, ww, wh, [[0, g0], [0.42, mixHex(g0, g1, 0.75)], [0.55, shade(g1, 1.25)], [1, g1]]);
   // sky sliver + a soft diagonal reflection streak (shifted per bay variant)
   A.save();
-  A.globalAlpha = 0.36 + variant * 0.07; A.globalCompositeOperation = 'screen';
+  A.globalAlpha = 0.035 + variant * 0.008; A.globalCompositeOperation = 'screen';
   A.fillStyle = '#7d93ad';
   A.beginPath();
   A.moveTo(wx, wy + wh * (0.4 + variant * 0.22)); A.lineTo(wx + ww * (0.4 + variant * 0.3), wy); A.lineTo(wx + ww, wy); A.lineTo(wx, wy + wh);
   A.closePath(); A.fill();
   A.restore();
-  t.o(wx, wy, ww, wh, def.glassRough ?? 0.34, def.glassMetal ?? 0.12);
+  t.o(wx, wy, ww, wh, def.glassRough ?? 0.44, def.glassMetal ?? 0.12);
   t.n(wx, wy, ww, wh, 0, 0);
   t.eRoom(wx, wy, ww, wh, 1, 0.3);
+
+  // Keep the baked lit state, but let different bay variants reveal different pieces of the
+  // room behind the glass. These masks live only in the emissive atlas: they do not add lights,
+  // geometry or simulation state, and the dark shapes remain stable at every time of day.
+  if (variant === 0) {
+    t.e(wx + ww * 0.08, wy + wh * 0.53, ww * 0.24, wh * 0.47, 0.045);
+  } else if (variant === 2) {
+    t.e(wx + ww * 0.64, wy + wh * 0.16, ww * 0.075, wh * 0.84, 0.035);
+    t.e(wx + ww * 0.715, wy + wh * 0.70, ww * 0.22, wh * 0.30, 0.055);
+  }
 
   // interiors: blinds / a lit ceiling strip in some bays (baked daytime variety)
   if (variant === 1 && def.blind !== false) {
@@ -389,7 +400,7 @@ export function drawBay(t, def, x0, w0, y0, h0, variant) {
   A.fillRect(wx - fw, wy - fw, fw, wh + fw * 2);
   A.fillRect(wx + ww, wy - fw, fw, wh + fw * 2);
   t.o(wx - fw, wy - fw, ww + fw * 2, wh + fw * 2, 0.42, def.frameMetal ?? 0.15);
-  t.o(wx, wy, ww, wh, def.glassRough ?? 0.34, def.glassMetal ?? 0.12);
+  t.o(wx, wy, ww, wh, def.glassRough ?? 0.44, def.glassMetal ?? 0.12);
   t.e(wx - fw, wy - fw, ww + fw * 2, fw, 0);
   t.e(wx - fw, wy + wh, ww + fw * 2, fw, 0);
   t.e(wx - fw, wy - fw, fw, wh + fw * 2, 0);
@@ -434,13 +445,19 @@ export function drawCurtainBay(t, def, x0, w0, y0, h0, variant) {
   // repeated tile does not read as herringbone across a whole curtain wall
   const gA = shade(def.glass[0], 1 - variant * 0.05), gB = shade(def.glass[1], 1 + variant * 0.04);
   t.gradA(x0, gy, w0, gh, [[0, gA], [0.5, mixHex(gA, gB, 0.55)], [0.62, mixHex(gA, gB, 0.35)], [1, gB]]);
-  A.save(); A.globalAlpha = 0.16 + variant * 0.04; A.globalCompositeOperation = 'screen';
+  A.save(); A.globalAlpha = 0.025 + variant * 0.008; A.globalCompositeOperation = 'screen';
   A.fillStyle = '#8aa2bd';
   const kk = 0.45 + variant * 0.5;
   A.beginPath(); A.moveTo(x0, gy + gh * (0.4 + variant * 0.25)); A.lineTo(x0 + w0 * kk, gy); A.lineTo(x0 + w0, gy); A.lineTo(x0, gy + gh);
   A.closePath(); A.fill(); A.restore();
-  t.o(x0, gy, w0, gh, def.glassRough ?? 0.33, def.glassMetal ?? 0.12);
+  t.o(x0, gy, w0, gh, def.glassRough ?? 0.44, def.glassMetal ?? 0.12);
   t.eRoom(x0, gy, w0, gh, 1, 0.26);
+  if (variant === 0) {
+    t.e(x0 + w0 * 0.07, gy + gh * 0.55, w0 * 0.25, gh * 0.45, 0.04);
+  } else if (variant === 2) {
+    t.e(x0 + w0 * 0.65, gy + gh * 0.15, w0 * 0.07, gh * 0.85, 0.03);
+    t.e(x0 + w0 * 0.72, gy + gh * 0.72, w0 * 0.21, gh * 0.28, 0.05);
+  }
   if (variant === 1) {
     A.save(); A.globalAlpha = 0.55; A.fillStyle = '#b9b3a4'; A.fillRect(x0 + mw, gy, w0 - mw * 2, gh * t.rnd(0.2, 0.45)); A.restore();
   }
@@ -501,7 +518,7 @@ export function drawShopfront(t, def, x0, w0, y0, h0, variant) {
   const bulk = h0 * 0.12;
   t.a(x0, gy, w0, gh + bulk, shade(def.wallColor, 0.7));
   t.gradA(x0 + w0 * 0.03, gy, w0 * 0.94, gh, [[0, '#2b3742'], [0.5, '#3d4a57'], [1, '#222b34']]);
-  A.save(); A.globalAlpha = 0.55; A.globalCompositeOperation = 'screen';
+  A.save(); A.globalAlpha = 0.08; A.globalCompositeOperation = 'screen';
   A.fillStyle = '#93a7bb';
   A.beginPath(); A.moveTo(x0, gy + gh); A.lineTo(x0 + w0 * 0.75, gy); A.lineTo(x0 + w0, gy); A.lineTo(x0 + w0 * 0.25, gy + gh); A.closePath(); A.fill();
   A.restore();

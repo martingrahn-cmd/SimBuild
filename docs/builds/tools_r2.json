@@ -1,0 +1,70 @@
+{
+  "module": "tools",
+  "round": 2,
+  "summary": "Repaired tools option/event contracts, commit/cancel lifecycle, real prop placement and demolition, exact road/sculpt undo through new terrain restoration APIs, helper-only layers, and sRGB preview/chip output. All 16 standard and 12 named-preset gauntlet captures are ready with zero errors on Apple M4 Metal. Last named-preset summary: max 190 scene draws, 1,521,121 triangles, minimum 54.2 fps; standard matrix: max 148 draws, minimum 59.7 fps. Isolated tools group is 8 draws / 5,792 triangles. Four 720p, five pinned and two integrated captures also have zero errors. Service remains an honest zero-charge unavailable path.",
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_presets/roadtool_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_presets/zonetool_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_presets/sculpt_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_presets/bulldoze_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_presets/service_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_presets/invalid_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_pinned/roadtool_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_pinned/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_pinned/roadtool_6.5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_pinned/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_720/roadtool_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_720/roadtool_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2_720/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/all_aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r2/all_night_22.png"
+  ],
+  "acceptanceMet": [
+    "1/3: authored showcase drives tools and yields 40 road edges, 35 nodes, 434 zone cells across all eight type/density pairs, 33 buildings, and six simultaneous poses.",
+    "2/14: ribbons use resampling <=2m, 0.15m lift, negative polygon offset and helper-only mask256; all tools geometry has shadows disabled.",
+    "4/21: seven chips in roadtool and closeup, 26px tall at 1080p and 720p; no overlap violations across ten cameras; 720p chip bottoms <=561px. Ribbon crop width 43/64=0.672.",
+    "5/7/12/16: finite road cost without simulation (96), node/grid/angle snap contracts, building pick/selection event, one reentrant selection emission, no-op selection preserves draft; real HUD clicks verified by integrator.",
+    "6: pinned night ribbon p50 201.86-202.07, p99 <=218 and ground contrast 3.50-3.90x. Golden-hour ribbon remains neutral with p99 <=218 and contrast 2.14-2.45x.",
+    "8/19: invalid road commit rejects without adding roads; unavailable service and removed props API return exact reasons and charge zero, with preview retained.",
+    "9 partial: eight successful mixed actions restore counters and 16 terrain samples exactly through undo and redo after delayed frames; third road substitutes for unavailable service. Capacity64.",
+    "10/13/15: imported exact zone palette with alpha0.45; isolated tools group8 draws5792triangles; 200 pointers geometry delta0; teardown/cancel produces idle, zero chips and zero ghost vertices.",
+    "20: two seed1337 runs have byte-identical history/counters/metrics; seed99 retains 40edges434cells33buildings."
+  ],
+  "acceptanceMissed": [
+    "11 staging: the specified bulldoze rectangle contains three buildings, below the four-building pose minimum, among17 total marked objects.",
+    "17: 16-ray sculpt probe finds a worst adjacent2m height step of1.728m outside the excluded road band, above1m.",
+    "22 partial: declared wash crop passes roadtool golden/night hue208/211 degrees and closeup night206, but street foliage contamination produces hue102/129 and noon720 roadtool183; cannot claim the all-camera195-215 band.",
+    "9 service-inclusive sequence cannot complete until services placement is implemented; separate failure-contract test passes.",
+    "6 bloom on/off difference is unmeasurable under the residual review and empty all-showcase state; no pass or fail assigned."
+  ],
+  "drawCalls": 190,
+  "triangles": 1521121,
+  "errors": 0,
+  "remainingWeaknesses": [
+    "The road ghost is continuous, neutral and terrain-conforming, but occupies a large foreground area in fixed street/closeup cameras and natural trees obscure its shape; the staged road path differs from the literal spec to avoid a shared-node invalid angle.",
+    "Bulldoze staging reaches three building victims instead of four; sculpt shoulder and wash hue measurements retain the misses above.",
+    "Services is still a stub; exact service-inclusive undo cannot be demonstrated. Curved-edge T-junction splitting still requires the roads owner API.",
+    "Elevation affects validation and pricing but does not produce a raised bridge preview; fill-block zoning still uses a circular footprint.",
+    "Chips are legible with controlled overlaps, but several appear over foreground foliage/buildings and lack leader lines.",
+    "All-showcase captures initialize an empty map without a tools ghost, so integrated bloom behavior is not established; source linear output is capped at0.70.",
+    "Full pre/post road height snapshots can retain roughly2MiB per road history entry at513-square terrain resolution; the undo stack is bounded at64."
+  ],
+  "coreRequestFile": "/Users/martingrahn/Documents/SimBuild/docs/core-requests/tools.md",
+  "selfScore": 7.2,
+  "verificationFiles": [
+    "shots/tools/r2/summary.json",
+    "shots/tools/r2_presets/summary.json",
+    "shots/tools/r2/verify.json",
+    "shots/tools/r2/metal-probe.json",
+    "shots/tools/r2/layout.json",
+    "shots/tools/r2/determinism.json",
+    "shots/tools/r2/pixels.json",
+    "shots/integration/w2_core_probe.json"
+  ]
+}

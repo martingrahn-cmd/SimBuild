@@ -1,0 +1,363 @@
+{
+  "module": "democity",
+  "round": "r8n",
+  "reviewType": "Independent bounded sunset NaN critical review",
+  "decision": "ACCEPT",
+  "acceptedScope": "Fix solar chromaticity division by zero and lift its near-horizon atmospheric sample above the coarse integrator zero-transmittance band. Visual/numerical correction only.",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "resolvedFinding": {
+    "previousRound": "r8m",
+    "priority": "P1",
+    "issue": "Nearly black 18:00 scene",
+    "status": "RESOLVED in the supplied corrected sweeps and fresh 17.99/18/18.01 boots; no universal state guarantee"
+  },
+  "nextPriority": {
+    "rank": 1,
+    "owner": [
+      "democity",
+      "zoning",
+      "buildings",
+      "roads",
+      "services"
+    ],
+    "issue": "Sparse repetitive city fabric: detached towers and repeated blocks sit in broad lawns with limited continuous street frontage.",
+    "evidence": [
+      "shots/democity/r8n-sunset-nan-final/downtown_12.png",
+      "shots/democity/r8n-sunset-nan-final/park_12.png"
+    ],
+    "status": "OPEN"
+  },
+  "rankedIssues": [
+    {
+      "rank": 1,
+      "owner": [
+        "democity",
+        "zoning",
+        "buildings",
+        "roads",
+        "services"
+      ],
+      "issue": "Sparse repetitive city fabric: detached towers and repeated blocks sit in broad lawns with limited continuous street frontage.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/downtown_12.png",
+        "shots/democity/r8n-sunset-nan-final/park_12.png"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "rank": 2,
+      "owner": [
+        "props"
+      ],
+      "issue": "Planar leaf cards and repeated rounded crown silhouettes remain prominent.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/park_12.png",
+        "shots/democity/r8n-sunset-nan-final/riverfront_12.png"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "rank": 3,
+      "owner": [
+        "buildings",
+        "props",
+        "services",
+        "effects"
+      ],
+      "issue": "Night window grids and local light pools still lack convincing depth and variation.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/downtown_22.png",
+        "shots/democity/r8n-sunset-nan-final/night_downtown_22.png"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "rank": 4,
+      "owner": [
+        "terrain",
+        "roads",
+        "democity",
+        "services"
+      ],
+      "issue": "Abrupt road grades, pads and site-to-landscape transitions remain visible.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/interchange_12.png",
+        "shots/democity/r8n-sunset-nan-final/industry_12.png"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "rank": 5,
+      "owner": [
+        "democity",
+        "services",
+        "props"
+      ],
+      "issue": "Landmark and industrial grounds remain schematic despite accepted local asset detailing.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/industry_12.png",
+        "shots/democity/r8n-sunset-nan-final/riverfront_12.png"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "rank": 6,
+      "owner": [
+        "environment",
+        "terrain",
+        "effects"
+      ],
+      "issue": "Straight geometric horizon and coarse/stretched mountain material remain; warm-sun/cool-moon handoff near 18 is visibly abrupt. Weather/cloud-reflection artistry remains previously open and was not rerun here.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-candidate/riverfront_17p99.png",
+        "shots/democity/r8n-sunset-nan-candidate/riverfront_18.png",
+        "shots/democity/r8n-sunset-nan-final/industry_12.png"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "rank": 7,
+      "owner": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation"
+      ],
+      "issue": "Limited visible human use and activity; static paused images do not establish native gameplay quality.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/suburb_12.png",
+        "shots/democity/r8n-sunset-nan-final/downtown_12.png"
+      ],
+      "status": "OPEN; dynamic judgment not rerun"
+    },
+    {
+      "rank": 8,
+      "owner": [
+        "core",
+        "props",
+        "traffic",
+        "environment",
+        "terrain",
+        "buildings"
+      ],
+      "issue": "Four of sixteen FPS samples below 50; raw heap exceeds 512 MB in eight; props update endpoint exceeds 2 ms. No causal regression or retained leak demonstrated.",
+      "evidence": [
+        "shots/democity/r8n-sunset-nan-final/summary.json",
+        "shots/democity/r8n-sunset-nan-final/park_12.json"
+      ],
+      "status": "OPEN"
+    }
+  ],
+  "source": {
+    "path": "src/modules/environment/index.js",
+    "sha256": "14f0b2be0e8d76a61fcd4d43429a625ab2ef049e8678da3ed944bf63676d105f",
+    "reconstructedPreR8nSha256": "472d268dd461c2f913b440ef5e2f6bac93dd70883b53b0d28f0d0b23aef05c4f",
+    "matchesRecordedR8m": true,
+    "onlyNewScope": [
+      "sun sample minimum y 0.004 to 0.008",
+      "sunTransMax local and normalization guarded by actual transmittance >1e-6"
+    ],
+    "gameplayStateSaveRngCameraGeometryChanged": false,
+    "moonChanged": false,
+    "shadersWaterSkyMatchR8mHashes": true
+  },
+  "diagnosis": {
+    "baselineStateRowsWithNonfiniteSunColor": [
+      17.999,
+      18,
+      18.001
+    ],
+    "candidateStateAllFinite": true,
+    "transitionRows": 15,
+    "candidateTransitionSunAndFogAllFinite": true,
+    "importantCorrection": "Exactly 18 already selects finite moon light in the baseline probe. Solar colour nevertheless poisons shared fog via U.fogSunCol; do not attribute the whole failure solely to active sunlight at exactly 18.",
+    "actualTransmittanceReplay": {
+      "direction": "normalize(-1,floor,0), altitude=150",
+      "floor004": [
+        0,
+        0,
+        0
+      ],
+      "oldNormalization": "NaN, NaN, NaN",
+      "newZeroGuard": [
+        0,
+        0,
+        0
+      ],
+      "floor008": [
+        0.05366642187483889,
+        0.007184884288864744,
+        0.0001028875551982396
+      ]
+    }
+  },
+  "pixelVerification": {
+    "independent": true,
+    "originalPngCount": 20,
+    "method": "Pillow RGB; x=220..1919 step8, y=0..979 step8; luma=.2126R+.7152G+.0722B; nonblack luma>3. Matches sweep script ROI/sample grid.",
+    "allStoredValuesMatchWithin": 1e-09,
+    "close17p99Mean": 26.118128318,
+    "close18Mean": 27.87773883,
+    "close18p01Mean": 28.055248002,
+    "closeMinimumNonblackFraction": 0.956372381,
+    "broadMinimumMean": 24.181841895,
+    "broadMaximumMean": 99.431617298,
+    "broadMinimumNonblackFraction": 0.963319211
+  },
+  "verificationToolCorrection": "Both current sweep.mjs scripts invoke public environment.refreshEnvironment() after every clock.set, then run 24 frames. This correction invalidates treating the earlier non-refreshed sweep as a clean comparison. Three independent fresh CLI starts corroborate the repaired boundary.",
+  "metrics": {
+    "frames": 16,
+    "allReady": true,
+    "errors": 0,
+    "maxDrawCalls": 469,
+    "maxTriangles": 2814092,
+    "minFps": 47.2,
+    "below50": 4,
+    "maxRawEndpointHeapMB": 682.5,
+    "rawHeapAbove512": 8,
+    "forcedGcHeapMeasured": false,
+    "moduleCpuOver2ms": [
+      {
+        "camera": "park",
+        "time": 12,
+        "module": "props",
+        "ms": 2.0999999940395355
+      }
+    ]
+  },
+  "freshBoots": [
+    {
+      "hour": 17.99,
+      "fps": 60,
+      "errors": 0
+    },
+    {
+      "hour": 18,
+      "fps": 59.3,
+      "errors": 0
+    },
+    {
+      "hour": 18.01,
+      "fps": 59,
+      "errors": 0
+    }
+  ],
+  "contracts": {
+    "apiCensusDoubleRestoreEqual": true,
+    "apiDeserializeResults": [
+      true,
+      true
+    ],
+    "validTourChecks": 8,
+    "invalidTourResult": false,
+    "mixedUseRecords": 32,
+    "mixedUseFullRecordedSnapshotsEqualTwice": true,
+    "mixedUseFlagsAndZoneBacklinksVerified": true,
+    "restage1337To7To1337To7SelectedDigestsEqual": true,
+    "restageDigestFields": [
+      "buildings",
+      "services",
+      "transit"
+    ],
+    "sharedDisplaySunVectorsEqual": true,
+    "waterNightEqualsEnvironmentNight": true,
+    "waterReflectionCadenceCountsPer120": [
+      15,
+      30,
+      120
+    ],
+    "errors": 0
+  },
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 39,
+  "originalImages": [
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_17p5.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_17p75.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_17p95.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_17p98.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_17p99.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18p01.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18p02.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18p05.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18p1.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18p25.png",
+    "shots/democity/r8n-sunset-nan-candidate/riverfront_18p5.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_15.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_16.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_17.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_17p5.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_18.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_18p5.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_19.png",
+    "shots/democity/r8n-sunset-nan-final-sweep/riverfront_20.png",
+    "shots/democity/r8n-sunset-nan-fresh/riverfront_17p99.png",
+    "shots/democity/r8n-sunset-nan-fresh/riverfront_18.png",
+    "shots/democity/r8n-sunset-nan-fresh/riverfront_18p01.png",
+    "shots/democity/r8n-sunset-nan-final/bridge_12.png",
+    "shots/democity/r8n-sunset-nan-final/bridge_22.png",
+    "shots/democity/r8n-sunset-nan-final/downtown_12.png",
+    "shots/democity/r8n-sunset-nan-final/downtown_22.png",
+    "shots/democity/r8n-sunset-nan-final/industry_12.png",
+    "shots/democity/r8n-sunset-nan-final/industry_22.png",
+    "shots/democity/r8n-sunset-nan-final/interchange_12.png",
+    "shots/democity/r8n-sunset-nan-final/interchange_22.png",
+    "shots/democity/r8n-sunset-nan-final/night_downtown_12.png",
+    "shots/democity/r8n-sunset-nan-final/night_downtown_22.png",
+    "shots/democity/r8n-sunset-nan-final/park_12.png",
+    "shots/democity/r8n-sunset-nan-final/park_22.png",
+    "shots/democity/r8n-sunset-nan-final/riverfront_12.png",
+    "shots/democity/r8n-sunset-nan-final/riverfront_22.png",
+    "shots/democity/r8n-sunset-nan-final/suburb_12.png",
+    "shots/democity/r8n-sunset-nan-final/suburb_22.png"
+  ],
+  "jsonEvidenceInspected": [
+    "shots/democity/r8n-sunset-nan-candidate/state-probe.json",
+    "shots/democity/r8n-sunset-nan-candidate/sweep.json",
+    "shots/democity/r8n-sunset-nan-candidate/transition-probe.json",
+    "shots/democity/r8n-sunset-nan-final-sweep/sweep.json",
+    "shots/democity/r8n-sunset-nan-fresh/riverfront_17p99.json",
+    "shots/democity/r8n-sunset-nan-fresh/riverfront_18.json",
+    "shots/democity/r8n-sunset-nan-fresh/riverfront_18p01.json",
+    "shots/democity/r8n-sunset-nan-final/bridge_12.json",
+    "shots/democity/r8n-sunset-nan-final/bridge_22.json",
+    "shots/democity/r8n-sunset-nan-final/downtown_12.json",
+    "shots/democity/r8n-sunset-nan-final/downtown_22.json",
+    "shots/democity/r8n-sunset-nan-final/industry_12.json",
+    "shots/democity/r8n-sunset-nan-final/industry_22.json",
+    "shots/democity/r8n-sunset-nan-final/interchange_12.json",
+    "shots/democity/r8n-sunset-nan-final/interchange_22.json",
+    "shots/democity/r8n-sunset-nan-final/night_downtown_12.json",
+    "shots/democity/r8n-sunset-nan-final/night_downtown_22.json",
+    "shots/democity/r8n-sunset-nan-final/park_12.json",
+    "shots/democity/r8n-sunset-nan-final/park_22.json",
+    "shots/democity/r8n-sunset-nan-final/riverfront_12.json",
+    "shots/democity/r8n-sunset-nan-final/riverfront_22.json",
+    "shots/democity/r8n-sunset-nan-final/suburb_12.json",
+    "shots/democity/r8n-sunset-nan-final/suburb_22.json",
+    "shots/democity/r8n-sunset-nan-final/summary.json",
+    "shots/democity/r8n-sunset-nan-contract/apicheck.json",
+    "shots/democity/r8n-sunset-nan-contract/display-contract.json",
+    "shots/democity/r8n-sunset-nan-contract/mixed-use.json",
+    "shots/democity/r8n-sunset-nan-contract/restage-cycle.json",
+    "shots/democity/r8n-sunset-nan-contract/water-cadence.json",
+    "shots/democity/r8n-sunset-black-diagnosis/baseline_17p999.json",
+    "shots/democity/r8n-sunset-black-diagnosis/baseline_18p001.json",
+    "shots/democity/r8n-sunset-black-diagnosis/state-probe.json",
+    "shots/democity/r8n-sunset-black-diagnosis/transition-probe.json"
+  ],
+  "limitations": [
+    "Independent review of supplied captures and data, with independent original-pixel recomputation and actual atmosphere-function replay; no new browser captures or gameplay run by this critic.",
+    "All 39 required original PNGs were individually inspected. Twenty sweep originals have shared sweep.json records, not individual screenshot sidecars. Nineteen fresh/final originals have individual sidecars.",
+    "No fresh eight-reference calibration, full 32-frame whole-game matrix, blind A/B judging, native playtest, all-weather sunset sweep, dawn sweep, or continuous real-time sunset recording in this bounded round. Existing whole-game anchors/ranking retained.",
+    "Corrected sweeps explicitly refresh environment after clock jumps and settle 24 frames. They establish clean settled samples, not natural LUT/PMREM cadence continuity. Fresh CLI boots independently confirm 17.99/18/18.01.",
+    "Transition debug probes inspect internal environment state for diagnosis only; they do not add or validate a gameplay API. These probes do not refresh the LUT, but the observed sunColor/fogSunCol are assigned per frame.",
+    "Raw endpoint heap is not forced-GC retained memory. Short M4 Metal windows are not sustained or target-GTX1660 proof. Fewer slow samples than R8m do not establish a performance improvement.",
+    "API restoration checks cover recorded census and mixed-use fields; restage equality covers serialized selected buildings/services/transit digests, not every world field or arbitrary save migration.",
+    "Build 163-module pass is builder-reported, not rerun by this critic. Existing university-site and deferred road-furniture warnings remain, despite zero errors."
+  ]
+}

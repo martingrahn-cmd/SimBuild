@@ -1,0 +1,383 @@
+{
+  "module": "props",
+  "round": 2,
+  "summary": "Improved leaf-cluster breakup and bark contrast, species-aware impostor tint, LOD1 shadows, terrain-conforming lamp pools, fence orientation, signal phase grouping/rendering, and save/restore fidelity. Removed a real dropped-draw GL sampler failure and the separate missing vertex-color signal defect. Full evidence captured; several visual and editing criteria remain unfinished.",
+  "drawCalls": 142,
+  "triangles": 1553254,
+  "errors": 0,
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/forest_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/avenue_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/signal_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/lamp_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/park_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/treecloseup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/busstop_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/canopy_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/avenue_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/lamp_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/signal_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/busstop_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/park_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/forest_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/park_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/all_aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/avenue_12_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/forest_22_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/avenue_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/avenue_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/lamp_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/lamp_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/park_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/park_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/street_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/street_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/forest_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/forest_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/skyline_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/skyline_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/aerial_on_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/aerial_off_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/dolly_a.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/dolly_b.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/wind_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/wind_12p004.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/wind_zero_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/wind_zero_12p004.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/props/r2/probe/signal_traffic_stub_12.png",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg"
+  ],
+  "remainingWeaknesses": [
+    "Foliage remains visibly made from flat leaf-cluster cards; branch structure is clearer but near crowns and far silhouettes do not match the CS2 reference quality.",
+    "Aerial impostors render as horizontal circular caps, with a visible change in shape and palette between detailed trees and impostors. Top-down shadows and the 620 m furniture radius remain documented deviations.",
+    "Foliage speckle exceeds the 0.05% threshold: fixed-noon props masks at 480 px measure forest 1.581%, skyline 0.989%, aerial 3.069%.",
+    "Pinned rectangles are incomplete or contain background: treecloseup has no valid 64 px bark-only trunk rect, conifer rect is absent in key views, and some crown/hedge rects do not isolate their target. Detailed crown segmentation, twelve canopy comparisons, and pure-material thresholds are not established.",
+    "Lamp pools now conform to road and sidewalk heights, but the required large pool rect is predominantly cool unlit pavement (lamp mean R-B=-2.634), and lamp-head p99=255 exceeds 250. Some projected pool bounds fill too much of the frame.",
+    "Bus shelter glazing remains opaque and the busstop camera looks at its back, hiding the seat and timetable. The park lacks the dense designed furnishing of the reference.",
+    "Dirty-region road edits miss the required density independence: 97.3 ms at density 0.25 versus 147.1 ms at 1.0 (1.512x), with 1497 versus 3176 trees. Both edits created three lamps and 8/9 street trees; absolute CPU limits pass.",
+    "Full terrain/zone/building rebuilds remain global and can erase manual placements; remove does not fully clean every fence/shelter/pool auxiliary record. Saves produced by this version round-trip exactly, but item-only external saves have incomplete complex-assembly reconstruction.",
+    "Camera-motion LOD queue rebuilding still allocates arrays; idle update measurements below timer resolution do not establish an allocation-free update contract.",
+    "The all-showcase frame is an empty city with ready modules and zero errors; it does not demonstrate props under a populated integrated city. Heap delta, every-shot props-only budgets, water-region reflection percentages, and independent-load byte determinism were not fully measured."
+  ],
+  "selfScore": 5.8,
+  "acceptanceMet": [
+    "3a-c and footprint part of 3d: all 3742 items passed ground-height, forbidden-asphalt, water and footprint-overlap probes; no props-owned lights.",
+    "2 and 12 data portions: eight species, all twelve frozen kinds present, 3176 trees; no extension of world.props.kinds.",
+    "10 behavioral portion: standalone opposing-arm groups corrected; deterministic clock reset/half-cycle and external traffic handover tested, including same-phase greenArms changes without geometry rebuild; signal lenses visibly render after material fixes.",
+    "19 save portion: deserialize(serialize()) preserves exact generated items and restores a manually placed bench.",
+    "20 measured portions: 16-shot gauntlet max 142 scene draws, 1553254 triangles, 59.2 FPS minimum on Apple M4 Metal, zero errors; seven noon props toggles max 54 draws and 448308 triangles. Initial build 149.9 ms; 30 idle updates each below 0.1 ms timer resolution.",
+    "21: all 34 required screenshots and JSONs exist under shots/props/r2, all props ready and errors empty; 21 probe PNGs include the 14 required auxiliary captures and seven matching props-on baselines.",
+    "22: no lights, renderer/fog/composer mutation, other module changes or commits by this builder.",
+    "23 place portion: bench placement visible in world props and save, 13.5 ms measured / 13.4 ms reported.",
+    "24 visual portion: matching 720p/1080p avenue and night forest framing; downscaled difference over 40 L is 0.679% and 0.058%, respectively. Extra forest_22 1080p baseline supplied."
+  ],
+  "acceptanceMissed": [
+    "1, 2 visual, 7, 9: crown/card quality, species verification and crop/mask thresholds remain incomplete or failed.",
+    "6: pool warmth and clipped lamp-head highlight do not meet the pinned tests.",
+    "11, 12, 13 visual: shelter glazing, furnishing clarity and full placement-spacing proof remain incomplete.",
+    "14, 18: visible impostor transition and flat top-down caps; speckle fails.",
+    "19, 23: global rebuild/manual-edit preservation, all-kind deletion and density-independent road updates remain incomplete.",
+    "20: complete memory attribution and every-shot module deltas not established."
+  ],
+  "coreRequestFile": "docs/core-requests/props.md",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+  "gauntlet": {
+    "module": "props",
+    "round": "dev2",
+    "at": "2026-09-06T12:14:50.641Z",
+    "shots": [
+      {
+        "png": "shots/props/rdev2/aerial_6p5.png",
+        "camera": "aerial",
+        "time": 6.5,
+        "ok": true,
+        "fps": 59.8,
+        "drawCalls": 78,
+        "triangles": 428956,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/aerial_12.png",
+        "camera": "aerial",
+        "time": 12,
+        "ok": true,
+        "fps": 60.2,
+        "drawCalls": 115,
+        "triangles": 533936,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/aerial_17p5.png",
+        "camera": "aerial",
+        "time": 17.5,
+        "ok": true,
+        "fps": 60.1,
+        "drawCalls": 78,
+        "triangles": 428956,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/aerial_22.png",
+        "camera": "aerial",
+        "time": 22,
+        "ok": true,
+        "fps": 59.8,
+        "drawCalls": 80,
+        "triangles": 486556,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/street_6p5.png",
+        "camera": "street",
+        "time": 6.5,
+        "ok": true,
+        "fps": 60,
+        "drawCalls": 99,
+        "triangles": 1327534,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/street_12.png",
+        "camera": "street",
+        "time": 12,
+        "ok": true,
+        "fps": 59.9,
+        "drawCalls": 98,
+        "triangles": 1326662,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/street_17p5.png",
+        "camera": "street",
+        "time": 17.5,
+        "ok": true,
+        "fps": 60,
+        "drawCalls": 99,
+        "triangles": 1327534,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/street_22.png",
+        "camera": "street",
+        "time": 22,
+        "ok": true,
+        "fps": 60.1,
+        "drawCalls": 100,
+        "triangles": 1384262,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/skyline_6p5.png",
+        "camera": "skyline",
+        "time": 6.5,
+        "ok": true,
+        "fps": 59.8,
+        "drawCalls": 59,
+        "triangles": 520934,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/skyline_12.png",
+        "camera": "skyline",
+        "time": 12,
+        "ok": true,
+        "fps": 60.1,
+        "drawCalls": 59,
+        "triangles": 520934,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/skyline_17p5.png",
+        "camera": "skyline",
+        "time": 17.5,
+        "ok": true,
+        "fps": 60.1,
+        "drawCalls": 59,
+        "triangles": 520934,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/skyline_22.png",
+        "camera": "skyline",
+        "time": 22,
+        "ok": true,
+        "fps": 60.1,
+        "drawCalls": 59,
+        "triangles": 575302,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/closeup_6p5.png",
+        "camera": "closeup",
+        "time": 6.5,
+        "ok": true,
+        "fps": 59.8,
+        "drawCalls": 98,
+        "triangles": 1295546,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/closeup_12.png",
+        "camera": "closeup",
+        "time": 12,
+        "ok": true,
+        "fps": 59.6,
+        "drawCalls": 138,
+        "triangles": 1438054,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/closeup_17p5.png",
+        "camera": "closeup",
+        "time": 17.5,
+        "ok": true,
+        "fps": 59.3,
+        "drawCalls": 98,
+        "triangles": 1295546,
+        "errors": 0,
+        "moduleStatus": "ready"
+      },
+      {
+        "png": "shots/props/rdev2/closeup_22.png",
+        "camera": "closeup",
+        "time": 22,
+        "ok": true,
+        "fps": 59.2,
+        "drawCalls": 142,
+        "triangles": 1553254,
+        "errors": 0,
+        "moduleStatus": "ready"
+      }
+    ],
+    "failedShots": [],
+    "maxDrawCalls": 142,
+    "maxTriangles": 1553254,
+    "minFps": 59.2,
+    "totalErrors": 0,
+    "uniqueErrors": [],
+    "evidenceSource": "shots/props/rdev2/summary.json"
+  },
+  "propsBudgetSamples": [
+    {
+      "camera": "avenue",
+      "draws": 46,
+      "triangles": 403386,
+      "sceneDraws": 83,
+      "sceneTriangles": 881794
+    },
+    {
+      "camera": "lamp",
+      "draws": 42,
+      "triangles": 386682,
+      "sceneDraws": 77,
+      "sceneTriangles": 910285
+    },
+    {
+      "camera": "park",
+      "draws": 47,
+      "triangles": 328239,
+      "sceneDraws": 74,
+      "sceneTriangles": 1342142
+    },
+    {
+      "camera": "street",
+      "draws": 54,
+      "triangles": 427910,
+      "sceneDraws": 98,
+      "sceneTriangles": 1326662
+    },
+    {
+      "camera": "forest",
+      "draws": 23,
+      "triangles": 448308,
+      "sceneDraws": 44,
+      "sceneTriangles": 794538
+    },
+    {
+      "camera": "skyline",
+      "draws": 16,
+      "triangles": 14720,
+      "sceneDraws": 59,
+      "sceneTriangles": 520934
+    },
+    {
+      "camera": "aerial",
+      "draws": 41,
+      "triangles": 217658,
+      "sceneDraws": 79,
+      "sceneTriangles": 428972
+    }
+  ],
+  "contractProbe": "shots/props/r2/probe/contract.json",
+  "dirtyRegionProbe": {
+    "rows": [
+      {
+        "density": 0.25,
+        "trees": 1497,
+        "ms": 97.60000000009313,
+        "reportedMs": 97.3,
+        "edgeId": 50,
+        "lamps": 3,
+        "roadTrees": 8
+      },
+      {
+        "density": 1,
+        "trees": 3176,
+        "ms": 147.39999999990687,
+        "reportedMs": 147.1,
+        "edgeId": 53,
+        "lamps": 3,
+        "roadTrees": 9
+      }
+    ],
+    "ratio": 1.5118191161356629,
+    "errors": []
+  },
+  "measurementsFile": "shots/props/r2/probe/measurements.json",
+  "viewingMethod": "References and early screenshots viewed individually. Final matrix and every required probe viewed in labeled contact sheets; six final gauntlet frames spanning all four cameras, day and night also opened individually.",
+  "resolvedWarning": "GL_INVALID_OPERATION: glDrawElementsInstanced: Mismatch between texture format and sampler type (signed/unsigned/float/shadow). The lens BasicMaterial skipped environment uniform setup while still including global fog chunks. Setting fog:false removed the unbound uEnvSky sampler; final instrumented GL failures=[] and screenshot errors=[]. The separate vertexColors flag on geometry without a color attribute made all lenses black and was removed; lens discs were brought ahead of the housing face.",
+  "unmeasurableRequirements": [
+    "Per residual.json, the whole-frame 3 m dolly delta includes parallax: measured 21.677% over 40 L, not treated as a numeric LOD failure by itself. Visible tier mismatch remains a real visual finding.",
+    "Wind-zero frames at different hours also change environmental lighting: 0.019% over 40 L and 1.365 mean L delta, not interpreted as failed byte determinism. Exact object-only 2-8 px movement is not established.",
+    "The published tier histogram cannot measure a transition-band width; source has a 24 m band. Same-depth impostor/LOD1 luminance, hedge amplitude and rail clearance cannot be established by the named image-only probes.",
+    "No numeric pass claimed for invalid or missing pinned crop regions."
+  ],
+  "verification": [
+    "node --check on six modified module JS files",
+    "git diff --check -- src/modules/props",
+    "Full 34-shot JSON errors/status verification",
+    "Seven fixed-noon props masks saved under shots/props/r2/*_mask.png"
+  ]
+}

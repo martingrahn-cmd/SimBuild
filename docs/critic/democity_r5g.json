@@ -1,0 +1,17 @@
+{
+  "module": "democity",
+  "round": "5g",
+  "score": 6.0,
+  "pass": false,
+  "decision": "hold",
+  "change": "Packed roads pavement-query triangles; public surface query semantics unchanged.",
+  "allocationEvidence": {
+    "beforePath": "shots/democity/r5f/heap-profile.json",
+    "afterPath": "shots/democity/r5g/heap-profile.json",
+    "surfaceAddSampleMB": { "before": 20.25, "after": 1.08 },
+    "surface": { "triangles": 216615, "packedBytes": 12130440, "validQueries": "1095/1095" }
+  },
+  "standardMatrix": { "path": "shots/democity/r5g/summary.json", "shots": 16, "errors": 0, "maxDrawCalls": 915, "maxTriangles": 3943946, "minFps": 31.7 },
+  "contract": { "path": "shots/democity/r5g/apicheck.json", "apiMethods": 13, "deserialize": [true, true], "tourStops": 8, "invalidTour": false, "errors": 0, "browserErrors": 0, "heapMB": { "primary": 600.6, "seed7Restage": 1105.7 } },
+  "remainingGateFailures": ["3M triangle target", "50 fps target", "512 MB heap target", "golden-hour wash", "city scale and variation", "seating/bridge and cross-seed lifecycle"]
+}

@@ -1,0 +1,26 @@
+{
+  "module": "democity",
+  "round": "r7p",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accept-bounded-change-score-held",
+  "verified": {
+    "build": true,
+    "api": true,
+    "doubleDeserialize": true,
+    "tour": true,
+    "exactCrossSeedRestage": true,
+    "imagesInspected": 4,
+    "errors": 0
+  },
+  "goldenHour": {
+    "baselineSkylineAbove235Pct": 12.020061728395062,
+    "finalSkylineAbove235Pct": 1.4606481481481481,
+    "baselineSkylineLargestFlatPatchPct": 21.777777777777775,
+    "finalSkylineLargestFlatPatchPct": 6.111111111111111,
+    "brightFractionPass": true,
+    "flatPatchPass": false
+  },
+  "evidence": "shots/democity/r7p-final",
+  "report": "docs/critic/democity_r7p.md"
+}

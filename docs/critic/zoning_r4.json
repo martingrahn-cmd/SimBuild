@@ -1,0 +1,533 @@
+{
+  "module": "zoning",
+  "round": 4,
+  "score": 8.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 73,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "4. Night is night.",
+    "5. Cell lattice present and screen-space stable.",
+    "9. No z-fighting, no floating.",
+    "23. Clean at 720p, and no crawl."
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Three classes miss the signed night attenuation range",
+      "detail": "The required 200px paired on/off crops reproduce commercial-high 0.244227, industrial-low 0.302415 and office-high 0.607723 for L22/L12, outside 0.35\u20130.55. The other five pass. Keep the shared night multiplier, but account for the terrain/background contribution without erasing class differences. Commercial-high and office-high have negative signed noon contributions; the signed ratios are retained exactly as specified.",
+      "evidence": "shots/zoning/r4/critic-probe/imgstats.json; sessionA_on/off.png; sessionB_on/off.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Sparse temporal outliers remain at both resolutions",
+      "detail": "At speed 1 with a fixed camera, the prescribed zoned-region mask excludes a 3px boundary band. Session E has maximum 14.0722 > 12 at 4 of 436083 pixels (mean 0.030226). Session F has maximum 13.9278 > 12 at 1 of 187535 pixels (mean 0.208099). These are sparse composite-image failures, not proof that the zoning shader alone causes z-fighting. Preserve the average stability while locating and eliminating the outliers or documenting an accepted external cause.",
+      "evidence": "shots/zoning/r4/critic-probe/sessionE_0.png; sessionE_1.png; sessionF_0.png; sessionF_1.png; imgstats.py/json"
+    },
+    {
+      "rank": 3,
+      "severity": "minor",
+      "title": "A faint street lattice sample falls below the pixel-width floor",
+      "detail": "Same-session isolated lattice contribution at cell 130,131, projected (900.56,477.50), measures 0.65px FWHM against the 1px floor. Its peak contribution is only 5.93/255 and local baseline 1.90, so this is a low-contrast edge case, not the previous broad-line defect. Street median is 1.2px; all seven measured zonesclose samples are 1.15\u20132.25px. Previously excessive positions now measure 2.25/1.95/2.10px.",
+      "evidence": "shots/zoning/r4/critic-probe/line_street_on.png; line_street_off.png; line-isolation.py/json"
+    }
+  ],
+  "strengths": [
+    "Eight distinct classes retain ground texture; minimum between-hatch RGB distance 42.5811 across all 28 pairs.",
+    "All eight wide-view contrast ratios pass, maximum 1.567542; corrected close-view lattice widths remove the prior excessive thickness.",
+    "1728 painted cells and 143 valid framed lots, with 1269 cells claimed (73.4375%); unrelated-road refresh preserves all 143 IDs and building IDs.",
+    "5347 road-frontage samples maintain 1.54787\u20131.55m geometric clearance with at most 0.002003m within-run deviation.",
+    "Five attributable draws and 19376 triangles, zero idle geometry growth, zero console errors, deterministic replay and graceful missing-dependency behavior."
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/zoning_r4.md",
+  "summary": "Independent 8.0/10, FAIL. Night attenuation still fails three classes and sparse temporal maxima exceed 12 at both resolutions. Wide-view aliasing and prior thick close lattice are corrected; API, lot validity, identities, dependency degradation and budgets pass. All 52 independently captured images were viewed; 32 matrix shots ready with zero errors.",
+  "shots": [
+    {
+      "png": "shots/zoning/r4/critic-probe/aerial_6p5.png",
+      "camera": "aerial",
+      "time": 6.5,
+      "ok": true,
+      "fps": 61,
+      "drawCalls": 43,
+      "triangles": 353216,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Morning district bands remain translucent; setbacks and unpainted cores read clearly."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/aerial_12.png",
+      "camera": "aerial",
+      "time": 12,
+      "ok": true,
+      "fps": 59.4,
+      "drawCalls": 43,
+      "triangles": 353216,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Noon hue families and density hatch remain distinct over terrain."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/aerial_17p5.png",
+      "camera": "aerial",
+      "time": 17.5,
+      "ok": true,
+      "fps": 61.1,
+      "drawCalls": 43,
+      "triangles": 353216,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Warm light changes the ground while the overlay remains legible."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/aerial_22.png",
+      "camera": "aerial",
+      "time": 22,
+      "ok": true,
+      "fps": 59.3,
+      "drawCalls": 43,
+      "triangles": 353216,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Night bands dim substantially; blue and purple high density are harder to separate visually."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/street_6p5.png",
+      "camera": "street",
+      "time": 6.5,
+      "ok": true,
+      "fps": 52.4,
+      "drawCalls": 49,
+      "triangles": 667964,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Near lilac frontage shows ground texture, thin lattice and a clear kerb gap."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/street_12.png",
+      "camera": "street",
+      "time": 12,
+      "ok": true,
+      "fps": 61.2,
+      "drawCalls": 49,
+      "triangles": 667964,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Cell strokes read thin at grazing angle; isolated weak stroke needs the numeric floor check."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/street_17p5.png",
+      "camera": "street",
+      "time": 17.5,
+      "ok": true,
+      "fps": 59.5,
+      "drawCalls": 49,
+      "triangles": 667964,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Strong low sun affects road/ground; frontage tint remains stable."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/street_22.png",
+      "camera": "street",
+      "time": 22,
+      "ok": true,
+      "fps": 57.2,
+      "drawCalls": 73,
+      "triangles": 763004,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Lilac frontage stays visible and dim; road markings remain brighter."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/skyline_6p5.png",
+      "camera": "skyline",
+      "time": 6.5,
+      "ok": true,
+      "fps": 60.5,
+      "drawCalls": 48,
+      "triangles": 648116,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Small district merges into the hazy terrain with muted class colours."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/skyline_12.png",
+      "camera": "skyline",
+      "time": 12,
+      "ok": true,
+      "fps": 60.9,
+      "drawCalls": 48,
+      "triangles": 648116,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Distant overlay recedes; no bright floating paint impression."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/skyline_17p5.png",
+      "camera": "skyline",
+      "time": 17.5,
+      "ok": true,
+      "fps": 60.5,
+      "drawCalls": 48,
+      "triangles": 648116,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Backlit water and horizon are bright; district overlay stays subdued."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/skyline_22.png",
+      "camera": "skyline",
+      "time": 22,
+      "ok": true,
+      "fps": 61.1,
+      "drawCalls": 46,
+      "triangles": 629974,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "District is very subdued but present; no overlay glow dominating the scene."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/closeup_6p5.png",
+      "camera": "closeup",
+      "time": 6.5,
+      "ok": true,
+      "fps": 60.6,
+      "drawCalls": 49,
+      "triangles": 769300,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Near office-low cells show terrain and retained back-garden core."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/closeup_12.png",
+      "camera": "closeup",
+      "time": 12,
+      "ok": true,
+      "fps": 60.4,
+      "drawCalls": 49,
+      "triangles": 769300,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Near lattice and kerb separation are coherent; distant density hatching visible."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/closeup_17p5.png",
+      "camera": "closeup",
+      "time": 17.5,
+      "ok": true,
+      "fps": 52.2,
+      "drawCalls": 49,
+      "triangles": 769300,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Warm side lighting leaves the purple frontage legible."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/closeup_22.png",
+      "camera": "closeup",
+      "time": 22,
+      "ok": true,
+      "fps": 58.9,
+      "drawCalls": 49,
+      "triangles": 769300,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Purple front block dims and keeps a faint continuous grid."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zones_6p5.png",
+      "camera": "zones",
+      "time": 6.5,
+      "ok": true,
+      "fps": 60.9,
+      "drawCalls": 47,
+      "triangles": 416192,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "All eight class landmarks are available; mixed boundary and small lot rhythm read."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zones_12.png",
+      "camera": "zones",
+      "time": 12,
+      "ok": true,
+      "fps": 59.3,
+      "drawCalls": 47,
+      "triangles": 416192,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Colour and density separation are clear; terrain remains visible within fill."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zones_17p5.png",
+      "camera": "zones",
+      "time": 17.5,
+      "ok": true,
+      "fps": 61.6,
+      "drawCalls": 47,
+      "triangles": 416192,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Sunset keeps vivid but translucent bands; no white flood."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zones_22.png",
+      "camera": "zones",
+      "time": 22,
+      "ok": true,
+      "fps": 61.1,
+      "drawCalls": 47,
+      "triangles": 416192,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Clearly darker than noon, with measured three-class signed attenuation failure."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zonesclose_6p5.png",
+      "camera": "zonesclose",
+      "time": 6.5,
+      "ok": true,
+      "fps": 59.7,
+      "drawCalls": 48,
+      "triangles": 533802,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Four high-density examples visible; near purple hatch is broad and orderly."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zonesclose_12.png",
+      "camera": "zonesclose",
+      "time": 12,
+      "ok": true,
+      "fps": 59.6,
+      "drawCalls": 48,
+      "triangles": 533802,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Close cell strokes are thinner than r3; clipped region outlines follow block edges."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zonesclose_17p5.png",
+      "camera": "zonesclose",
+      "time": 17.5,
+      "ok": true,
+      "fps": 60.4,
+      "drawCalls": 48,
+      "triangles": 533802,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Warm oblique light keeps the close hatch legible and the super-block core bare."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zonesclose_22.png",
+      "camera": "zonesclose",
+      "time": 22,
+      "ok": true,
+      "fps": 59.3,
+      "drawCalls": 48,
+      "triangles": 533802,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Density hatch remains visible; purple tint is dim and grounded."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneswide_6p5.png",
+      "camera": "zoneswide",
+      "time": 6.5,
+      "ok": true,
+      "fps": 59.2,
+      "drawCalls": 43,
+      "triangles": 357312,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Thin distant detail and muted fill reduce district-scale contrast."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneswide_12.png",
+      "camera": "zoneswide",
+      "time": 12,
+      "ok": true,
+      "fps": 59.7,
+      "drawCalls": 43,
+      "triangles": 357312,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "All eight paired contrast ratios pass; garden cores and frontage bands remain readable."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneswide_17p5.png",
+      "camera": "zoneswide",
+      "time": 17.5,
+      "ok": true,
+      "fps": 61.1,
+      "drawCalls": 43,
+      "triangles": 357312,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Wide overlay remains soft against the evening ground."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneswide_22.png",
+      "camera": "zoneswide",
+      "time": 22,
+      "ok": true,
+      "fps": 59.3,
+      "drawCalls": 43,
+      "triangles": 357312,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "District colours recede into night; no neon patch dominating terrain."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneslope_6p5.png",
+      "camera": "zoneslope",
+      "time": 6.5,
+      "ok": true,
+      "fps": 61.1,
+      "drawCalls": 48,
+      "triangles": 536424,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Steep exposed patches cut the zoned bands; contiguous cells bend over buildable ground."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneslope_12.png",
+      "camera": "zoneslope",
+      "time": 12,
+      "ok": true,
+      "fps": 60.2,
+      "drawCalls": 46,
+      "triangles": 518282,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Cyan/yellow bands stop around steep cut ground; no visible whole-patch stipple."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneslope_17p5.png",
+      "camera": "zoneslope",
+      "time": 17.5,
+      "ok": true,
+      "fps": 59.3,
+      "drawCalls": 48,
+      "triangles": 536424,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Long shadows cross the slope scene while zone boundaries remain readable."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/zoneslope_22.png",
+      "camera": "zoneslope",
+      "time": 22,
+      "ok": true,
+      "fps": 59.5,
+      "drawCalls": 46,
+      "triangles": 518282,
+      "errors": 0,
+      "moduleStatus": "ready",
+      "note": "Hillside exclusions still read in the dim cyan/yellow/purple patches."
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionA_off.png",
+      "note": "Noon terrain baseline; all paint and empty-band tint hidden.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionA_on.png",
+      "note": "Same-page noon overlay restored; paired texture and colour measurements.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionB_off.png",
+      "note": "Night terrain baseline at unchanged framing.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionB_on.png",
+      "note": "Same-page night overlay restored; three signed attenuation ratios fail.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionC_off.png",
+      "note": "Wide noon terrain baseline.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionC_on.png",
+      "note": "Wide overlay restored with softer composite contrast; all eight ratios pass.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionE_0.png",
+      "note": "1080p fixed slope frame at speed 1; terrain exclusions remain coherent.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionE_1.png",
+      "note": "Second slope frame appears stable at normal scale; four masked pixels exceed temporal maximum.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionF_0.png",
+      "note": "720p zones view retains class patterns and continuous visible lattice.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/sessionF_1.png",
+      "note": "Second 720p frame appears stable; one masked pixel exceeds temporal maximum.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/crops_zones_12.png",
+      "note": "Pinned empty-band and bare-ground comparison; empty band visibly lighter.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/crops_zoneswide_12.png",
+      "note": "Pinned near/far class crops; far block is less saturated.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/all12.png",
+      "note": "All-mode HUD and terrain, zoning overlay off; city is not staged by this module.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/degrade_noroads.png",
+      "note": "Expected empty grey environment with no terrain/roads selected; zoning hidden and ready.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/degrade_noterrain.png",
+      "note": "Expected flat floating-in-background district; all overlay vertices at y=0.16.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/river_run_12.png",
+      "note": "Additional waterfront view exposes actual curved frontage and stepped bank-side cells; loop count includes inland return.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/line_street_on.png",
+      "note": "Production street lattice enabled; very faint far strokes.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/line_street_off.png",
+      "note": "Same street with only lattice lift suppressed for contribution isolation.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/line_zonesclose_on.png",
+      "note": "Production close lattice enabled; formerly excessive stroke positions are visibly restrained.",
+      "viewed": true
+    },
+    {
+      "png": "shots/zoning/r4/critic-probe/line_zonesclose_off.png",
+      "note": "Close lattice lift suppressed; density hatch and region ink remain for isolation.",
+      "viewed": true
+    }
+  ]
+}

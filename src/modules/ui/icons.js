@@ -314,9 +314,11 @@ const speaker = () => wrap(`<path d="M4 12 h6 l7 -6 v20 l-7 -6 H4 z" fill="${P.w
 const monitor = () => wrap(`<rect x="3" y="5" width="26" height="17" rx="2" fill="${P.greyL}"/><rect x="5" y="7" width="22" height="13" fill="${P.blueD}"/><rect x="12" y="23" width="8" height="3" fill="${P.grey}"/><rect x="9" y="26" width="14" height="2" rx="1" fill="${P.grey}"/>`);
 const keyboard = () => wrap(`<rect x="2" y="8" width="28" height="16" rx="2.5" fill="${P.greyL}"/><g fill="${P.dark}"><rect x="5" y="11" width="3" height="3"/><rect x="10" y="11" width="3" height="3"/><rect x="15" y="11" width="3" height="3"/><rect x="20" y="11" width="3" height="3"/><rect x="25" y="11" width="2" height="3"/><rect x="5" y="16" width="3" height="3"/><rect x="10" y="16" width="12" height="3"/><rect x="24" y="16" width="3" height="3"/></g>`);
 const busLine = () => wrap(`<rect x="4" y="6" width="24" height="19" rx="4" fill="${P.green}"/><rect x="6.5" y="9" width="8" height="7" rx="1.5" fill="${P.blueL}"/><rect x="17.5" y="9" width="8" height="7" rx="1.5" fill="${P.blueL}"/><circle cx="10" cy="26" r="3" fill="${P.dark}"/><circle cx="22" cy="26" r="3" fill="${P.dark}"/><path d="M2 29 h28" stroke="${P.green}" stroke-width="2" stroke-dasharray="3 2"/>`);
+const pointer = () => wrap(`<path d="M7 3 L25 17 L17 19 L22 28 L17.5 30 L12.5 21 L7 27 Z" fill="${P.white}" stroke="${P.darkD}" stroke-width="1.5" stroke-linejoin="round"/>`);
+const fullscreen = () => wrap(`<path d="M5 12 V5 h7 M20 5 h7 v7 M27 20 v7 h-7 M12 27 H5 v-7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`);
 
 export const ICONS = {
-  garbage, citizens, journal, map: mapIcon, transitLines, trophy, save, load, download, upload, trash, check, chevronRight, back, lockBadge, bolt, drop, cross, flame, badge, mortar, smog, density, sliders, speaker, monitor, keyboard, busLine,
+  garbage, citizens, journal, map: mapIcon, transitLines, trophy, save, load, download, upload, trash, check, chevronRight, back, lockBadge, bolt, drop, cross, flame, badge, mortar, smog, density, sliders, speaker, monitor, keyboard, busLine, pointer, fullscreen,
   roads, zoning, terrain, props, bulldoze, info, electricity, water, health, fire, police, education, transit, parks,
   layers, stats, camera, gear, help, bell,
   play, pause, chevrons, sun, cloud, rain: rainIcon, moon, people, money, face, trendUp, trendDown, close, chevronDown, chevronUp, plus, minus, star,

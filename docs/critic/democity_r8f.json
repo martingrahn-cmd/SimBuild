@@ -1,0 +1,38 @@
+{
+  "module": "democity",
+  "round": "r8f",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "scoreChanged": false,
+  "change": "LOD1 uses 72 smaller leaf cards and each distance class has two deterministic side silhouettes while top-down behavior remains unchanged.",
+  "verified": {
+    "buildModules": 163,
+    "matrixCapturesInspected": 16,
+    "directedCapturesInspected": 7,
+    "errors": 0,
+    "maxDrawCalls": 473,
+    "maxTriangles": 2264008,
+    "minFps": 47.7,
+    "parkLodHistogram": { "lod0": 0, "lod1": 160, "impostor": 2175 },
+    "waterfrontLodHistogram": { "lod0": 18, "lod1": 135, "impostor": 546 },
+    "lod1TrianglesBefore": 104,
+    "lod1TrianglesAfter": 168,
+    "impostorTriangles": 4,
+    "parkCropMaeNormalized": 0.0191311,
+    "variantOnlyFullFrameMaeNormalized": 0.0047178,
+    "topDownVariantMaeNormalized": 0.0000393632,
+    "api": true,
+    "exactCrossSeedRestage": true
+  },
+  "rejected": [
+    "48 bowed cards: insufficient visual change for cost",
+    "opaque tetrahedral lobes: black angular clusters",
+    "camera-facing impostor normals: unnatural yellow-green lighting"
+  ],
+  "remaining": [
+    "Park composition and distant hillside placement remain sparse/repetitive.",
+    "Distance impostors remain planar and night foliage remains shallow.",
+    "Scale,50fps, broad frontage, grounding and subjective play gates remain failed."
+  ]
+}

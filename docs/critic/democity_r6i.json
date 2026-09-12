@@ -1,0 +1,9 @@
+{
+  "module": "democity", "round": "6i", "review": "local-critical", "score": 6.0, "pass": false,
+  "basis": {"ownerProfile": "shots/democity/r6h-owner-reprofile/mainpass-profile.json", "candidateProfile": "shots/democity/r6i-candidate-service-shadow420/mainpass-profile.json", "matrix": "shots/democity/rr6i-candidate-service-shadow420/summary.json", "api": "shots/democity/r6i-candidate-service-shadow420/apicheck.json", "restage": "shots/democity/r6i-candidate-service-shadow420/restage-cycle.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 784, "maxTriangles": 3181662, "minFps": 40.7},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true, "coverageChanged": false},
+  "change": {"owner": "services", "shadowDistanceM": 420, "visibleDetailDistanceM": 800, "realFacilitiesChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept services shadow distance and hold score; re-profile accepted multipass costs next"
+}

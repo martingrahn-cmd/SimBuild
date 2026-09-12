@@ -63,27 +63,27 @@ export const FACADES = {
   office_stone: {
     wall: 'stone', wallColor: '#b9b3a4', kind: 'punched',
     win: { x: 0.1, w: 0.8, y: 0.18, h: 0.56 }, frame: '#4b5157', frameW: 0.024, reveal: 0.05,
-    glass: ['#91aabf', '#556878'], glassRough: 0.34, glassMetal: 0.12, mullV: 2, mullH: 0, sill: true, sillColor: '#a8a294', dirt: 0.35,
+    glass: ['#91aabf', '#556878'], glassRough: 0.44, glassMetal: 0.12, mullV: 2, mullH: 0, sill: true, sillColor: '#a8a294', dirt: 0.35,
   },
   office_glass_blue: {
     wall: 'panel', wallColor: '#5a6d7c', kind: 'curtain',
     glass: ['#bcd6ea', '#7089a0'], spandrel: 0.19, spandrelColor: '#54707f',
-    frame: '#b3bac0', glassRough: 0.34, glassMetal: 0.12, mullV: 1,
+    frame: '#b3bac0', glassRough: 0.44, glassMetal: 0.12, mullV: 1,
   },
   office_glass_sky: {
     wall: 'panel', wallColor: '#6a7f8e', kind: 'curtain',
     glass: ['#c8e0f2', '#7f97a9'], spandrel: 0.16, spandrelColor: '#75909f',
-    frame: '#c8cdd1', glassRough: 0.34, glassMetal: 0.12, mullV: 1,
+    frame: '#c8cdd1', glassRough: 0.44, glassMetal: 0.12, mullV: 1,
   },
   office_glass_green: {
     wall: 'panel', wallColor: '#54675f', kind: 'curtain',
     glass: ['#b8dbcb', '#6d8a7c'], spandrel: 0.17, spandrelColor: '#516b62',
-    frame: '#b0b6b1', glassRough: 0.34, glassMetal: 0.12, mullV: 1,
+    frame: '#b0b6b1', glassRough: 0.44, glassMetal: 0.12, mullV: 1,
   },
   office_glass_dark: {
     wall: 'panel', wallColor: '#53575d', kind: 'curtain',
     glass: ['#a9bccb', '#616f7c'], spandrel: 0.22, spandrelColor: '#4a5058',
-    frame: '#7d858c', glassRough: 0.34, glassMetal: 0.12, mullV: 2,
+    frame: '#7d858c', glassRough: 0.44, glassMetal: 0.12, mullV: 2,
   },
   comm_upper: {
     wall: 'panel', wallColor: '#cbc3b3', kind: 'punched',
@@ -96,12 +96,12 @@ export const FACADES = {
   ind_metal: {
     wall: 'metal', wallColor: '#9aa3a6', kind: 'punched',
     win: { x: 0.08, w: 0.84, y: 0.26, h: 0.26 }, frame: '#6e7679', frameW: 0.02, reveal: 0.025,
-    glass: ['#a4b6c4', '#6a7984'], glassRough: 0.38, glassMetal: 0.12, mullV: 3, mullH: 0, sill: false, dirt: 0.7, blind: false,
+    glass: ['#a4b6c4', '#6a7984'], glassRough: 0.44, glassMetal: 0.12, mullV: 3, mullH: 0, sill: false, dirt: 0.7, blind: false,
   },
   ind_panel: {
     wall: 'panel', wallColor: '#b3b0a6', kind: 'punched',
     win: { x: 0.07, w: 0.86, y: 0.24, h: 0.22 }, frame: '#7a7e80', frameW: 0.02, reveal: 0.03,
-    glass: ['#a1b3c1', '#66747f'], glassRough: 0.36, glassMetal: 0.12, mullV: 3, mullH: 0, sill: false, dirt: 0.8, blind: false,
+    glass: ['#a1b3c1', '#66747f'], glassRough: 0.44, glassMetal: 0.12, mullV: 3, mullH: 0, sill: false, dirt: 0.8, blind: false,
   },
 };
 
@@ -184,7 +184,7 @@ function paintFlatRoof(t, color, gravel) {
   if (gravel) {
     for (let i = 0; i < 900; i++) {
       const x = t.rnd(-0.2, 1.2), y = t.rnd(-0.2, 1.2), s = t.rnd(0.004, 0.014);
-      A.fillStyle = shade(color, t.rnd(0.7, 1.35)); A.fillRect(x, y, s, s);
+      A.fillStyle = shade(color, t.rnd(0.86, 1.03)); A.fillRect(x, y, s, s);
     }
     t.grainN(-0.2, -0.2, 1.4, 1.4, 'fine', 0.5, 4);
     t.o(-0.2, -0.2, 1.4, 1.4, 0.94, 0);
@@ -233,7 +233,7 @@ function paintLawn(t, dark) {
   A.fillStyle = base; A.fillRect(-0.2, -0.2, 1.4, 1.4);
   for (let i = 0; i < 2600; i++) {
     const x = t.rnd(-0.2, 1.2), y = t.rnd(-0.2, 1.2);
-    A.fillStyle = shade(base, t.rnd(0.7, 1.35));
+    A.fillStyle = shade(base, t.rnd(0.86, 1.03));
     A.fillRect(x, y, 0.008, 0.016);
   }
   // mown stripes
@@ -379,10 +379,10 @@ function paintTrim(t, color) {
 function paintGlassPlain(t, color) {
   t.gradA(-0.2, -0.2, 1.4, 1.4, [[0, shade(color, 1.5)], [0.5, color], [1, shade(color, 0.6)]]);
   const A = t.A;
-  A.save(); A.globalAlpha = 0.4; A.globalCompositeOperation = 'screen';
+  A.save(); A.globalAlpha = 0.04; A.globalCompositeOperation = 'screen';
   A.fillStyle = '#93aac2'; A.beginPath(); A.moveTo(-0.2, 1.2); A.lineTo(0.9, -0.2); A.lineTo(1.2, -0.2); A.lineTo(0.1, 1.2); A.closePath(); A.fill();
   A.restore();
-  t.o(-0.2, -0.2, 1.4, 1.4, 0.06, 0.85);
+  t.o(-0.2, -0.2, 1.4, 1.4, 0.36, 0.12);
   t.e(-0.2, -0.2, 1.4, 1.4, 1);
 }
 
@@ -395,21 +395,16 @@ function paintSign(t, bg, ink) {
   t.gradA(-0.2, -0.2, 1.4, 1.4, [[0, shade(bg, 1.25)], [0.55, bg], [1, shade(bg, 0.82)]]);
   t.o(-0.2, -0.2, 1.4, 1.4, 0.42, 0.05);
   t.e(-0.2, -0.2, 1.4, 1.4, 0.30);
-  A.save(); A.fillStyle = ink;
+  // Preserve the atlas RNG sequence while replacing anonymous blocks with actual lettering.
   let lx = 0.11;
   const n = 4 + Math.floor(t.rnd(0, 4));
-  for (let i = 0; i < n && lx < 0.86; i++) {
-    const lw = t.rnd(0.05, 0.115);
-    A.fillRect(lx, 0.34, lw, 0.31);
-    lx += lw + 0.028;
+  for (let i = 0; i < n && lx < 0.86; i++) lx += t.rnd(0.05, 0.115) + 0.028;
+  const label = ['MARKET', 'CAFE', 'BOOKS', 'ATELIER'][n - 4];
+  for (const [g, color] of [[A, ink], [t.E, '#ffffff']]) {
+    g.save(); g.fillStyle = color; g.font = '600 0.40px sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(label, 0.5, 0.51, 0.76); g.restore();
   }
-  A.restore();
-  // the letters themselves are the bright part
-  const E = t.E;
-  E.save(); E.fillStyle = '#ffffff';
-  lx = 0.11;
-  for (let i = 0; i < n && lx < 0.86; i++) { const lw = 0.08; E.fillRect(lx, 0.34, lw, 0.31); lx += lw + 0.028; }
-  E.restore();
   t.n(-0.2, -0.2, 1.4, 1.4, 0, 0);
 }
 

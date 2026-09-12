@@ -440,7 +440,7 @@ export function stageHud(hud, ctx) {
   for (let d = 1; d <= 36; d++) history.push({ day: d, money: 620000 + d * 18000 + Math.sin(d * 0.7) * 40000, population: 9000 + d * 430 + Math.sin(d * 0.5) * 300, jobs: 4200 + d * 195 });
   hud.setSource({
     eco: { money: 1_284_530, population: 24_618, jobs: 11_204, happiness: 0.74, taxRate: 0.11, demand: { residential: 0.72, commercial: 0.41, industrial: 0.28, office: 0.55 } },
-    history, dayOffset: 16, income: 12_430, popDelta: 186,
+    history, dayOffset: 16, balance: 12_430, popDelta: 186,
     milestone: 8, milestoneName: 'Big Town', milestoneNext: 'Small City', xp: 0.62, unlocked,
     infoStats: { landvalue: { 'Average': '¢1,240 / m²', 'Highest': '¢3,860 / m²', 'Lowest': '¢210 / m²' } },
   });

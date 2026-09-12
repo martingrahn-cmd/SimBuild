@@ -1,0 +1,1018 @@
+{
+  "round": "r9m",
+  "module": "democity",
+  "decision": "ACCEPT",
+  "decisionScope": "Qualified selector/submission and ordinary street pass-attribution diagnosis; no product edit justified",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "pass": false,
+  "threshold": 8.5,
+  "productChange": false,
+  "recomputed": {
+    "censusCallsBothVersions": 4512,
+    "copiedSourceEntriesBothVersions": 9860,
+    "profilesPairs": 24,
+    "profilesBlocks": 54,
+    "sampledFramesAndIntervals": 11700,
+    "allStoredArithmeticMatches": true,
+    "allRecordedErrorsEmpty": true,
+    "censusV2Pass": true,
+    "supersededCensusV1NumericalPass": true,
+    "failedInterchangePass": false,
+    "streetProfilePass": true,
+    "geometryLedger": {
+      "colorInstances": 247,
+      "colorDraws": 4,
+      "trianglesPerInstance": 168,
+      "colorTriangles": 41496,
+      "castingChunk": 36,
+      "castingChunkDistance": 67.89232640754176,
+      "castingSubmitted": 119,
+      "castingActive": 112,
+      "cascades": 3,
+      "shadowDraws": 3,
+      "shadowTriangles": 59976,
+      "totalDraws": 7,
+      "totalTriangles": 101472,
+      "matchesEveryStreetPair": true
+    }
+  },
+  "evidence": {
+    "census": [
+      {
+        "file": "census-v1.json",
+        "pass": true,
+        "rows": [
+          {
+            "camera": "interchange",
+            "pitch": 0.704323259449296,
+            "topDown": true,
+            "histogram": {
+              "lod0": 0,
+              "lod1": 2540,
+              "impostor": 0
+            },
+            "summary": {
+              "calls": 1180,
+              "submitted": 2540,
+              "active": 2540,
+              "species": {
+                "maple": 295,
+                "birch": 406,
+                "oak": 772,
+                "fir": 256,
+                "spruce": 341,
+                "poplar": 287,
+                "blossom": 157,
+                "willow": 26
+              },
+              "activeSpecies": {
+                "maple": 295,
+                "birch": 406,
+                "oak": 772,
+                "fir": 256,
+                "spruce": 341,
+                "poplar": 287,
+                "blossom": 157,
+                "willow": 26
+              },
+              "castingChunks": 0,
+              "castingSubmitted": 0
+            },
+            "uniqueCopiedSourceIndices": 2540,
+            "chunks": 34,
+            "castingActive": 0,
+            "selectorSourceDistanceRange": [
+              311.54314890882193,
+              1849.3840100500784
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          },
+          {
+            "camera": "street",
+            "pitch": 0.18,
+            "topDown": false,
+            "histogram": {
+              "lod0": 30,
+              "lod1": 247,
+              "impostor": 1037
+            },
+            "summary": {
+              "calls": 106,
+              "submitted": 247,
+              "active": 221,
+              "species": {
+                "oak": 78,
+                "birch": 43,
+                "blossom": 22,
+                "maple": 39,
+                "poplar": 32,
+                "fir": 10,
+                "spruce": 19,
+                "willow": 4
+              },
+              "activeSpecies": {
+                "oak": 68,
+                "birch": 39,
+                "blossom": 21,
+                "maple": 35,
+                "poplar": 28,
+                "fir": 10,
+                "spruce": 16,
+                "willow": 4
+              },
+              "castingChunks": 1,
+              "castingSubmitted": 119
+            },
+            "uniqueCopiedSourceIndices": 247,
+            "chunks": 4,
+            "castingActive": 112,
+            "selectorSourceDistanceRange": [
+              48.37782118697072,
+              214.19371174535482
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          },
+          {
+            "camera": "park",
+            "pitch": 0.4511530973464185,
+            "topDown": false,
+            "histogram": {
+              "lod0": 0,
+              "lod1": 204,
+              "impostor": 2127
+            },
+            "summary": {
+              "calls": 82,
+              "submitted": 204,
+              "active": 184,
+              "species": {
+                "oak": 69,
+                "birch": 36,
+                "maple": 18,
+                "blossom": 14,
+                "poplar": 22,
+                "spruce": 26,
+                "fir": 18,
+                "willow": 1
+              },
+              "activeSpecies": {
+                "oak": 62,
+                "birch": 32,
+                "maple": 17,
+                "blossom": 12,
+                "poplar": 22,
+                "spruce": 22,
+                "fir": 16,
+                "willow": 1
+              },
+              "castingChunks": 0,
+              "castingSubmitted": 0
+            },
+            "uniqueCopiedSourceIndices": 204,
+            "chunks": 4,
+            "castingActive": 0,
+            "selectorSourceDistanceRange": [
+              75.18718179314621,
+              216.23861885511965
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          },
+          {
+            "camera": "aerial",
+            "pitch": 0.85,
+            "topDown": true,
+            "histogram": {
+              "lod0": 0,
+              "lod1": 1939,
+              "impostor": 0
+            },
+            "summary": {
+              "calls": 888,
+              "submitted": 1939,
+              "active": 1939,
+              "species": {
+                "blossom": 127,
+                "oak": 631,
+                "poplar": 233,
+                "birch": 329,
+                "maple": 240,
+                "spruce": 207,
+                "fir": 149,
+                "willow": 23
+              },
+              "activeSpecies": {
+                "blossom": 127,
+                "oak": 631,
+                "poplar": 233,
+                "birch": 329,
+                "maple": 240,
+                "spruce": 207,
+                "fir": 149,
+                "willow": 23
+              },
+              "castingChunks": 0,
+              "castingSubmitted": 0
+            },
+            "uniqueCopiedSourceIndices": 1939,
+            "chunks": 25,
+            "castingActive": 0,
+            "selectorSourceDistanceRange": [
+              395.05002624874976,
+              1406.8339346718979
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          }
+        ]
+      },
+      {
+        "file": "census-v2.json",
+        "pass": true,
+        "rows": [
+          {
+            "camera": "interchange",
+            "pitch": 0.704323259449296,
+            "topDown": true,
+            "histogram": {
+              "lod0": 0,
+              "lod1": 2540,
+              "impostor": 0
+            },
+            "summary": {
+              "calls": 1180,
+              "submitted": 2540,
+              "active": 2540,
+              "species": {
+                "maple": 295,
+                "birch": 406,
+                "oak": 772,
+                "fir": 256,
+                "spruce": 341,
+                "poplar": 287,
+                "blossom": 157,
+                "willow": 26
+              },
+              "activeSpecies": {
+                "maple": 295,
+                "birch": 406,
+                "oak": 772,
+                "fir": 256,
+                "spruce": 341,
+                "poplar": 287,
+                "blossom": 157,
+                "willow": 26
+              },
+              "castingChunks": 0,
+              "castingSubmitted": 0
+            },
+            "uniqueCopiedSourceIndices": 2540,
+            "chunks": 34,
+            "castingActive": 0,
+            "selectorSourceDistanceRange": [
+              311.54314890882193,
+              1849.3840100500784
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          },
+          {
+            "camera": "street",
+            "pitch": 0.18,
+            "topDown": false,
+            "histogram": {
+              "lod0": 30,
+              "lod1": 247,
+              "impostor": 1037
+            },
+            "summary": {
+              "calls": 106,
+              "submitted": 247,
+              "active": 221,
+              "species": {
+                "oak": 78,
+                "birch": 43,
+                "blossom": 22,
+                "maple": 39,
+                "poplar": 32,
+                "fir": 10,
+                "spruce": 19,
+                "willow": 4
+              },
+              "activeSpecies": {
+                "oak": 68,
+                "birch": 39,
+                "blossom": 21,
+                "maple": 35,
+                "poplar": 28,
+                "fir": 10,
+                "spruce": 16,
+                "willow": 4
+              },
+              "castingChunks": 1,
+              "castingSubmitted": 119
+            },
+            "uniqueCopiedSourceIndices": 247,
+            "chunks": 4,
+            "castingActive": 112,
+            "selectorSourceDistanceRange": [
+              48.37782118697072,
+              214.19371174535482
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          },
+          {
+            "camera": "park",
+            "pitch": 0.4511530973464185,
+            "topDown": false,
+            "histogram": {
+              "lod0": 0,
+              "lod1": 204,
+              "impostor": 2127
+            },
+            "summary": {
+              "calls": 82,
+              "submitted": 204,
+              "active": 184,
+              "species": {
+                "oak": 69,
+                "birch": 36,
+                "maple": 18,
+                "blossom": 14,
+                "poplar": 22,
+                "spruce": 26,
+                "fir": 18,
+                "willow": 1
+              },
+              "activeSpecies": {
+                "oak": 62,
+                "birch": 32,
+                "maple": 17,
+                "blossom": 12,
+                "poplar": 22,
+                "spruce": 22,
+                "fir": 16,
+                "willow": 1
+              },
+              "castingChunks": 0,
+              "castingSubmitted": 0
+            },
+            "uniqueCopiedSourceIndices": 204,
+            "chunks": 4,
+            "castingActive": 0,
+            "selectorSourceDistanceRange": [
+              75.18718179314621,
+              216.23861885511965
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          },
+          {
+            "camera": "aerial",
+            "pitch": 0.85,
+            "topDown": true,
+            "histogram": {
+              "lod0": 0,
+              "lod1": 1939,
+              "impostor": 0
+            },
+            "summary": {
+              "calls": 888,
+              "submitted": 1939,
+              "active": 1939,
+              "species": {
+                "blossom": 127,
+                "oak": 631,
+                "poplar": 233,
+                "birch": 329,
+                "maple": 240,
+                "spruce": 207,
+                "fir": 149,
+                "willow": 23
+              },
+              "activeSpecies": {
+                "blossom": 127,
+                "oak": 631,
+                "poplar": 233,
+                "birch": 329,
+                "maple": 240,
+                "spruce": 207,
+                "fir": 149,
+                "willow": 23
+              },
+              "castingChunks": 0,
+              "castingSubmitted": 0
+            },
+            "uniqueCopiedSourceIndices": 1939,
+            "chunks": 25,
+            "castingActive": 0,
+            "selectorSourceDistanceRange": [
+              395.05002624874976,
+              1406.8339346718979
+            ],
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+            "framebuffer": [
+              1920,
+              1080
+            ]
+          }
+        ]
+      }
+    ],
+    "profiles": [
+      {
+        "file": "final-v1.json",
+        "camera": "interchange",
+        "framesPerBlock": 180,
+        "warmFrames": 180,
+        "settleFrames": 30,
+        "cycles": 3,
+        "pass": false,
+        "framesVerified": 3780,
+        "intervalsVerified": 3780,
+        "maxIntervalSumVersusElapsedMs": 0.19999998807907104,
+        "rows": [
+          {
+            "mode": "total",
+            "inventory": {
+              "objects": 37,
+              "instances": 2630,
+              "sourceTriangles": 441840,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 52.787806173037296,
+                "maskedFps": 65.31204644412192,
+                "fpsPct": 23.725631313471208,
+                "controlDriftPct": 23.23993577265036,
+                "drawCalls": -28.0,
+                "triangles": -405019.6000000001
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 50.14697757206524,
+                "maskedFps": 57.37600408028943,
+                "fpsPct": 14.415677391195691,
+                "controlDriftPct": 13.931437918509012,
+                "drawCalls": -28.0,
+                "triangles": -405105.19999999995
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 56.23660888333333,
+                "maskedFps": 75.93655079196942,
+                "fpsPct": 35.03045845012625,
+                "controlDriftPct": 9.234318493223263,
+                "drawCalls": -28.0,
+                "triangles": -405048.0
+              }
+            ],
+            "summary": {
+              "stableCycles": 0,
+              "stableMedianFpsPct": null,
+              "stableMedianDrawCalls": null,
+              "stableMedianTriangles": null,
+              "maxControlDriftPct": 23.23993577265036
+            },
+            "stableResponses": [],
+            "allTriangleDeltas": [
+              -405105.19999999995,
+              -405048.0,
+              -405019.6000000001
+            ],
+            "allDrawDeltas": [
+              -28.0
+            ]
+          },
+          {
+            "mode": "color",
+            "inventory": {
+              "objects": 37,
+              "instances": 2630,
+              "sourceTriangles": 441840,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 50.069092231465525,
+                "maskedFps": 51.976552800051635,
+                "fpsPct": 3.8096567834065453,
+                "controlDriftPct": 17.399826086587794,
+                "drawCalls": -28.0,
+                "triangles": -405042.3999999999
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 50.00342691041711,
+                "maskedFps": 76.01030361816974,
+                "fpsPct": 52.010188730354145,
+                "controlDriftPct": 17.16003254073739,
+                "drawCalls": -28.0,
+                "triangles": -405107.19999999995
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 50.11307868465446,
+                "maskedFps": 56.24472705662891,
+                "fpsPct": 12.235624976383797,
+                "controlDriftPct": 16.68486750425313,
+                "drawCalls": -28.0,
+                "triangles": -405048.0
+              }
+            ],
+            "summary": {
+              "stableCycles": 0,
+              "stableMedianFpsPct": null,
+              "stableMedianDrawCalls": null,
+              "stableMedianTriangles": null,
+              "maxControlDriftPct": 17.399826086587794
+            },
+            "stableResponses": [],
+            "allTriangleDeltas": [
+              -405107.19999999995,
+              -405048.0,
+              -405042.3999999999
+            ],
+            "allDrawDeltas": [
+              -28.0
+            ]
+          },
+          {
+            "mode": "shadow",
+            "inventory": {
+              "objects": 37,
+              "instances": 2630,
+              "sourceTriangles": 441840,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 53.23272748461153,
+                "maskedFps": 56.50604300737717,
+                "fpsPct": 6.149065955171817,
+                "controlDriftPct": 18.195682779119167,
+                "drawCalls": 0.0,
+                "triangles": 14.399999999906868
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 60.20349125894509,
+                "maskedFps": 60.92813864634779,
+                "fpsPct": 1.203663396007837,
+                "controlDriftPct": 39.2462052986494,
+                "drawCalls": 0.0,
+                "triangles": -72.0
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 67.1893516075643,
+                "maskedFps": 57.122909460836816,
+                "fpsPct": -14.982198675651738,
+                "controlDriftPct": 14.371124066800128,
+                "drawCalls": 0.0,
+                "triangles": 0.0
+              }
+            ],
+            "summary": {
+              "stableCycles": 0,
+              "stableMedianFpsPct": null,
+              "stableMedianDrawCalls": null,
+              "stableMedianTriangles": null,
+              "maxControlDriftPct": 39.2462052986494
+            },
+            "stableResponses": [],
+            "allTriangleDeltas": [
+              -72.0,
+              0.0,
+              14.399999999906868
+            ],
+            "allDrawDeltas": [
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file": "street-final-v2.json",
+        "camera": "street",
+        "framesPerBlock": 240,
+        "warmFrames": 240,
+        "settleFrames": 30,
+        "cycles": 5,
+        "pass": true,
+        "framesVerified": 7920,
+        "intervalsVerified": 7920,
+        "maxIntervalSumVersusElapsedMs": 0.10000002384185791,
+        "rows": [
+          {
+            "mode": "total",
+            "inventory": {
+              "objects": 4,
+              "instances": 247,
+              "sourceTriangles": 41496,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 49.933371365072546,
+                "maskedFps": 54.85588900795231,
+                "fpsPct": 9.858172016646517,
+                "controlDriftPct": 3.1533405458780663,
+                "drawCalls": -7.0,
+                "triangles": -101472.0
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 51.249194891570156,
+                "maskedFps": 55.272794269750165,
+                "fpsPct": 7.851048951486739,
+                "controlDriftPct": 8.207380246798369,
+                "drawCalls": -7.0,
+                "triangles": -101472.0
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 54.05028752423538,
+                "maskedFps": 57.57881099771757,
+                "fpsPct": 6.528223317776161,
+                "controlDriftPct": 2.5827225554176514,
+                "drawCalls": -7.0,
+                "triangles": -101472.0
+              },
+              {
+                "cycle": 3,
+                "expectedFps": 54.52284304658747,
+                "maskedFps": 55.224464438048884,
+                "fpsPct": 1.2868393360593977,
+                "controlDriftPct": 0.8269156508715275,
+                "drawCalls": -7.0,
+                "triangles": -101472.0
+              },
+              {
+                "cycle": 4,
+                "expectedFps": 53.574604422112486,
+                "maskedFps": 50.526315789473685,
+                "fpsPct": -5.689801475007517,
+                "controlDriftPct": 2.6983294456224463,
+                "drawCalls": -7.0,
+                "triangles": -101472.0
+              }
+            ],
+            "summary": {
+              "stableCycles": 4,
+              "stableMedianFpsPct": 3.907531326917779,
+              "stableMedianDrawCalls": -7.0,
+              "stableMedianTriangles": -101472.0,
+              "maxControlDriftPct": 8.207380246798369
+            },
+            "stableResponses": [
+              9.858172016646517,
+              6.528223317776161,
+              1.2868393360593977,
+              -5.689801475007517
+            ],
+            "allTriangleDeltas": [
+              -101472.0
+            ],
+            "allDrawDeltas": [
+              -7.0
+            ]
+          },
+          {
+            "mode": "color",
+            "inventory": {
+              "objects": 4,
+              "instances": 247,
+              "sourceTriangles": 41496,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 54.38234084970829,
+                "maskedFps": 55.0610259703,
+                "fpsPct": 1.2479880600714255,
+                "controlDriftPct": 0.6911006627768566,
+                "drawCalls": -4.0,
+                "triangles": -41496.0
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 53.00954119567737,
+                "maskedFps": 52.09690023430124,
+                "fpsPct": -1.7216541414822761,
+                "controlDriftPct": 4.470445388818379,
+                "drawCalls": -4.0,
+                "triangles": -41496.0
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 51.19518185596616,
+                "maskedFps": 52.27619255064256,
+                "fpsPct": 2.1115477189196152,
+                "controlDriftPct": 2.459130027017896,
+                "drawCalls": -4.0,
+                "triangles": -41496.0
+              },
+              {
+                "cycle": 3,
+                "expectedFps": 50.84958106861732,
+                "maskedFps": 52.59121288484715,
+                "fpsPct": 3.425066204340288,
+                "controlDriftPct": 1.116537251197129,
+                "drawCalls": -4.0,
+                "triangles": -41496.0
+              },
+              {
+                "cycle": 4,
+                "expectedFps": 53.2777951154754,
+                "maskedFps": 53.31437711007839,
+                "fpsPct": 0.06866274124839311,
+                "controlDriftPct": 8.049645391127765,
+                "drawCalls": -4.0,
+                "triangles": -41496.0
+              }
+            ],
+            "summary": {
+              "stableCycles": 4,
+              "stableMedianFpsPct": 1.6797678894955204,
+              "stableMedianDrawCalls": -4.0,
+              "stableMedianTriangles": -41496.0,
+              "maxControlDriftPct": 8.049645391127765
+            },
+            "stableResponses": [
+              1.2479880600714255,
+              -1.7216541414822761,
+              2.1115477189196152,
+              3.425066204340288
+            ],
+            "allTriangleDeltas": [
+              -41496.0
+            ],
+            "allDrawDeltas": [
+              -4.0
+            ]
+          },
+          {
+            "mode": "shadow",
+            "inventory": {
+              "objects": 4,
+              "instances": 247,
+              "sourceTriangles": 41496,
+              "baseTriangles": [
+                168
+              ]
+            },
+            "pairs": [
+              {
+                "cycle": 0,
+                "expectedFps": 55.28717715195602,
+                "maskedFps": 54.84084729094126,
+                "fpsPct": -0.8072936330028702,
+                "controlDriftPct": 3.7535981577432445,
+                "drawCalls": -3.0,
+                "triangles": -59976.0
+              },
+              {
+                "cycle": 1,
+                "expectedFps": 55.53591475734541,
+                "maskedFps": 54.06257743323397,
+                "fpsPct": -2.6529450906659813,
+                "controlDriftPct": 2.841014250254337,
+                "drawCalls": -3.0,
+                "triangles": -59976.0
+              },
+              {
+                "cycle": 2,
+                "expectedFps": 54.88067488938862,
+                "maskedFps": 54.61496449982861,
+                "fpsPct": -0.4841602077517271,
+                "controlDriftPct": 0.48706309988069574,
+                "drawCalls": -3.0,
+                "triangles": -59976.0
+              },
+              {
+                "cycle": 3,
+                "expectedFps": 53.78146705445906,
+                "maskedFps": 53.87326314801081,
+                "fpsPct": 0.17068350600923932,
+                "controlDriftPct": 4.58470049490107,
+                "drawCalls": -3.0,
+                "triangles": -59976.0
+              },
+              {
+                "cycle": 4,
+                "expectedFps": 53.488890749098076,
+                "maskedFps": 51.14762483269162,
+                "fpsPct": -4.377106878863312,
+                "controlDriftPct": 3.515807767093398,
+                "drawCalls": -3.0,
+                "triangles": -59976.0
+              }
+            ],
+            "summary": {
+              "stableCycles": 5,
+              "stableMedianFpsPct": -0.8072936330028702,
+              "stableMedianDrawCalls": -3.0,
+              "stableMedianTriangles": -59976.0,
+              "maxControlDriftPct": 4.58470049490107
+            },
+            "stableResponses": [
+              -0.8072936330028702,
+              -2.6529450906659813,
+              -0.4841602077517271,
+              0.17068350600923932,
+              -4.377106878863312
+            ],
+            "allTriangleDeltas": [
+              -59976.0
+            ],
+            "allDrawDeltas": [
+              -3.0
+            ]
+          }
+        ]
+      }
+    ],
+    "hashes": {
+      "shots/democity/r9m-lod1-passes/census-v1.json": "efe78c6564861f5664f157fe30357bde1126728f725be500bc63857f01b55ac7",
+      "shots/democity/r9m-lod1-passes/final-v1.json": "3a98892440d4ceb901fd85c011877e2ebe95e4aba70416866071d055ea798202",
+      "shots/democity/r9m-lod1-passes/street-final-v2.json": "0ae5059935fa9b95bdb9ce9db319eca47f8b2fdd0e0098d888e64cab4c1c289a",
+      "shots/democity/r9m-lod1-passes/census-v2.json": "04b08a0c28be2da35180f01cbd2a95f4dcef672c13f72d24a3e4ba2b0558d601",
+      "tools/r9m-lod1-census.mjs": "6f00ee2e69be44931e28fa43656f9b8a0ed38f060c42657d60d0382b98be2105",
+      "tools/r9m-lod1-pass-profile.mjs": "7d364db1cc355eace2f23632d8dc58b42274335285b2ddb6275dcf4d15b08fd0",
+      "src/modules/props/chunks.js": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+      "src/modules/props/trees.js": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+      "src/modules/props/index.js": "be80cb25874c65a14b90f50702ae2e544850ee430e7f6af7c7400e6062b2156b",
+      "src/modules/props/textures.js": "6090fe11d3104bcda0d9729f250e856153ebad69c1c55f083e122ed89dedf039"
+    },
+    "censusSameSelectionKeys": {
+      "interchange": [
+        "camera",
+        "pitch",
+        "distance",
+        "position",
+        "target",
+        "fieldCamera",
+        "topDown",
+        "histogram",
+        "renderer",
+        "framebuffer",
+        "calls",
+        "chunks",
+        "summary",
+        "simErrors",
+        "errors"
+      ],
+      "street": [
+        "camera",
+        "pitch",
+        "distance",
+        "position",
+        "target",
+        "fieldCamera",
+        "topDown",
+        "histogram",
+        "renderer",
+        "framebuffer",
+        "calls",
+        "chunks",
+        "summary",
+        "simErrors",
+        "errors"
+      ],
+      "park": [
+        "camera",
+        "pitch",
+        "distance",
+        "position",
+        "target",
+        "fieldCamera",
+        "topDown",
+        "histogram",
+        "renderer",
+        "framebuffer",
+        "calls",
+        "chunks",
+        "summary",
+        "simErrors",
+        "errors"
+      ],
+      "aerial": [
+        "camera",
+        "pitch",
+        "distance",
+        "position",
+        "target",
+        "fieldCamera",
+        "topDown",
+        "histogram",
+        "renderer",
+        "framebuffer",
+        "calls",
+        "chunks",
+        "summary",
+        "simErrors",
+        "errors"
+      ]
+    },
+    "reconstructedEvidenceProducingPassProfilerSha256": "80de397d20ffb5a5300fa126349594a0c564288642cfedacb1c010e99d2d3023",
+    "wordingOnlySourceChangeVerified": true
+  },
+  "corrections": [
+    "Revised builder properly stops short of closing the top-down performance hypothesis; only immediate editing is unsupported.",
+    "Revised builder distinguishes fixed pass-profile settling from explicit census queue settlement and actual renderer evidence from aggregate checks.",
+    "Latest builder reconciles evidence-producing pass-profiler 80de397… versus current 7d364db…. Independently reconstructing the prior hash by replacing only the human-readable method string matches exactly; sampled behavior is unchanged. Use implemented camera-flight plus fixed30-frame wait, not the original method-string overstatement."
+  ],
+  "limitations": [
+    "Census reads copied LOD1 outputs and the same owner histogram after a forced owner update; it does not independently enumerate every omitted source bucket or prove selector completeness.",
+    "Submitted/active mean buffer entries and iFade-enabled entries, not individually visible pixels. Species maps aggregate retained source ordering; per-entry species/fade arrays are not saved, so the critic independently reconstructs active totals by source offset/hash but can only cross-check per-species active aggregates.",
+    "Chunk spheres drive frustum admission, then bucket centers drive selector distance and chunk centers drive the 120m shadow rule. An admitted tree is not necessarily in the viewport; CAP1=520 excludes the deliberate top-down path.",
+    "Census-v2 explicitly waits for camera flight and queue, then forces one complete current-camera update. This changes disposable LOD buffers/hysteresis state; it is not an untouched ordinary-frame measurement.",
+    "Pass profiler waits for camera flight then 30 frames, not an explicit queue-empty assertion; exact same-page pre/post selector/cast identity is not recorded for each timed block. Its 247-instance inventory and exact submission deltas agree with the separate street census.",
+    "The pass aggregate gate checks nonempty matched inventory, stable>=2, and errors; it does not enforce renderer/framebuffer identity, requested mode count or nonempty modes. Actual retained rows separately verify Metal/1920x1080 and all three requested modes.",
+    "Color mode disables LOD1 shadows in both controls and hides LOD1 for B. This includes geometry, depth, shading and dependent screen effects, not pure fragment-shader cost. Shadow and color timings are non-additive across fresh pages and different baselines.",
+    "Adjacent pairs share controls; fixed order, short durations, headless capture behavior and uncapped policy limit inference. Stable endpoint drift is not a confidence interval or evidence of sustained FPS.",
+    "Failed interchange timing cannot replicate settled top-down gains. No-shadow casting is established for the captured top-down presets, not every possible top-down position.",
+    "Current local source hashes and source inspection verify scope, but routed transformed response bytes and run-specific complete source manifests are not retained. Diagnostic exposure uses internal owner state only in disposable pages.",
+    "No screenshot, subjective quality, build rerun, API/save/restage, moving-transition, forced-GC memory or official whole-game performance gate is established by this audit. The builder reports a 163-module build; the four supplied JSON files contain no retained build log."
+  ],
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "props",
+      "finding": "Street total/color/shadow submission counts close exactly; timings +3.907531%,+1.679768%,−0.807294% are not a credible safe optimization prescription."
+    },
+    {
+      "rank": 2,
+      "owner": "props / verification",
+      "finding": "Interchange top-down submits2540 fade-active LOD1 entries in34 chunks and zero casting entries in the forced census. R9l prewarm2630 inventory is a different state; settled top-down timing remains unreplicated."
+    },
+    {
+      "rank": 3,
+      "owner": "democity / roads / zoning / buildings",
+      "finding": "Existing city-fabric rank1 remains a justified next broader visual priority. This round supplies no layout evidence and does not prove coordinated/non-cardinal designs will succeed."
+    }
+  ],
+  "nextPriority": {
+    "owner": "democity coordinating roads/zoning/buildings",
+    "task": "Keep accepted foliage source unchanged. If moving back to visual rank1, use a bounded actual-owner coordinated or non-cardinal layout prototype with legal road draft, parcel yield, retained identity, economy/save checks and matched visual evidence; do not repeat an exhausted cardinal-link screen as proof of a broader solution.",
+    "remainingPerformanceQuestion": "If Props performance is pursued instead, obtain a settled matched top-down color/depth replication before selecting a product candidate; the current failed timing rows do not answer it."
+  },
+  "imagesInspected": [],
+  "inspectionRegister": [
+    "docs/builds/democity_r9m_lod1_pass_attribution.md",
+    "tools/r9m-lod1-census.mjs",
+    "tools/r9m-lod1-pass-profile.mjs",
+    "shots/democity/r9m-lod1-passes/census-v1.json",
+    "shots/democity/r9m-lod1-passes/census-v2.json",
+    "shots/democity/r9m-lod1-passes/final-v1.json",
+    "shots/democity/r9m-lod1-passes/street-final-v2.json",
+    "src/modules/props/chunks.js (collection, allocation, selector, copy, cast and histogram contracts)",
+    "src/modules/props/trees.js (geometry, hash-fade shader and depth material)",
+    "src/modules/props/index.js (owner materials/reflection integration)",
+    "src/core/constants.js (High cascades=3)",
+    "src/modules/environment/lighting.js (CSM construction)",
+    "docs/critic/democity_r9l.md"
+  ]
+}

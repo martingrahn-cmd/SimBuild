@@ -1,11 +1,17 @@
-// STUB — replaced by the infoviews builder. Must init without errors.
-export default {
-  name: 'infoviews',
-  dependencies: [],
-  budget: { drawCalls: 10, triangles: 10000 },
-  async init(ctx) { ctx.log.info('stub init'); },
-  update(dt, ctx) {},
-  dispose(ctx) {},
-  api: { serialize() { return {}; }, deserialize() {} },
-  showcase: { description: 'infoviews stub — nothing staged yet', async setup(ctx) {} },
-};
+import * as THREE from 'three';
+import {VIEWS,BY_ID,color} from './views.js';
+import {Data,sample} from './data.js';
+import {Render} from './render.js';
+import {panel} from './panel.js';
+import {CAMERAS,stage} from './showcase.js';
+let S=null;
+const temp=new THREE.Color();
+function makeLegend(id){const v=BY_ID[id],s=S.data.stats(id);return {title:v.label,description:v.description,colors:v.colors,min:v.min,max:v.max,stats:{'City average':`${Math.round(s.mean*100)}%`,'Lower / upper decile':`${Math.round(s.p5*100)} / ${Math.round(s.p95*100)}%`,'Well served':`${Math.round(s.coveredFraction*100)}%`,'Population':S.ctx.world.economy.population.toLocaleString()}};}
+function publish(){const w=S.ctx.world.infoview;w.version++;S.ctx.events.emit('infoview:changed',{view:w.active,legend:w.legend,version:w.version});S.panel?.render(w.active,w.legend);}
+function setView(id){if(!S)return false;if(id==='none')id=null;if(id!==null&&!BY_ID[id])return false;const w=S.ctx.world.infoview;if(id&&(!S.ready||S.dirty)){recompute(undefined,true);}w.active=id;w.data=id?S.data.grids[id]:null;w.legend=id?makeLegend(id):null;w.desaturation=id ? .72 : 0;
+ // Own the film pipeline throughout activation, including diagnostic shell-off. Core's
+ // legacy RGB albedo tint cannot consume the documented plain RGBA callback.
+ w.buildingShellActive=id!==null;S.render.set(id);publish();return true;}
+function recompute(id,silent=false){if(!S||id&&!BY_ID[id])return 0;const ms=S.data.recompute(id);S.ready=true;S.dirty=false;S.lastGame=S.ctx.clock.day*24+S.ctx.clock.hour;S.render.upload(id);const w=S.ctx.world.infoview;if(w.active){w.data=S.data.grids[w.active];w.legend=makeLegend(w.active);}if(silent)w.version++;else publish();return ms;}
+const api={setView,view:()=>S?.ctx.world.infoview.active??null,views:()=>VIEWS,legend:()=>S?.ctx.world.infoview.legend??null,grid:id=>S?.data.grids[id]??null,sample:(id,x,z)=>sample(S?.data.grids[id],x,z),stats:id=>S?.data.stats(id)??null,recompute,recomputeCount:()=>S?.data.count??0,transition:()=>S?.render.uniforms.mixAmount.value??1,setPanel:v=>S?.panel?.show(v),setBuildingShell(v){if(S){S.render.shellOn=!!v;S.render.visibility();}},groundSurfaceStats(){return S?.render.displayGround?.stats()??{kind:'native-heightfield-fallback'};},overlayDraws(){return S?.render.meshes.filter(m=>m.visible&&(!(m.isInstancedMesh)||m.count>0)&&m.geometry.attributes.position.count>0).length??0;},serialize:()=>({active:api.view()}),deserialize(value){if(value?.active===null||BY_ID[value?.active])setView(value.active);else S?.ctx.log.warn('Ignoring unknown saved infoview',value?.active);},groundAlphaAt:(x,z)=>S?.render.alpha(x,z)??0,cropRects:args=>S?.render.crops(args)??{},rebuild(){S?.render.rebuild();if(S)S.dirty=true;}};
+export default {name:'infoviews',dependencies:['roads','zoning','buildings','simulation','services'],budget:{drawCalls:8,triangles:260000},async init(ctx){const start=performance.now();S={ctx,data:new Data(ctx),ready:false,dirty:true,lastGame:-Infinity,lastHour:ctx.clock.hour,terrainDirty:false,buildingsDirty:false,roadsDirty:false};S.cameraHadLayer=ctx.camera.camera.layers.isEnabled(9);ctx.camera.camera.layers.enable(9);S.render=new Render(ctx,S.data);const w=ctx.world.infoview;Object.assign(w,{active:null,data:null,legend:null,version:0,desaturation:0,buildingShellActive:false,views:VIEWS,set:setView,sample:(x,z)=>sample(w.data,x,z),valueAt:(x,z)=>w.active?{value:sample(w.data,x,z),text:w.active==='density'?`${Math.round(sample(w.data,x,z)*2500)} res/ha`:`${Math.round(sample(w.data,x,z)*100)}%`}:null,gridFor:id=>S?.data.grids[id]??null,buildingTint(id){if(!w.active)return null;const b=ctx.world.buildings.items.get(id);if(!b)return null;color(w.active,sample(w.data,b.x,b.z),temp);return {r:temp.r,g:temp.g,b:temp.b,a:.75};}});ctx.events.on('ui:action',e=>{if(e.action==='infoview')setView(e.args?.[0]??null);},'infoviews');for(const event of['sim:tick','buildings:changed','roads:changed','zones:changed','services:changed','terrain:changed','time:hour'])ctx.events.on(event,()=>{S.dirty=true;if(event==='terrain:changed')S.terrainDirty=true;if(event==='buildings:changed')S.buildingsDirty=true;if(event==='roads:changed')S.roadsDirty=true;},'infoviews');if(!ctx.modules.ui){S.panel=panel(ctx,setView);S.panel.render(null,null);}ctx.log.info('Infoviews initialized',{initMs:performance.now()-start});},update(dt,ctx){if(!S)return;const w=ctx.world.infoview;if(!w.active)return;if(S.terrainDirty||S.roadsDirty){S.render.rebuild();S.terrainDirty=S.roadsDirty=S.buildingsDirty=false;}else if(S.buildingsDirty){S.render.rebuildFilms();S.buildingsDirty=false;}const game=ctx.clock.day*24+ctx.clock.hour;if(Math.floor(game)!==Math.floor(S.lastGame))S.dirty=true;if(S.dirty&&(game-S.lastGame>=.1||game<S.lastGame))recompute();S.render.update();},dispose(ctx){if(!S)return;setView(null);S.panel?.dispose();S.render.dispose();ctx.events.offOwner('infoviews');if(!S.cameraHadLayer)ctx.camera.camera.layers.disable(9);S=null;},api,showcase:{description:'A mixed city with twelve data views, opening in land value.',cameras:CAMERAS,setup:ctx=>stage(ctx,api)}};

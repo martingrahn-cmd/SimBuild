@@ -43,6 +43,9 @@ export class Lighting {
     ev.on('module:ready', () => { this._sweepPending = true; }, owner);
     ev.on('app:ready', () => { this._sweepPending = true; this._settleFrames = 30; }, owner);
     ev.on('*', (_p, name) => { if (name.endsWith(':changed')) this._sweepPending = true; }, owner);
+    // Modules can rebuild meshes later in the same update frame. Bind shared uniforms after all
+    // updates, before any draw (including water reflections), rather than one frame too late.
+    this._offRender = ctx.engine.onBeforeRender(() => this.syncMaterials());
   }
 
   /** Per-frame: point the cascades along dir (direction light travels), set colour/intensity. */
@@ -60,6 +63,9 @@ export class Lighting {
       this.csm.updateFrustums();
     }
     this.csm.update();
+  }
+
+  syncMaterials() {
     // cheap shape check: direct children of the scene and of each module group (O(#modules), no traversal)
     const scene = this.ctx.scene;
     let shape = scene.children.length;
@@ -131,6 +137,7 @@ export class Lighting {
   }
 
   dispose() {
+    this._offRender?.();
     this.csm.remove();
     this.csm.dispose();
     if (this.envRT) { this.envRT.dispose(); this.ctx.scene.environment = null; }

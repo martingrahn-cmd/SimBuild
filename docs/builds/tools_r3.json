@@ -1,0 +1,247 @@
+{
+  "module": "tools",
+  "round": 3,
+  "summary": "Fixed reproducible terrain redo drift with complete transaction snapshots and synchronous road rebuilds; ribbon now follows authoritative rendered pavement with lateral tessellation; sculpt skirt meets the 16-ray step bound; demolition uses kit-sized prop volumes and stages four houses; wash crops decline obstructed regions. Added an angle-snap click regression fix and refreshed previews after prop/service changes. All 38 final screenshots were captured and viewed; all app console probes are clean.",
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/bulldoze_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/bulldoze_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/invalid_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/invalid_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/roadtool_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/roadtool_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/roadtool_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/sculpt_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/sculpt_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/service_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/service_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/zonetool_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_presets/zonetool_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_720/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_720/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_720/roadtool_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_720/roadtool_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_integrated/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_integrated/night_street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_landmarks/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_landmarks/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3_landmarks/street_6p5.png"
+  ],
+  "referencesViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "acceptanceMet": [
+    "1: Tool-authored district has 41 edges,36 nodes,440 zones covering all eight type/density combinations,34 buildings and28 undo entries.",
+    "2 visual continuity: posed crossing is clear of the former triangular road/kerb intrusions at1080p and720p; actual supporting-surface clearance is0.149999137..0.150000869m. Original raw-terrain band is separately missed.",
+    "4/21 measured portions: crisp fixed26px chips are visible at both resolutions; ribbon crop43/64=0.671875 at720p. Four required720p views captured and viewed.",
+    "6 measured night ribbon: roadtool22 p50=202.0722,p99=203,ground ratio3.90042,zero clipped pixels; no visible bloom skirt in tools-only frames.",
+    "7 measured snap behavior: node,edge,15-degree angle and8m grid results are correct; actual angle-snapped two-click road commits successfully without a spurious short tail.",
+    "8: Invalid posed road is13.87% grade with exact reason Grade14%>12% (formatted with spaces in UI); commit fails with unchanged edge count and filled red ghost.",
+    "9: Eight mixed successful actions, eight undo and eight redo calls restore all263169 terrain samples and road/node/zone/building counters exactly; capacity64.",
+    "10 measured portions: zone preview remains on8m grid with alpha0.45 and palette-family match in both dedicated views.",
+    "11: Marquee stages4 buildings and14 props; all18 selected IDs are removed, building count drops4, no original victim prop remains at its semantic location. Prop regeneration creates5 replacements elsewhere, so net prop count drops9.",
+    "12: Selection writes in place, emits one selected event and one clear event; pickAt returns the staged building ID.",
+    "13 measured geometry/idle: two stable group toggles give8 calls/8940 triangles;200 pointer calls and60 continuous pointer frames allocate zero geometry; idle mean0.005ms.",
+    "14: Geometry layer/shadow traversal has no violations; water images show no reflected tools.",
+    "15 measured API paths: cancel and select(null) produce idle state,zero geometry,zero chips on next frame.",
+    "16 measured API paths: duplicate selects emit1 event, option emits1,reentrant select emits1 total;200 synchronous pointer calls emit2 preview events.",
+    "17: Sculpt 16-ray2m sampling outside20m road exclusion has maxstep1.316046119m; peak24.789196968m; repeated raises are monotonic, all heights finite.",
+    "18/19: Nearby clinic preview validates; remote point gives No road access. Unavailable service and deliberately unavailable prop placement return exact failure strings and charge0; absent simulation returns finite cost144 and affordable=true.",
+    "20: Two seed1337 runs and seed99 have identical authored structure/history/metrics.",
+    "22 measured portions: dawn ribbon saturation0.004902,maxchannel204; valid roadtool wash median hue205.055 at6.5,204.516 at12,205.631 at22."
+  ],
+  "acceptanceMissed": [
+    "2 numeric raw-terrain clearance remains incompatible with pavement continuity: actual raw clearance0.149999142..0.560679765m exceeds original0.1..0.2m. Supporting reference max(terrain,paved surface) is proposed explicitly in core request; original criterion is not credited.",
+    "13 dynamic performance target: final continuous-pointer60-frame average1.968333ms,max2.8ms exceeds1.2ms average target (but average remains under2ms hard ceiling). Static six-pose captures have tools moduleMs0..0.1ms; geometry budget passes."
+  ],
+  "unmeasured": [
+    "Integrated all aerial12/night_street22 capture successfully but contain the default empty map and no live ribbon. Bloom on/off difference is unmeasurable under current residual protocol and is not credited.",
+    "Wash landmarks are intentionally omitted for obstructed street dawn/night,skyline evening and close-up/720p views; omitted hue measurements are not passes or failures.",
+    "HUD click/option/Escape event paths and exact720p chipRect traversal were not rerun this round after final disk pressure; prior independent r2 strengths are retained as historical evidence only.",
+    "Exact glyph cap-height counting and all-weather bloom acceptance remain residual protocol limitations."
+  ],
+  "drawCalls": 8,
+  "triangles": 8940,
+  "errors": 0,
+  "remainingWeaknesses": [
+    "Original raw-terrain lift band is not met over raised paved surfaces; authoritative pavement support eliminates the visible penetration but needs a specification decision.",
+    "Continuous pointer motion is above the1.2ms average target on the final run; static poses and all captured frame rates remain healthy.",
+    "Props has no boundsOf API; current kit-derived dimensions and true tree species heights improve envelopes, but future variants and arbitrary fence runs need authoritative prop bounds.",
+    "Low-angle foliage legitimately occludes previews, and distant fixed-size chips dominate the skyline; crop reporting conservatively omits obstructed wash.",
+    "Service placement remains a neighbor stub; live integrated bloom cannot be measured on the empty all-showcase staging."
+  ],
+  "coreRequestFile": "/Users/martingrahn/Documents/SimBuild/docs/core-requests/tools.md",
+  "selfScore": 8.3,
+  "selfScoreReason": "Major ranked visual and redo defects are fixed with independent reproduced traces, but the original raw-terrain numeric criterion and continuous-pointer target are not fully met; no pass claimed from a proposed waiver or unmeasured test.",
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/builds/tools_r3.json",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+  "environment": {
+    "url": "http://127.0.0.1:5174",
+    "SIM_GL": "metal",
+    "SIMBUILD_REF": "/Users/martingrahn/.simbuild/ref",
+    "SIM_CHROME": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "browserClosed": true
+  },
+  "frameMetrics": {
+    "allCaptures": 38,
+    "standardCaptures": 16,
+    "minFps": 58.7,
+    "maxFps": 60.7,
+    "standardMinFps": 58.7,
+    "maxWholeSceneCalls": 204,
+    "maxWholeSceneTriangles": 1544750,
+    "wholeSceneNotToolsBudget": true
+  },
+  "measurementNotes": [
+    "Final render pairs2 and3 each match8draws/8940triangles. First pair crossed neighbor/CSM initialization and reported a negative whole-scene difference; retained in raw evidence and excluded as warm-up.",
+    "All image pixel statistics use full-resolution PNGs with the published cropRects. Pillow runtime disappeared, so the working pixel probe uses the bundled Playwright PNG parser.",
+    "ENOSPC interrupted infrastructure late in this task; browser cache and bundled Python runtime disappeared. Existing system Chrome was used with Metal; completed capture/app error count remains0. No large writes or browsers remain active."
+  ],
+  "changedSourceFiles": [
+    "src/modules/tools/tools.js",
+    "src/modules/tools/gizmos.js",
+    "src/modules/tools/index.js",
+    "src/modules/tools/showcase.js",
+    "src/modules/tools/footprints.js",
+    "src/modules/tools/landmarks.js"
+  ],
+  "evidence": [
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/early-probe.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/transaction-probe.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/verification.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/final-metrics.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/pixels.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/summary.json",
+    "/Users/martingrahn/Documents/SimBuild/shots/tools/r3/additional-summary.json"
+  ],
+  "checks": {
+    "gitDiffCheck": "pass",
+    "fullUndoRedo": {
+      "actions": [
+        {
+          "ok": true,
+          "ids": [
+            80
+          ],
+          "cost": 96
+        },
+        {
+          "ok": true,
+          "ids": [
+            83
+          ],
+          "cost": 96
+        },
+        {
+          "ok": true,
+          "ids": [],
+          "cost": 80
+        },
+        {
+          "ok": true,
+          "ids": [],
+          "cost": 80
+        },
+        {
+          "ok": true,
+          "ids": [],
+          "cost": 175
+        },
+        {
+          "ok": true,
+          "ids": [],
+          "cost": 175
+        },
+        {
+          "ok": true,
+          "ids": [
+            11
+          ],
+          "cost": 120
+        },
+        {
+          "ok": true,
+          "ids": [
+            1000000001
+          ],
+          "cost": 60
+        }
+      ],
+      "before": 28,
+      "entriesAdded": 8,
+      "undos": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "redos": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "undoDiff": {
+        "edges": 0,
+        "nodes": 0,
+        "zones": 0,
+        "buildings": 0,
+        "maxHeightError": 0,
+        "heightErrors": 0
+      },
+      "redoDiff": {
+        "edges": 0,
+        "nodes": 0,
+        "zones": 0,
+        "buildings": 0,
+        "maxHeightError": 0,
+        "heightErrors": 0
+      }
+    },
+    "dynamicMs": {
+      "avg": 1.9683333333892128,
+      "max": 2.800000000745058
+    },
+    "groupDiff": [
+      {
+        "calls": 8,
+        "triangles": 8940
+      },
+      {
+        "calls": 8,
+        "triangles": 8940
+      }
+    ],
+    "support": {
+      "ghostLiftMin": 0.14999914169311523,
+      "ghostLiftMax": 0.5606797648124484,
+      "ghostSurfaceLiftMin": 0.14999913730062886,
+      "ghostSurfaceLiftMax": 0.15000086920914413
+    }
+  }
+}

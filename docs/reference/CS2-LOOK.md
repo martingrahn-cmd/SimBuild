@@ -1,7 +1,7 @@
 # Cities: Skylines II — visual reference for critics
 
 Reference screenshots (official Steam store images, used ONLY for comparison, never copied into the repo):
-`/tmp/claude-0/-home-user-SimBuild/c06ed41b-9bdf-5ab7-ace6-40b62a5e4281/scratchpad/ref/cs2_1.jpg` … `cs2_8.jpg` (1920×1080). Read them with the image reader before scoring.
+`$SIMBUILD_REF/cs2_1.jpg` … `cs2_8.jpg` (1920×1080); default reference directory: `$HOME/.simbuild/ref` after `./tools/fetch-reference.sh`. Read them with the image reader before scoring.
 
 ## What CS2 looks like (observed from the references)
 

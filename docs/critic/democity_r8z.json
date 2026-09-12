@@ -1,0 +1,182 @@
+{
+  "module": "democity",
+  "round": "r8z",
+  "reviewType": "independent bounded rejection audit",
+  "decision": "ACCEPT_REJECTION_RECORD",
+  "candidateDecision": "REJECT",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "scoreChange": 0,
+  "productChangeAccepted": false,
+  "sourceVerification": {
+    "file": "src/modules/props/trees.js",
+    "currentSha256": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+    "reconstructedCandidateSha256": "7a5e6155c8872fb0408d9911f0bb88a8e02a415b6a7112737156e34ee2bbdce6",
+    "markerCount": 1,
+    "acceptedMarker": "const whorls = near ? [0.29, 0.47, 0.64] : [];",
+    "candidateMarker": "const whorls = near ? [0.29, 0.47, 0.64] : [0.42];",
+    "acceptedSourceRetained": true,
+    "geometryDerivation": "LOD1 stem has 4 node rings x5 vertices and 3x4x2 triangles; 72 leaf cards add 288 vertices/144 triangles. Three candidate primaries each add 4x5 vertices and 3x4x2 triangles. No secondaries at LOD1.",
+    "rngScope": "Additional calls affect the skel1 fork; canopy uses independent can1 fork. No claim that candidate skeleton RNG consumption is unchanged."
+  },
+  "verification": {
+    "summarySidecarsExactMatch": true,
+    "validCaptureCount": 6,
+    "all16ModulesReadyEachCapture": true,
+    "errors": 0,
+    "sameLodHistograms": true,
+    "sameDrawCalls": true,
+    "sameCameraPerPair": true,
+    "imageMAERecomputedWith": "Pillow RGB conversion and NumPy mean absolute difference /255",
+    "measurements": [
+      {
+        "view": "park_12",
+        "drawCalls": [
+          335,
+          335
+        ],
+        "triangles": [
+          1344979,
+          1356499
+        ],
+        "triangleDelta": 11520,
+        "fps": [
+          46.8,
+          45.7
+        ],
+        "rawEndpointHeapMB": [
+          473,
+          560.6
+        ],
+        "lod": {
+          "lod0": 0,
+          "lod1": 160,
+          "impostor": 2175
+        },
+        "normalizedMAERecomputed": 0.00019054859598160252
+      },
+      {
+        "view": "park_22",
+        "drawCalls": [
+          314,
+          314
+        ],
+        "triangles": [
+          1715331,
+          1726851
+        ],
+        "triangleDelta": 11520,
+        "fps": [
+          46.9,
+          49.5
+        ],
+        "rawEndpointHeapMB": [
+          487.7,
+          516.9
+        ],
+        "lod": {
+          "lod0": 0,
+          "lod1": 160,
+          "impostor": 2175
+        },
+        "normalizedMAERecomputed": 0.00024390596001775197
+      },
+      {
+        "view": "riverfront_12",
+        "drawCalls": [
+          204,
+          204
+        ],
+        "triangles": [
+          1154224,
+          1182736
+        ],
+        "triangleDelta": 28512,
+        "fps": [
+          53.6,
+          50.6
+        ],
+        "rawEndpointHeapMB": [
+          732.7,
+          643.9
+        ],
+        "lod": {
+          "lod0": 18,
+          "lod1": 135,
+          "impostor": 546
+        },
+        "normalizedMAERecomputed": 6.005847555071411e-05
+      }
+    ]
+  },
+  "inspection": {
+    "allOriginalsIndividuallyInspected": true,
+    "originals": [
+      "shots/democity/r8z-lod1-branches/accepted_park_12.png",
+      "shots/democity/r8z-lod1-branches/accepted_park_22.png",
+      "shots/democity/r8z-lod1-branches/accepted_riverfront_12.png",
+      "shots/democity/r8z-lod1-branches/candidate_park_12.png",
+      "shots/democity/r8z-lod1-branches/candidate_park_22.png",
+      "shots/democity/r8z-lod1-branches/candidate_riverfront_12.png"
+    ],
+    "allCropPairsInspected": true,
+    "derived": [
+      "shots/democity/r8z-lod1-branches/park_12_crop_pair.png",
+      "shots/democity/r8z-lod1-branches/park_22_crop_pair.png",
+      "shots/democity/r8z-lod1-branches/riverfront_12_crop_pair.png"
+    ],
+    "sidecars": [
+      "shots/democity/r8z-lod1-branches/accepted_park_12.json",
+      "shots/democity/r8z-lod1-branches/accepted_park_22.json",
+      "shots/democity/r8z-lod1-branches/accepted_riverfront_12.json",
+      "shots/democity/r8z-lod1-branches/candidate_park_12.json",
+      "shots/democity/r8z-lod1-branches/candidate_park_22.json",
+      "shots/democity/r8z-lod1-branches/candidate_riverfront_12.json"
+    ],
+    "otherFiles": [
+      "docs/builds/democity_r8z_lod1_branches_rejected.md",
+      "tools/lod1-branch-visual.mjs",
+      "src/modules/props/trees.js",
+      "shots/democity/r8z-lod1-branches/summary.json",
+      "shots/democity/r8z-lod1-branches/comparison-metrics.json"
+    ]
+  },
+  "rankedFindings": [
+    {
+      "rank": 1,
+      "owner": "props",
+      "severity": "quality",
+      "finding": "Reject this single sparse LOD1 whorl as insufficient visual return for its extra geometry. Small branches are discernible on exposed trunks, especially riverfront foreground trees; they do not repair the dominant separated leaf-card clumps, flat crown reading or distant impostor silhouettes. No major new harmful visual regression is established by the supplied views."
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "severity": "cost",
+      "finding": "Verified canonical LOD1 cost rises from 308 vertices/168 triangles to 368/240, +60 vertices/+72 triangles (+42.857% triangles). Draw calls and reported local LOD counts stay equal in all three pairs. This is a geometry increase, not a CPU optimization or demonstrated FPS failure."
+    },
+    {
+      "rank": 3,
+      "owner": "props; democity composition",
+      "severity": "open",
+      "finding": "Crown coherence, impostor quality, sparse park composition and night crown readability remain open. This bounded branch rejection does not close any whole-game issue or show that all branch treatments would fail."
+    }
+  ],
+  "nextPriority": {
+    "owner": "props",
+    "action": "Diagnose projected crown/card and impostor coherence at the measured park LOD mix before choosing another tightly scoped visual candidate; a coupled leaf/branch treatment is a hypothesis, not an accepted redesign. Preserve geometry/shading budgets and require visible full-frame improvement.",
+    "scope": "Local foliage priority only; established whole-game ranking and 6.0 FAIL remain unchanged."
+  },
+  "limitations": [
+    "Independent review of supplied captures and source, not an independently rerun browser experiment or new whole-game review. Six originals and three derived crop pairs were individually inspected.",
+    "Three matched views at one seed and high quality do not establish all species, weather, camera, LOD-transition, or save/restore behavior. No fresh reference calibration or blind judging was performed in this bounded rejection audit.",
+    "Single fresh-page observations, accepted block before candidate block, are not a repeated interleaved timing experiment. FPS and raw endpoint heap cannot establish a performance regression, improvement, memory leak, or gate pass.",
+    "Pixel MAE was recomputed from all RGB pixels of each original pair. Live traffic/runtime variation contributes; neither MAE nor crop inspection isolates every foliage pixel or proves image equivalence.",
+    "Riverfront total triangle delta is 28512, equivalent to 396 added 72-triangle submissions, versus 135 trees in the reported local LOD1 histogram. Render/reflection composition is a plausible explanation, but no pass-by-pass submission ledger proves its exact allocation.",
+    "All six owner stats fields are null. Public Props API keys and LOD histograms exist, but no full record digest, serialized-state equality, API contract, or double-restore result was collected for this disposable candidate.",
+    "Source hashes identify current raw source and the exactly reconstructed candidate. The tool fetches Vite-transformed source and replaces the marker; it does not retain a hash/archive of each served transformed body.",
+    "The builder reports an earlier invalid bare-import routing run whose files were overwritten. That historical run cannot be independently reconstructed from these retained artifacts; all six current sidecars are valid.",
+    "No full matrix/build/restore rerun is necessary merely to reject a never-installed routed candidate and retain the unchanged accepted tree source. Those missing checks would matter before accepting a future product change."
+  ]
+}

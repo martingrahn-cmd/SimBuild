@@ -30,6 +30,7 @@ export class ZoneGrid {
     this.claimed = new Map();     // cell key -> lotId
     this.field = new RoadField(this.world);
     this.nextLot = 1;
+    this._restoreIdentity = null;
     this._o = { x: 0, z: 0, nx: 0, nz: 0 };
     this._changed = [];
     this._probe = [];
@@ -125,6 +126,10 @@ export class ZoneGrid {
       if (!sp) continue;
       const front = this.frontStart(e.type);
       for (const side of SIDES) {
+        // The prefab ring is clockwise in world X/Z, so its right-hand side is the central traffic
+        // island. It is part of the junction, not street frontage; only the outside of the ring may
+        // promise lots. Roads marks real directed cycles during its authoritative rebuild.
+        if (e.ring && side === 'right') continue;
         const s = sp[side];
         if (!s) continue;
         const sgn = side === 'right' ? 1 : -1;
@@ -248,8 +253,22 @@ export class ZoneGrid {
   }
 
   // ---------------------------------------------------------------- lots
-  /** Stable identity across rebuilds: road side + front cell (so buildingId is never orphaned). */
-  _lotKey(l) { return l.edgeId + ':' + l.side + ':' + (l.cells[0] || `${Math.round(l.x)}_${Math.round(l.z)}`); }
+  /** Stable identity across rebuilds: road side + original front cell (so buildingId is never orphaned). */
+  _lotKey(l) { return l.edgeId + ':' + l.side + ':' + (l._identityCell || l.cells[0] || `${Math.round(l.x)}_${Math.round(l.z)}`); }
+
+  /** Prepare one exact owner restore. The next regeneration consumes this map once. */
+  restoreIdentity(data) {
+    if (!Array.isArray(data?.lots) || !Number.isInteger(data.nextLot) || data.nextLot < 1) return false;
+    const lots = new Map(), ids = new Set();
+    for (const row of data.lots) {
+      if (!row || typeof row.key !== 'string' || !Number.isInteger(row.id) || row.id < 1 || lots.has(row.key) || ids.has(row.id)) return false;
+      lots.set(row.key, { id: row.id, buildingId: Number.isInteger(row.buildingId) ? row.buildingId : null });
+      ids.add(row.id);
+    }
+    if ([...ids].some(id => id >= data.nextLot)) return false;
+    this._restoreIdentity = { lots, nextLot: data.nextLot, used: new Set() };
+    return true;
+  }
 
   isJunction(nodeId) {
     const n = this.world.roads.nodes?.get(nodeId);
@@ -262,6 +281,7 @@ export class ZoneGrid {
    * what is left — the pinwheel subdivision real blocks have.
    */
   regenLots() {
+    const restore = this._restoreIdentity;
     const prev = new Map();
     for (const l of this.lots.values()) prev.set(this._lotKey(l), l);
     const removed = [], added = [];
@@ -277,7 +297,18 @@ export class ZoneGrid {
       for (const lot of this.genEdge(e)) {
         const sig = this._lotKey(lot);
         const old = prev.get(sig);
-        if (old) { lot.id = old.id; lot.buildingId = old.buildingId; prev.delete(sig); }
+        const saved = restore?.lots.get(sig);
+        if (restore && !saved) {
+          this._restoreIdentity = null;
+          throw new Error(`zoning restore produced unknown lot ${sig}`);
+        }
+        if (saved) {
+          lot.id = saved.id; lot.buildingId = saved.buildingId;
+          restore.used.add(sig);
+          if (!old || old.id !== lot.id) added.push(lot.id);
+          if (old && old.id !== lot.id) removed.push(old.id);
+          if (old) prev.delete(sig);
+        } else if (old) { lot.id = old.id; lot.buildingId = old.buildingId; prev.delete(sig); }
         else added.push(lot.id);
         this.lots.set(lot.id, lot);
         let set = this.byEdge.get(e.id);
@@ -286,7 +317,24 @@ export class ZoneGrid {
         for (const k of lot.cells) this.claimed.set(k, lot.id);
       }
     }
+    // genEdge builds every lot on one road before any of them enter `claimed`, so curved/corner
+    // sampling can repeat a raster key inside one lot or in two adjacent lots. `claimed.set` has
+    // always made the later lot the owner. Normalize the public memberships only after every claim
+    // is known, preserving that winner and the original front key used for stable lot identity.
+    for (const lot of this.lots.values()) {
+      const unique = new Set();
+      lot.cells = lot.cells.filter((key) => {
+        if (unique.has(key)) return false;
+        unique.add(key);
+        return this.claimed.get(key) === lot.id;
+      });
+    }
     for (const l of prev.values()) removed.push(l.id);
+    if (restore) {
+      this._restoreIdentity = null;
+      if (restore.used.size !== restore.lots.size || this.lots.size !== restore.lots.size) throw new Error('zoning restore lot identity mismatch');
+      this.nextLot = restore.nextLot;
+    }
     return { added, removed };
   }
 
@@ -404,7 +452,7 @@ export class ZoneGrid {
       }
       if (!cells.length) { cursor = b; continue; }
       out.push({
-        id: this.nextLot++, edgeId: e.id, side, cells,
+        id: this.nextLot++, edgeId: e.id, side, cells, _identityCell: cells[0],
         x, y: this.world.terrain.getHeight(x, z), z,
         w: w * this.cell, d: depth * this.cell,
         heading: Math.atan2(-nx, nz),      // faces the road: 0 = north = -Z, clockwise

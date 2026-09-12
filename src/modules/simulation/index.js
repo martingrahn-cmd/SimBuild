@@ -6,6 +6,7 @@
 // module the showcase runs a synthetic "virtual city" so the numbers still tell a story.
 import { Economy, TICK_SECONDS, TICKS_PER_HOUR, TICKS_PER_DAY, ZONE_TYPES, FINE_KEYS, MILESTONES, capacityOf, TUNING } from './economy.js';
 import { VirtualCity } from './virtualcity.js';
+import { createServiceUpkeepReader } from './service-upkeep.js';
 import * as Activity from './activity.js';
 import { Panel } from './panel.js';
 import { stageScene, updateScene, disposeScene, CAMERAS } from './showcase.js';
@@ -25,9 +26,9 @@ const S = {
 
 // ---------------------------------------------------------------- tick driver
 function effectiveSpeed(ctx) {
-  if (S.speedOverride !== null) return S.speedOverride;
   const t = ctx.world.time;
   if (t.paused) return 0;
+  if (S.speedOverride !== null) return S.speedOverride;
   if (t.speed > 0) return t.speed;
   return S.showcaseSpeed;          // clock frozen by ?time= : the showcase keeps the economy moving
 }
@@ -52,6 +53,15 @@ function refreshLots() {
   try { free = S.ctx.world.zones.freeLots?.(); } catch (e) { free = null; }
   if (!Array.isArray(free)) return;
   for (const lot of free) { const k = lot?.type; if (S.lots[k]) S.lots[k].push(lot); }
+}
+function mirrorOccupancy() {
+  const items = S.ctx?.world.buildings?.items;
+  if (!items?.size || !S.eco) return;
+  for (const rec of S.eco.buildings.values()) {
+    if (rec.virtual) continue;
+    const it = items.get(rec.id); if (!it) continue;
+    it.occupants = rec.occupants; it.jobs = rec.jobs;
+  }
 }
 function runTick() {
   const ctx = S.ctx, eco = S.eco, ev = ctx.events, mods = ctx.modules;
@@ -93,14 +103,7 @@ function runTick() {
     } else if (evt.type === 'loan' || evt.type === 'loan_paid') ev.emit('sim:loan', evt);
   }
   // mirror occupancy + levels onto world.buildings items (documented fields occupants/jobs) at the distribute cadence
-  if (tick % 20 === 0) {
-    const items = ctx.world.buildings?.items;
-    if (items && items.size) for (const rec of eco.buildings.values()) {
-      if (rec.virtual) continue;
-      const it = items.get(rec.id); if (!it) continue;
-      it.occupants = rec.occupants; it.jobs = rec.jobs;
-    }
-  }
+  if (tick % 20 === 0) mirrorOccupancy();
   S.tickPayload.tick = tick;
   ev.emit('sim:tick', S.tickPayload);
   if (tick % 25 === 0) {
@@ -112,11 +115,43 @@ function runTick() {
 
 function currentHour() { return S.ctx ? (S.showcaseSpeed && S.ctx.world.time.speed === 0 ? S.eco.econ.hour : S.ctx.world.time.hour) : 12; }
 
+// Read the transit owner's daily forecast. Committed allocated fleets retain upkeep while inactive.
+function createTransitFinanceReader(world) {
+  let lastLines = null, lastVersion = -1, lastSize = -1;
+  const totals = { income: 0, expenses: 0 };
+  return () => {
+    const lines = world.transit?.lines, version = world.transit?.version, size = lines?.size || 0;
+    if (lines === lastLines && version === lastVersion && size === lastSize) return totals;
+    lastLines = lines; lastVersion = version; lastSize = size;
+    totals.income = 0; totals.expenses = 0;
+    if (lines instanceof Map) for (const line of lines.values()) {
+      if (typeof line.active !== 'boolean' || ![line.ridership, line.fare, line.balance].every(Number.isFinite) || line.ridership < 0 || line.fare < 0) continue;
+      const forecastIncome = line.ridership * line.fare;
+      const expense = forecastIncome - line.balance / 30;
+      if (!Number.isFinite(forecastIncome) || !Number.isFinite(expense) || expense < -1e-6) continue;
+      if (line.active) totals.income += forecastIncome;
+      totals.expenses += Math.max(0, expense);
+    }
+    return totals;
+  };
+}
+
 /** Hooks the economy uses to read the rest of the world; every one tolerates stubs. */
 function makeEnv(ctx) {
   const w = ctx.world;
   return {
     servicesActive: () => !!(ctx.modules.services && w.services && w.services.items && w.services.items.size > 0),
+    serviceUpkeep: createServiceUpkeepReader(w, ctx.modules),
+    localUtilities: () => {
+      const kinds = new Set();
+      if (w.services?.items instanceof Map) for (const item of w.services.items.values()) kinds.add(item.kind);
+      return {
+        power: kinds.has('power_coal') || kinds.has('power_wind') || kinds.has('power_solar') || kinds.has('incinerator'),
+        water: kinds.has('water_pump') && kinds.has('sewage'),
+        garbage: kinds.has('landfill') || kinds.has('incinerator'),
+      };
+    },
+    transitFinance: createTransitFinanceReader(w),
     coverage: (kind, x, z) => { try { const v = w.services?.coverage?.(kind, x, z); return typeof v === 'number' && v === v ? v : 0; } catch (e) { return 0; } },
     isWater: (x, z) => { try { return !!w.terrain?.isWater?.(x, z); } catch (e) { return false; } },
     edges: () => (w.roads?.edges instanceof Map ? w.roads.edges : null),
@@ -149,7 +184,15 @@ export default {
       ev.on('time:tick', onTimeTick, own),
       ev.on('buildings:changed', () => { try { S.eco.syncBuildings(ctx.world.buildings.items); } catch (e) { ctx.log.warn(`buildings sync failed: ${e?.message}`); } S.lotsDirty = true; }, own),
       ev.on('roads:changed', () => { try { S.eco.syncRoads(ctx.world.roads.edges); } catch (e) { ctx.log.warn(`roads sync failed: ${e?.message}`); } }, own),
+      ev.on('roads:rebuilt', () => { try { S.eco.syncRoads(ctx.world.roads.edges); } catch (e) { ctx.log.warn(`roads rebuild sync failed: ${e?.message}`); } }, own),
       ev.on('zones:changed', () => { S.lotsDirty = true; }, own),
+      ev.on('save:loaded', (p) => {
+        const incoming = p?.modules?.simulation?.economy?.econ;
+        if (incoming) S.eco.restoreServicesManaged(incoming.servicesManaged);
+      }, own),
+      ev.on('services:changed', () => {
+        if (ctx.world.services.items.size) S.eco.econ.servicesManaged = true;
+      }, own),
       ev.on('ui:action', (p) => {
         if (!p) return;
         if (p.action === 'setTaxRate') S.eco.econ.taxRate = Math.max(0.01, Math.min(0.3, +p.args?.[0] || 0.1));
@@ -217,13 +260,26 @@ export default {
     /** Override the simulation speed (null = follow the game clock). */
     setSimSpeed(n) { S.speedOverride = n == null ? null : Math.max(0, +n); },
     simSpeed() { return S.ctx ? effectiveSpeed(S.ctx) : 0; },
+    /** Reconcile owner stock after an inverse transaction without rewinding clock or economy. */
+    reconcileWorld() {
+      if (!S.eco || !S.ctx) return false;
+      S.eco.syncRoads(S.ctx.world.roads.edges);
+      S.eco.syncBuildings(S.ctx.world.buildings.items);
+      S.eco.distribute();
+      mirrorOccupancy();
+      S.ctx.events.emit('sim:reconciled', { buildings: true, roads: true });
+      return true;
+    },
     isVirtual() { return !!S.city; },
     virtualCity() { return S.city; },
     serialize() { if (!S.eco) return null; return { module: 'simulation', version: 2, economy: S.eco.serialize(), city: S.city ? S.city.serialize() : null }; },
     deserialize(save) {
       if (!S.eco || !save || save.module !== 'simulation') return false;
-      S.eco.deserialize(save.economy);
+      if (S.eco.deserialize(save.economy) === false) return false;
       if (S.city && save.city) S.city.deserialize(save.city);
+      // Economy owns filled occupants/jobs. A frozen loaded city may not reach the next 20-tick
+      // mirror cadence, so publish restored occupancy immediately.
+      mirrorOccupancy();
       S.acc = 0; S.lotsDirty = true;
       return true;
     },

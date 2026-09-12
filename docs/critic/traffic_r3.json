@@ -1,0 +1,480 @@
+{
+  "module": "traffic",
+  "round": 3,
+  "score": 6.7,
+  "pass": false,
+  "consoleErrors": 2,
+  "maxDrawCalls": 184,
+  "apiContractOk": false,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Merging and ring traffic still interpenetrate",
+      "detail": "At fixed hour 17.5, 20 Hz sampling over 30 agent seconds records 114 negative-gap pair samples, minimum \u221210.961729883 m on edge 74, rear id 883/front id 893 at step 146. Fixed noon records 15, minimum \u22123.759685716 m on edge 74 at step 411. Peak also has a negative gap on ramp edge 92 at step 55. Phase-advancing traces independently show 442 peak and 72 noon overlapping pair samples. Reconcile entry reservations and insertion into the next lane with the receiving lane leader before a turning vehicle becomes lane-owned; do not teleport vehicles backward or hide them from edgeId to conceal collisions. Noon produces only two completed yield-then-enter events in the first 20 s, below three.",
+      "evidence": "shots/traffic/r3/critic-probe/extra.json fixedHour; probe.json traces; roundabout_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Close vehicle finish remains synthetic and trim coverage exceeds the material limit",
+      "detail": "The fleet has the required detail counts, panes, wheels and distinct classes, yet broad slab-like dark side panels, plain pale far-LOD bodies and oversized simple rear lamps still read below CS2 refs 1/5. Actual LOD0 triangle surface area assigned to chrome/trim is 11.798% sedan, 7.195% hatchback, 11.646% taxi, 5.100% pickup, 5.439% van, 7.816% box truck, 6.758% bus, 23.910% motorbike and 10.493% police, versus \u22644%. Material roughness/metalness is now correct (.32/.86); narrow the trim regions and improve pane/pillar proportions and local body detail, preserving distinct paint/glass/tyre responses. Area calculation includes all mesh triangles, including hidden faces; it is not a visible-pixel coverage estimate.",
+      "evidence": "shots/traffic/r3/critic-probe/extra.json geometry; fleet_12.png; queue_12.png; queue_17p5.png; street_12.png"
+    },
+    {
+      "rank": 3,
+      "severity": "blocker",
+      "title": "Empty road graph compiles an invalid traffic-owned fallback lens shader",
+      "detail": "Fresh showcase=traffic, wait ready, freeze, remove every world.roads edge through removeEdge(), call roads.rebuild(), traffic.step(1), then allow render frames for 500 ms. Vehicles/pedestrians become zero, but two console error events report traffic:mast:lens: instanceColor undeclared, dimension mismatch, cannot convert float to vec3. src/modules/traffic/masts.js:16 injects vTrafficSignal=instanceColor unconditionally; a zero-head mesh has no colour attribute initialized. This is traffic fallback ownership, not props. Handle the zero-head material/mesh or always initialize the attribute. Preserve the one intentional empty-graph warning without WebGL error spam.",
+      "evidence": "shots/traffic/r3/critic-probe/follow.mjs; follow.json zeroHeads/errors; src/modules/traffic/masts.js:16"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "title": "Explicit bus loop stalls before starting its second lap",
+      "detail": "Fresh isolated graph made through the public API: four one-way, one-lane, 150 m street edges in a rectangle at (\u2212450,\u2212450), (\u2212300,\u2212450), (\u2212300,\u2212300), (\u2212450,\u2212300). spawnVehicle(bus,{edges:[102,103,104,105],loop:true}) returns id350 and visits the four edges in order at steps 0/291/571/851, but over 4000 fixed steps (200 s) never re-enters edge102 and stays alive on its final route entry. Source sim.js only appends the loop after s>=rec.len, while its no-next-edge stop logic brakes the nonexternal bus before that condition. Prepare the loop successor before lookahead/turn construction.",
+      "evidence": "shots/traffic/r3/critic-probe/follow.json route; follow.mjs; src/modules/traffic/sim.js:298 and :380"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "title": "Queue discharge and advancing-clock night congestion miss their requirements",
+      "detail": "Three independent 90 s traces advance the game clock by .004 h per .1 agent second while stepping at 20 Hz (speed1 equivalent). After the specified 30 s pinned warm state, peak queued count ranges 11\u2013142 across all three cycles and never falls below two. At the 30 s night mark congestion is .351906696 with 11 queued of 36 vehicles, above .10; peak is .829237580. Mean speed and congestion recomputation agree with published values, so this is a flow outcome, not fabricated stats. Preserve the honest formula; resolve route/stop bottlenecks or request a precise change to the criterion if necessary.",
+      "evidence": "shots/traffic/r3/critic-probe/probe.json traces[].queue; probe.mjs; queue_17p5.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "title": "Coarse rotating LOD1 tyres leave more than 2 cm of road-local clearance",
+      "detail": "For 26 live non-null-edge vehicle instances, matching each slot position to its live vehicle and applying the actual aSpin shader rotation to tyre vertices gives maximum road-aligned local bottom clearance .064165749 m (SUV id439 LOD1). Ten saved examples exceed .02 m, including hatchback .043844793 and sedan .037756655. The physics origin itself tracks lane height accurately; the remaining gap comes from the rendered polygonal tyre shape. This is road-local vertex clearance, not a separate world-space terrain-height estimate; pitch/contact on the obscured merge deck remains visually unverified. Preserve tyre support at all rotations and LODs.",
+      "evidence": "shots/traffic/r3/critic-probe/follow.json wheelContact; follow.mjs; extra.json geometry; plate_junction_12_L1.png"
+    }
+  ],
+  "strengths": [
+    "Canonical-route displacement and heading regression is fixed: zero threshold violations over all three 90 s traces; zero red-entry violations in those traffic-showcase traces.",
+    "Eleven identifiable vehicle kinds, articulated semi and police/taxi liveries; LOD0 per-kind detail and LOD1/2 triangle budgets pass.",
+    "Night body-mask chroma ratio is 2.67453 against a .60 minimum, with readable pools and low clipping.",
+    "Fixed-hour fleet density, freight mix, seeded reproducibility and simulation-profile fallback all meet their measured targets.",
+    "All 28 regular captures are ready with zero errors, maximum 184 whole-frame draws; own peak rendering and warmed update budgets have headroom.",
+    "Traffic owns signal phases; integrated props reads traffic for all 60 checked arms at both hours. Correct trafficlight publication removes fallback masts."
+  ],
+  "summary": "6.7/10 FAIL. Normal-route motion, seeded density and night colour improved, but merge collisions, a stalled explicit loop, empty-graph shader errors, excessive trim coverage, coarse tyre clearance and undischarged queues remain. Independent 28-shot matrix plus 31 frozen plates inspected; unmeasured subcriteria are explicitly retained as limits.",
+  "shots": [
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/aerial_12.png",
+      "note": "Individually separated small cars occupy both highways and the grid; mid density is readable, with no origin pile.",
+      "drawCalls": 109,
+      "triangles": 533152,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/aerial_17p5.png",
+      "note": "Clearly more vehicles and visible queues than aerial_22, with long shadows.",
+      "drawCalls": 83,
+      "triangles": 438522,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/aerial_22.png",
+      "note": "Sparse local traffic and faint lights; most local carriageway is empty, without a black frame.",
+      "drawCalls": 55,
+      "triangles": 424314,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/all_12.png",
+      "note": "Ready integrated baseline shows empty terrain and the HUD; the all showcase intentionally starts with no authored city.",
+      "drawCalls": 32,
+      "triangles": 163894,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/all_22.png",
+      "note": "Ready integrated night baseline and HUD; empty authored-city state is intentional and is not a failed traffic frame.",
+      "drawCalls": 32,
+      "triangles": 163894,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/closeup_12.png",
+      "note": "Several vehicle classes cross the junction; distant LOD vehicles lose glazing and read as pale blobs.",
+      "drawCalls": 107,
+      "triangles": 960004,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/closeup_17p5.png",
+      "note": "Four-car queue on the right arm, bus at left, and long vehicle shadows; distant vehicle sides remain plain.",
+      "drawCalls": 184,
+      "triangles": 1119396,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/closeup_22.png",
+      "note": "A lone white car, its pools, and pedestrians remain readable at the junction.",
+      "drawCalls": 61,
+      "triangles": 929176,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/crossing_12.png",
+      "note": "Walker occupies the crosswalk and a white car crosses the central view.",
+      "drawCalls": 115,
+      "triangles": 931034,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/crossing_6p5.png",
+      "note": "Single foreground pedestrian has a head, torso and limbs but reads as a blocky peg figure; vans pass at left.",
+      "drawCalls": 111,
+      "triangles": 902314,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/fleet_12.png",
+      "note": "Eleven named silhouettes can be identified, including articulated semi and police light bar. Plain body panels, large dark glazing strips, and simple oversized rear clusters remain below the reference finish.",
+      "drawCalls": 152,
+      "triangles": 1171986,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/headlights_22.png",
+      "note": "Clear oncoming headlight pair, visible white body and a projected forward pool.",
+      "drawCalls": 97,
+      "triangles": 798076,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/junction_12.png",
+      "note": "Right-hand white sedan and yellow SUV at the stop line while the crossing direction carries vehicles.",
+      "drawCalls": 119,
+      "triangles": 947602,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/junction_22.png",
+      "note": "One left-hand car and its pools; sparse night scene with no right-arm queue in this instant.",
+      "drawCalls": 61,
+      "triangles": 895722,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/junction_6p5.png",
+      "note": "Warm SUV/van queue and cross traffic; pronounced diagonal shadows.",
+      "drawCalls": 123,
+      "triangles": 927074,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/merge_12.png",
+      "note": "Tall bridge piers dominate and obscure the drivable deck; this shot cannot visually certify wheel pitch. Road/camera integration limitation, not evidence that traffic itself floats.",
+      "drawCalls": 106,
+      "triangles": 1176231,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/night_street_22.png",
+      "note": "Sparse street, a clipped right-edge tail and distant left car with scattered pedestrians; no black crush.",
+      "drawCalls": 88,
+      "triangles": 904444,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/overview_12.png",
+      "note": "Wide highway connections contain a sparse, distributed fleet; no cluster at world origin.",
+      "drawCalls": 39,
+      "triangles": 416314,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/queue_12.png",
+      "note": "Eye-level car crossing and side queues; lead rear has red lamp clusters and a pale plate, but exaggerated black glazing bands.",
+      "drawCalls": 118,
+      "triangles": 938744,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/queue_17p5.png",
+      "note": "Four stopped vehicles are visible in the right lane; a very large cropped taxi in the foreground exposes simple rear lamps and slab-like dark side panels.",
+      "drawCalls": 177,
+      "triangles": 1076962,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/roundabout_12.png",
+      "note": "Approach and circulating cars are visible on the ring, with sparse pedestrians; a still image cannot certify yield gaps.",
+      "drawCalls": 112,
+      "triangles": 663439,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/skyline_12.png",
+      "note": "Tiny coloured vehicles distributed across both bridges and the grid; no visible sparkle in this final crop-enabled capture.",
+      "drawCalls": 87,
+      "triangles": 721284,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/skyline_17p5.png",
+      "note": "Warm small vehicles on both bridges with long structural shadows; traffic is distributed rather than carpeted.",
+      "drawCalls": 92,
+      "triangles": 738318,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/skyline_22.png",
+      "note": "Thin, sparse light points against dark roads; the frame remains exposed, though the avenue light string is weak.",
+      "drawCalls": 67,
+      "triangles": 710148,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/street_12.png",
+      "note": "Distinct cars and pedestrians at the crossroads; broad dark side-window/door bands still make the close vehicles synthetic.",
+      "drawCalls": 174,
+      "triangles": 1209859,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/street_12_720.png",
+      "note": "Street content fits 1280\u00d7720; no overflow. Headless traffic view has no interactive HUD to assess.",
+      "drawCalls": 131,
+      "triangles": 1099566,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/street_22.png",
+      "note": "Foreground white car has a warm forward pool and red rear pool; pedestrians remain legible.",
+      "drawCalls": 65,
+      "triangles": 1056322,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/street_6p5.png",
+      "note": "Warm freight van and SUV with two visible pedestrians; daylight surfaces retain detail.",
+      "drawCalls": 127,
+      "triangles": 1080946,
+      "consoleErrors": 0,
+      "status": "ready",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_12_A.png",
+      "note": "Mid-density lane-aligned fleet over the full network, no origin pile. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_12_B.png",
+      "note": "Mid-density lane-aligned fleet over the full network, no origin pile. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_12_C.png",
+      "note": "Mid-density lane-aligned fleet over the full network, no origin pile. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_12_D.png",
+      "note": "Mid-density lane-aligned fleet over the full network, no origin pile. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_12_step4.png",
+      "note": "Mid-density lane-aligned fleet over the full network, no origin pile. Same page after four fixed steps: cars shift slightly; terrain and road background remain stable.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_17p5_A.png",
+      "note": "Dense queues at several local signals and long, distinct vehicle shadows. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_17p5_B.png",
+      "note": "Dense queues at several local signals and long, distinct vehicle shadows. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_17p5_C.png",
+      "note": "Dense queues at several local signals and long, distinct vehicle shadows. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_aerial_17p5_D.png",
+      "note": "Dense queues at several local signals and long, distinct vehicle shadows. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_closeup_17p5_A.png",
+      "note": "Right-arm queue, foreground green sedan, left bus and long cast shadows; far white LOD bodies look simplified. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_closeup_17p5_B.png",
+      "note": "Right-arm queue, foreground green sedan, left bus and long cast shadows; far white LOD bodies look simplified. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_closeup_17p5_C.png",
+      "note": "Right-arm queue, foreground green sedan, left bus and long cast shadows; far white LOD bodies look simplified. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_closeup_17p5_D.png",
+      "note": "Right-arm queue, foreground green sedan, left bus and long cast shadows; far white LOD bodies look simplified. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_12_A.png",
+      "note": "Two nearest right-side cars, other crossing traffic and pedestrians; dry asphalt and clear daytime silhouettes. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_12_B.png",
+      "note": "Two nearest right-side cars, other crossing traffic and pedestrians; dry asphalt and clear daytime silhouettes. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_12_C.png",
+      "note": "Two nearest right-side cars, other crossing traffic and pedestrians; dry asphalt and clear daytime silhouettes. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_12_D.png",
+      "note": "Two nearest right-side cars, other crossing traffic and pedestrians; dry asphalt and clear daytime silhouettes. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_12_L0.png",
+      "note": "Two nearest right-side cars, other crossing traffic and pedestrians; dry asphalt and clear daytime silhouettes. Forced LOD0: detailed wheels and body trim remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_12_L1.png",
+      "note": "Two nearest right-side cars, other crossing traffic and pedestrians; dry asphalt and clear daytime silhouettes. Forced LOD1: wheel/body detail reduces and some silhouettes contract; quantified ROI test is qualified below.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_22_A.png",
+      "note": "Sparse left-side car with forward/rear pools; body retains colour under night lighting. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_22_B.png",
+      "note": "Sparse left-side car with forward/rear pools; body retains colour under night lighting. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_22_C.png",
+      "note": "Sparse left-side car with forward/rear pools; body retains colour under night lighting. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_22_D.png",
+      "note": "Sparse left-side car with forward/rear pools; body retains colour under night lighting. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_6p5_A.png",
+      "note": "Left-arm queue, right-side SUVs and long dawn shadows; no clipping or black crush. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_6p5_B.png",
+      "note": "Left-arm queue, right-side SUVs and long dawn shadows; no clipping or black crush. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_6p5_C.png",
+      "note": "Left-arm queue, right-side SUVs and long dawn shadows; no clipping or black crush. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_junction_6p5_D.png",
+      "note": "Left-arm queue, right-side SUVs and long dawn shadows; no clipping or black crush. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_skyline_12_A.png",
+      "note": "Small coloured dashes across distant bridges and local roads; no bright white sparkle visible. Normal frozen plate.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_skyline_12_B.png",
+      "note": "Small coloured dashes across distant bridges and local roads; no bright white sparkle visible. Vehicle geometry and its associated features removed; pedestrians and signal poles remain.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_skyline_12_C.png",
+      "note": "Small coloured dashes across distant bridges and local roads; no bright white sparkle visible. Shadows removed; vehicles remain and the loss of directional grounding is visible.",
+      "inspected": true
+    },
+    {
+      "file": "/Users/martingrahn/Documents/SimBuild/shots/traffic/r3/critic-probe/plate_skyline_12_D.png",
+      "note": "Small coloured dashes across distant bridges and local roads; no bright white sparkle visible. Light pools removed; daylight sets look unchanged, while the night set loses road illumination.",
+      "inspected": true
+    }
+  ],
+  "acceptanceFailed": [
+    "1. Wheels on the road, nothing floating, nothing sunk.",
+    "5. Car-following: no interpenetration, real queues.",
+    "6. Traffic-light compliance and intersection behaviour.",
+    "11. Materials: paint, not plastic; no sparkle; no clipping.",
+    "15. Outside connections (ARCHITECTURE \u00a715).",
+    "19. stats is live and honest.",
+    "20. Reacts to the road graph."
+  ]
+}

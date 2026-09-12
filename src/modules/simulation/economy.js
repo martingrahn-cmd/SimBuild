@@ -7,6 +7,7 @@
 // (ground/air pollution, noise, land value), fine + daily history.
 import { Ring } from './ring.js';
 import { Grids } from './grids.js';
+import { validEconomySave } from './save-validation.js';
 
 export const TICK_SECONDS = 0.25;
 export const TICKS_PER_HOUR = 100;
@@ -28,16 +29,21 @@ export const TUNING = {
   tradePerCommercialJob: 0.22, // tourism / retail spill-over
   servicePerCapita: 1.55,     // ¢ per resident per day (schools, health, garbage...)
   servicePerJob: 0.35,
-  adminFixed: 1500,           // ¢ per day city administration
-  buildingUpkeep: { residential: 4, commercial: 9, industrial: 14, office: 12 },  // ¢ per building per day
+  utilityImportBase: { power: 45, water: 35, garbage: 25 },
+  utilityImportPerCapita: { power: 0.42, water: 0.34, garbage: 0.24 },
+  adminFixed: 100,            // base city administration per day
+  adminPerCapita: 0.3,        // administration scales with the population it serves
+  // Zoned buildings are private tax sources. Their municipal cost is carried by roads/services,
+  // rather than charging the city a second per-building upkeep bill.
+  buildingUpkeep: { residential: 0, commercial: 0, industrial: 0, office: 0 },
   roadUpkeepPerKm: { street: 120, avenue: 200, highway: 420, alley: 60, gravel: 40 },
-  moveInRate: 0.55,           // share of the daily move-in pool that arrives at desire 1
+  moveInRate: 0.82,           // quicker early settlement while housing and jobs remain available
   outsideJobs: 220,           // jobs reachable via outside connections
   moveOutBase: 0.006,
   birthRate: 0.0004,          // net natural growth per day
   demandTau: 0.5,             // days, demand smoothing
   happinessTau: 0.8,          // days
-  growthPerHour: 5,           // spawn requests per game hour at demand 1 (superlinear in demand)
+  growthPerHour: 7.5,         // private construction starts per game hour at demand 1
   growthThreshold: 0.22,      // demand below this spawns nothing, so a healthy city shows 25-50 % bars
   lookahead: 0.25,            // demand plans for pop × (1 + lookahead) + lookaheadPop
   lookaheadPop: 90,
@@ -49,10 +55,10 @@ export const TUNING = {
 
 /** CS2-style progression: population thresholds unlock service categories and pay a one-off reward. */
 export const MILESTONES = [
-  { pop: 0,      name: 'Hamlet',        unlocks: ['roads', 'zoning'],                 reward: 0 },
-  { pop: 150,    name: 'Tiny Village',  unlocks: ['power', 'water'],                  reward: 20000 },
-  { pop: 400,    name: 'Small Village', unlocks: ['garbage', 'healthcare'],           reward: 30000 },
-  { pop: 900,    name: 'Large Village', unlocks: ['education', 'police'],             reward: 40000 },
+  { pop: 0,      name: 'Hamlet',        unlocks: ['roads', 'zoning', 'power', 'water', 'garbage'], reward: 0 },
+  { pop: 150,    name: 'Tiny Village',  unlocks: ['healthcare'],                      reward: 20000 },
+  { pop: 400,    name: 'Small Village', unlocks: ['education'],                       reward: 30000 },
+  { pop: 900,    name: 'Large Village', unlocks: ['police'],                          reward: 40000 },
   { pop: 1800,   name: 'Grand Village', unlocks: ['fire', 'parks'],                   reward: 60000 },
   { pop: 3500,   name: 'Tiny Town',     unlocks: ['high_density', 'avenues'],         reward: 80000 },
   { pop: 6000,   name: 'Boom Town',     unlocks: ['highways', 'transit'],             reward: 120000 },
@@ -84,6 +90,9 @@ export function capacityOf(b) {
 export function defaultEnv() {
   return {
     servicesActive: () => false,                   // true once a services module manages coverage
+    serviceUpkeep: () => 0,                        // daily cost of the real facility stock
+    localUtilities: () => ({ power: false, water: false, garbage: false }),
+    transitFinance: () => null,                    // daily owner forecast; money moves only in step()
     coverage: () => 0,                             // (kind, x, z) -> 0..1
     isWater: () => false,                          // (x, z)
     edges: () => null,                             // Map id -> {a, b, type, length}
@@ -140,8 +149,8 @@ export class Economy {
     e.capacity = this.capacity; e.buildingCount = this.buildingCount; e.filledJobs = this.filled;
     e.jobOpenings = 0; e.housingVacancy = 0;
     e.income = 0; e.expenses = 0; e.net = 0;           // ¢ per day
-    e.incomeBreakdown = { residentialTax: 0, businessTax: 0, trade: 0 };
-    e.expenseBreakdown = { roads: 0, buildings: 0, services: 0, admin: 0, loans: 0 };
+    e.incomeBreakdown = { residentialTax: 0, businessTax: 0, trade: 0, transit: 0 };
+    e.expenseBreakdown = { roads: 0, buildings: 0, services: 0, admin: 0, loans: 0, transit: 0 };
     e.roadKm = 0; e.attractiveness = 0.5; e.landValue = 0.3;
     e.growthRequests = 0; e.levelUps = 0;
     e.milestone = { level: 0, name: MILESTONES[0].name, next: MILESTONES[1].name, nextPop: MILESTONES[1].pop, progress: 0, unlocked: MILESTONES[0].unlocks.slice() };
@@ -150,6 +159,8 @@ export class Economy {
     e.pollutionExposure = 0;          // mean ground+air pollution at homes 0..1
     e.services = this.services;
     e.servicesActive = false;
+    e.servicesManaged = false; // bootstrap ends permanently when the first real facility is placed
+    e.utilityImports = { power: true, water: true, garbage: true, cost: 0 };
     e.grids = this.grids.expose();
     for (const k of ZONE_TYPES) { this._target[k] = e.demand[k]; this._growthAcc[k] = 0; }
     this.tick = 0;
@@ -182,8 +193,9 @@ export class Economy {
   removeBuilding(id) { if (this.buildings.delete(id)) this._recount(); }
   /** Rebuild the stock from world.buildings.items (Map id -> building). Virtual records are kept. */
   syncBuildings(items) {
-    for (const [id, rec] of this.buildings) if (!rec.virtual && !items.has(id)) this.buildings.delete(id);
+    for (const [id, rec] of this.buildings) if (!rec.virtual && (!items.has(id) || items.get(id)?.construction)) this.buildings.delete(id);
     for (const b of items.values()) {
+      if (b.construction) continue;
       const cur = this.buildings.get(b.id);
       const cap = capacityOf(b);
       if (cur && cur.type === b.type && cur.density === b.density && cur.level === (b.level | 0 || 1) && cur.capacity === cap && cur.x === b.x && cur.z === b.z) continue;
@@ -226,6 +238,7 @@ export class Economy {
     // -- services, pollution grids, per-building levels (once a game hour, cheap)
     if (this.tick % TICKS_PER_HOUR === GRID_TICK) this._refreshEnvironment(e.happiness);
     const sv = this.services, svActive = e.servicesActive;
+    const imported = e.utilityImports;
     const utilities = svActive ? Math.min(sv.power, sv.water) : 1;
 
     // -- labour market
@@ -296,18 +309,25 @@ export class Economy {
     const bizTax = employed * T.taxPerJob * taxK;
     const connection = this.roadKm.highway > 0 ? 1 : 0.6;   // outside connections: highways carry exports
     const trade = (this.filled.industrial * T.tradePerIndustrialJob + this.filled.commercial * T.tradePerCommercialJob) * connection;
+    const transit = this.env.transitFinance();
+    const transitIncome = Number.isFinite(transit?.income) ? Math.max(0, transit.income) : 0;
+    const transitExpense = Number.isFinite(transit?.expenses) ? Math.max(0, transit.expenses) : 0;
     const roads = this.roadUpkeep;
     let bld = 0;
     for (const k of ZONE_TYPES) bld += this.buildingCount[k] * T.buildingUpkeep[k];
-    const services = np * T.servicePerCapita + employed * T.servicePerJob;
-    const admin = this.buildings.size > 0 || np > 0 ? T.adminFixed : T.adminFixed * 0.25;
+    if (!e.servicesManaged && this.env.servicesActive()) e.servicesManaged = true;
+    imported.cost = 0;
+    for (const key of ['power', 'water', 'garbage']) if (imported[key]) imported.cost += T.utilityImportBase[key] + np * T.utilityImportPerCapita[key];
+    const services = this.env.serviceUpkeep() + imported.cost;
+    const admin = this.buildings.size > 0 || np > 0 ? T.adminFixed + np * T.adminPerCapita : T.adminFixed * 0.25;
     const loans = this._serviceLoans(dtDay);
     e.incomeBreakdown.residentialTax = resTax; e.incomeBreakdown.businessTax = bizTax; e.incomeBreakdown.trade = trade;
     e.expenseBreakdown.roads = roads; e.expenseBreakdown.buildings = bld; e.expenseBreakdown.services = services; e.expenseBreakdown.admin = admin; e.expenseBreakdown.loans = loans;
-    e.income = resTax + bizTax + trade;
-    e.expenses = roads + bld + services + admin + loans;
+    e.incomeBreakdown.transit = transitIncome; e.expenseBreakdown.transit = transitExpense;
+    e.income = resTax + bizTax + trade + transitIncome;
+    e.expenses = roads + bld + services + admin + loans + transitExpense;
     e.net = e.income - e.expenses;
-    e.money += (e.income - (roads + bld + services + admin)) * dtDay;   // loan payments were already deducted
+    e.money += (e.income - (roads + bld + services + admin + transitExpense)) * dtDay;   // loan payments were already deducted
 
     // -- happiness (smoothed toward a target)
     const taxPain = (e.taxRate - 0.1) * 2.6;
@@ -385,21 +405,39 @@ export class Economy {
       for (const u of ms.unlocks) if (!m.unlocked.includes(u)) m.unlocked.push(u);
       this.events.push({ type: 'milestone', level: lvl, name: ms.name, unlocks: ms.unlocks, reward: ms.reward, population: e.population });
     }
+    for (let i = 0; i <= lvl; i++) for (const u of MILESTONES[i].unlocks) if (!m.unlocked.includes(u)) m.unlocked.push(u);
     if (lvl !== m.level) { m.level = lvl; m.name = MILESTONES[lvl].name; e.loanCapacity = TUNING.loanMax[Math.min(lvl, TUNING.loanMax.length - 1)]; }
     const nxt = MILESTONES[lvl + 1];
     m.next = nxt ? nxt.name : null; m.nextPop = nxt ? nxt.pop : MILESTONES[lvl].pop;
     m.progress = nxt ? clamp01((e.population - MILESTONES[lvl].pop) / Math.max(1, nxt.pop - MILESTONES[lvl].pop)) : 1;
   }
 
+  /** Reconcile a restored city's latch after every module has restored its own stock. */
+  restoreServicesManaged(managed) {
+    this.econ.servicesManaged = managed === true || !!this.env.servicesActive();
+    this._refreshEnvironment(this._refreshHappiness);
+    this.distribute();
+  }
+
   // ---------------------------------------------------------------- services, grids, per-building levels
   /** Grids + per-building service levels. Stateless given (stock, env, happiness) so a reload reproduces it exactly. */
   _refreshEnvironment(happiness) {
     const e = this.econ, env = this.env, sv = this.services;
-    const active = !!env.servicesActive();
+    const active = e.servicesManaged || !!env.servicesActive();
+    if (active) e.servicesManaged = true;
     e.servicesActive = active;
     this._refreshHappiness = happiness;
     this.grids.update(this.buildings, env, happiness);
     const g = this.grids;
+    // Outside imports are the city's fallback connection, not a one-time bootstrap that vanishes
+    // as soon as any facility is placed. Retire each import only when the matching local system
+    // actually supplies every current building through the real road-component coverage grid.
+    const local = env.localUtilities();
+    const servedBuildings = [...this.buildings.values()].filter(r => Number.isFinite(r.x) && Number.isFinite(r.z));
+    const fullyCovered = key => servedBuildings.length > 0 && servedBuildings.every(r => clamp01(env.coverage(key, r.x, r.z)) >= 0.999);
+    e.utilityImports.power = !(local.power && fullyCovered('power'));
+    e.utilityImports.water = !(local.water && fullyCovered('water') && fullyCovered('sewage'));
+    e.utilityImports.garbage = !(local.garbage && fullyCovered('garbage'));
     let n = 0, sum = { education: 0, health: 0, police: 0, fire: 0, parks: 0, power: 0, water: 0, garbage: 0 };
     let resN = 0, resPol = 0;
     for (const r of this.buildings.values()) {
@@ -417,15 +455,16 @@ export class Economy {
         const fire = clamp01(env.coverage('fire', r.x, r.z));
         r.fireRisk = clamp01(0.3 * (1 - fire) + (r.type === 'industrial' ? 0.25 : 0.05) + 0.03 * r.level);
         r.parks = clamp01(env.coverage('park_small', r.x, r.z) * 0.6 + env.coverage('park_large', r.x, r.z) * 0.7 + env.coverage('plaza', r.x, r.z) * 0.4);
-        r.power = clamp01(env.coverage('power', r.x, r.z)); r.water = clamp01(env.coverage('water', r.x, r.z));
-        const garbage = clamp01(env.coverage('garbage', r.x, r.z));
+        r.power = e.utilityImports.power ? 1 : clamp01(env.coverage('power', r.x, r.z));
+        r.water = e.utilityImports.water ? 1 : clamp01(env.coverage('water', r.x, r.z));
+        const garbage = e.utilityImports.garbage ? 1 : clamp01(env.coverage('garbage', r.x, r.z));
         sum.education += r.education; sum.health += r.health; sum.police += police; sum.fire += fire; sum.parks += r.parks; sum.power += r.power; sum.water += r.water; sum.garbage += garbage;
         n++;
-      } else if (!active) { r.education = 0; r.health = 0; r.crime = clamp01(0.3 * (1 - e.happiness)); r.fireRisk = r.type === 'industrial' ? 0.3 : 0.1; r.parks = 0; r.power = 1; r.water = 1; }
+      } else if (!active) { r.education = 0; r.health = 0; r.crime = clamp01(0.3 * (1 - e.happiness)); r.fireRisk = r.type === 'industrial' ? 0.3 : 0.1; r.parks = 0; r.power = e.utilityImports.power ? 1 : 0; r.water = e.utilityImports.water ? 1 : 0; }
       if (r.type === 'residential') { resN++; resPol += r.pollution; }
     }
     if (active && n) for (const k of SERVICE_KEYS) sv[k] = sum[k] / n;
-    else for (const k of SERVICE_KEYS) sv[k] = k === 'power' || k === 'water' || k === 'garbage' ? 1 : 0;
+    else for (const k of SERVICE_KEYS) sv[k] = (k === 'power' || k === 'water' || k === 'garbage') && e.utilityImports[k] ? 1 : 0;
     e.pollutionExposure = resN ? resPol / resN : 0;
   }
 
@@ -490,31 +529,34 @@ export class Economy {
       rng: [r.a, r.b, r.c, r.d],
       econ: {
         money: e.money, populationF: e.populationF, happiness: e.happiness, taxRate: e.taxRate,
+        servicesManaged: e.servicesManaged,
         demand: { ...e.demand }, growthRequests: e.growthRequests, levelUps: e.levelUps,
         milestone: { level: e.milestone.level, unlocked: e.milestone.unlocked.slice() },
         loans: e.loans.map((l) => ({ ...l })), nextLoanId: this._nextLoanId, pollutionExposure: e.pollutionExposure, refreshHappiness: this._refreshHappiness,
       },
       target: { ...this._target }, growthAcc: { ...this._growthAcc },
       roadKm: { ...this.roadKm },
-      buildings: [...this.buildings.values()].map((b) => ({ id: b.id, type: b.type, density: b.density, level: b.level, capacity: b.capacity, virtual: b.virtual, x: b.x === b.x ? b.x : null, z: b.z === b.z ? b.z : null })),
+      buildings: [...this.buildings.values()].sort((a, b) => a.id - b.id).map((b) => ({ id: b.id, type: b.type, density: b.density, level: b.level, capacity: b.capacity, virtual: b.virtual, x: b.x === b.x ? b.x : null, z: b.z === b.z ? b.z : null })),
       history: e.history.map((h) => ({ ...h })),
       fine: this.fine.serialize(),
     };
   }
   deserialize(s) {
-    if (!s || (s.version !== 1 && s.version !== 2)) throw new Error('economy: unsupported save');
+    if (!validEconomySave(s, { zoneTypes: ZONE_TYPES, roadTypes: Object.keys(this.roadKm), fineLen: this.fine.len, fineWidth: this.fine.n })) return false;
     const e = this.econ, r = this.rng;
     this.reset(e);
     this.tick = s.tick | 0;
     [r.a, r.b, r.c, r.d] = s.rng.map((v) => v | 0);
     e.money = s.econ.money; e.populationF = s.econ.populationF; e.population = Math.round(e.populationF);
     e.happiness = s.econ.happiness; e.taxRate = s.econ.taxRate;
+    e.servicesManaged = s.econ.servicesManaged === true;
     for (const k of ZONE_TYPES) { e.demand[k] = s.econ.demand[k]; this._target[k] = s.target[k]; this._growthAcc[k] = s.growthAcc[k]; }
     e.growthRequests = s.econ.growthRequests | 0; e.levelUps = s.econ.levelUps | 0;
     e.pollutionExposure = s.econ.pollutionExposure || 0;
     if (s.econ.milestone) {
       const lvl = clamp(s.econ.milestone.level | 0, 0, MILESTONES.length - 1);
       e.milestone.level = lvl; e.milestone.name = MILESTONES[lvl].name; e.milestone.unlocked = (s.econ.milestone.unlocked || []).slice();
+      for (let i = 0; i <= lvl; i++) for (const u of MILESTONES[i].unlocks) if (!e.milestone.unlocked.includes(u)) e.milestone.unlocked.push(u);
       e.loanCapacity = TUNING.loanMax[Math.min(lvl, TUNING.loanMax.length - 1)];
     }
     e.loans.length = 0; for (const l of s.econ.loans || []) e.loans.push({ ...l });
@@ -527,6 +569,20 @@ export class Economy {
     this.fine.deserialize(s.fine);
     e.tick = this.tick; e.day = 1 + Math.floor(this.tick / TICKS_PER_DAY); e.hour = (this.tick % TICKS_PER_DAY) / TICKS_PER_HOUR;
     this._recount();
+    // Labour and occupancy are derived rather than serialized. Recreate the same frozen market
+    // state before distributing people/jobs; reset() otherwise leaves employed at zero until the
+    // next simulation tick and a loaded paused city appears to lose every filled workplace.
+    const jobsTotal = this.capacity.commercial + this.capacity.industrial + this.capacity.office;
+    const labour = e.populationF * TUNING.labourShare;
+    const employed = Math.min(labour, (jobsTotal + TUNING.outsideJobs) * TUNING.frictional);
+    const fill = jobsTotal > 0 ? Math.min(1, employed / (jobsTotal + TUNING.outsideJobs)) : 0;
+    for (const k of ['commercial', 'industrial', 'office']) this.filled[k] = this.capacity[k] * fill;
+    e.labour = labour;
+    e.employed = employed;
+    e.unemployment = labour > 1 ? 1 - employed / labour : 0;
+    e.jobOpenings = Math.max(0, (jobsTotal + TUNING.outsideJobs) * TUNING.frictional - employed);
+    e.jobs = Math.round(jobsTotal);
+    e.housingVacancy = Math.max(0, this.capacity.residential - e.populationF);
     this._milestones(e);
     this._refreshEnvironment(s.econ.refreshHappiness ?? e.happiness);
     e.pollutionExposure = s.econ.pollutionExposure || 0;

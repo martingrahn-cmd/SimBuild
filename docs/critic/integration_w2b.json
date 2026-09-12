@@ -1,0 +1,131 @@
+{
+  "summary": "Wave2b integration complete as a correctness handoff, not a visual/performance pass. Applied25files after116guards and external backups. All8 final captures ready/errors0; services7.0 and infoviews6.4 remainFAIL. Ordinary UI earned city reached404residents with functioning service consequences and durable saves. Wave3 remains required.",
+  "coreChanges": [
+    "IndexedDB atomic slot payload+metadata with legacy migration, concurrent-tab winner protection, commit-based UI success and async save/remove contracts.",
+    "Validated simulation restore, explicit restore boundaries and old-world history invalidation; exact service finance and identity inverses.",
+    "Common oriented service footprint cache, native terrain displaySurface and infoview cloned display geometry/reflection invalidation.",
+    "Catalog daily upkeep and saved managed-services latch, simulation-owned growth, native input/selection and live finance/service HUD.",
+    "ARCHITECTURE public contracts and docs/RECOVERY.md with exact rollback plan and real404-city save export."
+  ],
+  "coreRequestsRejected": [
+    "Deferred native building RGBA film and exact road relief; current proxy bypass remains until complete native support.",
+    "Deferred effects world-only desaturation and safe opaque depth; no global veil, private feedback loop or lighting retune.",
+    "Deferred lane/deck profiles and curved-edge split; highest road surface is not lane identity.",
+    "Rejected invented coverage gradients, fake occupancy/histogram normalization and a superficial traffic-managed bus wrapper."
+  ],
+  "seamsFixed": [
+    "Production finance18, mixed8actions+8undo+8redo and identity24 pass; exact cash/roads/zones/services/all263169heights survive actual awaited save/load.",
+    "Populated services stage:22facilities/160buildings/3434automaticprops, zero centers inside oriented facility pads; manualbench survives, routine load event emits0props changes and retains object identities.",
+    "Sole producer deletion+110ticks power0; managedempty save/load over supplied outgoing stock restores0facilities/power0.",
+    "Production storage4slots16,402,716characters survives fullChrome restart byte-for-byte; actual load302residents identical, nativeunlocks work, failed replacement retainsoldsave.",
+    "Native display topology matches owner through camera and terrain edit; max7combinedownedcalls/254250triangles including fallback. Off0calls, fallbacksecondary3zero-primitivecalls.",
+    "Core world references preserved, only environment lights, composer installed,720/1080physicalresize exact. Native idle selection, modal/shift/focus/history6checks pass.",
+    "Organic city402 loaded through production menu, clinic12000+landfill11000 placed by ordinarybuttons/canvas. After12real seconds4x:404people,power/water/garbage1,health.06149,net\u22123837/day; realautosave and manualsave succeed."
+  ],
+  "crossCuttingOpen": [
+    "Whole all-mode still bare because democity/transit are stubs; this is not a whole-game aesthetic pass.",
+    "1080p all-mode measurements48.9/47.4/40.7/42.2fps miss50target. Retained without selecting best reruns; whole-game profiling remains.720p59.9/60.1; moduleaerial60.4/60.1.",
+    "Final independent services7.0/infoviews6.4 remainFAIL; procedural materials, nightalias/depth/CPU stalls, pollution parity and weak building films remain.",
+    "New-player economics remain unbalanced/untuned;404city has ongoing deficit, partialhealth and no late-game sustainability proof.",
+    "Ambient road traffic is not a resident-trip simulation; street lamps do not visibly respond to electricity shortage. Whole-world module restore remains non-atomic."
+  ],
+  "errorsRemaining": [],
+  "drawCalls": 38,
+  "evidence": {
+    "viewed": [
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_all_aerial_12.png",
+        "fps": 48.9,
+        "drawCalls": 32,
+        "triangles": 163894,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "Bare terrain and mirrored river; HUD fits. Democity remains stub."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_all_skyline_22.png",
+        "fps": 47.4,
+        "drawCalls": 37,
+        "triangles": 458794,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "Bright blue night sky and dark terrain; no authored city yet."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_all_street_17p5.png",
+        "fps": 40.7,
+        "drawCalls": 38,
+        "triangles": 998686,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "Coarse foreground tufts and washed warm horizon remain."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_all_closeup_6p5.png",
+        "fps": 42.2,
+        "drawCalls": 38,
+        "triangles": 995022,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "Repeated ground pattern and shoreline steps remain."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_services_aerial_12.png",
+        "fps": 60.4,
+        "drawCalls": 175,
+        "triangles": 1101137,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "Distinct service pads and civic silhouettes, sparse repeated residential grid; no automatic trees in owned pads."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_infoviews_aerial_12.png",
+        "fps": 60.1,
+        "drawCalls": 155,
+        "triangles": 633574,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "Native display film now follows hillsides; opaque color, broad street films and weak building contrast remain."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_all_aerial_12_720.png",
+        "fps": 59.9,
+        "drawCalls": 32,
+        "triangles": 163894,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "720p HUD fits; no city staging yet."
+      },
+      {
+        "png": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-final-matrix/w2b_all_street_22_720.png",
+        "fps": 60.1,
+        "drawCalls": 38,
+        "triangles": 998686,
+        "errors": [],
+        "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "note": "720p HUD fits; night ground remains difficult to read."
+      }
+    ],
+    "allMaxDraws": 38,
+    "maxDraws": 175,
+    "maxTriangles": 1101137,
+    "minFps": 40.7,
+    "root": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration",
+    "productionRegression": "w2b-production-regression/summary.json",
+    "storage": "production-save-verification/result.json",
+    "surface": "terrain-surface-production/supplement-fixes.json",
+    "core": "core-w2b.json",
+    "native": "native-selection-production/result.json",
+    "ordinaryPlay": "gameplay-live-production/003.result.json"
+  },
+  "backup": {
+    "plan": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w2b-candidate/apply-tool/transactions/2026-09-08T07-05-57.948Z-903b261f-b890-4cac-869c-64763cf53998",
+    "manifestSHA256": "5c6594dd1d6a431bbef3c6821c124d6897d8a91079da5323838accae2379e44a"
+  },
+  "build": {
+    "pass": true,
+    "modules": 156,
+    "elapsedMs": 436
+  },
+  "visualScoresRevised": false
+}

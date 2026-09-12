@@ -438,9 +438,9 @@ const TIERS = [0.26, 0.52, 0.86, 1.30];
 function setWin(mb, tab, hx, hy, coolT, bias, record) {
   const h = ih(hx, hy);
   const r = tab[h % tab.length];
-  const t = tab[(h >> 7) % tab.length];
-  const c = tab[(h >> 14) % tab.length];
-  const tier = TIERS[(h >> 21) & 3] * (0.85 + 0.3 * t);
+  const t = tab[(h >>> 7) % tab.length];
+  const c = tab[(h >>> 14) % tab.length];
+  const tier = TIERS[(h >>> 21) & 3] * (0.85 + 0.3 * t);
   const cool = c > coolT ? 1 : 0;
   mb.winState(r, tier, cool, bias);
   if (record && mb.cells) mb.cells.push(r, tier, cool, bias);
@@ -482,21 +482,32 @@ function walls(mb, A, o) {
   const edges = edgesOf(poly, o.faces);
   if (!edges.length) return;
 
-  if (!near) {
-    // LOD1: a coarse quad grid on the row tile — same colour, same silhouette, no relief, and still
-    // one baked window state per quad so a far city lights up in blocks rather than as flat slabs.
-    const row = A.rect(`${o.facade}_row`);
-    const H = yTop - o.y0;
+  if (o.lod === 2) {
+    // Shadow-only silhouette: coplanar window cells cannot change the depth map.
+    // Setbacks are separate wall calls; roofs, crowns and equipment still keep their outlines.
+    mb.noWin();
     for (const e of edges) {
-      const bays = clamp(Math.round(e.L / o.bayW), 1, 26);
-      const nu = Math.max(1, Math.ceil(bays / 3)), nv = Math.max(1, Math.min(10, Math.ceil(st.length / 2)));
-      const du = e.L / nu, dv = H / nv;
-      for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) {
-        setWin(mb, tab, o.wsx + e.i * 31 + i, o.wsy + j, coolT, bias, false);
-        const x0 = e.a[0] + e.ux * du * i, z0 = e.a[1] + e.uz * du * i;
-        const x1 = e.a[0] + e.ux * du * (i + 1), z1 = e.a[1] + e.uz * du * (i + 1);
-        const y0 = o.y0 + dv * j, y1 = o.y0 + dv * (j + 1);
-        mb.quad([x0, y0, z0], [x1, y0, z1], [x1, y1, z1], [x0, y1, z0], row);
+      const a = e.a, b = [a[0] + e.ux * e.L, a[1] + e.uz * e.L];
+      mb.quad([a[0], o.y0, a[1]], [b[0], o.y0, b[1]],
+        [b[0], yTop, b[1]], [a[0], yTop, a[1]], A.rect('wall_concrete'));
+    }
+    return;
+  }
+
+  if (!near) {
+    // One quad per actual bay and storey: retain the LOD0 atlas frequency and baked state.
+    // Only the projecting relief is removed at distance.
+    for (let j = 0; j < st.length; j++) {
+      const S = st[j];
+      const tv = ['a', 'b', 'c'].map(v => A.rect(`${S.facade}_${v}`));
+      for (const e of edges) {
+        const bays = clamp(Math.round(e.L / S.bayW), 1, 26), du = e.L / bays;
+        for (let i = 0; i < bays; i++) {
+          const hv = ih(o.wsx + e.i * 17 + i, o.wsy + j * 5);
+          setWin(mb, tab, o.wsx + e.i * 31 + i, o.wsy + j, coolT, bias, false);
+          const P = (k, y) => [e.a[0] + e.ux * du * k, y, e.a[1] + e.uz * du * k];
+          mb.quad(P(i, S.y), P(i + 1, S.y), P(i + 1, S.y + S.h), P(i, S.y + S.h), tv[hv % 3]);
+        }
       }
     }
     mb.noWin();
@@ -509,12 +520,8 @@ function walls(mb, A, o) {
   const budget = o.fullBudget ?? FULL_CELL_BUDGET;
   const sFull = clamp(Math.floor(budget / Math.max(1, perStorey)), 1, st.length);
 
-  const coarseFrom = 8;
   for (let s = 0; s < st.length; s++) {
-    if (s >= coarseFrom && (s - coarseFrom) % 2 === 1) continue;
     const S = st[s];
-    const merged = s >= coarseFrom && s + 1 < st.length ? 2 : 1;
-    S.h = (S.h0 ?? (S.h0 = S.h)) * merged;
     const full = s < sFull;
     const g = facadeGeom(S.facade);
     const tv = [A.rect(`${S.facade}_a`), A.rect(`${S.facade}_b`), A.rect(`${S.facade}_c`)];
@@ -537,6 +544,7 @@ function walls(mb, A, o) {
         const wy1 = S.y + S.h * (1 - g.y);
         const wy0 = S.y + S.h * (1 - g.y - g.h);
         const su = [g.x, 1 - g.y - g.h, g.x + g.w, 1 - g.y];
+        mb.measureDepth("reveal", P(wx0, wy0, -rev), P(wx0, wy0, 0));
         // recessed glazing
         mb.quad(P(wx0, wy0, -rev), P(wx1, wy0, -rev), P(wx1, wy1, -rev), P(wx0, wy1, -rev), tile, su);
         mb.noWin();
@@ -575,6 +583,9 @@ function walls(mb, A, o) {
     }
   }
 
+  // A top-storey lintel also gives single-storey houses and sheds a built material transition.
+  if (o.bands === false || st.length === 1) bandRing(mb, A.rect(o.bandTile || "wall_concrete"), edges, yTop - 0.2, 0.2, BAND);
+
   // projecting floor bands: a shadow line under every storey (cs2_1)
   if (o.bands !== false) {
     const bt = A.rect(o.bandTile || 'wall_concrete');
@@ -588,6 +599,7 @@ function walls(mb, A, o) {
 function bandRing(mb, tile, edges, y, h, out) {
   for (const e of edges) {
     const P = (t, yy, off) => [e.a[0] + e.ux * t + e.nx * off, yy, e.a[1] + e.uz * t + e.nz * off];
+    mb.measureDepth("band", P(0, y, out), P(0, y, 0));
     const n = clamp(Math.round(e.L / 26), 1, 2);
     for (let i = 0; i < n; i++) {
       const a = (i / n) * e.L, b = ((i + 1) / n) * e.L;
@@ -617,6 +629,7 @@ function parapet(mb, A, poly, yTop, h, outTile, capTile) {
       const a = (i / n) * e.L, b = ((i + 1) / n) * e.L;
       mb.quad(P(a, yTop, 0), P(b, yTop, 0), P(b, yTop + h, 0), P(a, yTop + h, 0), outTile);           // outer
       mb.quad(P(b, yTop, -t), P(a, yTop, -t), P(a, yTop + h, -t), P(b, yTop + h, -t), outTile);       // inner
+      mb.measureDepth("cornice", P(a, yTop + h, CORNICE), P(a, yTop + h, 0));
       // coping cap: overhangs CORNICE outside and t inside, with a visible cap thickness
       const cy = yTop + h;
       mb.quad(P(a, cy, CORNICE), P(b, cy, CORNICE), P(b, cy + 0.14, CORNICE), P(a, cy + 0.14, CORNICE), capTile);
@@ -650,13 +663,16 @@ const CLUTTER_KINDS = ['hvac', 'tank', 'bulkhead', 'vent', 'monitor', 'solar', '
 function roofClutter(mb, A, p, o) {
   const near = o.lod === 0;
   const list = o.clutterList || p.clutterList || [];
-  if (!list.length) return;
+  // LOD1 keeps the planned roof slab, parapet and crown silhouette, but not
+  // sub-metre mechanical clutter.  The existing near flag was unused here,
+  // leaving small equipment on every distant chunk despite the LOD contract.
+  if (!near || !list.length) return;
   const R = p.clutterR || p.r;
   const metal = A.rect('metal_light'), dark = A.rect('metal_dark'), ribbed = A.rect('metal_ribbed');
   const hw = o.w / 2 - 1.8, hd = o.d / 2 - 1.8;
   let k = 0;
   const rr = () => R[(k++) % R.length];
-  const n = near ? list.length : Math.min(list.length, 1);
+  const n = list.length;
   for (let i = 0; i < n; i++) {
     const [kind, tier] = list[i];
     const sc = 0.7 + tier * 0.42;
@@ -724,6 +740,7 @@ function pitchedRoof(mb, A, o) {
   const swap = !!o.ridgeAcross;
   const W = (swap ? o.d : o.w) + oh * 2, D = (swap ? o.w : o.d) + oh * 2;
   const hw = W / 2, hd = D / 2;
+  mb.measureDepth("cornice", [hw, 0, 0], [hw - oh, 0, 0]);
   const ye = o.y;
   const rise = o.pitch * Math.min(W, D) * 0.5;
   const yr = ye + rise;
@@ -821,7 +838,7 @@ function retailBase(mb, A, p, o) {
     // illuminated fascia sign band running the frontage
     const fy = y0 + gh - 1.08;
     mb.winState(0.985, 1.0, 0, 1.0);
-    mb.quad(P(0.1, fy, 0.30), P(e.L - 0.1, fy, 0.30), P(e.L - 0.1, fy + 0.82, 0.30), P(0.1, fy + 0.82, 0.30), sign);
+    mb.quad(P(0.1, fy, 0.30), P(e.L - 0.1, fy, 0.30), P(e.L - 0.1, fy + 0.82, 0.30), P(0.1, fy + 0.82, 0.30), sign, null, true);
     mb.noWin();
     mb.quad(P(0.1, fy, 0.30), P(e.L - 0.1, fy, 0.30), P(e.L - 0.1, fy, -0.01), P(0.1, fy, -0.01), dark);
     mb.quad(P(0.1, fy + 0.82, -0.01), P(e.L - 0.1, fy + 0.82, -0.01), P(e.L - 0.1, fy + 0.82, 0.30), P(0.1, fy + 0.82, 0.30), dark);
@@ -832,8 +849,8 @@ function retailBase(mb, A, p, o) {
     const P = (t, y, off) => [e.a[0] + e.ux * t + e.nx * off, y, e.a[1] + e.uz * t + e.nz * off];
     const t = e.L * 0.22, by = y0 + gh - 3.2;
     mb.winState(0.985, 1.1, 1, 1.0);
-    mb.quad(P(t, by, 0.32), P(t, by, 1.7), P(t, by + 1.8, 1.7), P(t, by + 1.8, 0.32), sign);
-    mb.quad(P(t + 0.12, by, 1.7), P(t + 0.12, by, 0.32), P(t + 0.12, by + 1.8, 0.32), P(t + 0.12, by + 1.8, 1.7), sign);
+    mb.quad(P(t, by, 0.32), P(t, by, 1.7), P(t, by + 1.8, 1.7), P(t, by + 1.8, 0.32), sign, null, true);
+    mb.quad(P(t + 0.12, by, 1.7), P(t + 0.12, by, 0.32), P(t + 0.12, by + 1.8, 0.32), P(t + 0.12, by + 1.8, 1.7), sign, null, true);
     mb.noWin();
     mb.colorHex('#9aa0a4');
     mb.quad(P(t, by + 1.8, 0.32), P(t, by + 1.8, 1.7), P(t + 0.12, by + 1.8, 1.7), P(t + 0.12, by + 1.8, 0.32), A.rect('metal_dark'));
@@ -884,9 +901,9 @@ function emitCrown(mb, A, p, poly, yTop, kind, w, d) {
     }
     case 'setback': {
       mb.colorHex('#e6e6e0');
-      mb.box(0, yTop, 0, w * 0.7, 3.4, d * 0.7, { side: conc, top: A.rect('roof_membrane_dark') }, 3);
+      mb.box(0, yTop, 0, w * 0.7, 3.4, d * 0.7, { side: A.rect('metal_ribbed'), top: A.rect('roof_membrane_dark') }, 3);
       mb.colorHex('#d8d8d2');
-      mb.box(0, yTop + 3.4, 0, w * 0.42, 2.6, d * 0.42, { side: conc, top: A.rect('roof_membrane_dark') }, 3);
+      mb.box(0, yTop + 3.4, 0, w * 0.42, 2.6, d * 0.42, { side: A.rect('metal_ribbed'), top: A.rect('roof_membrane_dark') }, 3);
       mb.colorHex('#ffffff');
       break;
     }
@@ -1316,7 +1333,6 @@ function emitInd(mb, A, p, lod) {
     flatRoof(mb, A, p, { poly, w: p.w, d: p.d, y: h, parapetH: p.parapetH, roofTile: p.roofTile, lod, parapetTile: 'wall_metal' });
     emitCrown(mb, A, p, poly, h + p.parapetH, p.crown, p.w, p.d);
   }
-  if (!near) return;
   const dockW = 3.2, dockH = 3.6;
   for (let i = 0; i < p.docks; i++) {
     const cx = (i - (p.docks - 1) / 2) * (p.w / (p.docks + 0.3));
@@ -1343,7 +1359,7 @@ function emitInd(mb, A, p, lod) {
     mb.ox += mb.c * cx + mb.s * cz; mb.oz += mb.s * cx - mb.c * cz;
     mb.colorHex('#e6e2d6');
     mb.baseAO(0, BASE_AO_H, BASE_AO_K);
-    walls(mb, A, { w: ow, d: od, y0: 0, floors: 1, floorH: oh, bayW: 3.2, facade: 'comm_upper', wsx: p.wsx + 401, wsy: p.wsy + 9, lod: 0, wtab: p.wtab, bias: p.bias, coolT: p.coolT, bands: false, fullBudget: 400 });
+    walls(mb, A, { w: ow, d: od, y0: 0, floors: 1, floorH: oh, bayW: 3.2, facade: 'comm_upper', wsx: p.wsx + 401, wsy: p.wsy + 9, lod, wtab: p.wtab, bias: p.bias, coolT: p.coolT, bands: false, fullBudget: 400 });
     mb.clearAO();
     mb.colorHex('#ffffff');
     roofDeck(mb, A.rect('roof_membrane'), rectOutline(ow, od), oh);
@@ -1461,8 +1477,8 @@ export function emitGround(mb, A, p, lot, h, lod) {
     paved.push({ x: dx, z: (zFront + p.d / 2) / 2, w: dw, d: Math.abs(zFront - p.d / 2) + 1, heading: 0 });
     strip(mb, A, h, p.w * 0.18, zFront - 0.2, p.w * 0.18, p.d / 2 - 0.2, 1.3, 'paving');
     paved.push({ x: p.w * 0.18, z: (zFront + p.d / 2) / 2, w: 1.3, d: Math.abs(zFront - p.d / 2), heading: 0 });
-    if (p.hedge) hedgeRun(mb, A, h, hw, zFront, zBack, 0.9);
-    else if (p.fence) fenceRun(mb, A, h, hw, zFront, zBack, false);
+    if (p.hedge) hedgeRun(mb, A, h, hw, zFront, zBack, 0.9, dx, dw);
+    else if (p.fence) fenceRun(mb, A, h, hw, zFront, zBack, false, kind === "house" ? (p.garage ? p.garageSide * (p.w / 2 + p.garageW / 2 + 0.15) : p.w * 0.2) : 0, kind === "town" ? fw : (p.garage ? p.garageW : 3));
     if (p.deck && near) {
       mb.colorHex('#b8926c');
       const px = -p.w * 0.2, pz = -p.d / 2 - 2.2;
@@ -1474,8 +1490,8 @@ export function emitGround(mb, A, p, lot, h, lod) {
     const fw = Math.min(lw * 0.7, p.w * 0.85);
     strip(mb, A, h, 0, zFront + 0.5, 0, p.d / 2 - 0.4, fw, 'concrete_slab');
     paved.push({ x: 0, z: (zFront + p.d / 2) / 2, w: fw, d: Math.abs(zFront - p.d / 2) + 1, heading: 0 });
-    if (p.hedge) hedgeRun(mb, A, h, hw, zFront, zBack, 0.75);
-    else fenceRun(mb, A, h, hw, zFront, zBack, false);
+    if (p.hedge) hedgeRun(mb, A, h, hw, zFront, zBack, 0.75, 0, fw);
+    else fenceRun(mb, A, h, hw, zFront, zBack, false, kind === "house" ? (p.garage ? p.garageSide * (p.w / 2 + p.garageW / 2 + 0.15) : p.w * 0.2) : 0, kind === "town" ? fw : (p.garage ? p.garageW : 3));
   } else if (kind === 'ind') {
     const aw = Math.min(lw * 0.9, p.w + 6);
     strip(mb, A, h, 0, zFront + 0.5, 0, p.d / 2 + 1, aw, 'asphalt');
@@ -1516,7 +1532,7 @@ function strip(mb, A, h, x0, z0, x1, z1, w, tileName) {
   for (let i = 0; i < n; i++) mb.quad(P(i / n, -1), P(i / n, 1), P((i + 1) / n, 1), P((i + 1) / n, -1), tile);
 }
 
-function hedgeRun(mb, A, h, hw, zFront, zBack, height) {
+function hedgeRun(mb, A, h, hw, zFront, zBack, height, gateX = 0, gateW = 3) {
   const tile = A.rect('hedge');
   mb.colorHex('#ffffff');
   const seg = (x0, z0, x1, z1) => {
@@ -1538,9 +1554,14 @@ function hedgeRun(mb, A, h, hw, zFront, zBack, height) {
   seg(-hw, zFront - 1.5, -hw, zBack);
   seg(hw, zBack, hw, zFront - 1.5);
   seg(-hw, zBack, hw, zBack);
+  // A single frontage boundary, interrupted only by the driveway and pedestrian entrance.
+  const left = clamp(Math.min(gateX - gateW / 2 - 0.6, -1), -hw, hw);
+  const right = clamp(Math.max(gateX + gateW / 2 + 0.6, 1), -hw, hw);
+  if (left + hw > 0.4) seg(-hw, zFront - 1.5, left, zFront - 1.5);
+  if (hw - right > 0.4) seg(right, zFront - 1.5, hw, zFront - 1.5);
 }
 
-function fenceRun(mb, A, h, hw, zFront, zBack, industrial) {
+function fenceRun(mb, A, h, hw, zFront, zBack, industrial, gateX = 0, gateW = 3) {
   const tile = A.rect(industrial ? 'metal_dark' : 'trim_white');
   const height = industrial ? 2.2 : 1.25;
   mb.colorHex(industrial ? '#9aa0a4' : '#efece3');
@@ -1558,6 +1579,11 @@ function fenceRun(mb, A, h, hw, zFront, zBack, industrial) {
   seg(-hw, zFront - 1.5, -hw, zBack);
   seg(hw, zBack, hw, zFront - 1.5);
   seg(-hw, zBack, hw, zBack);
+  // A single frontage boundary, interrupted only by the driveway and pedestrian entrance.
+  const left = clamp(Math.min(gateX - gateW / 2 - 0.6, -1), -hw, hw);
+  const right = clamp(Math.max(gateX + gateW / 2 + 0.6, 1), -hw, hw);
+  if (left + hw > 0.4) seg(-hw, zFront - 1.5, left, zFront - 1.5);
+  if (hw - right > 0.4) seg(right, zFront - 1.5, hw, zFront - 1.5);
   mb.colorHex('#ffffff');
 }
 

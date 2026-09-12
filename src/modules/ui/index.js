@@ -27,18 +27,19 @@ export default {
       ev.on('sim:loan', (p) => hud.notify({ type: 'money', title: p?.type === 'loan_paid' ? 'Loan repaid' : 'Loan taken', body: p?.amount ? `¢${Math.round(p.amount).toLocaleString('en-US')}` : '', ttl: 6 }), own),
       ev.on('weather:changed', () => { hud._wKind = -1; }, own),
       ev.on('transit:changed', () => hud.onTransitChanged(), own),
-      ev.on('save:saved', (p) => { hud.menus.refresh(); if (p?.slot === 'auto') hud.notify({ type: 'info', title: 'Autosaved', body: `Day ${ctx.clock.day} · ${hud.dateString()}`, ttl: 4 }); }, own),
-      ev.on('save:loaded', () => { hud.notify({ type: 'success', title: 'Game loaded', body: `${hud.cityName} · day ${ctx.clock.day}`, ttl: 6 }); hud.hideInfo(); hud.minimap.setSample(null); }, own),
+      ev.on('save:saved', (p) => { hud.menus.refresh(); hud.notify({ type: p?.slot === 'auto' ? 'info' : 'success', title: p?.slot === 'auto' ? 'Autosaved' : 'Game saved', body: `Day ${ctx.clock.day} · ${hud.dateString()}`, ttl: 5 }); }, own),
+      ev.on('save:failed', (p) => hud.notify({ type: 'error', title: p?.action === 'load' ? 'Could not load game' : p?.action === 'delete' ? 'Could not delete save' : p?.action === 'migration' ? 'Existing save kept in legacy storage' : p?.action === 'storage' ? 'Save storage unavailable' : 'Could not save game', body: String(p?.error || 'Storage unavailable'), ttl: 10 }), own),
+      ev.on('save:loaded', () => { hud.notify({ type: 'success', title: 'Game loaded', body: `${hud.cityName} · day ${ctx.clock.day}`, ttl: 6 }); hud.hideInfo(); hud.setSource({}); hud.minimap.setSample(null); }, own),
       ev.on('module:error', (p) => {
         if (p?.module === 'ui') return;
         hud.notify({ type: 'error', title: `Module "${p?.module}" ${p?.phase || ''} error`, body: String(p?.error?.message || p?.error || 'unknown error').slice(0, 140), ttl: 12 });
       }, own),
-      ev.on('time:day', ({ day }) => hud.notify({ type: 'info', title: 'New month', body: `${hud.dateString()} begins. Monthly budget applied.`, ttl: 6 }), own),
+      ev.on('time:day', ({ day }) => hud.notify({ type: 'info', title: 'New month', body: `${hud.dateString()} begins. The budget continues to accrue throughout this period.`, ttl: 6 }), own),
       ev.on('app:ready', () => {
         if (S.staged || ctx.headless) return;
         const showcase = ctx.world.flags.showcase;
         if (!showcase || showcase === 'democity' || showcase === 'all') hud.menus.open('main', { boot: true });
-        hud.notify({ type: 'info', title: `Welcome to ${hud.cityName}`, body: 'Use the toolbar to build roads and zone land. Right-drag to orbit, wheel to zoom, Esc for the menu.', ttl: 12 });
+        hud.notify({ type: 'info', title: `Welcome to ${hud.cityName}`, body: 'Power, water/sewage and waste start as paid outside imports. Their facilities are available now. Build roads, then paint zones beside them.', ttl: 14 });
       }, own),
     );
   },
@@ -69,6 +70,7 @@ export default {
     setInfoview: (name) => S.hud?.setInfoview(name),
     showLines: (id) => S.hud?.showLines(id),
     toast: (t) => S.hud?.toast(t),
+    dismissTransientNotifications: () => S.hud?.dismissTransientNotifications() ?? 0,
     serialize() { return { cityName: S.hud?.cityName || 'New Dollarton', infoview: S.hud?.infoview || null, minimap: !S.hud?.minimap.collapsed }; },
     deserialize(d) { if (!S.hud || !d) return; if (d.cityName) { S.hud.cityName = d.cityName; S.hud.cityEl.textContent = d.cityName; } if (d.minimap === false) S.hud.minimap.toggle(false); },
     get hud() { return S.hud; },

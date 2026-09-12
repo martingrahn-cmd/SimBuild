@@ -1,0 +1,34 @@
+{
+  "module": "democity",
+  "round": "5f",
+  "score": 6.0,
+  "pass": false,
+  "decision": "hold",
+  "change": "Props self-cull only during the planar-water reflection through the water:reflection owner event.",
+  "reflectionAttribution": {
+    "path": "shots/democity/r5e/reflection-profile.json",
+    "baseline": { "drawCalls": 148, "triangles": 1465999 },
+    "propsRemoved": { "drawCalls": 40, "triangles": 853376 },
+    "preserved": ["terrain proxies", "roads", "buildings", "services", "traffic", "transit"]
+  },
+  "standardMatrix": {
+    "path": "shots/democity/r5f/summary.json",
+    "shots": 16,
+    "errors": 0,
+    "maxDrawCalls": 915,
+    "maxTriangles": 3943946,
+    "minFps": 31.3,
+    "measurement": "peak over every rendered frame, including periodic planar reflection"
+  },
+  "contract": {
+    "path": "shots/democity/r5f/apicheck.json",
+    "apiMethods": 13,
+    "deserialize": [true, true],
+    "tourStops": 8,
+    "invalidTour": false,
+    "errors": 0,
+    "browserErrors": 0,
+    "heapMB": { "primary": 852, "seed7Restage": 1064.6 }
+  },
+  "remainingGateFailures": ["3M triangle target", "50 fps target", "512 MB heap target", "golden-hour wash", "city scale and variation", "seating/bridge and cross-seed lifecycle"]
+}

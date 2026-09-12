@@ -1,0 +1,442 @@
+{
+  "module": "democity",
+  "round": "r8v",
+  "reviewType": "Independent zoning lot-membership correctness delta",
+  "decision": "ACCEPT",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "rank1Status": "OPEN",
+  "sourceHashes": {
+    "src/modules/zoning/grid.js": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+    "shots/democity/r8v-lot-membership/source/pre/grid.js": "7e027c0fb9cb1ebb9b77cf10b5f77126e59f1615589e0ca0464f7855ab609eab",
+    "shots/democity/r8v-lot-membership/source/candidate/grid.js": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+    "tools/lot-membership-contract-probe.mjs": "ce2732b3f66619f92c5305721040ab53f93fc9ff7ef6205da001112f99ce8b32",
+    "tools/lot-membership-visual.mjs": "b12ca831db325be52468c3c23e3783bb9d7fe80f8098352f2370a1b760e68fb4"
+  },
+  "sourceScope": "Exactly three grid.js hunks: original-front identity anchor, post-all-claims stable dedupe by final claimed owner, key lookup fallback. No lot generator geometry, sampling/order, economy/RNG/save schema change.",
+  "contracts": [
+    {
+      "seed": 1337,
+      "counts": {
+        "cells": 9964,
+        "lots": 612,
+        "buildings": 612
+      },
+      "crossBranchChecksIndependentlyRecomputed": {
+        "counts": true,
+        "invariantLots": true,
+        "claimedRows": true,
+        "publicOwners": true,
+        "zoningSave": true,
+        "buildings": true,
+        "simulation": true,
+        "roads": true,
+        "economyExceptNet": true
+      },
+      "allFiveSnapshotsPerBranchStableProjectionVerified": true,
+      "snapshotsPerBranch": 5,
+      "refreshesPerBranch": 2,
+      "restoresPerBranch": 2,
+      "restoreResults": [
+        {
+          "completed": true,
+          "returned": null
+        },
+        {
+          "completed": true,
+          "returned": null
+        }
+      ],
+      "changedLotIds": [
+        227,
+        235,
+        609,
+        610,
+        612
+      ],
+      "removedReferences": 7,
+      "beforeRawReferences": 4889,
+      "afterRawReferences": 4882,
+      "baselineDuplicates": 5,
+      "candidateDuplicates": 0,
+      "baselineOverlapKeys": 2,
+      "candidateOverlapKeys": 0,
+      "everyCandidateMembershipEqualsBaselineLastOwnerNormalization": true,
+      "publicPicksBeforeAfterEqual": true,
+      "publicPickRecordsPerSnapshot": 9964,
+      "allCandidateInitialPicksRecomputedFromGeometry": true,
+      "geometricFallbackOnUnclaimedCells": 580,
+      "claimedCellPickExceptionsUnchanged": [
+        {
+          "key": "166,89",
+          "claimedId": 611,
+          "pickedId": null
+        }
+      ],
+      "retainedBelowNominalUniqueAreaLots": [
+        {
+          "id": 227,
+          "uniqueCells": 5,
+          "width": 16,
+          "depth": 24
+        }
+      ],
+      "allCurrentFirstKeysEqualIdentityAnchor": true,
+      "netBeforeRestore": 10098.974266367346,
+      "netAfterRestore": 0,
+      "serializedSimulationExact": true,
+      "candidateReplay": {
+        "orderedEdges": 569,
+        "runSummary": {
+          "runs": 730,
+          "eligibleSlots": 2048,
+          "shortRunSlots": 419,
+          "remainderSlots": 640,
+          "nullSlots": 3718,
+          "shallowSlots": 1578
+        },
+        "calculatedLots": 612,
+        "membershipSummary": {
+          "lots": 612,
+          "rawCellReferences": 4882,
+          "uniqueCellReferences": 4882,
+          "duplicateCellsWithinLots": 0,
+          "mixedOwnerCells": 1360,
+          "mixedSideCells": 753,
+          "classMismatchCells": 0,
+          "beyondPreferredCells": 0,
+          "lotsBelowMinUniqueArea": 1,
+          "overlapCellsAcrossLots": 0
+        },
+        "errors": [],
+        "browserErrors": []
+      }
+    },
+    {
+      "seed": 7,
+      "counts": {
+        "cells": 10113,
+        "lots": 648,
+        "buildings": 648
+      },
+      "crossBranchChecksIndependentlyRecomputed": {
+        "counts": true,
+        "invariantLots": true,
+        "claimedRows": true,
+        "publicOwners": true,
+        "zoningSave": true,
+        "buildings": true,
+        "simulation": true,
+        "roads": true,
+        "economyExceptNet": true
+      },
+      "allFiveSnapshotsPerBranchStableProjectionVerified": true,
+      "snapshotsPerBranch": 5,
+      "refreshesPerBranch": 2,
+      "restoresPerBranch": 2,
+      "restoreResults": [
+        {
+          "completed": true,
+          "returned": null
+        },
+        {
+          "completed": true,
+          "returned": null
+        }
+      ],
+      "changedLotIds": [
+        63,
+        200,
+        379,
+        643,
+        647,
+        648
+      ],
+      "removedReferences": 8,
+      "beforeRawReferences": 5184,
+      "afterRawReferences": 5176,
+      "baselineDuplicates": 6,
+      "candidateDuplicates": 0,
+      "baselineOverlapKeys": 2,
+      "candidateOverlapKeys": 0,
+      "everyCandidateMembershipEqualsBaselineLastOwnerNormalization": true,
+      "publicPicksBeforeAfterEqual": true,
+      "publicPickRecordsPerSnapshot": 10113,
+      "allCandidateInitialPicksRecomputedFromGeometry": true,
+      "geometricFallbackOnUnclaimedCells": 535,
+      "claimedCellPickExceptionsUnchanged": [
+        {
+          "key": "109,85",
+          "claimedId": 647,
+          "pickedId": null
+        }
+      ],
+      "retainedBelowNominalUniqueAreaLots": [
+        {
+          "id": 200,
+          "uniqueCells": 5,
+          "width": 16,
+          "depth": 24
+        }
+      ],
+      "allCurrentFirstKeysEqualIdentityAnchor": true,
+      "netBeforeRestore": 9653.137185274896,
+      "netAfterRestore": 0,
+      "serializedSimulationExact": true,
+      "candidateReplay": {
+        "orderedEdges": 611,
+        "runSummary": {
+          "runs": 717,
+          "eligibleSlots": 2116,
+          "shortRunSlots": 394,
+          "remainderSlots": 611,
+          "nullSlots": 4073,
+          "shallowSlots": 1663
+        },
+        "calculatedLots": 648,
+        "membershipSummary": {
+          "lots": 648,
+          "rawCellReferences": 5176,
+          "uniqueCellReferences": 5176,
+          "duplicateCellsWithinLots": 0,
+          "mixedOwnerCells": 1495,
+          "mixedSideCells": 772,
+          "classMismatchCells": 0,
+          "beyondPreferredCells": 0,
+          "lotsBelowMinUniqueArea": 1,
+          "overlapCellsAcrossLots": 0
+        },
+        "errors": [],
+        "browserErrors": []
+      }
+    }
+  ],
+  "visuals": [
+    {
+      "name": "seed1337-edge444",
+      "originalsIndividuallyViewed": true,
+      "changedPixels": 0,
+      "changedPercent": 0.0,
+      "rmseRGB255": 0.0,
+      "rmseNormalized": 0.0,
+      "maxChannelDelta": 0.0,
+      "fiveMeshGeometryRecordsEqual": true,
+      "renderCountsEqual": true,
+      "baselineCounters": {
+        "drawCalls": 131,
+        "triangles": 877890,
+        "fps": 53.1,
+        "heapMB": 508
+      },
+      "candidateCounters": {
+        "drawCalls": 131,
+        "triangles": 877890,
+        "fps": 53.1,
+        "heapMB": 470.5
+      },
+      "errors": [],
+      "browserErrors": []
+    },
+    {
+      "name": "seed7-edge443",
+      "originalsIndividuallyViewed": true,
+      "changedPixels": 31420,
+      "changedPercent": 3.4092881944444446,
+      "rmseRGB255": 0.15003495927492908,
+      "rmseNormalized": 0.0005883723893134473,
+      "maxChannelDelta": 67.0,
+      "fiveMeshGeometryRecordsEqual": true,
+      "renderCountsEqual": true,
+      "baselineCounters": {
+        "drawCalls": 160,
+        "triangles": 1125861,
+        "fps": 54.1,
+        "heapMB": 723.5
+      },
+      "candidateCounters": {
+        "drawCalls": 160,
+        "triangles": 1125861,
+        "fps": 10.3,
+        "heapMB": 667.5
+      },
+      "errors": [],
+      "browserErrors": []
+    },
+    {
+      "name": "seed7-edge685",
+      "originalsIndividuallyViewed": true,
+      "changedPixels": 13761,
+      "changedPercent": 1.4931640625,
+      "rmseRGB255": 0.08826550068464525,
+      "rmseNormalized": 0.0003461392183711579,
+      "maxChannelDelta": 40.0,
+      "fiveMeshGeometryRecordsEqual": true,
+      "renderCountsEqual": true,
+      "baselineCounters": {
+        "drawCalls": 73,
+        "triangles": 558599,
+        "fps": 51.2,
+        "heapMB": 670.2
+      },
+      "candidateCounters": {
+        "drawCalls": 73,
+        "triangles": 558599,
+        "fps": 8.5,
+        "heapMB": 591.7
+      },
+      "errors": [],
+      "browserErrors": []
+    }
+  ],
+  "smoke": {
+    "ok": true,
+    "fps": 11,
+    "drawCalls": 430,
+    "triangles": 2062014,
+    "heapMB": 571.2,
+    "errors": [],
+    "warnings": [
+      "[props] no roads yet: road furniture deferred until roads:changed",
+      "[democity] No valid reserved university site"
+    ]
+  },
+  "smokeAll16ModulesReady": true,
+  "mixedUse": {
+    "count": 32,
+    "allThreeRecordsEqual": true,
+    "errors": [],
+    "browserErrors": []
+  },
+  "restage": {
+    "seedSequence": [
+      1337,
+      7,
+      1337,
+      7
+    ],
+    "bothDigestComparisonsIndependentlyVerified": true,
+    "digestScope": [
+      "building id/xyz/level/type",
+      "service id/kind/xyz",
+      "democity plan transit"
+    ],
+    "rawHeapMB": [
+      584.9,
+      877.1,
+      655.7,
+      923.4
+    ],
+    "errors": [],
+    "browserErrors": []
+  },
+  "inspectionRegister": {
+    "originalsIndividuallyViewed": [
+      "shots/democity/r8v-lot-membership/smoke.png",
+      "shots/democity/r8v-lot-membership/baseline-visual/seed1337-edge444.png",
+      "shots/democity/r8v-lot-membership/baseline-visual/seed7-edge443.png",
+      "shots/democity/r8v-lot-membership/baseline-visual/seed7-edge685.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed1337-edge444.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed7-edge443.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed7-edge685.png"
+    ],
+    "derivedViewed": [
+      "shots/democity/r8v-lot-membership/candidate-visual/montage.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed1337-edge444-strip.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed1337-edge444-diff.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed7-edge443-strip.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed7-edge443-diff.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed7-edge685-strip.png",
+      "shots/democity/r8v-lot-membership/candidate-visual/seed7-edge685-diff.png"
+    ],
+    "jsonEvidenceRead": [
+      "shots/democity/r8v-lot-membership/baseline-contracts.json",
+      "shots/democity/r8v-lot-membership/slot-order-candidate.json",
+      "shots/democity/r8v-lot-membership/visual-compare.json",
+      "shots/democity/r8v-lot-membership/baseline-candidate-compare.json",
+      "shots/democity/r8v-lot-membership/smoke.json",
+      "shots/democity/r8v-lot-membership/candidate-contracts.json",
+      "shots/democity/r8v-lot-membership/mixed-use.json",
+      "shots/democity/r8v-lot-membership/candidate-visual/summary.json",
+      "shots/democity/r8v-lot-membership/baseline-visual/summary.json",
+      "shots/democity/r8v-lot-membership/restage/restage-cycle.json"
+    ],
+    "sourceRead": [
+      "src/modules/zoning/grid.js",
+      "src/modules/zoning/index.js relevant public/save paths",
+      "src/modules/zoning/palette.js fixed widths/depths",
+      "src/core/save.js restore contract",
+      "src/modules/props/index.js reflection visibility handler",
+      "tools/lot-membership-contract-probe.mjs",
+      "tools/lot-membership-visual.mjs",
+      "tools/parcel-slot-order-profile.mjs including corrected GRID_SOURCE routing",
+      "tools/democity-restage-cycle.mjs",
+      "tools/democity-mixed-use-probe.mjs"
+    ]
+  },
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "roads",
+        "zoning",
+        "buildings"
+      ],
+      "title": "City fabric and capacity remain unchanged",
+      "detail": "612/648 real lots and buildings remain. Seven/eight redundant references removed; no new lot, geometry, density or visual score improvement."
+    },
+    {
+      "rank": 2,
+      "owner": "zoning",
+      "supportingOwners": [
+        "core",
+        "buildings"
+      ],
+      "title": "Identity and migration evidence is bounded",
+      "detail": "_identityCell is generated before normalization, used only in owner key matching and regenerated from cells on load; save format stays cell-only. All tested anchors equal current first keys, so anchor-retention after losing an original first key and importing a distinct historical city are not directly exercised."
+    },
+    {
+      "rank": 3,
+      "owner": "zoning",
+      "title": "Nominal raster-area shortfall remains",
+      "detail": "Lots227/200 retain5 unique keys and16\u00d724m frames. No duplicate filler, geometry resize or deletion conceals the existing shortfall."
+    },
+    {
+      "rank": 4,
+      "owner": "core",
+      "supportingOwners": [
+        "zoning",
+        "props"
+      ],
+      "title": "Performance gates are not established",
+      "detail": "Smoke11FPS; directed candidate53.1/10.3/8.5FPS. No paired controlled timing or regeneration benchmark. Raw heap endpoints including restage923.4MB are not forced-GC memory; no candidate-causal slowdown or sustainedFPS pass established."
+    },
+    {
+      "rank": 5,
+      "owner": "verification tooling",
+      "supportingOwners": [
+        "props",
+        "environment"
+      ],
+      "title": "Visual isolation is incomplete",
+      "detail": "One-time group hiding can be undone by props water:reflection listener at props/index.js:681. Trees remain visible. Do not attribute all pixel differences solely to environment or claim full dynamic exclusion. Three directed overlay hash records match, but no full matrix/material-transform oracle is supplied."
+    }
+  ],
+  "limits": [
+    "All7 original PNGs individually viewed; montage and all6 strips/diffs also viewed. No reference recalibration or new critic captures. This is a local correctness delta, not whole-game acceptance.",
+    "Both roughly37MB contract branches were parsed completely and all20 snapshot projections/memberships checked. Refresh/restore excludes economy.net only; it resets to0 in both branches while serialized simulation and other recorded economy values remain exact.",
+    "saves.restore returns undefined on success and throws on rejection in current core; recorded completed:true/returned:null is consistent. Restores reload the current save without intervening perturbation; this does not certify arbitrary old-city import or rollback.",
+    "Public lotAt checks geometric bounds, then falls back across lot rectangles; it is not a direct ownership-map getter. All recorded public picks remain equal and were independently reconstructed from frames. Owner-map reconstruction in the tool sorts IDs; agreement at relevant overlaps plus actual public pick equality supports this fixture, not every possible reordered-world case.",
+    "Current _identityCell is extra owner-local live lot metadata, not serialized authority. Existing pre-change in-memory lots fall back to cells[0]. Regeneration recreates anchors. No independent synthetic test for entirely stolen first keys/empty memberships or adversarial mutated metadata was run.",
+    "Visual geometry equality compares saved32-bit attribute/index hashes for5 zoning meshes per view, not raw arrays/full materials/transforms or every scene object. Exact hash equality supports overlay stability, not universal rendering equivalence.",
+    "Group masks are one-time assignments and props may re-enable itself after reflection. Environment/shadow/wind phase differences are plausible contributors, not causally isolated by this harness. Pixel counts and normalizedRMSE were recomputed from originals.",
+    "Tool stats are sampled before freeze/screenshot and include asynchronous/live rendering. Timing and raw heap vary strongly; no full16/32frame matrix, forcedGC or sustained50FPS test supplied.",
+    "R8u was accidentally overwritten by a positional-output invocation, then regenerated with exact pre-grid routing; the corrected baseline/candidate replay files were both re-read and compared before finalization. Source/SHA256SUMS is valid; the older empty source/pre/SHA256SUMS remains non-evidence.",
+    "No standalone generic API-result file or R8v builder report was supplied at review start; actual public refresh/restore, mixed-use and restage evidence above was reviewed directly. No production/source/STATUS/HANDOFF files were written."
+  ],
+  "nextOwnerSafePriority": "Return rank1 investigation to actual legal slot/frontage yield through zoning/roads/democity/buildings; this local integrity fix creates no capacity. Preserve retained raster shortfall and measured performance limits."
+}

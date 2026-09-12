@@ -1,0 +1,20 @@
+{
+  "module": "democity",
+  "round": 4,
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 751,
+  "apiContractOk": true,
+  "auditScope": "Fresh independent evidence re-review within the shared workspace; not a claim of a separate human reviewer.",
+  "issues": [
+    {"rank": 1, "severity": "blocker", "title": "Night lamps form oversized white discs", "detail": "Aerial and whole-game night views have repeated bright discs that obscure the city.", "evidence": "shots/democity/r4i/aerial_22.png"},
+    {"rank": 2, "severity": "blocker", "title": "Geometry and heap exceed gates", "detail": "Fresh matrix peak is 5,075,465 triangles, whole-game night is 4,887,305, and primary heap is 1,003.7 MB.", "evidence": "shots/democity/r4i/apicheck.json"},
+    {"rank": 3, "severity": "major", "title": "Golden-hour skyline is overexposed", "detail": "The 17:30 skyline loses a large city area to a near-white field.", "evidence": "shots/democity/r4i/skyline_17p5.png"},
+    {"rank": 4, "severity": "major", "title": "Density and variation remain synthetic", "detail": "612 buildings, repeated facades and large empty lawns remain far below the city-scale visual bar.", "evidence": "shots/democity/r4i/downtown_12.png"},
+    {"rank": 5, "severity": "major", "title": "Terrain, waterfront and industry remain schematic", "detail": "Road joins, broad unused terrain and flat industrial forms lack the reference detail.", "evidence": "shots/democity/r4i/bridge_12.png"}
+  ],
+  "strengths": ["37 fresh captures are ready with zero console errors.", "Fresh primary and seed-7 API probes keep service coverage above the stated threshold.", "HUD fits at 1280x720.", "Serialize/deserialize, restage and tour probes pass."],
+  "summary": "6.0 FAIL. Fresh evidence confirms the W4 local score: contract health is sound, but night lighting, exposure, density and whole-scene cost prevent a higher tier.",
+  "shots": ["shots/democity/r4i/summary.json", "shots/democity/r4is7/summary.json", "shots/democity/r4i/aerial_22.png", "shots/democity/r4i/skyline_17p5.png", "shots/democity/r4i/all_aerial_22.png", "shots/democity/r4i/aerial_12_720p.png", "shots/democity/r4i/apicheck.json"]
+}

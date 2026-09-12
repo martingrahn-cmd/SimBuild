@@ -1,0 +1,316 @@
+{
+  "module": "democity",
+  "round": "r8t",
+  "reviewType": "Independent accepted-source parcel-capacity diagnostic audit",
+  "decision": "ACCEPT_CORRECTED_DIAGNOSTIC",
+  "productDecision": "NO_CHANGE",
+  "unqualifiedImpossibilityClaim": "NOT_ESTABLISHED",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "rank1Status": "OPEN",
+  "inspectedFiles": [
+    "docs/builds/democity_r8t_parcel_capacity.md",
+    "tools/parcel-capacity-profile.mjs",
+    "shots/democity/r8t-parcel-capacity/profile.json",
+    "src/modules/zoning/palette.js",
+    "src/modules/zoning/grid.js",
+    "docs/builds/democity_r7s_scale_layout_rejected.md",
+    "docs/critic/democity_r8g.md",
+    "shots/democity/r7s-layout-64/cityscale.json",
+    "shots/democity/r7s-layout-80-nosplit/cityscale.json",
+    "shots/democity/r7s-layout-restored/cityscale.json"
+  ],
+  "additionalSourceSections": [
+    "ARCHITECTURE.md zones/roads/buildings contracts",
+    "docs/prompts/modules/zoning.md items10-12",
+    "docs/prompts/modules/democity.md relevant gate references"
+  ],
+  "sourceHashes": {
+    "tools/parcel-capacity-profile.mjs": "0360edb2bf215a2cd6533b787b6c805259fa6fd2e0a7ae80f6e0917c75a334d5",
+    "shots/democity/r8t-parcel-capacity/profile.json": "04feb97a1d9750984e1add7961f806e2769cfc37f4462c4e0bf9cb52ac3392e9",
+    "src/modules/zoning/grid.js": "7e027c0fb9cb1ebb9b77cf10b5f77126e59f1615589e0ca0464f7855ab609eab",
+    "src/modules/zoning/palette.js": "7e8f79bd84e096310945ac3a32fcca0b32338272671edc09cb3d8cb7d3927b25",
+    "docs/builds/democity_r8t_parcel_capacity.md": "ae521642051818dba74007ad9e55e7255d46a55a14c21319a8e7c6e0b8b4e095"
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "quality": "high",
+    "backend": "Metal",
+    "headless": true,
+    "independentlyExecuted": false
+  },
+  "recomputed": [
+    {
+      "seed": 1337,
+      "savedCounts": {
+        "seed": 1337,
+        "worldSeed": 1337,
+        "cells": 9964,
+        "lots": 612,
+        "buildings": 612,
+        "claimed": 4882,
+        "unclaimed": 5082,
+        "backlandBeyondPreferredDepth": 706,
+        "withinPreferredDepth": 4376,
+        "byClass": {
+          "industrial/low": 1034,
+          "residential/low": 2574,
+          "residential/high": 975,
+          "commercial/low": 145,
+          "commercial/high": 49,
+          "office/high": 305
+        },
+        "byDepth": {
+          "1": 1750,
+          "2": 1387,
+          "3": 1048,
+          "4": 897
+        },
+        "byEdgeType": {
+          "street": 4519,
+          "gravel": 160,
+          "avenue": 274,
+          "alley": 129
+        },
+        "components": 1068,
+        "componentsWithOneLotCapacity": 134,
+        "additionalLotPerfectPackingUpperBound": 143,
+        "totalLotPerfectPackingUpperBound": 755,
+        "upperByClass": {
+          "industrial/low": 30,
+          "office/high": 1,
+          "residential/high": 11,
+          "residential/low": 95,
+          "commercial/low": 6,
+          "commercial/high": 0
+        },
+        "diagonalAdditionalPackingBound": 150,
+        "fullPreferredCells": 9258,
+        "fullPreferredByClass": {
+          "industrial/low": 1823,
+          "residential/low": 4662,
+          "residential/high": 1849,
+          "commercial/low": 338,
+          "commercial/high": 89,
+          "office/high": 497
+        },
+        "classOnlyRepackBound": 1229,
+        "fullComponents": 1213,
+        "fullComponentsWithOneLotCapacity": 594,
+        "fullRepackPerfectPackingUpperBound": 794,
+        "fullUpperByClass": {
+          "industrial/low": 98,
+          "residential/low": 566,
+          "office/high": 7,
+          "residential/high": 83,
+          "commercial/low": 38,
+          "commercial/high": 2
+        },
+        "fullDiagonalComponents": 1136,
+        "fullDiagonalRepackPackingBound": 804,
+        "existingLotsDisconnectedUnderDiagonalModel": 0,
+        "errors": [],
+        "browserErrors": [],
+        "pass": true
+      },
+      "arithmeticChecksPass": true,
+      "classOnlyRecomputedByClass": {
+        "industrial/low": 151,
+        "residential/low": 777,
+        "residential/high": 205,
+        "commercial/low": 56,
+        "commercial/high": 9,
+        "office/high": 31
+      },
+      "retainedComponents": {
+        "largestComponents": {
+          "rows": 30,
+          "cells": 512,
+          "quotientSum": 30,
+          "allQuotientsVerified": true
+        },
+        "largestFullComponents": {
+          "rows": 30,
+          "cells": 863,
+          "quotientSum": 77,
+          "allQuotientsVerified": true
+        }
+      },
+      "unclaimedFraction": 0.5100361300682457,
+      "backlandFractionOfUnclaimed": 0.13892168437622984,
+      "eightNeighbourCountsIndependentlyRebuilt": false
+    },
+    {
+      "seed": 7,
+      "savedCounts": {
+        "seed": 7,
+        "worldSeed": 7,
+        "cells": 10113,
+        "lots": 648,
+        "buildings": 648,
+        "claimed": 5176,
+        "unclaimed": 4937,
+        "backlandBeyondPreferredDepth": 675,
+        "withinPreferredDepth": 4262,
+        "byClass": {
+          "industrial/low": 1027,
+          "residential/low": 2457,
+          "residential/high": 893,
+          "commercial/low": 151,
+          "office/high": 387,
+          "commercial/high": 22
+        },
+        "byDepth": {
+          "1": 1711,
+          "2": 1400,
+          "3": 1017,
+          "4": 809
+        },
+        "byEdgeType": {
+          "street": 4237,
+          "avenue": 361,
+          "gravel": 148,
+          "alley": 191
+        },
+        "components": 1130,
+        "componentsWithOneLotCapacity": 122,
+        "additionalLotPerfectPackingUpperBound": 128,
+        "totalLotPerfectPackingUpperBound": 776,
+        "upperByClass": {
+          "industrial/low": 35,
+          "residential/low": 73,
+          "office/high": 3,
+          "residential/high": 11,
+          "commercial/low": 6,
+          "commercial/high": 0
+        },
+        "diagonalAdditionalPackingBound": 137,
+        "fullPreferredCells": 9438,
+        "fullPreferredByClass": {
+          "industrial/low": 1722,
+          "residential/low": 4671,
+          "residential/high": 2035,
+          "commercial/low": 315,
+          "office/high": 639,
+          "commercial/high": 56
+        },
+        "classOnlyRepackBound": 1244,
+        "fullComponents": 1286,
+        "fullComponentsWithOneLotCapacity": 600,
+        "fullRepackPerfectPackingUpperBound": 778,
+        "fullUpperByClass": {
+          "industrial/low": 86,
+          "residential/low": 524,
+          "office/high": 10,
+          "residential/high": 120,
+          "commercial/low": 37,
+          "commercial/high": 1
+        },
+        "fullDiagonalComponents": 1198,
+        "fullDiagonalRepackPackingBound": 789,
+        "existingLotsDisconnectedUnderDiagonalModel": 0,
+        "errors": [],
+        "browserErrors": [],
+        "pass": true
+      },
+      "arithmeticChecksPass": true,
+      "classOnlyRecomputedByClass": {
+        "industrial/low": 143,
+        "residential/low": 778,
+        "residential/high": 226,
+        "commercial/low": 52,
+        "office/high": 39,
+        "commercial/high": 6
+      },
+      "retainedComponents": {
+        "largestComponents": {
+          "rows": 30,
+          "cells": 528,
+          "quotientSum": 29,
+          "allQuotientsVerified": true
+        },
+        "largestFullComponents": {
+          "rows": 30,
+          "cells": 762,
+          "quotientSum": 61,
+          "allQuotientsVerified": true
+        }
+      },
+      "unclaimedFraction": 0.48818352615445465,
+      "backlandFractionOfUnclaimed": 0.13672270609681994,
+      "eightNeighbourCountsIndependentlyRebuilt": false
+    }
+  ],
+  "findings": [
+    {
+      "rank": 1,
+      "owner": "zoning",
+      "supportingOwners": [
+        "democity",
+        "roads"
+      ],
+      "title": "Component ownership is stricter than actual lot sampling",
+      "evidence": "tools/parcel-capacity-profile.mjs:28,32 groups by stored cell edgeId/side/class and filters stored depth. grid.js:319-327 instead checks sampled cell existence, matching class and prior claims; it does not enforce stored edgeId, side or depth. A lot road owner does not imply identical owner metadata on every sampled raster cell.",
+      "implication": "804/789 are conditional component-model quotients, not established upper bounds on current legal lot generation. Reassignment is not solely a hypothetical future algorithm."
+    },
+    {
+      "rank": 2,
+      "owner": "zoning",
+      "supportingOwners": [
+        "democity"
+      ],
+      "title": "Existing-lot validation does not validate the bound assumptions",
+      "evidence": "Tool line36 first filters lot.cells to the preferred set, then checks only eight-neighbour connectivity, without owner/class component identity. It also does not check unique cell count against LOT_SLOTS*LOT_DEPTH or disjoint allocation across lots. grid.js:400-403 appends quantized keys without deduplication.",
+      "implication": "The recorded zero disconnected lots proves connected nonempty retained subsets only. It does not prove all original lot cells fit one component or satisfy the distinct-cell area assumption. Actual duplicate/overlap counts were not captured; this review does not claim they occurred."
+    },
+    {
+      "rank": 3,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning"
+      ],
+      "title": "No candidate justified is supported; architectural necessity is not proved",
+      "evidence": "The actual _splitRun fixes k=floor(runLength/want) before remainder/corner assignment. The current run alone cannot gain another complete lot from moving its remainder. However altered sampling, earlier-edge competition or later-edge claims are not explored by this diagnostic. Historical r7s trials are two specific rejected layouts, not an exhaustive search.",
+      "implication": "Accept the decision to select no product change. Qualify coordinated frontage work as a reasonable next investigation, not a proven requirement or proof that every bounded splitter change is impossible."
+    },
+    {
+      "rank": 4,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning"
+      ],
+      "title": "Saved evidence supports arithmetic checks but not replay of all connectivity counts",
+      "evidence": "Only 30 largest four-neighbour components per category per seed are saved. No full cells/lots map or eight-neighbour component list is present. pass checks only errors and the cell partition equality.",
+      "implication": "Class aggregate quotients and all 120 retained component quotients can be recomputed; global connectivity counts and 150/137/804/789 cannot independently be rebuilt from this artifact. Repeated-run equality is a builder assertion without a second retained final record."
+    }
+  ],
+  "nextOwnerSafePriority": {
+    "owner": "zoning",
+    "supportingOwners": [
+      "democity",
+      "roads",
+      "buildings"
+    ],
+    "task": "Validate the model against actual sampled slot runs before choosing a product change. Retain full cell/lot evidence, quantify mixed stored-owner membership, excluded-depth cells, unique-cell area and overlaps, then compare actual feasible run yield for both seeds. If proposing corridors, predict yield using the real owner algorithm and preserve identity/restage and rendering budgets.",
+    "restriction": "No smaller lot contract, decorative stock, count padding or unverified redesign justified by this diagnostic."
+  },
+  "limits": [
+    "Read-only audit of supplied JSON and source; no browser rerun, screenshot inspection, build, API/restage or performance test. None is required to review a no-product-change structural diagnosis.",
+    "No visual score recalibration or gate passes. Raw/retained memory and FPS are unmeasured in R8t.",
+    "Profile contains aggregate counts and truncated component lists; full graph, slot runs and original lot cell membership are absent.",
+    "Area quotients are genuine upper bounds only under assumed disjoint distinct-cell minimum allocation and full inclusion in the modeled domains; those assumptions are not validated against actual lot generation.",
+    "Class-only pooling removes edge constraints but retains stored-depth filtering and the unverified distinct-cell area premise. 1229/1244 neither certifies buildable lots nor proves the actual 1400-lot target impossible.",
+    "Most unclaimed cells are in stored preferred depth (86.11%/86.33%). Calling all of them longitudinal remainder is an inference: availability, sampling, ownership competition and junctions were not separately attributed.",
+    "Historical 573/695/612 counts were checked in r7s cityscale records. Their successful probe flags are not city-scale specification passes. Their source restoration is not newly audited here."
+  ],
+  "writtenFiles": [
+    "docs/critic/democity_r8t.md",
+    "docs/critic/democity_r8t.json"
+  ],
+  "builderRevisionReviewed": "Final corrected version re-read: conditional estimates, filtered-connectivity limitation and actual slot/claim-order replay prerequisite are now explicit. Main overclaim addressed; findings retain underlying model limits."
+}

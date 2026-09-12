@@ -1,243 +1,129 @@
-// traffic module: vehicles driving world.roads lanes with A* routing, IDM car-following, lane
-// assignment, traffic-light phases and junction yielding; instanced procedural vehicle classes with
-// rotating wheels and night lighting; pedestrians on sidewalks; outside connections; congestion grid.
 import { LaneGraph } from './graph.js';
-import { Traffic, MIX, setShadowCasting } from './sim.js';
+import { Traffic, MIX } from './sim.js';
 import { stage, CAMERAS } from './showcase.js';
-
-const S = {
-  ctx: null, graph: null, traffic: null, dirty: true, settle: 0,
-  showcase: false, targetVeh: 0, targetPed: 0, simApi: null, ready: false,
+import { fallbackProfile } from './profile.js';
+import { buildMasts, updateMasts, mastGate } from './masts.js';
+const S={ctx:null,graph:null,traffic:null,dirty:true,acc:0,steps:0,frozen:false,density:null,reseed:true,profile:{},lastTarget:-1};
+function rebuild(){
+  S.graph.build();S.dirty=false;
+  const t=S.traffic;
+  for(const v of t.vehicles.values()){
+    const rec=S.graph.edges.get(v.rec.id);
+    if(!rec || v.lane>=rec.lanes){t.despawn(v.id);continue;}
+    v.rec=rec;v.edgeId=rec.id;v.s=Math.min(v.s,rec.len-0.1);
+    if(v.turn.active){const next=S.graph.edges.get(v.turn.rec.id);if(!next){t.despawn(v.id);continue;}v.turn.rec=next;v.edgeId=null;}
+  }
+  for(let i=t.peds.length-1;i>=0;i--){const p=t.peds[i],r=S.graph.edges.get(p.rec.id);if(!r||!r.swR){t.world.traffic.pedestrians.delete(p.id);t.peds.splice(i,1);}else p.rec=r;}
+  buildMasts(S);
+  if(!S.graph.edges.size&&!S.warned){S.ctx.log.warn('empty road graph: traffic waiting for roads');S.warned=true;}
+  if(S.graph.edges.size) S.warned=false;
+}
+function population(){
+  const h=S.ctx.world.time.hour;
+  const p=typeof S.ctx.modules.simulation?.profile==='function'?S.ctx.modules.simulation.profile(h,S.profile):fallbackProfile(h,S.profile);
+  const mult=S.density===null?1:S.density;
+  const eco=S.ctx.world.economy||{},activity=Math.max(0,eco.population||0)+Math.max(0,eco.jobs||0)*.6;
+  // Local fleets scale from actual residents/jobs. Two or more explicit border portals may carry a
+  // small through-traffic floor even before settlement; an isolated player road gets exactly zero.
+  const through=S.graph.portals.length>=2?Math.min(24,S.graph.portals.length*6):0;
+  // A real hamlet still needs enough moving vehicles to read across a player-sized road network.
+  // Keep exact zero for a city with no residents/jobs, then add a small local fleet floor that
+  // continues to scale from real activity instead of road length or showcase density.
+  const localCapacity=activity>0?6+Math.ceil(activity/2):0;
+  const vehicleCapacity=Math.min(240,localCapacity+through);
+  const pedestrianCapacity=Math.min(260,Math.ceil((Math.max(0,eco.population||0)+Math.max(0,eco.jobs||0)*.25)/2.5));
+  S.traffic.target=Math.round(Math.min(240*p.traffic,vehicleCapacity)*mult);
+  S.traffic.pedTarget=Math.round(Math.min(260*p.pedestrians,pedestrianCapacity)*mult);
+  if(S.reseed && S.traffic.target>0 && S.graph.edges.size){
+    S.traffic.rng=S.ctx.rng.fork('traffic:fleet:'+h.toFixed(2));S.traffic.time=0;
+    for(const nd of S.graph.nodes.values()){nd.busy=-1;nd.busyUntil=0;}
+    S.reseed=false;S.traffic.seedToTarget();
+  }
+}
+function sync(alpha=1){
+  const t=S.traffic,w=S.ctx.world.weather;
+  t.lightsOn=((w.night??S.ctx.modules.environment?.getNight?.()??0)>0.15||w.rain>0.4)?1:0;
+  S.graph.updateSignals();t.render(alpha);updateMasts(S);
+}
+function stepOne(){
+  if(S.dirty||S.graph.dirty)rebuild();population();
+  const t=S.traffic,start=performance.now();
+  t.balance(0.05);t.step(0.05);t.stepPeds(0.05);t.stepMs=performance.now()-start;
+  S.steps++;
+}
+// Arrange the rush-hour demonstration with real vehicles on its red approach.
+function stageQueue(){
+  if(S.ctx.world.time.hour<16||S.ctx.world.time.hour>19)return;
+  const t=S.traffic,g=S.graph;
+  const rec=[...g.edges.values()].find(r=>{const a=g.nodes.get(r.a),b=g.nodes.get(r.b);return Math.abs(a.x-40)<.1&&Math.abs(b.x-40)<.1&&Math.min(a.z,b.z)===40&&Math.max(a.z,b.z)===120;});
+  if(!rec)return;const dir=g.nodes.get(rec.a).z>40?1:-1,lane=g.laneFirst(rec,dir),end=rec.len-(dir>0?rec.trimB:rec.trimA);
+  for(const v of t.vehicles.values())if(v.rec.id===rec.id)t.despawn(v.id);
+  let distance=end-7.5;
+  for(const kind of ['hatchback','sedan','suv','taxi']){const ci=MIX.findIndex(m=>m[0]===kind),v=t.spawn({rec,dir,lane,s:distance,ci,restore:true});if(v){v.v=0;v.brake=1;t.pose(v);v.previous=null;distance-=v.len+2.1;}}
+  while(t.vehicles.size<t.target)if(!t.spawn())break;
+  sync();
+}
+const api={
+  spawnVehicle(kind,route){
+    if(!S.traffic)return -1;if(S.dirty||S.graph.dirty)rebuild();
+    const ci=MIX.findIndex(m=>m[0]===kind);if(ci<0)return -1;
+    const edges=Array.isArray(route)?route:route?.edges;
+    const opts={ci};
+    if(edges?.length){
+      const steps=[];let end=null;
+      for(const id of edges){const r=S.graph.edges.get(id);if(!r)return -1;
+        const dir=end===null?1:r.a===end?1:r.b===end?-1:0;
+        if(!dir||S.graph.laneCount(r,dir)<1)return -1;
+        steps.push({edgeId:id,dir});end=dir>0?r.b:r.a;
+      }
+      opts.rec=S.graph.edges.get(edges[0]);opts.dir=1;opts.s=opts.rec.trimA+3;opts.route=steps;opts.explicit=true;opts.loop=!!route?.loop;
+    }
+    const v=S.traffic.spawn(opts);sync();return v?.id??-1;
+  },
+  despawn(id){const ok=S.traffic?.despawn(id)??false;if(ok)sync();return ok;},
+  vehicle(id){return S.traffic?.vehicles.get(id)??null;},
+  flowGrid(){return S.traffic?.flowApi??null;},
+  outsideConnections(){return S.graph?.portals.map(p=>{const r=S.graph.edges.get(p.out.edgeId),d=S.graph.entryDir(r,p.out.dir);return {nodeId:p.nodeId,edgeId:r.id,x:p.x,z:p.z,type:r.type,heading:Math.atan2(d.x,-d.z)};})??[];},
+  signalState(nodeId){S.graph?.updateSignals();const s=S.graph?.signals.get(nodeId);return s?{phase:s.phase,greenArms:s.greenArms.slice(),since:s.since,cycle:4320}:null;},
+  // Read-only scalar for render owners that only need to know when any signal aspect changed.
+  // Updating and hashing once avoids N signalState() calls, each of which would rescan the graph
+  // and allocate an object/array. Signal timing and the detailed signalState contract stay unchanged.
+  signalKey(){
+    if(!S.graph)return 0;
+    S.graph.updateSignals();let k=1000;
+    for(const s of S.graph.signals.values()){
+      k=(k*31+(s.phase|0)+1)>>>0;
+      k=(k*31+(s.state==='yellow'?2:s.state==='green'?1:0))>>>0;
+      for(const id of s.greenArms)k=(k*31+id)>>>0;
+    }
+    return k;
+  },
+  signals(){S.graph?.updateSignals();return S.graph?[...S.graph.signals.values()].map(s=>({nodeId:s.id,x:s.x,z:s.z,arms:s.arms.length,phase:s.phase,greenArms:s.greenArms.slice()})):[];},
+  setDensity(v){S.density=v==null?null:Math.max(0,Math.min(1,Number(v)||0));if(S.density===0){for(const id of S.traffic.vehicles.keys())S.traffic.despawn(id);S.traffic.peds.length=0;S.ctx.world.traffic.pedestrians.clear();S.reseed=true;S.traffic.flow.fill(0);}population();sync();},
+  density(){return S.density??S.profile.traffic??0;},
+  stats(){const t=S.traffic;if(!t)return null;return {...t.stats,byKind:{...t.stats.byKind},vehicles:t.vehicles.size,pedestrians:t.peds.length,byKindTris:t.byKindTris,byLod:{...t.byLod},draws:t.draws+(S.masts?.draws??0),tris:t.submittedTris+(S.masts?.tris??0),targetVehicles:t.target,targetPeds:t.pedTarget,stepMs:t.stepMs??0,cullDistance:1200,signals:S.graph.signals.size,emissive:{head:t.lightsOn*4,tail:t.lightsOn*1.6,brake:t.maxBrake*4.2,mast:S.masts?.visible?7.5:null},textures:0};},
+  forceLod(n){S.traffic.forcedLod=n==null?null:Math.max(0,Math.min(2,n|0));sync();},
+  step(n=1){for(let i=0;i<Math.max(0,n|0);i++)stepOne();sync();return S.steps;},
+  freeze(v){S.frozen=!!v;S.acc=0;},
+  debug:{setVisible(layer,v){if(layer in S.traffic.visible)S.traffic.visible[layer]=!!v;sync();},lodHistogram(){return {...S.traffic.byLod};}},
+  cropRects({project,width,height,camera}){
+    const out={},cp=camera.camera.position;let best=null,dist=Infinity;
+    for(const v of S.traffic.vehicles.values()){const p=project(v.x,v.y+0.8,v.z),d=Math.hypot(v.x-cp.x,v.y-cp.y,v.z-cp.z);if(p[2]>-1&&p[2]<1&&p[0]>0&&p[0]<width&&p[1]>0&&p[1]<height&&d<dist){best=v;dist=d;}}
+    if(best){const spec=S.traffic.classes[best.ci].spec,pts=[];const c=Math.cos(best.heading),s=Math.sin(best.heading);for(const x of [-spec.HW,spec.HW])for(const z of [-spec.L/2,spec.L/2])for(const y of [0,spec.H??3.3])pts.push(project(best.x+c*x-s*z,best.y+y,best.z+s*x+c*z));const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);let x=Math.min(...xs),y=Math.min(...ys),w=Math.max(...xs)-x,h=Math.max(...ys)-y;x-=w*.2;y-=h*.2;w*=1.4;h*=1.4;out.lead_vehicle=[Math.max(0,x|0),Math.max(0,y|0),Math.min(width-Math.max(0,x|0),Math.ceil(w)),Math.min(height-Math.max(0,y|0),Math.ceil(h))];}
+    for(const r of S.graph.edges.values()){let found=false;for(let i=1;i<r.n-1;i++){const x=r.cx[i],y=r.cy[i]+.08,z=r.cz[i],d=Math.hypot(x-cp.x,y-cp.y,z-cp.z);if(d<200||d>400)continue;const p=project(x,y,z);if(p[2]>-1&&p[2]<1&&p[0]>64&&p[0]<width-64&&p[1]>64&&p[1]<height-64){out.far_asphalt=[p[0]-64,p[1]-64,128,128];found=true;break;}}if(found)break;}
+    return out;
+  },
+  serialize(){const t=S.traffic;return {module:'traffic',version:2,density:S.density,vehicles:[...t.vehicles.values()].map(v=>({kind:v.kind,edgeId:v.rec.id,lane:v.lane,t:v.t,speed:v.speed,dir:v.dir,paint:v.paint,route:v.route,ri:v.ri,loop:v.loop,explicit:v.explicit,external:v.external})),peds:t.peds.map(p=>({edgeId:p.rec.id,side:p.side,t:p.t,dir:p.dir,phase:p.phase}))};},
+  deserialize(data){if(data?.module!=='traffic'||!Array.isArray(data.vehicles))return false;if(S.dirty||S.graph.dirty)rebuild();api.setDensity(0);S.density=data.density??null;
+    for(const d of data.vehicles){const rec=S.graph.edges.get(d.edgeId),ci=MIX.findIndex(m=>m[0]===d.kind);if(!rec||ci<0)continue;const dir=d.dir??(d.lane<rec.per?1:-1),v=S.traffic.spawn({rec,dir,s:(dir>0?d.t:1-d.t)*rec.len,ci,route:d.route,explicit:d.explicit,loop:d.loop,external:d.external,restore:true,lane:d.lane});if(v){v.v=d.speed;v.paint=d.paint??v.paint;v.ri=d.ri??0;}}
+    for(const d of data.peds??[]){const r=S.graph.edges.get(d.edgeId);if(!r?.swR)continue;const p=S.traffic.spawnPed({w:{id:r.id,side:d.side==='right'?1:-1},s:(d.dir>0?d.t:1-d.t)*r.len});if(p){p.dir=d.dir;p.phase=d.phase;}}
+    S.reseed=false;S.traffic.stepPeds(0);population();sync();return true;
+  },
 };
-
-function smoothstep(a, b, x) {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-}
-
-/** Fallback activity curve when the simulation module is not running (showcase). */
-function activityCurve(h) {
-  const g = (c, w, a) => a * Math.exp(-((h - c) * (h - c)) / (2 * w * w));
-  return Math.min(1, 0.08 + g(8, 1.7, 0.88) + g(12.5, 2.2, 0.42) + g(17.5, 2.0, 0.98) + g(21, 2.0, 0.22));
-}
-
-function activity(hour) {
-  try {
-    const a = S.simApi?.activity?.(hour);
-    if (typeof a === 'number' && Number.isFinite(a)) return Math.max(0, Math.min(1, a));
-  } catch { /* fall through */ }
-  return activityCurve(hour);
-}
-
-function rebuildGraph() {
-  if (!S.graph) return;
-  const t0 = performance.now();
-  S.graph.build();
-  S.dirty = false;
-  // vehicles whose edge disappeared must go
-  if (S.traffic) {
-    const dead = [];
-    for (const v of S.traffic.vehicles.values()) {
-      const rec = S.graph.edges.get(v.edgeId);
-      if (!rec) { dead.push(v.id); continue; }
-      v.rec = rec;
-      v.s = Math.min(v.s, rec.len - 1);
-      v.route.length = v.ri + 1;
-      v.route[v.ri] = { edgeId: rec.id, dir: v.dir };
-    }
-    for (const id of dead) S.traffic.despawn(id);
-    for (const p of S.traffic.peds) {
-      const rec = S.graph.edges.get(p.rec.id);
-      if (rec) { p.rec = rec; p.s = Math.min(p.s, rec.len - 1); }
-    }
-    S.traffic.peds = S.traffic.peds.filter((p) => S.graph.edges.has(p.rec.id));
-  }
-  S.ctx.log.info(`lane graph: ${S.graph.edges.size} edges, ${S.graph.nodes.size} nodes, ${S.graph.signals.size} signals, ${S.graph.portals.length} outside connections (${(performance.now() - t0).toFixed(0)} ms)`);
-}
-
-function targets() {
-  const w = S.ctx.world;
-  const hour = w.time.hour;
-  const act = activity(hour);
-  if (S.showcase) {
-    return [Math.round(S.targetVeh * (0.55 + 0.45 * act)), Math.round(S.targetPed * (0.30 + 0.70 * act))];
-  }
-  const pop = w.economy.population || 0;
-  const base = Math.max(12, Math.min(240, 18 + pop * 0.05));
-  return [Math.round(base * (0.35 + 0.75 * act)), Math.round(base * 0.7 * (0.15 + 0.85 * act))];
-}
-
 export default {
-  name: 'traffic',
-  dependencies: ['roads'],
-  budget: { drawCalls: 170, triangles: 1_600_000 },
-
-  async init(ctx) {
-    S.ctx = ctx;
-    S.showcase = ctx.world.flags.showcase === 'traffic';
-    S.simApi = ctx.modules?.simulation || null;
-    S.graph = new LaneGraph(ctx.world, ctx.log);
-    S.traffic = new Traffic(ctx, S.graph);
-    const maxV = S.showcase ? 230 : 260;
-    S.traffic.buildMeshes(maxV, S.showcase ? 190 : 200);
-    S.targetVeh = 175; S.targetPed = 140;
-    ctx.events.on('roads:changed', () => { S.dirty = true; S.settle = 0; }, 'traffic');
-    ctx.log.info(`vehicle classes: ${MIX.map((m) => m[0]).join(', ')} — ${S.traffic.tris} tris of source geometry`);
-    S.ready = true;
-  },
-
-  update(dt, ctx) {
-    if (!S.traffic) return;
-    if (S.dirty || S.graph.dirty) {
-      S.settle += dt;
-      if (S.settle >= 0.06) rebuildGraph();
-      else return;
-    }
-    if (!S.graph.edges.size) return;
-    const w = ctx.world;
-    const speed = w.time.paused ? (ctx.headless ? 1 : 0) : Math.max(0.5, Math.min(3, w.time.speed));
-    const sdt = Math.min(0.1, dt) * speed;
-    const elev = ctx.clock.sunElevation();
-    S.traffic.lightsOn = 1 - smoothstep(0.03, 0.22, elev);
-    const [tv, tp] = targets();
-    S.traffic.target = tv; S.traffic.pedTarget = tp;
-    if (sdt > 0) {
-      S.traffic.balance(sdt);
-      S.traffic.step(sdt);
-      S.traffic.stepPeds(sdt);
-    }
-    S.traffic.render(Math.min(0.1, dt));
-  },
-
-  dispose() {
-    S.traffic?.dispose();
-    S.traffic = null; S.graph = null; S.ctx = null; S.ready = false;
-  },
-
-  api: {
-    /** Spawn a vehicle. kind = one of the vehicle classes; route = [{edgeId,dir}] (optional). */
-    spawnVehicle(kind, route) {
-      if (!S.traffic) return null;
-      const ci = MIX.findIndex((m) => m[0] === kind);
-      const opts = { ci: ci >= 0 ? ci : undefined };
-      if (route && route.length) {
-        const rec = S.graph.edges.get(route[0].edgeId);
-        if (!rec) return null;
-        opts.rec = rec; opts.dir = route[0].dir || 1; opts.s = 0; opts.route = route.slice();
-      }
-      const v = S.traffic.spawn(opts);
-      return v ? v.id : null;
-    },
-    despawn(id) { return S.traffic ? S.traffic.despawn(id) : false; },
-    /** 256² congestion grid for infoviews. */
-    flowGrid() {
-      if (!S.traffic) return null;
-      const size = 256, cell = S.ctx.world.size / size, half = S.ctx.world.size / 2;
-      const data = S.traffic.flow;
-      return {
-        size, cellSize: cell, data,
-        sample(x, z) {
-          const gx = ((x + half) / cell) | 0, gz = ((z + half) / cell) | 0;
-          if (gx < 0 || gz < 0 || gx >= size || gz >= size) return 0;
-          return Math.min(1, data[gz * size + gx]);
-        },
-      };
-    },
-    /** Traffic-signal state at a node: {phase, state, arms:[{edgeId,dir,state}]} or null. */
-    lightState(nodeId) {
-      const s = S.graph?.signals.get(nodeId);
-      if (!s) return null;
-      return {
-        nodeId, phase: s.phase, state: s.state, t: s.t, green: s.green, yellow: s.yellow,
-        arms: s.arms.map((a) => ({
-          edgeId: a.edgeId, dir: a.dir,
-          state: a.phase === s.phase ? s.state : 'red',
-        })),
-      };
-    },
-    /** All signalised intersections: [{id,x,y,z,arms}] */
-    signals() {
-      if (!S.graph) return [];
-      return [...S.graph.signals.values()].map((s) => ({ id: s.id, x: s.x, y: s.y, z: s.z, arms: s.arms.length }));
-    },
-    /** Outside connections (map-border / dead-end highway portals). */
-    outsideConnections() { return S.graph ? S.graph.portals.map((p) => ({ nodeId: p.nodeId, x: p.x, z: p.z, highway: p.big })) : []; },
-    kinds() { return MIX.map((m) => m[0]); },
-    /** Real CSM shadow casting for vehicles/pedestrians. Off by default — see docs/core-requests/traffic.md. */
-    setShadowCasting(on) { return setShadowCasting(on, S.traffic); },
-    stats() { return S.traffic ? { ...S.traffic.stats, pedestrians: S.traffic.peds.length, signals: S.graph.signals.size } : null; },
-    /** dev: force the population targets (showcase / democity staging) */
-    setTargets(vehicles, pedestrians) {
-      if (vehicles !== undefined) S.targetVeh = vehicles;
-      if (pedestrians !== undefined) S.targetPed = pedestrians;
-      S.showcase = true;
-    },
-    /** Run the simulation forward without rendering, so a fresh scene is already "in motion". */
-    preroll(seconds = 40, stepSize = 0.06) {
-      if (!S.traffic) return 0;
-      if (S.dirty || S.graph.dirty) rebuildGraph();
-      if (!S.graph.edges.size) return 0;
-      const n = Math.round(seconds / stepSize);
-      for (let i = 0; i < n; i++) {
-        S.traffic.balance(stepSize);
-        S.traffic.step(stepSize);
-        S.traffic.stepPeds(stepSize);
-      }
-      return n;
-    },
-    serialize() {
-      if (!S.traffic) return null;
-      return {
-        vehicles: [...S.traffic.vehicles.values()].map((v) => ({
-          kind: v.kind, edgeId: v.edgeId, dir: v.dir, lane: v.lane, s: +v.s.toFixed(2),
-          v: +v.v.toFixed(2), paint: v.paint, external: v.external,
-        })),
-        peds: S.traffic.peds.map((p) => ({ edgeId: p.rec.id, side: p.side, dir: p.dir, s: +p.s.toFixed(2) })),
-        targets: [S.targetVeh, S.targetPed],
-      };
-    },
-    deserialize(data) {
-      if (!S.traffic || !data) return;
-      if (S.dirty || S.graph.dirty) rebuildGraph();
-      for (const id of [...S.traffic.vehicles.keys()]) S.traffic.despawn(id);
-      S.traffic.peds.length = 0;
-      S.ctx.world.traffic.pedestrians.clear();
-      for (const d of data.vehicles || []) {
-        const rec = S.graph.edges.get(d.edgeId);
-        if (!rec) continue;
-        const ci = MIX.findIndex((m) => m[0] === d.kind);
-        const v = S.traffic.spawn({ rec, dir: d.dir, s: d.s, ci: ci >= 0 ? ci : undefined, external: d.external });
-        if (v) { v.v = d.v || 0; v.lane = Math.min(d.lane, rec.lanes - 1); v.prevLane = v.lane; if (d.paint) v.paint = d.paint; }
-      }
-      for (const d of data.peds || []) {
-        const rec = S.graph.edges.get(d.edgeId);
-        if (!rec || !rec.swR) continue;
-        const p = S.traffic.spawnPed({ w: { id: d.edgeId, side: d.side }, s: d.s });
-        if (p) p.dir = d.dir;
-      }
-      if (data.targets) { S.targetVeh = data.targets[0]; S.targetPed = data.targets[1]; }
-    },
-    _debug() { return S; },
-  },
-
-  showcase: {
-    description: 'The roads showcase network alive: ~150 instanced vehicles of 8 classes routed with A* and IDM car-following, queueing at signalised crossroads, merging onto the highway, plus pedestrians on every sidewalk.',
-    cameras: CAMERAS,
-    async setup(ctx) {
-      S.showcase = true;
-      await stage(ctx);
-      rebuildGraph();
-      S.targetVeh = 190; S.targetPed = 155;
-      const [tv, tp] = targets();
-      S.traffic.target = tv; S.traffic.pedTarget = tp;
-      const t0 = performance.now();
-      const steps = 750, dt = 0.06;   // fixed count: the staged scene must be deterministic
-      for (let i = 0; i < steps; i++) {
-        S.traffic.balance(dt);
-        S.traffic.step(dt);
-        S.traffic.stepPeds(dt);
-      }
-      ctx.log.info(`pre-rolled ${steps} steps (${(steps * dt).toFixed(0)} s) in ${(performance.now() - t0).toFixed(0)} ms; ${S.traffic.vehicles.size} vehicles, ${S.traffic.peds.length} pedestrians`);
-    },
-  },
+ name:'traffic',dependencies:['terrain','roads','simulation'],budget:{drawCalls:60,triangles:300000},
+ async init(ctx){S.ctx=ctx;S.graph=new LaneGraph(ctx.world,ctx.log,ctx.modules.roads);S.traffic=new Traffic(ctx,S.graph);S.traffic.buildMeshes(240,260);ctx.world.traffic.kinds=Object.freeze(MIX.map(m=>m[0]));ctx.events.on('roads:changed',()=>{S.dirty=true;},'traffic');ctx.events.on('props:changed',()=>mastGate(S),'traffic');ctx.events.on('app:ready',()=>mastGate(S),'traffic');},
+ update(dt){if(!S.traffic)return;if(S.dirty||S.graph.dirty)rebuild();population();if(!S.frozen){S.acc+=Math.min(.2,dt);let n=0;while(S.acc>=.05&&n++<4){stepOne();S.acc-=.05;}}sync(S.frozen?1:S.acc/.05);},
+ dispose(){S.traffic?.dispose();S.masts?.dispose();S.traffic=null;},api,
+ showcase:{description:'Signalised crossroads, a fed roundabout, highway merge and four outside connections with walking pedestrians and a fleet line-up.',cameras:CAMERAS,async setup(ctx){await stage(ctx);rebuild();population();api.step(120);stageQueue();ctx.modules.environment?.hookScene?.();}}
 };

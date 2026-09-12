@@ -62,6 +62,16 @@ button.sb-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 @keyframes sb-fadeout { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
 .sb-photohint .sb-key { margin: 0 2px 0 4px; }
 
+/* World-space building problems projected by the UI. */
+.sb-utility-warnings { position: absolute; inset: 0; pointer-events: none; z-index: 12; }
+.sb-utility-warning { position: absolute; left: 0; top: 0; min-width: 30px; height: 30px; padding: 0 5px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center; gap: 1px; color: #fff4b0;
+  background: rgba(127, 38, 31, .94); border: 2px solid rgba(255, 211, 91, .92);
+  box-shadow: 0 3px 10px rgba(0,0,0,.55), 0 0 0 2px rgba(0,0,0,.24); }
+.sb-utility-warning::after { content: ''; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: rgba(255, 211, 91, .92); }
+.sb-utility-warning svg { width: 17px; height: 17px; filter: drop-shadow(0 1px 1px rgba(0,0,0,.55)); }
+
 /* ---------------------------------------------------------------- tooltip */
 [data-tip] { position: relative; }
 [data-tip]::after {
@@ -187,6 +197,10 @@ button.sb-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .sb-close svg { width: 14px; height: 14px; }
 .sb-close:hover { background: rgba(255, 80, 80, 0.25); color: #fff; }
 .sb-subpanel-body { display: flex; min-height: 130px; }
+.sb-service-guide { width: 220px; flex: 0 0 220px; margin: 10px 0 10px 10px; padding: 10px; border-radius: 6px;
+  display: flex; align-items: flex-start; gap: 8px; color: var(--text-2); font-size: 11.5px; line-height: 1.4;
+  background: rgba(47,143,245,.10); border: 1px solid rgba(98,178,255,.22); }
+.sb-service-guide svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--accent-2); }
 .sb-toolmodes { width: 226px; flex: 0 0 auto; padding: 10px 12px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,.14); }
 .sb-tm-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .sb-tm-row .sb-k { font-size: 12px; color: var(--text-2); font-weight: 600; white-space: nowrap; }

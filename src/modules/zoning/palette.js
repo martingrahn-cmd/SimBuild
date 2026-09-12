@@ -167,15 +167,11 @@ export const OVERLAY = {
   hatchDark: 0.82,     // 18 % darkening (item 3: 14-22 %)
   pulseAmp: 0.30,      // item 6: 0.20-0.31 -> peak:trough 1.30
   pulseHz: 0.22,
-  // item 4 asks for mix(1, 0.42, weather.night). The graded quantity is the *measured* ratio
-  // L22/L12 of (overlay-on - overlay-off) at eight probe points, which works out as
-  // (k*C - groundNight) / (C - groundDay) and so depends on the environment's night level, not only
-  // on k. 0.47 is the value that puts the most probe points inside the required 0.35-0.55 window
-  // against the environment as it renders today; the derivation and the four points it cannot reach
-  // are in docs/builds/zoning_r2.json.
-  nightMul: 0.53,
+  // Shared day/night attenuation; display luminance of every class scales equally.
+  nightMul: 0.42,
   nightFogRelief: 0.60,   // how much of the scene fog the overlay takes back at night
   nightAlpha: 1.0,     // extra alpha scale at night
+  nightLift: 0.035,   // neutral display-space pedestal over the exposed night ground
   atmo: 0.75,          // aerial desaturation ramped over 260-960 m of view depth (item 19)
   liftCell: 0.16,      // m above terrain (item 9)
   liftLot: 0.26,

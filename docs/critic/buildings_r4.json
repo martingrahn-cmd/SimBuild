@@ -1,0 +1,82 @@
+{
+  "module": "buildings",
+  "round": 4,
+  "score": 7.4,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 266,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "3. Night windows are per-window, baked, and dark between"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "minor",
+      "title": "Far-window isolated contrast remains above the limit",
+      "detail": "Validated128\u00d7128 farTower landmark hits building117 at287.246m. Isolated horizontal-neighbour luma contrast>40 occurs in0.223214% of eligible pixels, failing strict<0.2%. Near200crop ratio6.920814 passes. This static measurement is not evidence of observed temporal flicker.",
+      "evidence": "shots/buildings/r4/critic-probe/measurements.json"
+    },
+    {
+      "rank": 2,
+      "severity": "minor",
+      "title": "Facade and roof repetition still limits realism",
+      "detail": "Tall buildings repeat fine glazed stripes and largely empty glass interiors. Blank stepped rooftop masses dominate some roofs. CAFE/BOOKS/MARKET signs are readable now, but adjacent repeated signs and shallow shop interiors remain unlike the calibrated CS2 references. Macro uniqueness and explicit bay checks pass; this is visual scoring feedback rather than an invented numeric threshold.",
+      "evidence": "shots/buildings/r4/critic-probe/block_12.png"
+    }
+  ],
+  "strengths": [
+    "All28 prescribed captures and fresh API probes ready with zero application/GL errors on real AppleM4 Metal.",
+    "Secondary-pass budget failure from round3 is fixed, confirmed by720 sampled rendered frames.",
+    "Exact daytime lit override difference0; info tint difference27.300043 and restore0; all347night items lit.",
+    "Mutation/events/roundtrip/terrain reseating and visibly distinct five-level growth work; catalog covers all40classes."
+  ],
+  "summary": "Triangle budgets now pass and storefront text is readable. Far-window contrast still narrowly fails and repetitive facade/roof/interior design remains below CS2 quality.",
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/buildings_r4.md",
+  "shots": [
+    "shots/buildings/r4/critic-probe/aerial_6p5.png",
+    "shots/buildings/r4/critic-probe/aerial_12.png",
+    "shots/buildings/r4/critic-probe/aerial_17p5.png",
+    "shots/buildings/r4/critic-probe/aerial_22.png",
+    "shots/buildings/r4/critic-probe/street_6p5.png",
+    "shots/buildings/r4/critic-probe/street_12.png",
+    "shots/buildings/r4/critic-probe/street_17p5.png",
+    "shots/buildings/r4/critic-probe/street_22.png",
+    "shots/buildings/r4/critic-probe/skyline_6p5.png",
+    "shots/buildings/r4/critic-probe/skyline_12.png",
+    "shots/buildings/r4/critic-probe/skyline_17p5.png",
+    "shots/buildings/r4/critic-probe/skyline_22.png",
+    "shots/buildings/r4/critic-probe/closeup_6p5.png",
+    "shots/buildings/r4/critic-probe/closeup_12.png",
+    "shots/buildings/r4/critic-probe/closeup_17p5.png",
+    "shots/buildings/r4/critic-probe/closeup_22.png",
+    "shots/buildings/r4/critic-probe/downtown_12.png",
+    "shots/buildings/r4/critic-probe/suburb_12.png",
+    "shots/buildings/r4/critic-probe/industry_12.png",
+    "shots/buildings/r4/critic-probe/block_12.png",
+    "shots/buildings/r4/critic-probe/catalog_12.png",
+    "shots/buildings/r4/critic-probe/night_downtown_22.png",
+    "shots/buildings/r4/critic-probe/block_22.png",
+    "shots/buildings/r4/critic-probe/suburb_6p5.png",
+    "shots/buildings/r4/critic-probe/block_12_720.png",
+    "shots/buildings/r4/critic-probe/crops_nightdt_22.png",
+    "shots/buildings/r4/critic-probe/all_12.png",
+    "shots/buildings/r4/critic-probe/all_22.png",
+    "shots/buildings/r4/critic-probe/day_lit0.png",
+    "shots/buildings/r4/critic-probe/day_lit1.png",
+    "shots/buildings/r4/critic-probe/lod0.png",
+    "shots/buildings/r4/critic-probe/lod1.png",
+    "shots/buildings/r4/critic-probe/info_off.png",
+    "shots/buildings/r4/critic-probe/info_on.png",
+    "shots/buildings/r4/critic-probe/info_restored.png",
+    "shots/buildings/r4/critic-probe/growth_1.png",
+    "shots/buildings/r4/critic-probe/growth_2.png",
+    "shots/buildings/r4/critic-probe/growth_3.png",
+    "shots/buildings/r4/critic-probe/growth_4.png",
+    "shots/buildings/r4/critic-probe/growth_5.png",
+    "shots/buildings/r4/critic-probe/day_exact0.png",
+    "shots/buildings/r4/critic-probe/day_exact1.png",
+    "shots/buildings/r4/critic-probe/nightFacade.png",
+    "shots/buildings/r4/critic-probe/farTower.png"
+  ]
+}

@@ -1,0 +1,439 @@
+{
+  "module": "democity",
+  "round": "r9g",
+  "reviewer": "independent",
+  "decision": "ACCEPT",
+  "candidateDecision": "REJECT",
+  "scope": "accept the qualified rejection record for one disposable appended two-lane street",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "wholeGameScore": 6.0,
+  "wholeGamePass": false,
+  "productChangeJustified": false,
+  "sourceVerification": {
+    "path": "src/modules/democity/plan.js",
+    "sha256": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+    "baselineRoutedSha256": "9b7aba470c24351ad55ad46d82e9c71cb50d2b769f8ee0cbb34b5a7e0f48838d",
+    "candidateRoutedSha256": "f4ceb3326ef5748cfd2ef6c0aacc96f07fd543e115dc327d06f837e7d5fd50da",
+    "allThreeSourceHashesIndependentlyReconstructed": true,
+    "verifierSha256": "92d20fe76fbfc0d39f023daf426d41e34f34e846bd0814715dd6bb38729e58da",
+    "productionPlanUnchanged": true,
+    "productEditsByCritic": []
+  },
+  "summarySha256": "4d538c9a11732fdfa8257ab574867836ddc51ab51decb8a840999baad417e3c5",
+  "results": [
+    {
+      "seed": 1337,
+      "baselineCounts": {
+        "roadNodes": 468,
+        "roadEdges": 604,
+        "zonedCells": 9964,
+        "claimedCells": 4882,
+        "lots": 612,
+        "buildings": 612,
+        "services": 31
+      },
+      "candidateCounts": {
+        "roadNodes": 468,
+        "roadEdges": 605,
+        "zonedCells": 9966,
+        "claimedCells": 4870,
+        "lots": 611,
+        "buildings": 611,
+        "services": 31
+      },
+      "countDelta": {
+        "roadNodes": 0,
+        "roadEdges": 1,
+        "zonedCells": 2,
+        "claimedCells": -12,
+        "lots": -1,
+        "buildings": -1,
+        "services": 0
+      },
+      "gainedKeys": [],
+      "lostKeys": [
+        "335:right:42,19"
+      ],
+      "retainedKeys": 611,
+      "sameLotId": 424,
+      "sameBuildingId": 382,
+      "changedLotId": 187,
+      "changedBuildingId": 229,
+      "retainedMembershipChanges": 0,
+      "retainedPlanarGeometryChanges": 0,
+      "edgeId": 1073,
+      "endpointIds": [
+        69,
+        70
+      ],
+      "baselineEndpointDegrees": [
+        1,
+        1
+      ],
+      "existingEdgePayloadPrefixExact": true,
+      "changedNodeIds": [
+        69,
+        70
+      ],
+      "changedNodeFields": [
+        "y"
+      ],
+      "candidateRepeatProjectionExact": true,
+      "designLengthM": 72,
+      "designEndpointRiseM": 17.74638557434082,
+      "designMeanRiseRunPercent": 24.64775774214003,
+      "roadSurfaceNullSamples": 7,
+      "candidateTerrainSamplesWater": 0,
+      "directedCameraTargetYShiftFromSourceAndSamples": 0.770115852355957,
+      "baselineEconomy": {
+        "population": 8046,
+        "jobs": 19566,
+        "money": 26397.355105028793,
+        "happiness": 0.6955013906364649,
+        "demand": {
+          "residential": 5.3682385841392356e-40,
+          "commercial": 0.9421395139462411,
+          "industrial": 0.9599999999999334,
+          "office": 0.059999999999995834
+        },
+        "net": 10098.974266367346,
+        "loans": [
+          {
+            "id": 1,
+            "principal": 109000,
+            "remaining": 117706.56164383575,
+            "dailyPayment": 322.5205479452055,
+            "daysLeft": 364.95833333333053,
+            "day": 51
+          }
+        ],
+        "taxRate": 0.12
+      },
+      "candidateEconomy": {
+        "population": 8049,
+        "jobs": 19381,
+        "money": 26037.37774727952,
+        "happiness": 0.6955714879880812,
+        "demand": {
+          "residential": 5.3682385841392356e-40,
+          "commercial": 0.9416680666119459,
+          "industrial": 0.9599999999999334,
+          "office": 0.059999999999995834
+        },
+        "net": 10103.271392994378,
+        "loans": [
+          {
+            "id": 1,
+            "principal": 109000,
+            "remaining": 117706.56164383575,
+            "dailyPayment": 322.5205479452055,
+            "daysLeft": 364.95833333333053,
+            "day": 51
+          }
+        ],
+        "taxRate": 0.12
+      },
+      "baselineTerrainHash": "457afe45608e41019f03413ec217b29e5b614ab04818405aa2e12f0a93178ebb",
+      "candidateTerrainHash": "c75d23354ce6f9e40ad1e064ef4e3af19cb1756268233bb704f6e083e4b17344",
+      "serializationEqualToBaseline": {
+        "buildings": false,
+        "simulation": false,
+        "services": true,
+        "transit": false,
+        "economy": false
+      }
+    },
+    {
+      "seed": 7,
+      "baselineCounts": {
+        "roadNodes": 493,
+        "roadEdges": 646,
+        "zonedCells": 10113,
+        "claimedCells": 5176,
+        "lots": 648,
+        "buildings": 648,
+        "services": 31
+      },
+      "candidateCounts": {
+        "roadNodes": 493,
+        "roadEdges": 647,
+        "zonedCells": 10107,
+        "claimedCells": 5170,
+        "lots": 648,
+        "buildings": 648,
+        "services": 31
+      },
+      "countDelta": {
+        "roadNodes": 0,
+        "roadEdges": 1,
+        "zonedCells": -6,
+        "claimedCells": -6,
+        "lots": 0,
+        "buildings": 0,
+        "services": 0
+      },
+      "gainedKeys": [
+        "348:right:51,26",
+        "1140:right:45,25",
+        "1140:left:46,22"
+      ],
+      "lostKeys": [
+        "348:right:51,25",
+        "346:left:45,16",
+        "346:left:45,20"
+      ],
+      "retainedKeys": 645,
+      "sameLotId": 519,
+      "sameBuildingId": 359,
+      "changedLotId": 126,
+      "changedBuildingId": 286,
+      "retainedMembershipChanges": 0,
+      "retainedPlanarGeometryChanges": 0,
+      "edgeId": 1140,
+      "endpointIds": [
+        67,
+        68
+      ],
+      "baselineEndpointDegrees": [
+        2,
+        1
+      ],
+      "existingEdgePayloadPrefixExact": true,
+      "changedNodeIds": [
+        67,
+        68
+      ],
+      "changedNodeFields": [
+        "y"
+      ],
+      "candidateRepeatProjectionExact": true,
+      "designLengthM": 72,
+      "designEndpointRiseM": 10.003980159759521,
+      "designMeanRiseRunPercent": 13.894416888554892,
+      "roadSurfaceNullSamples": 8,
+      "candidateTerrainSamplesWater": 0,
+      "directedCameraTargetYShiftFromSourceAndSamples": 0.3730912208557129,
+      "baselineEconomy": {
+        "population": 8018,
+        "jobs": 23109,
+        "money": 25738.835428437204,
+        "happiness": 0.6862591554433531,
+        "demand": {
+          "residential": 6.403856255760514e-40,
+          "commercial": 0.9490507022603224,
+          "industrial": 0.9599999999999334,
+          "office": 0.059999999999995834
+        },
+        "net": 9653.137185274896,
+        "loans": [
+          {
+            "id": 1,
+            "principal": 125000,
+            "remaining": 134984.5890410972,
+            "dailyPayment": 369.86301369863014,
+            "daysLeft": 364.95833333333053,
+            "day": 51
+          }
+        ],
+        "taxRate": 0.12
+      },
+      "candidateEconomy": {
+        "population": 8021,
+        "jobs": 23056,
+        "money": 26373.115375890233,
+        "happiness": 0.6862575492618598,
+        "demand": {
+          "residential": 6.400745695386024e-40,
+          "commercial": 0.9492378359576851,
+          "industrial": 0.9599999999999334,
+          "office": 0.059999999999995834
+        },
+        "net": 9658.69558017249,
+        "loans": [
+          {
+            "id": 1,
+            "principal": 126000,
+            "remaining": 136064.46575342386,
+            "dailyPayment": 372.82191780821915,
+            "daysLeft": 364.95833333333053,
+            "day": 51
+          }
+        ],
+        "taxRate": 0.12
+      },
+      "baselineTerrainHash": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727",
+      "candidateTerrainHash": "22efd080b91fcc12e4acaf706978e11b794a3e5c9360f7d92c8135a62d773527",
+      "serializationEqualToBaseline": {
+        "buildings": false,
+        "simulation": false,
+        "services": true,
+        "transit": false,
+        "economy": false
+      }
+    }
+  ],
+  "imageComparisonsIndependentlyRecomputed": [
+    {
+      "seed": 1337,
+      "view": "aerial",
+      "metric": {
+        "normalizedRgbMae": 0.026260433056967642,
+        "changedPixels": 683641,
+        "strongPixelsGE8": 445008,
+        "maxChannelDelta": 226
+      },
+      "differenceX4": "shots/democity/r9g-actual-frontage/final/seed1337_aerial_difference_x4.png"
+    },
+    {
+      "seed": 1337,
+      "view": "directed",
+      "metric": {
+        "normalizedRgbMae": 0.028071959094851932,
+        "changedPixels": 1804660,
+        "strongPixelsGE8": 675483,
+        "maxChannelDelta": 222
+      },
+      "differenceX4": "shots/democity/r9g-actual-frontage/final/seed1337_directed_difference_x4.png"
+    },
+    {
+      "seed": 7,
+      "view": "aerial",
+      "metric": {
+        "normalizedRgbMae": 0.008054776385862987,
+        "changedPixels": 257342,
+        "strongPixelsGE8": 130713,
+        "maxChannelDelta": 226
+      },
+      "differenceX4": "shots/democity/r9g-actual-frontage/final/seed7_aerial_difference_x4.png"
+    },
+    {
+      "seed": 7,
+      "view": "directed",
+      "metric": {
+        "normalizedRgbMae": 0.02230815026627935,
+        "changedPixels": 1727637,
+        "strongPixelsGE8": 471479,
+        "maxChannelDelta": 224
+      },
+      "differenceX4": "shots/democity/r9g-actual-frontage/final/seed7_directed_difference_x4.png"
+    }
+  ],
+  "verification": {
+    "allSixRunsParsedInFull": true,
+    "allSixCensusesRecomputed": true,
+    "allStableKeysUnique": true,
+    "allLotCellMembershipUniqueAndNonOverlapping": true,
+    "allClaimedCellsPresentInSerializedPaint": true,
+    "everyBuildingLotBindingVerifiedBijection": true,
+    "allSixRuns16ReadyModules": true,
+    "engineBrowserHttpErrors": 0,
+    "allComparisonCountsRecomputed": true,
+    "candidateRepeatProjectionsComparedStructurally": true,
+    "allFourImageMetricsAndDerivedPixelsRecomputed": true,
+    "newEdgeIsLastBothSeeds": true,
+    "buildLog": "shots/democity/r9g-actual-frontage/final/build.log",
+    "buildModules": 163,
+    "buildDurationMs": 329,
+    "buildSuccess": true,
+    "freshCriticBuild": false,
+    "newBrowserRunByCritic": false
+  },
+  "inspection": {
+    "all8OriginalsInspectedIndividuallyAtOriginalResolution": true,
+    "all4DifferencesInspectedIndividuallyAtOriginalResolution": true,
+    "originals": [
+      "shots/democity/r9g-actual-frontage/final/baseline_seed1337_aerial.png",
+      "shots/democity/r9g-actual-frontage/final/baseline_seed1337_directed.png",
+      "shots/democity/r9g-actual-frontage/final/candidate_seed1337_aerial.png",
+      "shots/democity/r9g-actual-frontage/final/candidate_seed1337_directed.png",
+      "shots/democity/r9g-actual-frontage/final/baseline_seed7_aerial.png",
+      "shots/democity/r9g-actual-frontage/final/baseline_seed7_directed.png",
+      "shots/democity/r9g-actual-frontage/final/candidate_seed7_aerial.png",
+      "shots/democity/r9g-actual-frontage/final/candidate_seed7_directed.png"
+    ],
+    "differences": [
+      "shots/democity/r9g-actual-frontage/final/seed1337_aerial_difference_x4.png",
+      "shots/democity/r9g-actual-frontage/final/seed1337_directed_difference_x4.png",
+      "shots/democity/r9g-actual-frontage/final/seed7_aerial_difference_x4.png",
+      "shots/democity/r9g-actual-frontage/final/seed7_directed_difference_x4.png"
+    ],
+    "documents": [
+      "docs/builds/democity_r9g_actual_frontage_rejected.md",
+      "docs/critic/democity_r8y.md",
+      "docs/critic/democity_r9f.md"
+    ],
+    "source": [
+      "tools/actual-frontage-link.mjs",
+      "tools/local-frontage-opportunity.mjs",
+      "src/modules/democity/plan.js",
+      "src/modules/zoning/grid.js",
+      "src/modules/buildings/index.js",
+      "src/modules/roads/network.js",
+      "src/modules/roads/index.js"
+    ],
+    "json": [
+      "shots/democity/r9g-actual-frontage/final/summary.json"
+    ]
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "democity/roads/zoning",
+      "title": "Reject this street: net lots\u22121/0 and claimed cells\u221212/\u22126",
+      "evidence": "complete serialized baseline and candidate worlds; directed originals"
+    },
+    {
+      "priority": 2,
+      "owner": "democity/zoning/buildings",
+      "title": "Fresh startup allocation is sensitive beyond the local lot change",
+      "evidence": "retained611/645 keys preserve membership and planar geometry but187/126 lot IDs and229/286 building IDs differ; broad aerial form changes"
+    },
+    {
+      "priority": 3,
+      "owner": "verification",
+      "title": "Do not generalize fresh-boot churn or alley-based proxy beyond the measured street",
+      "evidence": "routing point; regenLots previous-key reuse; road type dimensions"
+    },
+    {
+      "priority": 4,
+      "owner": "roads/verification",
+      "title": "Design-grade and directed-camera limitations prevent stronger physical/pixel conclusions",
+      "evidence": "design profiles, surface nulls, source-selected terrain-relative camera"
+    }
+  ],
+  "nextBoundedPriority": {
+    "wholeGameRank": 1,
+    "owner": "democity",
+    "supportingOwners": [
+      "zoning",
+      "buildings",
+      "simulation"
+    ],
+    "task": "Hold accepted and rejected geometry fixed and trace staged lot emission, previous-key reuse, nextLot allocation, spawn iteration/building IDs and any ID-derived plan RNG at successive startup boundaries. Find the first divergence before proposing an owner-safe repair. Test ordinary existing-world regeneration separately only if a specific hypothesis requires it."
+  },
+  "existingWholeGameRanksClosed": [],
+  "limits": [
+    "These are separate fresh city startups. They do not test adding a road to an existing saved world or establish incremental regenLots identity loss; that implementation reuses previous stable keys.",
+    "The street is16m wide. R8y used an8m alley calibration,5.55m frontage/about4.05m paved half. This is not a like-for-like validation of that estimator and leaves narrower geometry untested.",
+    "Design grade is endpoint rise/run across72m, not maximum, actual pavement or driven grade. Surface query samples contain7/8 nulls and irregular values; no road-surface validity or collision conclusion is established.",
+    "Directed cameras target current terrain+5 and consequently differ vertically by0.770115852m/0.373091221m. Their pixel differences include changed viewpoint as well as world, water and runtime motion.",
+    "Pixel MAE is not a road-quality score or exclusive measure of terrain/building impact. No same-state replay, captured camera matrix or per-image synchronized performance sidecars are supplied.",
+    "Terrain payload is hashed but not retained in full; repeat hash equality is verified, underlying terrain hashes cannot be independently recomputed from this artifact.",
+    "Candidate repetition covers the listed serialization projection and normalized Democity stats. It excludes rendering/timing stats, unrecorded owners, traffic positions and full-world state. Simulation city field isnull.",
+    "Full world lot records and private original-front key are read for this disposable diagnosis. That does not authorize product consumers to depend on private state.",
+    "One seed1337 and one seed7 baseline/candidate/repeat experiment at noon do not establish save/restore, ordinary UI placement, sustained simulation, performance, weather or night behavior.",
+    "No production candidate is being accepted. Missing full matrix and rollback tests do not weaken rejection already justified by negative/zero net yield.",
+    "The next allocation trace is a diagnosis of staged startup sensitivity, not permission to rewrite identity or RNG rules, change live regeneration, or conclude all localized links are impossible."
+  ],
+  "warnings": [
+    "[democity] No valid reserved university site",
+    "[props] no roads yet: road furniture deferred until roads:changed"
+  ],
+  "criticFilesWritten": [
+    "docs/critic/democity_r9g.md",
+    "docs/critic/democity_r9g.json"
+  ]
+}

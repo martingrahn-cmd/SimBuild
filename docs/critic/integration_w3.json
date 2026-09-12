@@ -1,0 +1,334 @@
+{
+  "wave": "3",
+  "roundCap": 3,
+  "state": "integration-complete-paused-by-user",
+  "updatedAt": "2026-09-08T10:13:09.521442+00:00",
+  "qualityPass": false,
+  "wholeGameScore": null,
+  "independentScores": {
+    "democity": {
+      "score": 6.0,
+      "pass": false,
+      "apiContractOk": false,
+      "baseline": "frozen pre-integration r3"
+    },
+    "transit": {
+      "score": 6.8,
+      "pass": false,
+      "apiContractOk": true,
+      "baseline": "frozen pre-integration r3"
+    }
+  },
+  "coreChanges": [
+    "Applied32guarded replacements across8production files: src/modules/tools/index.js, tools/tools.js, ui/index.js, ui/hud.js, simulation/index.js, simulation/economy.js, src/core/save.js and src/main.js.",
+    "Native transit draft adapter forwards stop picks/hover, Enter commit and Escape/stationary-right cancellation to owner APIs; private markers use the actual road route. Right drag remains camera orbit. Removed invented2500construction charge.",
+    "Original pointer ID/button and movement threshold guard world input; modal, foreign-pointer, cancellation, capture loss, blur and leave cannot create phantom commits.",
+    "Fixed synchronous line-panel open/toggle race,6000unlock guards, native New line/Edit route dispatch and final navigation-only tab cards fallback. The cards fallback is one additional correctness edit after the32guard transaction.",
+    "Simulation derives daily fares/upkeep from the public30-day transit forecast and books them once per real tick; inactive allocated vehicles keep upkeep. Pause dominates public speed override. Statistics shows both rates; line label says30-day forecast.",
+    "Old saves clear outgoing democity-owned landmarks after real owners restore; legacy exact transit{} migrates to empty lines/stops. Rejected owners yield explicit partial-load failure and do not generate false Save imported success.",
+    "Integrated public transient-notification cleanup, keeping journal/rewards/permanent warnings. Registered industrial→industry and riverfront→waterfront camera aliases.",
+    "Workflow lastRound reports the actual final critic round3; status aggregator persists full issue objects, failed acceptance clauses and critic paths alongside compact summaries."
+  ],
+  "coreDecisions": {
+    "democity": "Applied requested camera aliases, legacy-load landmark cleanup and public transient-notification cleanup; documented democity:staged/tour events and actual public API signatures. Retained owner r3 shortfall-to400 startup correction and public paid civic/props staging. Deferred coordinated seed/terrain reset and roads design-height authoring because they require multi-owner state/geometry work beyond this cycle. Optional landmark rectangle exclusion is unnecessary for current owner workaround using public props placement/removal. No density, coverage or budget failure waived.",
+    "transit": "Applied native draft tool/hover/numbered markers, Enter/cancel/right-drag guards, line panel race/unlock fixes and real fiscal adapter. Retained exact-empty-object legacy migration, one owner fleet and actual public stop/line signatures. Rejected a spawnVehicle-only fleet wrapper because it would independently advance/duplicate buses; use current own fleet until managed pose/reservation API exists. Deferred collision coordination, tram and remaining art failures. Demand/forecast recomputation on restore is explicitly retained as a continuity limitation, not a money/route corruption claim.",
+    "ui": "Applied native transit panel dispatch/unlock, navigation-only category card fallback (fixes real New line/Edit route TypeError), public transient-notification cleanup,30-day forecast label and two daily transit statistics rows. Timed notices may be dismissed without touching journal/rewards/permanent warnings. Visual repaint timing in immediate1080p screenshots is disclosed;720p settled panels were viewed. No restyle or quality score change.",
+    "tools": "Applied public transit consumer and native pointer/modal/capture guards; removed fixed fictitious line construction fee. Retained validated service costs/history/terrain/identity work from wave2b. Deferred curved-edge splitting and optional prop bounds API; use existing guarded roads splits and per-kind bounds fallback.",
+    "simulation": "Applied daily transit revenue/upkeep reader from public owner forecast, version/Map/size invalidation and once-per-tick booking; paused clock overrides speed override. Native41tick ledger and isolated14finance checks pass. Deferred ordinary-game balance, long-run stability and save-derived-demand continuity. No synthetic money, demo-equity adjustment or capacity-as-occupants substitution.",
+    "roads": "Retained actual authoritative graph/lane/profile APIs and existing identity-preserving restore. Deferred graded-node/design-height authoring and curved split to roads-owned geometry/traffic regressions. Transit uses public lanes and explicitly marked interior junction connectors; highest-surface rays do not identify stacked lanes. Bridge and slope quality failures remain.",
+    "traffic": "Kept traffic and transit fleet ownership distinct with no duplicate spawned bus facade. A managed pose/doors/timetable/livery/reservation capability is required before fleet migration; current spawnVehicle is insufficient. Collision overlap and shared low-object shadows remain future coordinated work, not fixed in this cycle.",
+    "services": "Retained authoritative paid catalog placement, masks, upkeep and validated footprint/ID contracts from wave2b. Independent democity civic coverage59.10% still fails60%; placement/layout belongs to democity and may not be hidden by fake coverage or cheaper facilities. Deferred optional depth-fade contract and lighting polish.",
+    "infoviews": "Retained published display-surface and single-shell overlay contracts from wave2b; no new renderer or tint changes. Its independent6.4 and full issues remain. Depth/desaturation and composed overlay quality require a later authorized owner/whole-game review.",
+    "props": "Retained service/lot mask contracts and256m chunk exception; no budget relaxation. Democity uses public setDensity/rebuild/plant/remove and does not write private prop records or generate duplicate forests. Optional landmark exclusion API deferred; existing public workaround serves current staging. Occlusion and LOD/speckle failures remain.",
+    "buildings": "Retained native zoning/spawn and visible mask contracts. Democity fills only the missing stock up to400 through public spawnFreeLots before preroll, making all/democity equivalent. No capacity/population/stock inflation or inherited showcase score increase. Lot yield, repetitive assets and composed triangle burden remain future coordinated work.",
+    "zoning": "Retained isRoad0|1|2 classification, real lot reservations and native growth ownership. No hidden setback or road-mask exceptions added. Civic facilities consume real zonable land; compact frontage/layout changes deferred with democity density failures kept.",
+    "terrain": "Retained exact terrain restoration, road/lot/service exclusions and rendering-camera sky fix. No terrain seed/height internals were modified by democity integration. Deferred coordinated public regeneration and broad noon/shore/ground polish; full-world contract required before a reset.",
+    "environment": "Retained sole shared lighting/exposure/fog ownership and prior reflection-camera/shadow fixes. No competing global light or exposure controller added by integration. Night sky/body balance, golden-hour washout and composed shadow/triangle costs remain cross-cutting work, not waived.",
+    "effects": "Retained existing composer/resize/HMR-isolated capture behavior and shared environment grading input. No second composer, duplicate grading or global exposure write added. Deferred broad visual calibration and depth contract until dedicated composed evidence; all final screenshots use actual production source."
+  },
+  "crossCuttingOpen": [
+    {
+      "id": "W3-PERFORMANCE",
+      "severity": "blocker",
+      "owners": [
+        "democity",
+        "buildings",
+        "props",
+        "environment",
+        "effects"
+      ],
+      "detail": "Integrated 1080p High Metal city remains below50fps: isolated5-second samples23.40–30.58fps, peak921draws and6,920,922triangles. Draw budget1500 passes, triangle3M and50fps goals fail. Independent wider pre-integration democity matrix peaks7,297,762triangles and1,057.8MB heap. Prior all-mode stub numbers are historical, not current city performance.",
+      "next": "Profile real render passes and shared asset/LOD costs before increasing city density."
+    },
+    {
+      "id": "W3-CITY-SCALE",
+      "severity": "blocker",
+      "owners": [
+        "democity",
+        "zoning",
+        "roads",
+        "buildings",
+        "services"
+      ],
+      "detail": "611buildings/lots and10,017zoned cells miss1200/1400/11000 targets; civic expansion consumes lots. Health+education302/511=59.10% misses60%, utilities507/511=99.22%. Bridge clearance, seating, district grain, street activity and steep mountain road remain deficient.",
+      "next": "Design compact valid frontage and paid civic placement; retain actual service validation and finances."
+    },
+    {
+      "id": "W3-LIGHTING",
+      "severity": "major",
+      "owners": [
+        "environment",
+        "effects",
+        "terrain",
+        "buildings",
+        "props",
+        "democity",
+        "transit"
+      ],
+      "detail": "Night sky/body panels too bright relative to streets, repetitive lamp pools, golden-hour washout, repeated façades and vegetation occlusion remain. Democity texture autocorrelation.566727 exceeds.55. No shared exposure restyle during integration.",
+      "next": "Use composed day/night reference comparisons and ownership-aware lighting changes."
+    },
+    {
+      "id": "W3-SEED-RESET",
+      "severity": "major",
+      "owners": [
+        "core",
+        "terrain",
+        "democity",
+        "roads",
+        "buildings"
+      ],
+      "detail": "Same-seed saved city restores, but cross-seed restage is not equivalent to a fresh seed7 page (fresh654buildings versus restage622 in independent probe). Democity API verdict remains false.",
+      "next": "Design coordinated public seed/reset lifecycle and cache invalidation, with whole-world regressions; no private owner writes."
+    },
+    {
+      "id": "W3-TRANSIT-TRAFFIC",
+      "severity": "major",
+      "owners": [
+        "transit",
+        "traffic",
+        "roads"
+      ],
+      "detail": "Transit owns one deterministic bus fleet; traffic.spawnVehicle alone cannot accept managed timetable/pose/door/livery/reservation. Buses can overlap independently simulated cars. Junction paths are transit-owned continuous connectors. Tram remains absent.",
+      "next": "Agree a complete managed traffic interface with collision reservations before migrating fleet ownership."
+    },
+    {
+      "id": "W3-TRANSIT-ART",
+      "severity": "major",
+      "owners": [
+        "transit",
+        "props",
+        "environment"
+      ],
+      "detail": "Independent transit6.8 retains synthetic body/interior/lamp shapes, bright night body, incomplete shelter boarding scene, foliage/pole obstruction and incomplete shadow flags. Stable attributable measured20draw maximum is not a universal every-frame guarantee; some triangle samples exceed140k.",
+      "next": "Use transit_r3 full ranked issues; no r4 authorized at this checkpoint."
+    },
+    {
+      "id": "W3-SAVE-ATOMICITY",
+      "severity": "major",
+      "owners": [
+        "core",
+        "simulation",
+        "transit"
+      ],
+      "detail": "Owner refusal reports an explicit partial-restore error and known-good recovery succeeds, but whole-world restore is not atomic. Transit load recomputes derived demand/forecast: observed12→10riders and−26280→−26400forecast, with exact money27510.38668149143/pop5945/authored route/stops/stocks. No claim of bitwise equality for derived forecasts or of postload demand continuity.",
+      "next": "Specify derived-value reconciliation and explore staged all-owner validation/rollback; preserve original failure evidence."
+    },
+    {
+      "id": "W3-PLAY-BALANCE",
+      "severity": "major",
+      "owners": [
+        "simulation",
+        "services",
+        "transit",
+        "ui"
+      ],
+      "detail": "Organic native UI checkpoint reached404residents, treasury27384.214 and daily net≈−3837.45. Tax20 exploratory branch was not saved and remained negative. Demo8047 is real deterministic preroll, while native transit6000 unlock is a labeled test fixture. Neither proves sustainable ordinary progression. Daily transit fare/upkeep booking passes41real ticks.",
+      "next": "Run longer ordinary play from earned404save after renewed authorization; tune affordability, shortages and progression from measured play."
+    },
+    {
+      "id": "W3-UNJUDGED-WHOLE",
+      "severity": "major",
+      "owners": [
+        "integrator",
+        "whole-game-critic",
+        "blind-judges"
+      ],
+      "detail": "No whole-game score or blind A/B result exists. Audio is unscored; earlier module issues remain in STATUS full openIssueDetails. All module latest independent scores remain below8.5.",
+      "next": "After authorized fixes/stabilization, run independent whole-game critic and blind A/B, then the prioritized level-raising report."
+    }
+  ],
+  "errorsRemaining": [],
+  "screenshots": [
+    {
+      "name": "w3_all_aerial_12",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 556,
+      "triangles": 3331161,
+      "fps": 16.5,
+      "heapMB": 977.5,
+      "ok": true
+    },
+    {
+      "name": "w3_all_skyline_22",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 693,
+      "triangles": 4506921,
+      "fps": 16.9,
+      "heapMB": 966.4,
+      "ok": true
+    },
+    {
+      "name": "w3_all_street_17p5",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 492,
+      "triangles": 3680951,
+      "fps": 17.4,
+      "heapMB": 924.8,
+      "ok": true
+    },
+    {
+      "name": "w3_all_closeup_6p5",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 428,
+      "triangles": 3418277,
+      "fps": 18.4,
+      "heapMB": 999.9,
+      "ok": true
+    },
+    {
+      "name": "w3_democity_aerial_12",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 556,
+      "triangles": 3331161,
+      "fps": 28.2,
+      "heapMB": 675.5,
+      "ok": true
+    },
+    {
+      "name": "w3_transit_bus_12",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 133,
+      "triangles": 1433423,
+      "fps": 59.5,
+      "heapMB": 205.1,
+      "ok": true
+    },
+    {
+      "name": "w3_all_aerial_12_720",
+      "width": 1280,
+      "height": 720,
+      "drawCalls": 556,
+      "triangles": 3331161,
+      "fps": 37.1,
+      "heapMB": 758.5,
+      "ok": true
+    },
+    {
+      "name": "w3_all_industrial_12",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 251,
+      "triangles": 1444121,
+      "fps": 39.6,
+      "heapMB": 1025.8,
+      "ok": true
+    },
+    {
+      "name": "w3_all_riverfront_12",
+      "width": 1920,
+      "height": 1080,
+      "drawCalls": 260,
+      "triangles": 1959332,
+      "fps": 36.5,
+      "heapMB": 1073.9,
+      "ok": true
+    }
+  ],
+  "screenshotsViewed": 9,
+  "performance": [
+    {
+      "camera": "aerial",
+      "time": 12,
+      "seconds": 5.0085,
+      "frames": 149,
+      "actualFps": 29.748832008980017,
+      "maxDrawCalls": 700,
+      "maxTriangles": 4406254
+    },
+    {
+      "camera": "skyline",
+      "time": 22,
+      "seconds": 5.04209999999404,
+      "frames": 118,
+      "actualFps": 23.40294718473245,
+      "maxDrawCalls": 921,
+      "maxTriangles": 6920922
+    },
+    {
+      "camera": "street",
+      "time": 17.5,
+      "seconds": 5.032300000011921,
+      "frames": 152,
+      "actualFps": 30.204876497752505,
+      "maxDrawCalls": 642,
+      "maxTriangles": 4492513
+    },
+    {
+      "camera": "closeup",
+      "time": 6.5,
+      "seconds": 5.004,
+      "frames": 153,
+      "actualFps": 30.575539568345324,
+      "maxDrawCalls": 543,
+      "maxTriangles": 4179850
+    }
+  ],
+  "nativeGate": {
+    "result": "scoped correctness checks passed; visual/performance quality still fails",
+    "fullNativeEvidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/native-transit-production/attempt3-recovery-detail/result.json",
+    "successfulPrecedingAssertions": 37,
+    "supersededAssertion": "38 compared full derived line record; only ridership and balance differed. Original failed result retained.",
+    "recoveryEvidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/native-transit-production/recovery-result.json",
+    "focusedAssertionsPassed": 10,
+    "realFiscalTicks": 41,
+    "scope": "Controlled6000unlock fixture; NOT earned6000. Native mouse/keyboard with explicitly labeled synthetic cancellation diagnostics; no production source replacement.",
+    "observedForecastRecompute": {
+      "ridership": [
+        12,
+        10
+      ],
+      "balance": [
+        -26280,
+        -26400
+      ],
+      "cashExact": 27510.38668149143,
+      "populationExact": 5945
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "passed": true,
+    "modules": 163,
+    "after": "navigation-only HUD tab fix"
+  },
+  "isolatedCandidateChecks": {
+    "finance": 14,
+    "input": 14,
+    "source": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate"
+  },
+  "checkpointDirectory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/w3-r3-integration-2026-09-08-final",
+  "deferred": [
+    "All r4/new development",
+    "Whole-game independent critic",
+    "Blind A/B judging",
+    "Longer ordinary-play balance validation",
+    "Final prioritized level-raising report"
+  ]
+}

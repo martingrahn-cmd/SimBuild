@@ -1,0 +1,1709 @@
+{
+  "module": "transit",
+  "round": 2,
+  "score": 6.4,
+  "consoleErrors": 0,
+  "maxDrawCalls": 20,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "1. Hard gates",
+    "3. The bus is a modelled vehicle, not a box",
+    "6. Night is a lit vehicle in a dark scene",
+    "17. Shadows and contact",
+    "22. Tram line stretch"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Finish the bus surfaces and individual night windows",
+      "detail": "Roof vents, door bays and waistband now read, but daylight glass remains opaque gray and paint flat. Body roughness0.56 exceeds the specified0.25\u20130.45. Night windows share one pale treatment rather than at least two warm/cool tints and one dark window. Add restrained glass/interior depth and deterministic individual variation while preserving the corrected movement and draw budget. The pinned bus crop has maximum8-neighbour excess184.84045/255 and3069pixels>40; it includes edges/background/HUD, so this is a literal crop failure, not proof that all bright pixels are paint sparkle.",
+      "evidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_bus_12.png; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_bus_22.png; pixels.json; src/modules/transit/render.js"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Frame the bus and shelter without HUD or vegetation obstruction",
+      "detail": "The bus hero clips into the bottom toolbar. Both night shelter presets are dominated by a giant clipped bus front; street frames are obstructed by vegetation and ambient trucks, and standard closeup mostly shows unrelated intersection traffic. Reposition owned stops/showcase cameras using public APIs, retaining existing props ownership. The shelter roof intersects visible leaves and the timetable is a blank plate. No unmeasured sub-metre ground-gap or shelter-light ratio is asserted.",
+      "evidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_night_stop_22.png; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_stop_12.png; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_closeup_12.png"
+    },
+    {
+      "rank": 3,
+      "severity": "minor",
+      "title": "Retain essential bus detail at distance and validate the LOD transition",
+      "detail": "There are now near/far levels at180m and offscreen attributable draws0. Far buses retain body/glass but lose wheels and lit window/headlamp elements, matching dark distant fleet in night aerial/skyline. Retain cheap essential silhouette/light cues. The required2m-threshold pixel test remains unestablished; do not call it a numerical failure without measuring it. Stable group deltas observed here are at most20; unstable22/88 deltas are excluded.",
+      "evidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_aerial_22.png; extra.json; src/modules/transit/render.js"
+    },
+    {
+      "rank": 4,
+      "severity": "minor",
+      "title": "Complete contact and shadow treatment",
+      "detail": "Fleet body/structure cast shadows, but several glass/lamp/door/shelter-glass batches do not, failing the literal all-object shadow flags. Improve actual contact appearance without blindly adding transparent duplicate shadow passes. Shadow azimuth and tiny tyre-to-ground gap are not independently measured; no fabricated numeric defect is attached.",
+      "evidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/probe.json; src/modules/transit/render.js"
+    },
+    {
+      "rank": 5,
+      "severity": "minor",
+      "title": "Keep route identity across the aerial network",
+      "detail": "Parallel ribbons, chevrons, white stop rings and720p labels are real improvements. Far routes still disappear through foliage and lose end-to-end clarity at aerial/skyline. Preserve near label readability and the accepted tighter overlay camera. Composited CIE separation is not measured, and the residual specification arithmetic makes the literal3percent overlay requirement unreliable; neither is used as a numerical failure.",
+      "evidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_skyline_12.png; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_overlay_12_720.png"
+    },
+    {
+      "rank": 6,
+      "severity": "minor",
+      "title": "Tram stretch remains absent",
+      "detail": "No articulated tram, rails, catenary or platforms. This is a round3+ stretch with at most0.3 score impact; remaining core bus quality and final native play integration take priority.",
+      "evidence": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_line_12.png"
+    }
+  ],
+  "strengths": [
+    "Junction discontinuity fixed: independent157join bisections now continuous to6.17e\u221210m; retain8s dwell and exact lane poses.",
+    "Occupancy fractions, zero-fleet JSON and road-distance/real-occupant demand code correct r1 contract defects.",
+    "Real HUD, exact ordinary restoration without geometry growth, public draft commit/cancel/fare/fleet and deterministic state pass probes.",
+    "Separated route ribbons, chevrons, rings and readable720p chips improve wayfinding substantially.",
+    "Measured300sample CPU mean.0677ms/max.2ms; offscreen0draws and stable observed at most20calls."
+  ],
+  "summary": "6.4/10 FAIL: continuous deterministic buses, corrected contracts and much better wayfinding; flat bus/glass surfaces, uniform night windows and obstructed subject framing remain obviously synthetic.",
+  "shots": [
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_aerial_6p5.png",
+      "note": "Separated pale blue/red/green routes read across the grid; small buses and muted forest ground lack reference material richness.",
+      "drawCalls": 224,
+      "triangles": 1640578,
+      "fps": 60.3,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 34
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 16
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1864
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.4,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 370
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_aerial_12.png",
+      "note": "Three ribbons and stop discs are more traceable than r1; foliage still obscures sections and vehicle detail is tiny.",
+      "drawCalls": 148,
+      "triangles": 1136615,
+      "fps": 59.7,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 35
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 19
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1850
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1.5,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 372
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_aerial_17p5.png",
+      "note": "Warm washed ground; three route colours remain distinguishable but muted.",
+      "drawCalls": 148,
+      "triangles": 1145927,
+      "fps": 50.3,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 35
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 17
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1854
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.3,
+          "initMs": 14
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 369
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_aerial_22.png",
+      "note": "Repeated pole pools dominate; ribbons read more strongly than the distant unlit bus bodies.",
+      "drawCalls": 147,
+      "triangles": 1341587,
+      "fps": 36.2,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 44
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 19
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1895
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.3,
+          "initMs": 16
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 387
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_street_6p5.png",
+      "note": "Large foreground leaves obscure the shelter; two floating stop labels read, but no clear hero bus.",
+      "drawCalls": 130,
+      "triangles": 1556672,
+      "fps": 36.5,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 39
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 18
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1897
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.5,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 388
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_street_12.png",
+      "note": "Ambient truck and foliage obstruct the near stop; glass, bench and white-ring disc are visible.",
+      "drawCalls": 176,
+      "triangles": 1574412,
+      "fps": 38.1,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 44
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 20
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2001
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.6,
+          "initMs": 16
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 383
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_street_17p5.png",
+      "note": "Blue bus, roof vents and window bays are identifiable beside the stop; flat opaque windows and foliage obscure the front.",
+      "drawCalls": 183,
+      "triangles": 1590288,
+      "fps": 35.6,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 38
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 20
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 1961
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1.6,
+          "initMs": 16
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 384
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_street_22.png",
+      "note": "Passenger windows are uniformly pale gray rectangles; dark blue body is separated from them, but individual warm/cool variation is absent.",
+      "drawCalls": 143,
+      "triangles": 1759146,
+      "fps": 60,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 39
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 15
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2060
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.4,
+          "initMs": 14
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.3,
+          "initMs": 369
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_skyline_6p5.png",
+      "note": "Front route sections visible across a low forest grid; distant stretches are tree-occluded.",
+      "drawCalls": 149,
+      "triangles": 765489,
+      "fps": 60,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 35
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 16
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1949
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.5,
+          "initMs": 14
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 368
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_skyline_12.png",
+      "note": "Three route colours resolve near the camera; far sections are not continuously traceable through foliage.",
+      "drawCalls": 149,
+      "triangles": 775473,
+      "fps": 60,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 35
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 16
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1943
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1,
+          "initMs": 14
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 372
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_skyline_17p5.png",
+      "note": "Warm sky wash weakens distant network detail; near coloured routes remain visible.",
+      "drawCalls": 147,
+      "triangles": 786969,
+      "fps": 59.5,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 34
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 16
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1975
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.5,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 371
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_skyline_22.png",
+      "note": "Dark tree silhouettes and gray sky; distant buses do not show a lit window band.",
+      "drawCalls": 146,
+      "triangles": 959357,
+      "fps": 60,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 35
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 17
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1953
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.7,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 375
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_closeup_6p5.png",
+      "note": "Central intersection contains ambient vehicles and pedestrians, with little useful transit model detail.",
+      "drawCalls": 273,
+      "triangles": 2220778,
+      "fps": 47.5,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 34
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 5
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 22
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2040
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.3,
+          "initMs": 17
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 406
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_closeup_12.png",
+      "note": "One Market 2 chip; intersection traffic dominates rather than a bus model suitable for close inspection.",
+      "drawCalls": 194,
+      "triangles": 1886791,
+      "fps": 38.3,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 44
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 5
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 26
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2239
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.7,
+          "initMs": 20
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 457
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_closeup_17p5.png",
+      "note": "Bus is only peripherally clipped; fixed intersection remains the main subject.",
+      "drawCalls": 308,
+      "triangles": 2260678,
+      "fps": 34.5,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 37
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 19
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2234
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1.8,
+          "initMs": 17
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 434
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_closeup_22.png",
+      "note": "Night intersection and road lamps; no useful close hero bus for judging individual window treatment.",
+      "drawCalls": 155,
+      "triangles": 2074027,
+      "fps": 35.2,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 44
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 17
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2226
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.4,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 418
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_stop_12.png",
+      "note": "Four-post glass shelter, roof, bench, flag and disc are visible; blank timetable plate and vegetation crossing the roof remain.",
+      "drawCalls": 207,
+      "triangles": 1777120,
+      "fps": 36.4,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 39
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 21
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 2178
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.5,
+          "initMs": 16
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 408
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_bus_12.png",
+      "note": "Large near three-quarter bus clipped by bottom HUD: destination glyphs, roof vents, pillars, two door bays and hub/waist split improved; opaque gray windows and flat body remain synthetic.",
+      "drawCalls": 145,
+      "triangles": 1494348,
+      "fps": 36.9,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 39
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 17
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2114
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.5,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 388
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_line_12.png",
+      "note": "Three partially visible routes across the forest grid; path readability improved but not reference-level end-to-end clarity.",
+      "drawCalls": 161,
+      "triangles": 1374425,
+      "fps": 38.5,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 40
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 18
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2056
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1.2,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 388
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_overlay_12.png",
+      "note": "Separated blue/red ribbons, green branch, chevrons, rings and three readable labels are a clear improvement; tighter camera clips full network.",
+      "drawCalls": 267,
+      "triangles": 1744858,
+      "fps": 59.8,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 35
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 18
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1942
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.9,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 380
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_night_stop_22.png",
+      "note": "Large bus front fills and clips the lower frame, obscuring the shelter; identical gray windows and roof-crossing leaves remain.",
+      "drawCalls": 165,
+      "triangles": 1968034,
+      "fps": 49.3,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 52
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 5
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 26
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2185
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.3,
+          "initMs": 20
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 462
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_lines_12.png",
+      "note": "Real three-row panel, eight named stops and finite details; network sits behind/right but is visually weak.",
+      "drawCalls": 205,
+      "triangles": 1385707,
+      "fps": 58.3,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 54
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 18
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2156
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.4,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 404
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_overlay_12_720.png",
+      "note": "Three non-overlapping labels remain readable at 720p. Panel scroll container retains footer; lower controls require scrolling, not overflow.",
+      "drawCalls": 186,
+      "triangles": 1292047,
+      "fps": 60,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 38
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 21
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2038
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.4,
+          "initMs": 16
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 432
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_lines_12_720.png",
+      "note": "Line names and numerical detail readable at 720p; lower controls require scroll, distant chips are culled.",
+      "drawCalls": 205,
+      "triangles": 1385707,
+      "fps": 60.2,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 36
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 18
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2005
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.4,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 391
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_bus_22.png",
+      "note": "Destination and headlamps lit, uniform gray window band and green waist; headlight pool falls below the camera/HUD, so image alone cannot establish its absence.",
+      "drawCalls": 213,
+      "triangles": 2076521,
+      "fps": 51.7,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 36
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 18
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1973
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 377
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/transit_stop_22.png",
+      "note": "Same shelter framing problem as night_stop: close bus front obscures most of the shelter and clips the bottom.",
+      "drawCalls": 165,
+      "triangles": 1968034,
+      "fps": 59.7,
+      "errors": [],
+      "modules": {
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 41
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 4
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 16
+        },
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1906
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.8,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.2,
+          "initMs": 369
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        }
+      }
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/repeat-1.png",
+      "note": "First fixed closeup seed1337: ambient intersection and one chip, no strong bus hero."
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/repeat-2.png",
+      "note": "Second closeup visually matches first; measured mean absolute difference0.1777458/255."
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/mask-aerial-on.png",
+      "note": "Diagnostic visible-group frame with ribbons and buses; ambient vehicles also move between paired captures."
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/mask-aerial-off.png",
+      "note": "Owned ribbons/buses disappear, but ambient motion contaminates pixel attribution; no pure transit-mask conclusion."
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/mask-street-on.png",
+      "note": "Diagnostic shelter/ribbon/chips visible; ambient truck and pedestrians contaminate paired capture."
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/mask-street-off.png",
+      "note": "Owned furniture/ribbons/chips vanish; ambient positions change, so this is not an isolated material measurement."
+    },
+    {
+      "file": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r2/critic/all_aerial_12.png",
+      "note": "Composed city shows high-rises, river and two bridges, but HUD has only1resident and about429cash: confirmed democity startup mismatch, not a transit init error.",
+      "drawCalls": 443,
+      "triangles": 2691357,
+      "fps": 30,
+      "errors": [],
+      "modules": {
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1976
+        },
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 63
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 22
+        },
+        "zoning": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "buildings": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 21
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 2.4,
+          "initMs": 388
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1.6,
+          "initMs": 15
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 0
+        },
+        "effects": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "tools": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2
+        },
+        "services": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 74
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        },
+        "audio": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 293
+        },
+        "infoviews": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 94
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 4
+        },
+        "democity": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 0
+        }
+      }
+    }
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/transit_r2.md",
+  "pass": false
+}

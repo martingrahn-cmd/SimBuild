@@ -5,6 +5,7 @@
 // yield lines, turn arrows, gore hatching). Also derives lamp positions and the intersection list.
 import * as THREE from 'three';
 import { LAYERS } from '../../core/constants.js';
+import { PavementSurface } from './surface.js';
 
 const TILE = 1024;
 const ROW = 4;               // metres between rows along a straight edge
@@ -22,6 +23,8 @@ const MAX_GRADE = 0.15;      // profile grade limit (rise per metre)
 const PLATEAU = 24;          // minimum metres over which an arm blends from the node height to the terrain profile
 const DECK_DEPTH = 1.5;
 const PIER_SPACING = 24;
+const CONCRETE_DETAIL_DISTANCE = 700;
+const CONCRETE_SHADOW_DISTANCE = 600;
 
 const KERB_COL = [0.66, 0.66, 0.64];
 const KERB_FACE_COL = [0.5, 0.5, 0.49];
@@ -43,9 +46,27 @@ export function packFlags({ oneWay = false, hw = false, dbl = false, noLineL = f
 }
 function smooth01(t) { t = t < 0 ? 0 : t > 1 ? 1 : t; return t * t * (3 - 2 * t); }
 
+// A distant road keeps its walkable top faces but omits curb, parapet and deck
+// sidewalls. The authoritative network and PavementSurface are always built
+// from the full accumulator before this render-only representation is made.
+function distantConcreteGeometry(source) {
+  const index = source.index.array, normal = source.attributes.normal, keep = [];
+  for (let i = 0; i < index.length; i += 3) {
+    const ny = (normal.getY(index[i]) + normal.getY(index[i + 1]) + normal.getY(index[i + 2])) / 3;
+    if (ny > 0.45) keep.push(index[i], index[i + 1], index[i + 2]);
+  }
+  const geo = new THREE.BufferGeometry();
+  for (const [name, attribute] of Object.entries(source.attributes)) geo.setAttribute(name, attribute);
+  const Index = index.constructor;
+  geo.setIndex(new THREE.BufferAttribute(new Index(keep), 1));
+  geo.boundingBox = source.boundingBox?.clone() || null;
+  geo.boundingSphere = source.boundingSphere?.clone() || null;
+  return geo;
+}
+
 /** Growable geometry accumulator with a fixed attribute layout (pos, nrm, uv, color, aRoad). */
 class Acc {
-  constructor() { this.pos = []; this.nrm = []; this.uv = []; this.col = []; this.road = []; this.idx = []; this.n = 0; }
+  constructor() { this.pos = []; this.nrm = []; this.uv = []; this.col = []; this.road = []; this.idx = []; this.n = 0; this.pavement = new Set(); }
   v(x, y, z, nx, ny, nz, u, v, col = SW_COL, r0 = 0, r1 = 0, r2 = 0, r3 = 0) {
     this.pos.push(x, y, z); this.nrm.push(nx, ny, nz); this.uv.push(u, v);
     this.col.push(col[0], col[1], col[2]); this.road.push(r0, r1, r2, r3);
@@ -89,6 +110,8 @@ export class RoadBuilder {
   constructor(net, world, mats, group, log) {
     this.net = net; this.world = world; this.mats = mats; this.group = group; this.log = log;
     this.meshes = [];
+    this.lodPairs = [];
+    this.pavement = new PavementSurface();
     this.nodeInfo = new Map();
     this.stats = { edges: 0, nodes: 0, tris: 0, meshes: 0, bridges: 0, flattenCalls: 0, terrainVerts: 0, ms: 0 };
     this.flattening = false;
@@ -98,13 +121,19 @@ export class RoadBuilder {
   }
 
   dispose() {
+    this.pavement.clear();
     for (const m of this.meshes) { this.group.remove(m); m.geometry.dispose(); }
+    for (const pair of this.lodPairs) { this.group.remove(pair.lod); pair.lod.geometry.dispose(); }
     this.meshes = [];
+    this.lodPairs = [];
     this.tiles.clear();
   }
 
+  /** A newly seeded terrain needs a new immutable seabed/original-height basis. */
+  resetTerrainBasis() { this._grid = null; }
+
   // ------------------------------------------------------------------ orchestration
-  rebuild() {
+  rebuild({ preserveTerrain = false } = {}) {
     const t0 = performance.now();
     this.dispose();
     const net = this.net;
@@ -117,7 +146,8 @@ export class RoadBuilder {
     this.nodeHeights();
     for (const e of net.edges.values()) { this.profileBlend(e); if (e.bridge) bridges++; }
     for (const info of this.nodeInfo.values()) if (info.kind === 'intersection') this.nodeShapes(info);
-    this.conformTerrain();
+    if (!preserveTerrain) this.conformTerrain();
+    else this.stats.terrainVerts = 0;
     this.buildCoverage();
     for (const e of net.edges.values()) this.emitEdge(e);
     for (const n of net.nodes.values()) this.emitNode(n);
@@ -125,6 +155,7 @@ export class RoadBuilder {
     for (const [key, tile] of this.tiles) {
       for (const [name, acc] of Object.entries(tile)) {
         if (acc.empty) continue;
+        if (name === 'asphalt' || name === 'concrete') this.pavement.add(acc, name === 'asphalt');
         const geo = acc.build();
         const mesh = new THREE.Mesh(geo, this.mats[name]);
         mesh.name = `roads/${name}/${key}`;
@@ -136,6 +167,19 @@ export class RoadBuilder {
         mesh.updateMatrix();
         this.group.add(mesh);
         this.meshes.push(mesh);
+        if (name === 'concrete') {
+          const lod = new THREE.Mesh(distantConcreteGeometry(geo), this.mats[name]);
+          lod.name = `roads/concrete-lod/${key}`;
+          lod.renderOrder = mesh.renderOrder;
+          lod.castShadow = false;
+          lod.receiveShadow = true;
+          lod.layers.enable(LAYERS.ROADS);
+          lod.matrixAutoUpdate = false;
+          lod.updateMatrix();
+          lod.visible = false;
+          this.group.add(lod);
+          this.lodPairs.push({ detail: mesh, lod, center: geo.boundingSphere.center.clone() });
+        }
         tris += acc.idx.length / 3; meshes++;
       }
     }
@@ -143,6 +187,18 @@ export class RoadBuilder {
     this.stats.edges = net.edges.size; this.stats.nodes = net.nodes.size; this.stats.tris = tris; this.stats.meshes = meshes;
     this.stats.bridges = bridges; this.stats.ms = performance.now() - t0;
     net.dirty = false;
+  }
+
+  updateLod(camera) {
+    let detail = 0, lod = 0;
+    for (const pair of this.lodPairs) {
+      const distance = Math.hypot(pair.center.x - camera.position.x, pair.center.z - camera.position.z);
+      const far = distance > CONCRETE_DETAIL_DISTANCE;
+      pair.detail.visible = !far; pair.lod.visible = far;
+      pair.detail.castShadow = !far && distance < CONCRETE_SHADOW_DISTANCE;
+      if (far) lod++; else detail++;
+    }
+    this.stats.concreteLod = { distance: CONCRETE_DETAIL_DISTANCE, detail, lod };
   }
 
   acc(name, x, z) {
@@ -483,13 +539,21 @@ export class RoadBuilder {
   profileBlend(e) {
     const net = this.net;
     const c = net.poly(e.id);
+    const T = this.world.terrain;
     const nA = net.nodes.get(e.a), nB = net.nodes.get(e.b);
     const n = c.n, len = c.len;
     const yA = nA.y, yB = nB.y;
+    c.bridgeFloor = T.seaLevel + BRIDGE_CLEAR;
     // blend length: at most the free length between the two plateaus, so each end is exactly its node height
     const L = Math.max(0.5, Math.min(Math.max(PLATEAU, Math.min(len * 0.45, 40)), len - e.trimA - e.trimB));
     c.blend = { yA, yB, tA: e.trimA, tB: e.trimB, L };
-    for (let i = 0; i < n; i++) c.ys[i] = net.blendY(c, c.s[i], c.smooth[i]);
+    for (let i = 0; i < n; i++) {
+      c.ys[i] = net.blendY(c, c.s[i], c.smooth[i]);
+      // The node-plateau blend can otherwise pull a water-crossing deck back below the
+      // bridge design minimum that profileSmooth established. This remains roads-owned
+      // render/traffic geometry; terrain is never modified below a bridge.
+      if (c.water[i]) c.ys[i] = Math.max(c.ys[i], T.seaLevel + BRIDGE_CLEAR);
+    }
     e.bridge = false;
     for (let i = 0; i < n; i++) {
       const b = c.water[i] || (c.ys[i] - c.terrain[i] > BRIDGE_MIN);
@@ -811,6 +875,7 @@ export class RoadBuilder {
           const c0 = p0.kind === 'swin' ? SW_IN_COL : colOf(p0.kind), c1 = p0.kind === 'swin' ? SW_COL : colOf(p0.kind);
           const a = acc.v(r.x + rx * u0, r.y + p0.y, r.z + rz * u0, nx / nl, ny / nl, nz / nl, u0, r.d, c0);
           const b = acc.v(r.x + rx * u1, r.y + p1.y, r.z + rz * u1, nx / nl, ny / nl, nz / nl, u1, r.d, c1);
+          if (acc === conc) { acc.pavement.add(a); acc.pavement.add(b); }
           ids.push([acc, a, b]);
         }
         return { ids, outerU: P[P.length - 1].u - wa + wb, outerY: P[P.length - 1].y };

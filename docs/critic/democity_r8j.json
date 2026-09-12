@@ -1,0 +1,536 @@
+{
+  "module": "democity",
+  "round": "r8j",
+  "reviewType": "independent bounded Northbank apron review",
+  "decision": "ACCEPT",
+  "acceptedScope": "Small static hardstand detail of existing saved port-7 record; no functioning quay or cargo simulation claim.",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "pass": false,
+  "threshold": 8.5,
+  "wholeGameRank5": "OPEN",
+  "source": {
+    "path": "src/modules/democity/landmarks.js",
+    "sha256": "f874672149fcddc6223c7937171be1652964da25be5b8d8879fa48718ee025b2",
+    "gitTracked": false,
+    "newRngCalls": false,
+    "cameraOrShowcaseBranchAdded": false,
+    "newWorldRecords": false
+  },
+  "ownershipDecision": "Permitted democity-owned saved landmark rendering, not camera-only duplicate scenery; fixed detail is not simulated activity.",
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 26,
+  "originalImages": [
+    "shots/democity/r8j-site-diagnosis/baseline/port-apron_12.png",
+    "shots/democity/r8j-site-diagnosis/baseline/port-apron_22.png",
+    "shots/democity/r8j-site-diagnosis/baseline/port-wide_12.png",
+    "shots/democity/r8j-site-diagnosis/baseline/port-wide_22.png",
+    "shots/democity/r8j-site-diagnosis/candidate/port-apron_12.png",
+    "shots/democity/r8j-site-diagnosis/candidate/port-apron_22.png",
+    "shots/democity/r8j-site-diagnosis/candidate/port-wide_12.png",
+    "shots/democity/r8j-site-diagnosis/candidate/port-wide_22.png",
+    "shots/democity/r8j-site-diagnosis/waterfront_12.png",
+    "shots/democity/r8j-site-diagnosis/waterfront_22.png",
+    "shots/democity/r8j-site-final/bridge_12.png",
+    "shots/democity/r8j-site-final/bridge_22.png",
+    "shots/democity/r8j-site-final/downtown_12.png",
+    "shots/democity/r8j-site-final/downtown_22.png",
+    "shots/democity/r8j-site-final/industry_12.png",
+    "shots/democity/r8j-site-final/industry_22.png",
+    "shots/democity/r8j-site-final/interchange_12.png",
+    "shots/democity/r8j-site-final/interchange_22.png",
+    "shots/democity/r8j-site-final/night_downtown_12.png",
+    "shots/democity/r8j-site-final/night_downtown_22.png",
+    "shots/democity/r8j-site-final/park_12.png",
+    "shots/democity/r8j-site-final/park_22.png",
+    "shots/democity/r8j-site-final/riverfront_12.png",
+    "shots/democity/r8j-site-final/riverfront_22.png",
+    "shots/democity/r8j-site-final/suburb_12.png",
+    "shots/democity/r8j-site-final/suburb_22.png"
+  ],
+  "sidecarCount": 26,
+  "derivedImagesInspected": [
+    "shots/democity/r8j-site-final/contact-sheet.png"
+  ],
+  "finalSummaryMatchesSidecars": true,
+  "customSummariesMatchSidecars": true,
+  "finalMatrix": {
+    "frames": 16,
+    "ready": 16,
+    "errors": 0,
+    "below50": 7,
+    "minFps": 46.2,
+    "maxDraws": 469,
+    "maxTriangles": 2809484,
+    "maxHeapMB": 730.3,
+    "rows": [
+      {
+        "shot": "bridge_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 54.5,
+        "draws": 301,
+        "triangles": 1577299,
+        "heapMB": 542.6,
+        "elapsedMs": 12840
+      },
+      {
+        "shot": "bridge_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 55.7,
+        "draws": 294,
+        "triangles": 1977979,
+        "heapMB": 708.8,
+        "elapsedMs": 12651
+      },
+      {
+        "shot": "downtown_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 49.4,
+        "draws": 425,
+        "triangles": 1887972,
+        "heapMB": 544.4,
+        "elapsedMs": 12875
+      },
+      {
+        "shot": "downtown_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 48.8,
+        "draws": 410,
+        "triangles": 2266966,
+        "heapMB": 495.3,
+        "elapsedMs": 12986
+      },
+      {
+        "shot": "industry_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 204,
+        "triangles": 1153202,
+        "heapMB": 487.2,
+        "elapsedMs": 12492
+      },
+      {
+        "shot": "industry_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 202,
+        "triangles": 1547876,
+        "heapMB": 480.3,
+        "elapsedMs": 12591
+      },
+      {
+        "shot": "interchange_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 47.3,
+        "draws": 388,
+        "triangles": 1809020,
+        "heapMB": 730.3,
+        "elapsedMs": 12713
+      },
+      {
+        "shot": "interchange_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 47.8,
+        "draws": 400,
+        "triangles": 2191322,
+        "heapMB": 506.3,
+        "elapsedMs": 12893
+      },
+      {
+        "shot": "night_downtown_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 46.2,
+        "draws": 418,
+        "triangles": 2455886,
+        "heapMB": 719.6,
+        "elapsedMs": 13079
+      },
+      {
+        "shot": "night_downtown_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 50.6,
+        "draws": 343,
+        "triangles": 2809484,
+        "heapMB": 494.2,
+        "elapsedMs": 12684
+      },
+      {
+        "shot": "park_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 48.4,
+        "draws": 469,
+        "triangles": 1818546,
+        "heapMB": 709.3,
+        "elapsedMs": 12736
+      },
+      {
+        "shot": "park_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 48.7,
+        "draws": 443,
+        "triangles": 2185908,
+        "heapMB": 641.8,
+        "elapsedMs": 12841
+      },
+      {
+        "shot": "riverfront_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 246,
+        "triangles": 1307988,
+        "heapMB": 495,
+        "elapsedMs": 12709
+      },
+      {
+        "shot": "riverfront_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 212,
+        "triangles": 1676550,
+        "heapMB": 700.2,
+        "elapsedMs": 12616
+      },
+      {
+        "shot": "suburb_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 51.6,
+        "draws": 364,
+        "triangles": 1756576,
+        "heapMB": 700.6,
+        "elapsedMs": 13074
+      },
+      {
+        "shot": "suburb_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 56.3,
+        "draws": 329,
+        "triangles": 2136522,
+        "heapMB": 487.8,
+        "elapsedMs": 12849
+      }
+    ]
+  },
+  "metrics": {
+    "errorsAll26": 0,
+    "all16ModulesReadyInAll26": true,
+    "rawHeapAbove512": 9,
+    "maxModuleEndpointMs": 2.2,
+    "maxModuleEndpointOwner": "props",
+    "maxModuleEndpointShot": "bridge_12",
+    "measuredFrameRange": [
+      70,
+      91
+    ],
+    "forcedGCMeasured": false
+  },
+  "ownerProfile": {
+    "records": 13,
+    "plansExactlyEqual": true,
+    "draws": [
+      8,
+      8
+    ],
+    "triangles": [
+      6172,
+      6760
+    ],
+    "delta": 588,
+    "independentlyReconstructedCurrent": 6760,
+    "independentlyReconstructedCorrectedBaseline": 6172,
+    "apronTriangles": [
+      72,
+      660
+    ]
+  },
+  "contracts": {
+    "suppliedPass": true,
+    "deserialize": [
+      true,
+      true
+    ],
+    "mixedUseOwned": 32,
+    "stock": 612,
+    "recordedMixedUseBeforeFirstSecondEqual": true,
+    "recordedSeed1337Equal": true,
+    "recordedSeed7Equal": true,
+    "browserIndependentlyExecuted": false
+  },
+  "rankedIssues": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings",
+        "roads",
+        "services"
+      ],
+      "issue": "Sparse city fabric and repeated forms remain dominant.",
+      "evidence": [
+        "downtown_12",
+        "interchange_12",
+        "park_12"
+      ],
+      "status": "Open; atlas change does not alter parcels or massing."
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "supportingOwners": [
+        "terrain",
+        "democity"
+      ],
+      "issue": "Planar crowns and inconsistent foliage tiers remain.",
+      "evidence": [
+        "park_12",
+        "riverfront_12",
+        "industry_12"
+      ],
+      "status": "Open; retain the earlier bounded r8h improvement without implying completion."
+    },
+    {
+      "rank": 3,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "buildings",
+        "props",
+        "services",
+        "effects",
+        "democity"
+      ],
+      "issue": "Night interiors remain flat and lighting remains disconnected from occupancy and ground.",
+      "evidence": [
+        "night_downtown_22",
+        "downtown_22",
+        "suburb_22",
+        "industry_22",
+        "park_22"
+      ],
+      "status": "Small near-window improvement accepted; rank remains open and unchanged."
+    },
+    {
+      "rank": 4,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "roads",
+        "democity",
+        "buildings",
+        "services"
+      ],
+      "issue": "Abrupt grades, banks and site boundaries remain.",
+      "evidence": [
+        "riverfront_12",
+        "interchange_12",
+        "industry_12",
+        "bridge_12"
+      ],
+      "status": "Open; no new numeric collision or bridge-clearance failure asserted."
+    },
+    {
+      "rank": 5,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "services",
+        "buildings",
+        "props"
+      ],
+      "issue": "Landmark materials and working-site context remain schematic.",
+      "evidence": [
+        "park_12",
+        "suburb_12",
+        "industry_12",
+        "bridge_12"
+      ],
+      "status": "Open; a small static hardstand improvement is accepted, but apron/cranes remain disconnected from the shore and working-site context is weak."
+    },
+    {
+      "rank": 6,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "environment",
+        "effects"
+      ],
+      "issue": "Horizon/reflection/terrain layer seams remain.",
+      "evidence": [
+        "riverfront_12",
+        "riverfront_22",
+        "industry_12"
+      ],
+      "status": "Open; explicit weather artistry was not retested in this bounded round."
+    },
+    {
+      "rank": 7,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation",
+        "buildings"
+      ],
+      "issue": "Featured streets and destinations communicate limited human use.",
+      "evidence": [
+        "night_downtown_12",
+        "night_downtown_22",
+        "park_22",
+        "bridge_12"
+      ],
+      "status": "Open presentation issue; paused stills do not establish simulation or boarding failures."
+    },
+    {
+      "rank": 8,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic",
+        "environment",
+        "effects",
+        "buildings"
+      ],
+      "issue": "Local FPS and raw memory targets remain unmet.",
+      "evidence": [
+        "park_12",
+        "downtown_12"
+      ],
+      "status": "Local final minimum46.2FPS,7/16 below50, raw heap730.3MB, props endpoint2.2ms. Geometry passes; no causal timing or retained-leak claim."
+    }
+  ],
+  "evidenceLimits": [
+    "Independent review of supplied screenshots and browser probes, not an independent browser execution. All26 originals and sidecars individually inspected; contact sheet inspected additionally. Newly added derived comparisons were not needed or counted as inspected.",
+    "Only eight final presets at noon/night, one seed1337,1920x1080 High, Chrome152 on Apple M4 ANGLE Metal, headless=1/speed=0. No fresh full whole-game matrix, dawn/sunset/weather/720p/all-alias, motion, blind judgment or CS2 reference reinspection.",
+    "Final measured windows contain70–91frames, roughly1.5seconds. Total elapsed around13seconds includes startup/settling; raw endpoint heap is not post-GC retained memory. CPU endpoints are not worst-frame/sustained traces or GTX1660 results.",
+    "Custom captures use camera/clock APIs, wait60frames, read stats before freeze and then screenshot. These are endpoint stats rather than standard helper peak-window captures. Independent real-time traffic prevents identical moving pixels.",
+    "Exact restage digests cover buildings/services/transit. Double deserialize/public counts and unchanged13-record profiles support continuity, not complete world or geometry-byte/save-failure certification.",
+    "The known apron is46x30m with heading0; arbitrary imported sizes/headings are not certified. Existing terrain seat recomputation is retained. Static surface detail does not establish collision, driveability, cargo/ship/mooring or economic function.",
+    "landmarks.js is untracked, so git diff is empty. Exact prior apron branch was supplied from the parent apply_patch log; both corrected pre-state and current geometry totals were independently reconstructed read-only. No production mutation was made.",
+    "Only the requested two critic reports were written; no source, STATUS, HANDOFF, captures or test-script files were changed."
+  ],
+  "inspectionRegister": [
+    {
+      "file": "shots/democity/r8j-site-diagnosis/baseline/port-apron_12.png",
+      "observation": "Pale slab with faint existing parallel marks; isolated from water/cranes by roads and grass."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/baseline/port-apron_22.png",
+      "observation": "Pale slab with faint existing parallel marks; isolated from water/cranes by roads and grass."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/baseline/port-wide_12.png",
+      "observation": "Pale slab with faint existing parallel marks; isolated from water/cranes by roads and grass."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/baseline/port-wide_22.png",
+      "observation": "Pale slab with faint existing parallel marks; isolated from water/cranes by roads and grass."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/candidate/port-apron_12.png",
+      "observation": "Darker structured slab with stronger lines, wheel stops and narrow edge fittings; modestly less blank but still an empty inland hardstand."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/candidate/port-apron_22.png",
+      "observation": "Darker structured slab with stronger lines, wheel stops and narrow edge fittings; modestly less blank but still an empty inland hardstand."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/candidate/port-wide_12.png",
+      "observation": "Darker structured slab with stronger lines, wheel stops and narrow edge fittings; modestly less blank but still an empty inland hardstand."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/candidate/port-wide_22.png",
+      "observation": "Darker structured slab with stronger lines, wheel stops and narrow edge fittings; modestly less blank but still an empty inland hardstand."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/waterfront_12.png",
+      "observation": "Residential riverfront diagnosis does not show the apron; no direct candidate attribution."
+    },
+    {
+      "file": "shots/democity/r8j-site-diagnosis/waterfront_22.png",
+      "observation": "Residential riverfront diagnosis does not show the apron; no direct candidate attribution."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/bridge_12.png",
+      "observation": "Improved apron visible in standard view; cranes/crossings retain their silhouette; disconnected pads and shore remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/bridge_22.png",
+      "observation": "Improved apron visible in standard view; cranes/crossings retain their silhouette; disconnected pads and shore remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/downtown_12.png",
+      "observation": "Readable skyline/materials; sparse grass parcels and repeated forms dominate."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/downtown_22.png",
+      "observation": "Readable skyline/materials; sparse grass parcels and repeated forms dominate."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/industry_12.png",
+      "observation": "Recognisable plant structures; plain yards, schematic night pools and stretched mountain remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/industry_22.png",
+      "observation": "Recognisable plant structures; plain yards, schematic night pools and stretched mountain remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/interchange_12.png",
+      "observation": "Road hierarchy intact; sparse blocks, repeated crowns and steep terrain remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/interchange_22.png",
+      "observation": "Road hierarchy intact; sparse blocks, repeated crowns and steep terrain remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/night_downtown_12.png",
+      "observation": "Retail and r8i window cues retained; flat luminous panes and quiet street remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/night_downtown_22.png",
+      "observation": "Retail and r8i window cues retained; flat luminous panes and quiet street remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/park_12.png",
+      "observation": "Stadium preserved; planar foliage and empty venue surroundings remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/park_22.png",
+      "observation": "Stadium preserved; planar foliage and empty venue surroundings remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/riverfront_12.png",
+      "observation": "Riverfront materials intact; steep opposite-bank roads and night horizon seam remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/riverfront_22.png",
+      "observation": "Riverfront materials intact; steep opposite-bank roads and night horizon seam remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/suburb_12.png",
+      "observation": "Hospital/water tower preserved; repetitive gardens and pale night sites remain."
+    },
+    {
+      "file": "shots/democity/r8j-site-final/suburb_22.png",
+      "observation": "Hospital/water tower preserved; repetitive gardens and pale night sites remain."
+    }
+  ]
+}

@@ -18,8 +18,8 @@ const HALF = 'half';
 // camera's frame at once — items 1-3 measure at those pixels and a point off the edge of the frame
 // would silently measure the clamped border instead.
 const LAYOUT = [
-  [[R, 'low'], [R, 'low'], undefined, undefined, [I, 'high'], [I, 'low'], [O, 'high'], [C, 'low']],
-  [[R, 'low'], [C, 'low'], undefined, undefined, [C, 'high'], [R, 'high'], [O, 'low'], [I, 'low']],
+  [[R, 'low'], [I, 'high'], undefined, undefined, [I, 'high'], [I, 'low'], [O, 'high'], [C, 'low']],
+  [[R, 'high'], [C, 'high'], undefined, undefined, [C, 'high'], [R, 'high'], [O, 'low'], [I, 'low']],
   [[R, 'high'], [I, 'high'], [C, 'low'], [R, 'low'], [O, 'low'], [I, 'low'], [C, 'high'], [O, 'high']],
   [[R, 'high'], null, HALF, null, [C, 'high'], [O, 'low'], [I, 'high'], [R, 'low']],
 ];
@@ -127,6 +127,16 @@ export function stageRoads(ctx) {
     info.slopeTarget = [Math.round((sx + best.x) / 2), Math.round((sz + best.z) / 2)];
   }
 
+  // A continuous 160 m waterfront frontage avoids the grid junctions interrupting the
+  // shoreline contour every 80 m. The road stays inland; terrain validity still cuts its band.
+  if (T.features?.river) {
+    const bank = x => T.features.river.zAt(x) + T.features.river.halfWidthAt(x);
+    const start = [-480, bank(-480) + 48];
+    edge(node(...start), node(-320, northAt(-320)), 'street',
+      { ctrl: { x: -400, z: bank(-400) + 48 } });
+    info.riverExtension = { start, control: [-400, bank(-400) + 48], end: [-320, northAt(-320)] };
+  }
+
   // --- 7. one highway across the north of the district: proves item 14 (no lots, no zonable cells)
   // north of the waterfront run's band, so the highway corridor does not eat the river frontage
   const hw = [[-470, -220], [-300, -216], [-140, -210]];
@@ -134,9 +144,8 @@ export function stageRoads(ctx) {
   info.highway = hw;
 
   // junction nodes where two zoned frontages meet (item 12): the interior grid intersections
-  for (const [k, id] of cache) {
-    const [x, z] = k.split(',').map(Number);
-    const n = RD.nodes.get(id);
+  for (const n of RD.nodes.values()) {
+    const { id, x, z } = n;
     if (n && n.edges && n.edges.size >= 3 && Math.abs(x) <= 320 && z >= -170 && z <= 160) info.junctions.push({ id, x, z });
   }
   info.junctions.sort((a, b) => a.id - b.id);
@@ -190,9 +199,19 @@ export function paintZones(ctx, grid) {
       rect(XS[c] - 5, 163, XS[c + 1] + 5, 189, skirtS[c][0], skirtS[c][1]);
       blocks.push({ x: Math.round((XS[c] + XS[c + 1]) / 2), z: 176, type: skirtS[c][0], density: skirtS[c][1] });
     }
+    if (T.features?.river) {
+      const bank = x => T.features.river.zAt(x) + T.features.river.halfWidthAt(x);
+      const lo = Math.min(bank(-480), bank(-400), bank(-320));
+      const hi = Math.max(bank(-480), bank(-400), bank(-320));
+      rect(-509, lo - 8, -321, hi + 88, R, 'low');
+      blocks.push({ x: -420, z: Math.round(bank(-420) + 70), type: R, density: 'low' });
+    }
     // the super-block (x -160..0, z north..0); its unreachable core is the bare-ground landmark
     const zN = Math.max(northZ(T, -160), northZ(T, 0));
     rect(-157, zN + 3, -3, -3, SUPER[0], SUPER[1]);
+    // A second high-density frontage in the super-block is visible in the fixed close view.
+    rect(-157, -77, -109, -3, I, 'high');
+    blocks.push({ x: -140, z: -40, type: I, density: 'high' });
     blocks.push({ x: -130, z: Math.round((zN - 0) / 2), type: SUPER[0], density: SUPER[1] });
     // west and east skirts, again three cells deep
     const zW = northZ(T, -320) + 3, zE = northZ(T, 320) + 3;
@@ -211,7 +230,7 @@ export function paintZones(ctx, grid) {
     // contour.
     const doomed = new Map();
     for (const [k, c] of cells) {
-      if (c.depth < 3 || claimed.has(k)) continue;
+      if (c.depth < 2 || claimed.has(k)) continue;
       const ix = Math.floor((c.x + 1024) / 8), iz = Math.floor((c.z + 1024) / 8);
       let onTerrainEdge = false;
       for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {

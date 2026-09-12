@@ -1,0 +1,37 @@
+{
+  "round": 1,
+  "judge": "local control",
+  "entries": [
+    {
+      "pair": "pair_01", "verdict": "B", "confidence": "high",
+      "why": "B presents a complete metropolitan region with layered shorelines, bridges, forests, districts and atmospheric depth. A has readable roads and a core, but large empty grass parcels, repeated towers and thin vegetation make it look like a compact simulation fixture.",
+      "loserNeeds": "Increase real block-frontage density and asset variation while retaining the readable district plan.",
+      "tellsA": ["repeated tower shells", "large empty grass blocks", "uniform road grid", "flat sparse foliage"],
+      "tellsB": []
+    },
+    {
+      "pair": "pair_02", "verdict": "A", "confidence": "high",
+      "why": "A has believable house lots, varied trees and hedges, strong contact shadows, road camber and fine material detail. B communicates a suburb but the water tower, white civic blocks, repeated small houses and card-like trees expose coarse geometry and weak grounding.",
+      "loserNeeds": "Replace the repeated house/foliage set with grounded, materially varied lots and articulated civic assets.",
+      "tellsA": [],
+      "tellsB": ["monolithic white blocks", "simple water-tower cylinder", "repeated roofs", "flat foliage cards", "empty lawns"]
+    },
+    {
+      "pair": "pair_03", "verdict": "A", "confidence": "high",
+      "why": "A has precise road geometry, lane markings, barriers, vehicles, deep tree shadows and convincing construction feedback. B shows a coherent interchange but its shoulders, merging geometry, vegetation and surrounding lots lack the detail and material response needed at this scale.",
+      "loserNeeds": "Raise road-edge, junction and vegetation fidelity so the interchange holds up as the main subject.",
+      "tellsA": [],
+      "tellsB": ["thin repetitive trees", "flat asphalt", "sparse traffic", "empty central field", "uniform building spacing"]
+    },
+    {
+      "pair": "pair_04", "verdict": "B", "confidence": "high",
+      "why": "B builds a convincing night street from wet reflections, signs, lamps, traffic and pedestrians at several depths. A has readable lit windows and streets, but white window panels, weak pools of light and almost no visible activity leave it feeling like an unoccupied architectural model.",
+      "loserNeeds": "Add grounded warm light sources, reflected/wet material response and concentrated street-level activity.",
+      "tellsA": ["white window panels", "dark empty streets", "repeated facade grids", "limited light spill"],
+      "tellsB": []
+    }
+  ],
+  "decoded": { "oursWins": 0, "referenceWins": 4, "ties": 0, "highConfidence": 4 },
+  "key": "shots/integration/blind-r1-key.json",
+  "imageDirectory": "shots/integration/blind-r1"
+}

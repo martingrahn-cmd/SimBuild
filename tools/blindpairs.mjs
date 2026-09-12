@@ -21,6 +21,7 @@ if (!args.pairs || !args.out || !args.key) { console.error('usage: --pairs pairs
 
 const pairs = JSON.parse(fs.readFileSync(args.pairs, 'utf8'));
 const seed = +(args.seed || 1);
+const python = args.python || process.env.SIM_PYTHON || 'python3';
 const [W, H] = (args.size || '1600x900').split('x').map(Number);
 fs.mkdirSync(args.out, { recursive: true });
 fs.mkdirSync(path.dirname(path.resolve(args.key)), { recursive: true });
@@ -67,7 +68,7 @@ for (const p of usable) {
   const jobs = [[p.ours, oursIsA ? 'A' : 'B'], [p.ref, oursIsA ? 'B' : 'A']];
   for (const [src, slot] of jobs) {
     const dst = path.join(dir, `${slot}.jpg`);
-    const r = spawnSync('python3', [pyFile, src, dst, String(W), String(H)], { encoding: 'utf8' });
+    const r = spawnSync(python, [pyFile, src, dst, String(W), String(H)], { encoding: 'utf8' });
     if (r.status !== 0) { console.error(`normalize failed for ${src}: ${r.stderr}`); process.exit(1); }
   }
   // Pad both files to the same byte length with trailing bytes after the JPEG EOI marker (decoders ignore

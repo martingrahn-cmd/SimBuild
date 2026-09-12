@@ -58,3 +58,21 @@ Not applied:
 - `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
   (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
   until then, since that contract now holds by documentation.
+
+## Integrator decision (local wave 2, render material setup)
+
+Moved the existing pending material sweep to an engine `onBeforeRender` hook after all module updates. Props created during a tools-triggered road rebuild could otherwise first draw after the environment update and before their sky/cloud uniforms were bound, causing Metal sampler conflicts. The hook retains change detection and the bounded settlement sweep. Root inspected `shots/integration/w2_material_binding.png`: 141 draws, 992,327 triangles, zero errors. Tools separately repeats the GL probe.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Applied the small sky-dome secondary-camera transform and retained the onBeforeRender material synchronization that fixed newly generated props' missing environment sampler bindings on Metal. No sun/exposure/fog/shadow retune during wave2. world.weather remains the sole shared source; other modules do not add global lights or overwrite tone mapping.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+Retained sole global light, exposure, fog and weather ownership. No global brightness adjustment to improve module acceptance metrics. Existing sky secondary-camera correction remains; night readability is a whole-game quality issue.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Retained sole shared lighting/exposure/fog ownership and prior reflection-camera/shadow fixes. No competing global light or exposure controller added by integration. Night sky/body balance, golden-hour washout and composed shadow/triangle costs remain cross-cutting work, not waived. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.

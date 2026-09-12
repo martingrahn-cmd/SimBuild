@@ -1,0 +1,33 @@
+{
+  "module": "democity",
+  "round": "r8a",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted-final-v5",
+  "scoreChanged": false,
+  "change": "The existing real arena landmark uses an open panelled stadium roof, field, facade piers and entrance articulation.",
+  "rejectedIterations": [
+    "thick torus roof read as a soft doughnut",
+    "thin torus step lacked architectural connection"
+  ],
+  "verified": {
+    "buildModules": 163,
+    "acceptedCapturesInspected": 3,
+    "errors": 0,
+    "landmarks": 13,
+    "serializedPlanExact": true,
+    "landmarkDrawsBefore": 8,
+    "landmarkDrawsAfter": 8,
+    "landmarkTrianglesBefore": 3600,
+    "landmarkTrianglesAfter": 4076,
+    "arenaCropMaeNormalized": 0.0773545,
+    "parkPeakTriangles": 1801028,
+    "api": true,
+    "exactCrossSeedRestage": true
+  },
+  "remaining": [
+    "Arena and other landmarks remain procedural rather than production asset quality.",
+    "The arena site and broader city frontage remain sparse.",
+    "Whole-game50fps, scale, foliage, grounding and night-depth gates remain failed."
+  ]
+}

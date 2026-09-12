@@ -88,7 +88,7 @@ export const PROP_COST = {
 /**
  * Service building metadata. Keys match world.services.kinds; anything not listed falls back to
  * DEFAULT_SERVICE so a services module that adds kinds still gets a sane ghost. When a real
- * `services` module lands, ctx.modules.services.footprintOf/coverageOf/costOf win over this table.
+ * `services` module is ready, its catalog and footprint APIs win over this fallback table.
  *   w/d       footprint in metres (w along the road frontage, d away from it)
  *   h         ghost box height
  *   coverage  service radius in metres (0 = network/grid service, no circle)
@@ -120,10 +120,16 @@ export function serviceDef(kind, modules) {
   const base = SERVICES[kind]
     ? { ...DEFAULT_SERVICE, ...SERVICES[kind], kind }
     : { ...DEFAULT_SERVICE, kind, label: String(kind || 'service').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) };
-  // prefer a real services module the day it publishes these (flat, guarded — never `.api`)
-  if (typeof svc?.footprintOf === 'function') { const f = svc.footprintOf(kind); if (f?.w) { base.w = f.w; base.d = f.d; if (f.h) base.h = f.h; } }
-  if (typeof svc?.coverageOf === 'function') { const c = svc.coverageOf(kind); if (Number.isFinite(c)) base.coverage = c; }
-  if (typeof svc?.costOf === 'function') { const c = svc.costOf(kind); if (Number.isFinite(c)) base.cost = c; }
+  const entry = svc?.catalog?.()?.[kind];
+  const footprint = svc?.footprint?.(kind) || entry?.footprint;
+  if (footprint?.w > 0 && footprint?.d > 0) { base.w = footprint.w; base.d = footprint.d; }
+  if (entry) {
+    if (entry.label) base.label = entry.label;
+    if (Number.isFinite(entry.cost)) base.cost = entry.cost;
+    if (Number.isFinite(entry.upkeep)) base.upkeep = entry.upkeep;
+    if (entry.radius === null) base.coverage = 0;
+    else if (Number.isFinite(entry.radius)) base.coverage = entry.radius;
+  }
   return base;
 }
 

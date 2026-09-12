@@ -3,6 +3,7 @@
 // panel, infoview legend, notifications + journal, statistics, milestone toast, minimap, dev corner,
 // photo mode, menus (main / pause / save / load / settings). Emits `ui:action` for every interaction.
 import { ICONS, PALETTE } from './icons.js';
+import * as THREE from 'three';
 import * as CARDS from './cards.js';
 import { CSS } from './styles.js';
 import { MODULE_NAMES } from '../../core/constants.js';
@@ -26,8 +27,8 @@ const LINE_COLOURS = ['#2f8ff5', '#e5484d', '#4cc25a', '#f5c542', '#a66cf5', '#3
 
 /** Milestone ladder (mirrors simulation/economy.js; used for "Unlocks at …" tooltips when the simulation is absent). */
 export const MILESTONES = [
-  { name: 'Hamlet', unlocks: ['roads', 'zoning'] }, { name: 'Tiny Village', unlocks: ['power', 'water'] }, { name: 'Small Village', unlocks: ['garbage', 'healthcare'] },
-  { name: 'Large Village', unlocks: ['education', 'police'] }, { name: 'Grand Village', unlocks: ['fire', 'parks'] }, { name: 'Tiny Town', unlocks: ['high_density', 'avenues'] },
+  { name: 'Hamlet', unlocks: ['roads', 'zoning', 'power', 'water', 'garbage'] }, { name: 'Tiny Village', unlocks: ['healthcare'] }, { name: 'Small Village', unlocks: ['education'] },
+  { name: 'Large Village', unlocks: ['police'] }, { name: 'Grand Village', unlocks: ['fire', 'parks'] }, { name: 'Tiny Town', unlocks: ['high_density', 'avenues'] },
   { name: 'Boom Town', unlocks: ['highways', 'transit'] }, { name: 'Busy Town', unlocks: ['university', 'plazas'] }, { name: 'Big Town', unlocks: ['large_parks', 'hospital'] },
   { name: 'Small City', unlocks: ['office_high', 'incinerator'] }, { name: 'Big City', unlocks: ['landmarks'] }, { name: 'Metropolis', unlocks: ['monuments'] }, { name: 'Megalopolis', unlocks: [] },
 ];
@@ -53,9 +54,9 @@ export const SERVICE_KINDS = {
   plaza: { cat: 'parks', label: 'Plaza', cost: 8000, unlock: 'plazas' },
 };
 const SERVICE_CATS = [
-  { id: 'electricity', label: 'Electricity', icon: 'electricity', unlock: 'power', hint: [['LMB', 'Place'], ['R', 'Rotate'], ['Esc', 'Close']] },
-  { id: 'water', label: 'Water & Sewage', icon: 'water', unlock: 'water' },
-  { id: 'garbage', label: 'Garbage', icon: 'garbage', unlock: 'garbage' },
+  { id: 'electricity', label: 'Electricity', icon: 'electricity', unlock: 'power', hint: [['LMB', 'Place'], ['Esc', 'Close']], guide: 'Electricity follows connected roads; no separate cables are needed. Paid outside power covers the city until a connected local system can serve every building.' },
+  { id: 'water', label: 'Water & Sewage', icon: 'water', unlock: 'water', guide: 'Water and sewage follow connected roads; no separate pipes are needed. Paid outside service remains until connected pumps and sewage capacity cover every building.' },
+  { id: 'garbage', label: 'Garbage', icon: 'garbage', unlock: 'garbage', guide: 'Waste collection follows connected roads. Paid outside collection remains until connected local capacity covers every building.' },
   { id: 'health', label: 'Healthcare', icon: 'health', unlock: 'healthcare' },
   { id: 'education', label: 'Education', icon: 'education', unlock: 'education' },
   { id: 'police', label: 'Police', icon: 'police', unlock: 'police' },
@@ -92,12 +93,13 @@ export class Hud {
     this.ctx = ctx;
     this.events = ctx.events;
     this.cityName = cityName;
-    this.source = { eco: ctx.world.economy, dayOffset: 0, income: 0, popDelta: 0, milestone: null, milestoneName: null, milestoneNext: null, xp: null, unlocked: null };
-    this.activeCategory = null; this.activeTab = {}; this.activeCard = {}; this.optionValues = {};
+    this.source = { eco: ctx.world.economy, dayOffset: 0, income: 0, balance: null, popDelta: 0, milestone: null, milestoneName: null, milestoneNext: null, xp: null, unlocked: null };
+    this.activeCategory = 'inspect'; this.activeTab = {}; this.activeCard = {}; this.optionValues = {};
     this.notes = []; this.journal = []; this._noteSeq = 0;
     this.infoview = null; this.transitSel = null; this.transitSource = null; this.leftKind = null; this.sideKind = null; this.photo = false;
     this._lastMin = -1; this._lastDay = -1; this._lastPaused = null; this._lastSpeed = null; this._lastMoney = null; this._lastPop = null; this._lastHappy = -1;
     this._devAcc = 0; this._sideAcc = 0; this._wKind = -1; this._wTemp = null; this._wMonth = -1; this._msKey = '';
+    this._utilityAcc = 0; this._utilityMarkers = new Map(); this._utilityPoint = new THREE.Vector3();
     this.categories = this.buildCategories();
     this._build(dev);
     this.menus = new Menus(this);
@@ -114,12 +116,14 @@ export class Hud {
       cat.cards.push({ id: kind, label: def.label, cost: def.cost, unlock: def.unlock, icon: () => CARDS.serviceTile(kind), opts: { kind } });
     }
     byId.transit.cards.push(
-      { id: 'bus_line', label: 'Bus Line', cost: 2500, icon: () => CARDS.lineTile('#2f8ff5'), opts: { mode: 'line', kind: 'bus' }, tool: 'transit' },
+      { id: 'bus_line', label: 'Bus Line', cost: 0, icon: () => CARDS.lineTile('#2f8ff5'), opts: { mode: 'line', kind: 'bus' }, tool: 'transit' },
       { id: 'bus_stop', label: 'Bus Stop', cost: 320, icon: () => CARDS.propTile('bus_stop'), opts: { kind: 'bus_stop' }, tool: 'prop' },
     );
     byId.transit.tabs = [{ id: 'lines', label: 'Lines', icon: 'transitLines', open: 'lines' }];
     return [
-      { id: 'roads', label: 'Roads', icon: 'roads', tool: 'road', hint: [['LMB', 'Place node'], ['RMB', 'Cancel'], ['U', 'Undo'], ['Esc', 'Close']],
+      { id: 'inspect', label: 'Select / Inspect', icon: 'pointer', neutral: true },
+      { sep: true },
+      { id: 'roads', label: 'Roads', icon: 'roads', tool: 'road', hint: [['LMB', 'Add node'], ['Enter', 'Finish & build'], ['RMB', 'Undo point'], ['⌘/Ctrl+Z', 'Undo built road'], ['Esc', 'Select mode']],
         options: [
           { kind: 'modes', id: 'mode', label: 'Tool Mode', items: [['straight', 'Straight'], ['curve', 'Curved'], ['free', 'Continuous'], ['grid', 'Grid']], value: 'straight' },
           { kind: 'stepper', id: 'elevation', label: 'Elevation', value: 0, step: 5, min: -20, max: 60, unit: ' m' },
@@ -137,10 +141,10 @@ export class Hud {
           { id: 'intersections', label: 'Intersections', icon: 'plus', cards: [
             { id: 'crossing', label: 'Crosswalk', cost: 60, icon: () => CARDS.junctionTile('cross'), opts: { junction: 'crossing' } },
             { id: 'lights', label: 'Traffic Lights', cost: 900, icon: () => CARDS.junctionTile('lights'), opts: { junction: 'lights' } },
-            { id: 'roundabout', label: 'Roundabout', cost: 1600, unlock: 'avenues', icon: () => CARDS.junctionTile('roundabout'), opts: { junction: 'roundabout' } },
+            { id: 'roundabout', label: 'Roundabout', cost: 430, icon: () => CARDS.junctionTile('roundabout'), opts: { junction: 'roundabout' } },
           ] },
         ] },
-      { id: 'zoning', label: 'Zoning', icon: 'zoning', tool: 'zone', hint: [['LMB', 'Paint'], ['RMB', 'Erase'], ['Esc', 'Close']],
+      { id: 'zoning', label: 'Zoning', icon: 'zoning', tool: 'zone', hint: [['LMB', 'Paint roadside cells'], ['RMB', 'Erase cells'], ['Esc', 'Select mode']],
         options: [
           { kind: 'modes', id: 'brush', label: 'Brush', items: [['fill', 'Fill block'], ['paint', 'Paint'], ['marquee', 'Marquee']], value: 'paint' },
           { kind: 'stepper', id: 'size', label: 'Brush size', value: 24, step: 8, min: 8, max: 96, unit: ' m' },
@@ -153,13 +157,13 @@ export class Hud {
           { id: 'industrial_low', label: 'Industrial', icon: () => CARDS.zoneTile(ZONE_COL.industrial, 'low'), opts: { type: 'industrial', density: 'low' } },
           { id: 'office_high', label: 'Office', unlock: 'office_high', icon: () => CARDS.zoneTile(ZONE_COL.office, 'high'), opts: { type: 'office', density: 'high' } },
         ] },
-      { id: 'terrain', label: 'Landscaping', icon: 'terrain', tool: 'terrain', hint: [['LMB', 'Apply brush'], ['Wheel', 'Brush size'], ['Esc', 'Close']],
+      { id: 'terrain', label: 'Landscaping', icon: 'terrain', tool: 'terrain', hint: [['LMB', 'Apply brush'], ['Esc', 'Close']],
         options: [
           { kind: 'stepper', id: 'size', label: 'Brush size', value: 40, step: 10, min: 10, max: 200, unit: ' m' },
           { kind: 'stepper', id: 'strength', label: 'Strength', value: 50, step: 10, min: 10, max: 100, unit: ' %' },
         ],
         cards: ['raise', 'lower', 'flatten', 'smooth'].map((m) => ({ id: m, label: { raise: 'Raise', lower: 'Lower', flatten: 'Level', smooth: 'Smooth' }[m], icon: () => CARDS.terrainTile(m), opts: { mode: m } })) },
-      { id: 'props', label: 'Props & Trees', icon: 'props', tool: 'prop', hint: [['LMB', 'Place'], ['R', 'Rotate'], ['Esc', 'Close']],
+      { id: 'props', label: 'Props & Trees', icon: 'props', tool: 'prop', hint: [['LMB', 'Place'], ['Esc', 'Close']],
         options: [
           { kind: 'modes', id: 'mode', label: 'Placement', items: [['single', 'Single'], ['line', 'Line'], ['brush', 'Brush']], value: 'single' },
           { kind: 'stepper', id: 'spacing', label: 'Spacing', value: 12, step: 2, min: 2, max: 40, unit: ' m' },
@@ -189,7 +193,12 @@ export class Hud {
     const m = list.find((x) => x.unlocks?.includes(key));
     return m ? `Unlocks at ${m.name}` : 'Locked';
   }
-  cardsOf(cat) { return cat.tabs ? cat.tabs.find((t) => t.id === (this.activeTab[cat.id] || cat.tabs[0].id))?.cards || cat.tabs[0].cards : cat.cards; }
+  cardsOf(cat) {
+    const tabs = cat.tabs || [];
+    const selected = tabs.find((t) => t.id === (this.activeTab[cat.id] || tabs[0]?.id));
+    // Navigation tabs (such as Transit Lines) keep their category's asset cards.
+    return selected?.cards ?? cat.cards ?? tabs[0]?.cards ?? [];
+  }
 
   // ----------------------------------------------------------------------------------------- build
   _build(dev) {
@@ -230,12 +239,17 @@ export class Hud {
     const tr = el('div', 'sb-topright');
     const topBtns = el('div', 'sb-topbtns sb-pe');
     const bHelp = btn('sb-round sb-tip-below', ICONS.help(), 'Help'); bHelp.addEventListener('click', () => { this.action('help'); this.notify({ type: 'info', title: 'Controls', body: 'Right-drag to orbit, middle-drag or WASD to pan, wheel to zoom. Space pauses, 1–3 set speed, P photo mode, Esc menu.', ttl: 9 }); });
-    const bGear = btn('sb-round sb-tip-below', ICONS.gear(), 'Settings'); bGear.addEventListener('click', () => { this.action('options'); this.menus.open('settings'); });
+    const bGear = btn('sb-round sb-tip-below', ICONS.gear(), 'Game menu'); bGear.addEventListener('click', () => { this.action('menu'); this.menus.open('pause'); });
     topBtns.append(bHelp, bGear);
     this.notesEl = el('div', 'sb-notes sb-pe');
     this.sideEl = el('div', 'sb-side sb-glass sb-pe sb-hidden');
     tr.append(topBtns, this.notesEl, this.sideEl);
     root.appendChild(tr);
+
+    // Projected building-status markers. They belong to UI and read Simulation's public
+    // per-building contract; the underlying utility coverage and road ownership stay untouched.
+    this.utilityWarningsEl = el('div', 'sb-utility-warnings');
+    root.appendChild(this.utilityWarningsEl);
 
     // left column: info panel / transit lines (mutually exclusive)
     this.infoEl = el('div', 'sb-info sb-glass sb-pe sb-hidden');
@@ -261,11 +275,12 @@ export class Hud {
   }
   _key(e) {
     const tgt = e.target && typeof e.target.closest === 'function' ? e.target : document.body;
-    if (tgt.closest('input,select,textarea')) return;
+    if (tgt.closest('input,select,textarea') || tgt.isContentEditable || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.code === 'Escape') {
       if (this.menus.isOpen()) this.menus.close();
       else if (this.photo) this.setPhotoMode(false);
-      else if (this.activeCategory) this.setCategory(null, true);
+      else if (this.infoview) this.setInfoview(null);
+      else if (this.activeCategory && this.activeCategory !== 'inspect') this.setCategory('inspect', true);
       else if (this.leftKind) this.hideLeft(true);
       else if (this.sideKind) this.hideSide();
       else this.menus.open('pause');
@@ -305,15 +320,15 @@ export class Hud {
     this.toolBtns = {};
     for (const c of this.categories) {
       if (c.sep) { tools.appendChild(el('div', 'sb-sep')); continue; }
-      const b = btn('sb-tool', ICONS[c.icon]() + '<span class="sb-lockbadge sb-hidden">' + ICONS.lockBadge() + '</span>', c.label);
-      b.addEventListener('click', () => this.setCategory(this.activeCategory === c.id ? null : c.id, true));
+      const b = btn('sb-tool' + (this.activeCategory === c.id ? ' is-active' : ''), ICONS[c.icon]() + '<span class="sb-lockbadge sb-hidden">' + ICONS.lockBadge() + '</span>', c.label);
+      b.addEventListener('click', () => this.setCategory(c.neutral ? c.id : (this.activeCategory === c.id ? 'inspect' : c.id), true));
       this.toolBtns[c.id] = b; tools.appendChild(b);
     }
 
     const right = el('div', 'sb-toolbar-right');
     this.rightBtns = {};
     for (const [id, icon, tip, fn] of [
-      ['lines', 'transitLines', 'Transit lines', () => { this.action('transitLines'); this.leftKind === 'lines' ? this.hideLeft(true) : this.showLines(); }],
+      ['lines', 'transitLines', 'Transit lines', () => { this._unlocked = this.unlockedSet(); if (!this.isUnlocked('transit')) { this.setCategory('transit'); return; } const wasOpen = this.leftKind === 'lines'; this.action('transitLines'); wasOpen ? this.hideLeft(true) : this.showLines(); }],
       ['stats', 'stats', 'Statistics', () => { this.action('statistics'); this.sideKind === 'stats' ? this.hideSide() : this.showSide('stats'); }],
       ['journal', 'journal', 'Journal', () => { this.action('journal'); this.sideKind === 'journal' ? this.hideSide() : this.showSide('journal'); }],
       ['map', 'map', 'Minimap (M)', () => { this.action('minimap'); this.minimap.toggle(); }],
@@ -332,7 +347,11 @@ export class Hud {
       b.setAttribute('data-tip', locked ? `${c.label} · ${this.unlockLabel(c.unlock)}` : c.label);
     }
     for (const [id, on] of [['lines', this.isUnlocked('transit', set)]]) this.rightBtns[id].classList.toggle('is-locked', !on);
-    if (this.activeCategory) this._renderSubpanel(this.categories.find((c) => c.id === this.activeCategory));
+    if (this.activeCategory) {
+      const active = this.categories.find((c) => c.id === this.activeCategory);
+      if (active?.neutral) { this.subEl.classList.add('sb-hidden'); this.hintEl.classList.add('sb-hidden'); }
+      else if (active) this._renderSubpanel(active);
+    }
   }
 
   _buildStatus() {
@@ -368,7 +387,7 @@ export class Hud {
     this.faceEl = el('span', 'sb-face', ICONS.face(0.8));
     this.hapEl = el('span', 'sb-v sb-num', '—');
     hap.append(this.faceEl, this.hapEl);
-    hap.addEventListener('click', () => { this.action('happiness'); this.setInfoview('happiness'); });
+    hap.addEventListener('click', () => { this.action('happiness'); this.setInfoview(this.infoview === 'happiness' ? null : 'happiness'); });
     const money = btn('sb-chip sb-chip-btn sb-money', '', 'Budget');
     this.moneyEl = el('span', 'sb-v sb-num', '¢0');
     this.moneyTrend = el('span', 'sb-trend up sb-num', ICONS.trendUp() + '<span>¢0</span>');
@@ -423,6 +442,11 @@ export class Hud {
       if (fromUser) { this.action('category', null); this._toolsSelect(null); }
       return;
     }
+    if (cat.neutral) {
+      this.subEl.classList.add('sb-hidden'); this.hintEl.classList.add('sb-hidden');
+      if (fromUser) { this.setInfoview(null); this.action('category', id); this._toolsSelect(null); }
+      return;
+    }
     this._renderSubpanel(cat);
     if (fromUser) {
       this.action('category', id);
@@ -430,6 +454,13 @@ export class Hud {
       const cardId = this.activeCard[id] || cards[0]?.id;
       const card = cards.find((c) => c.id === cardId);
       if (card && this.isUnlocked(card.unlock)) this._selectTool(cat, card);
+      if (id === 'roads' && !this._roadHelpShown) {
+        this._roadHelpShown = true;
+        this.notify({ type: 'info', title: 'Building roads', body: 'Click to add points and press Enter to finish. Pale roadside cells show exactly where zoning and buildings can grow after the road is built. Right-click removes only the latest point.', ttl: 10 });
+      } else if (id === 'zoning' && !this._zoningHelpShown) {
+        this._zoningHelpShown = true;
+        this.notify({ type: 'info', title: 'Zoning grows buildings', body: 'Paint colored cells beside a road. Homes and workplaces grow there automatically when there is demand.', ttl: 9 });
+      }
     }
   }
   _selectTool(cat, card) {
@@ -455,7 +486,7 @@ export class Hud {
   }
   _toolsSelect(name, opts) {
     const tools = this.ctx.modules?.tools;
-    try { if (name === null) tools?.api?.select?.(null); else tools?.api?.select?.(name, opts); } catch (e) { this.ctx.log.warn('tools.select failed', e); }
+    try { if (name === null) tools?.select?.(null); else tools?.select?.(name, opts); } catch (e) { this.ctx.log.warn('tools.select failed', e); }
   }
   _renderSubpanel(cat) {
     const sub = this.subEl; sub.innerHTML = '';
@@ -473,10 +504,11 @@ export class Hud {
         head.appendChild(b);
       }
     }
-    const close = btn('sb-close', ICONS.close()); close.addEventListener('click', () => this.setCategory(null, true));
+    const close = btn('sb-close', ICONS.close()); close.addEventListener('click', () => this.setCategory('inspect', true));
     head.appendChild(close);
     const body = el('div', 'sb-subpanel-body');
     if (cat.options?.length) body.appendChild(this._renderOptions(cat));
+    if (cat.guide) body.appendChild(el('div', 'sb-service-guide', `${ICONS.info()}<span>${esc(cat.guide)}</span>`));
     const cards = el('div', 'sb-cards');
     this.cardEls = {};
     const list = this.cardsOf(cat);
@@ -515,7 +547,7 @@ export class Hud {
             if (opt.kind === 'modes') { this.optionValues[key] = id; g.querySelectorAll('.sb-tm').forEach((x) => x.classList.toggle('is-active', x === b)); }
             else { const set = new Set(this.optionValues[key] ?? opt.value); set.has(id) ? set.delete(id) : set.add(id); this.optionValues[key] = [...set]; b.classList.toggle('is-active', set.has(id)); }
             this.action('toolOption', cat.id, opt.id, this.optionValues[key]);
-            try { this.ctx.modules?.tools?.api?.setOption?.(opt.id, this.optionValues[key]); } catch (e) { /* tools optional */ }
+            try { this.ctx.modules?.tools?.setOption?.(opt.id, this.optionValues[key]); } catch (e) { /* tools optional */ }
           });
           g.appendChild(b);
         }
@@ -528,7 +560,7 @@ export class Hud {
           const v = Math.max(opt.min, Math.min(opt.max, (this.optionValues[key] ?? opt.value) + d * opt.step));
           this.optionValues[key] = v; show();
           this.action('toolOption', cat.id, opt.id, v);
-          try { this.ctx.modules?.tools?.api?.setOption?.(opt.id, v); } catch (e) { /* tools optional */ }
+          try { this.ctx.modules?.tools?.setOption?.(opt.id, v); } catch (e) { /* tools optional */ }
         };
         const dn = btn('sb-tm', ICONS.chevronDown()); dn.addEventListener('click', () => change(-1));
         const up = btn('sb-tm', ICONS.chevronUp()); up.addEventListener('click', () => change(1));
@@ -541,7 +573,7 @@ export class Hud {
 
   /** tool:changed → highlight. Accepts {tool, options}. */
   onToolChanged({ tool, options } = {}) {
-    if (!tool) { if (this.activeCategory) this.setCategory(null); return; }
+    if (!tool) { if (this.activeCategory !== 'inspect') this.setCategory('inspect'); return; }
     const t = String(tool).toLowerCase();
     const o = options || {};
     let cat = /road/.test(t) ? 'roads' : /zone/.test(t) ? 'zoning' : /terrain|sculpt|landscap/.test(t) ? 'terrain' : /bulldoz|demolish/.test(t) ? 'bulldoze' : /transit|line/.test(t) ? 'transit' : /prop|tree|lamp/.test(t) ? 'props' : /info|view/.test(t) ? 'info' : null;
@@ -550,7 +582,9 @@ export class Hud {
     if (this.activeCategory !== cat) this.setCategory(cat);
     const def = this.categories.find((c) => c.id === cat);
     if (!def) return;
-    const card = this.cardsOf(def).find((c) => Object.keys(c.opts || {}).length && Object.entries(c.opts).every(([k, v]) => o[k] === v));
+    // Prefer the specific one-way/intersection card over its more general street-type match.
+    const card = this.cardsOf(def).filter((c) => Object.keys(c.opts || {}).length && Object.entries(c.opts).every(([k, v]) => o[k] === v))
+      .sort((a, b) => Object.keys(b.opts).length - Object.keys(a.opts).length)[0];
     if (card) this.selectCard(cat, card.id);
   }
 
@@ -605,10 +639,59 @@ export class Hud {
     this.tempEl.textContent = `${temp}°C`;
     this.seasonEl.textContent = SEASONS[month];
   }
+  // Economy rates are per simulation day; the calendar displays one month per day.
+  _budgetNet() {
+    if (Number.isFinite(this.source.balance)) return this.source.balance; // explicit showcase override
+    const eco = this.source.eco || {};
+    if (Number.isFinite(eco.net)) return eco.net;
+    if (Number.isFinite(eco.income) && Number.isFinite(eco.expenses)) return eco.income - eco.expenses;
+    return 0;
+  }
   _month() { return ((this.ctx.clock.day - 1 + (this.source.dayOffset | 0)) % 12 + 12) % 12; }
   dateString() { const c = this.ctx.clock; const m = this._month(), y = 2031 + Math.floor((c.day - 1 + (this.source.dayOffset | 0)) / 12); return `${MONTHS[m]} ${y}`; }
 
   // ----------------------------------------------------------------------------------------- per frame
+  _refreshUtilityWarnings() {
+    const simulation = this.ctx.modules?.simulation;
+    const buildings = this.ctx.world.buildings?.items;
+    if (!simulation?.building || !buildings) return;
+    const camera = this.ctx.camera.camera;
+    const candidates = [];
+    for (const b of buildings.values()) {
+      if (b.construction && (b.construction.progress ?? 0) < 1) continue;
+      const r = simulation.building(b.id); if (!r) continue;
+      const power = r.power < 0.5, water = r.water < 0.5;
+      if (!power && !water) continue;
+      candidates.push({ id: b.id, power, water, d: camera.position.distanceToSquared(this._utilityPoint.set(b.x, b.y || 0, b.z)) });
+    }
+    candidates.sort((a, b) => a.d - b.d);
+    const wanted = new Map(candidates.slice(0, 48).map((x) => [x.id, x]));
+    for (const [id, marker] of this._utilityMarkers) if (!wanted.has(id)) { marker.el.remove(); this._utilityMarkers.delete(id); }
+    for (const [id, state] of wanted) {
+      const key = `${state.power ? 'p' : ''}${state.water ? 'w' : ''}`;
+      let marker = this._utilityMarkers.get(id);
+      if (!marker) {
+        const node = el('div', 'sb-utility-warning'); this.utilityWarningsEl.appendChild(node);
+        marker = { el: node, key: '' }; this._utilityMarkers.set(id, marker);
+      }
+      if (marker.key !== key) {
+        marker.key = key;
+        marker.el.innerHTML = `${state.power ? ICONS.bolt() : ''}${state.water ? ICONS.drop() : ''}`;
+        marker.el.setAttribute('aria-label', [state.power ? 'No power' : '', state.water ? 'No water' : ''].filter(Boolean).join(' and '));
+      }
+    }
+  }
+  _positionUtilityWarnings() {
+    const camera = this.ctx.camera.camera, width = this.root.clientWidth, height = this.root.clientHeight;
+    for (const [id, marker] of this._utilityMarkers) {
+      const b = this.ctx.world.buildings.items.get(id);
+      if (!b) { marker.el.style.display = 'none'; continue; }
+      const p = this._utilityPoint.set(b.x, (b.y || 0) + (b.height || 6) + 7, b.z).project(camera);
+      const visible = p.z > -1 && p.z < 1 && Math.abs(p.x) < 1.08 && Math.abs(p.y) < 1.08;
+      marker.el.style.display = visible ? '' : 'none';
+      if (visible) marker.el.style.transform = `translate(${((p.x * .5 + .5) * width).toFixed(1)}px, ${((-p.y * .5 + .5) * height).toFixed(1)}px) translate(-50%, -100%)`;
+    }
+  }
   update(dt) {
     const c = this.ctx.clock;
     const mins = Math.floor(c.hour * 60);
@@ -625,9 +708,13 @@ export class Hud {
       const money = Math.round(eco.money), pop = Math.round(eco.population);
       if (money !== this._lastMoney) {
         this._lastMoney = money; this.moneyEl.textContent = '¢' + fmtInt.format(money);
-        const inc = Math.round(this.source.income || eco.income || 0);
-        this.moneyTrend.className = 'sb-trend sb-num ' + (inc >= 0 ? 'up' : 'down');
-        this.moneyTrend.innerHTML = (inc >= 0 ? ICONS.trendUp() : ICONS.trendDown()) + `<span>${inc >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(inc))}</span>`;
+      }
+      const net = Math.round(this._budgetNet());
+      if (net !== this._lastNet) {
+        this._lastNet = net;
+        this.moneyTrend.className = 'sb-trend sb-num ' + (net >= 0 ? 'up' : 'down');
+        this.moneyTrend.innerHTML = (net >= 0 ? ICONS.trendUp() : ICONS.trendDown()) + `<span>${net >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(net))}/day</span>`;
+        this.moneyTrend.title = 'Net balance per simulation day (one displayed calendar month). Accrues continuously; purchases and milestone rewards are separate.';
       }
       if (pop !== this._lastPop) {
         this._lastPop = pop; this.popEl.textContent = fmtInt.format(pop);
@@ -643,7 +730,10 @@ export class Hud {
       if (n.ttl > 0) { n.ttl -= dt; if (n.ttl <= 0) this._dismiss(n); }
     }
     this.minimap.update(dt);
-    if (this.sideKind === 'stats') { this._sideAcc += dt; if (this._sideAcc > 2) { this._sideAcc = 0; this._drawSparks(); } }
+    this._utilityAcc += dt;
+    if (this._utilityAcc >= 0.25) { this._utilityAcc = 0; this._refreshUtilityWarnings(); }
+    this._positionUtilityWarnings();
+    if (this.sideKind === 'stats' || this._infoLive) { this._sideAcc += dt; if (this._sideAcc > 2) { this._sideAcc = 0; if (this.sideKind === 'stats') { this._refreshStatsValues(); this._drawSparks(); } this._refreshInfoValues(); } }
     if (!this.devBox.classList.contains('sb-hidden')) {
       this._devAcc += dt;
       if (this._devAcc >= 0.25) {
@@ -689,6 +779,17 @@ export class Hud {
     setTimeout(() => n.el.remove(), 220);
   }
   clearNotifications() { for (const n of this.notes.slice()) this._dismiss(n); }
+  /** End staged historical popups while preserving the journal and persistent warnings. */
+  dismissTransientNotifications() {
+    let removed = 0;
+    for (const n of this.notes.slice()) if (n.ttl > 0) {
+      this.notes.splice(this.notes.indexOf(n), 1); n.el.remove(); removed++;
+    }
+    if (this.toastEl && !this.toastEl.classList.contains('is-sticky')) {
+      this.toastEl.remove(); this.toastEl = null; removed++;
+    }
+    return removed;
+  }
 
   // ----------------------------------------------------------------------------------------- side panels (right column)
   _sideFrame(icon, title, sub) {
@@ -708,12 +809,30 @@ export class Hud {
     else if (kind === 'journal') this._renderJournal();
     else if (kind === 'milestones') this._renderMilestones();
   }
+  _setLiveText(node, value) { if (node && node.textContent !== value) node.textContent = value; }
+  _statsRows() {
+    const eco = this.source.eco || {}, net = Math.round(this._budgetNet());
+    const imports = eco.utilityImports || {};
+    const importedNames = ['power', 'water', 'garbage'].filter((key) => imports[key]).map((key) => ({ power: 'power', water: 'water/sewage', garbage: 'waste' })[key]);
+    return [['Population', fmtInt.format(Math.round(eco.population || 0))], ['Jobs', fmtInt.format(Math.round(eco.jobs || 0))], ['Happiness', `${Math.round(clamp01(eco.happiness) * 100)}%`], ['Treasury', `¢${fmtInt.format(Math.round(eco.money || 0))}`], ['Daily balance', `${net >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(net))}`, net >= 0 ? 'good' : 'bad'], ['Tax rate', `${Math.round((eco.taxRate ?? 0.1) * 100)}%`], ['Utility imports', importedNames.length ? importedNames.join(', ') : 'None'], ['Import cost / day', `¢${fmtInt.format(Math.round(imports.cost || 0))}`], ['Transit fares / day', `¢${fmtInt.format(Math.round(eco.incomeBreakdown?.transit || 0))}`], ['Transit fleet / day', `¢${fmtInt.format(Math.round(eco.expenseBreakdown?.transit || 0))}`]];
+  }
+  _refreshStatsValues() {
+    const rows = this._statsRows();
+    for (let i = 0; i < rows.length; i++) {
+      const node = this._statsValues?.[i]; if (!node) continue;
+      this._setLiveText(node, rows[i][1]);
+      node.classList.toggle('good', rows[i][2] === 'good'); node.classList.toggle('bad', rows[i][2] === 'bad');
+    }
+    this._setLiveText(this._taxValue, Math.round((this.source.eco?.taxRate ?? 0.1) * 100) + ' %');
+    this._setLiveText(this.sideEl.querySelector('.sb-h2 span'), this.cityName + ' · ' + this.dateString());
+  }
   _renderStats() {
     const eco = this.source.eco || {};
     const body = this._sideFrame(ICONS.stats(), 'Statistics', `${esc(this.cityName)} · ${this.dateString()}`);
     const g = el('div', 'sb-rows');
-    const rows = [['Population', fmtInt.format(Math.round(eco.population || 0))], ['Jobs', fmtInt.format(Math.round(eco.jobs || 0))], ['Happiness', `${Math.round(clamp01(eco.happiness) * 100)}%`], ['Treasury', `¢${fmtInt.format(Math.round(eco.money || 0))}`], ['Monthly balance', `${(this.source.income || 0) >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(Math.round(this.source.income || 0)))}`, (this.source.income || 0) >= 0 ? 'good' : 'bad'], ['Tax rate', `${Math.round((eco.taxRate ?? 0.1) * 100)}%`]];
-    for (const [k, v, cls] of rows) { g.appendChild(el('span', 'sb-k', k)); g.appendChild(el('span', 'sb-v sb-num' + (cls ? ' ' + cls : ''), v)); }
+    const rows = this._statsRows();
+    this._statsValues = [];
+    for (const [k, v, cls] of rows) { g.appendChild(el('span', 'sb-k', k)); const value = el('span', 'sb-v sb-num' + (cls ? ' ' + cls : ''), v); g.appendChild(value); this._statsValues.push(value); }
     body.appendChild(el('div', 'sb-section', 'Overview')); body.appendChild(g);
     body.appendChild(el('div', 'sb-section', 'Trends'));
     const sp = el('div', 'sb-spark');
@@ -728,7 +847,8 @@ export class Hud {
     const tax = el('div', 'sb-barrow'); tax.innerHTML = `<span class="sb-k">Tax rate</span>`;
     const st = el('div', 'sb-stepper'); const val = el('span', 'sb-val sb-num', `${Math.round((eco.taxRate ?? 0.1) * 100)} %`);
     const dn = btn('sb-tm', ICONS.chevronDown()), up = btn('sb-tm', ICONS.chevronUp());
-    const setTax = (d) => { const t = Math.max(0.01, Math.min(0.3, (eco.taxRate ?? 0.1) + d)); this.action('setTaxRate', +t.toFixed(2)); val.textContent = `${Math.round(t * 100)} %`; };
+    this._taxValue = val;
+    const setTax = (d) => { const t = Math.max(0.01, Math.min(0.3, (this.source.eco?.taxRate ?? 0.1) + d)); this.action('setTaxRate', +t.toFixed(2)); val.textContent = `${Math.round(t * 100)} %`; };
     dn.addEventListener('click', () => setTax(-0.01)); up.addEventListener('click', () => setTax(0.01));
     st.append(dn, val, up); tax.append(st, el('span', 'sb-v', '')); body.appendChild(el('div', 'sb-section', 'Budget')); body.appendChild(tax);
     const loan = btn('sb-action small', ICONS.money() + '<span>Take loan ¢50,000</span>'); loan.addEventListener('click', () => { this.action('takeLoan', 50000, 30); this.notify({ type: 'money', title: 'Loan requested', body: '¢50,000 over 30 days.', ttl: 5 }); });
@@ -801,8 +921,32 @@ export class Hud {
   _simExtra(id) {
     try { const r = this.ctx.modules?.simulation?.building?.(id); if (!r) return {}; return { happiness: r.happiness, wellbeing: r.health, levelProgress: r.levelProgress, landValue: r.landValue, education: r.education, crime: r.crime, power: r.power, water: r.water }; } catch (e) { return {}; }
   }
-  hideInfo() { if (this.leftKind === 'info') this._setLeft(null); this.infoEl.innerHTML = ''; }
+  _serviceValues(data) {
+      const def = SERVICE_KINDS[data.kind] || {}, rows = [], bars = [];
+      const catalog = this.ctx.modules.services?.catalog?.()?.[data.kind];
+      const capacities = data.capacity ?? catalog?.capacity ?? {};
+      const primary = data.kind === 'incinerator' ? 'garbage'
+        : ['power', 'water', 'sewage', 'garbage', 'people'].find(k => capacities[k] > 0);
+      const capacity = typeof capacities === 'number' ? capacities : (capacities[primary] || 0);
+      const load = Number.isFinite(data.load) ? data.load : 0;
+      const upkeep = catalog?.upkeep ?? Math.round((def.cost || 10000) * 0.04);
+      rows.push(['Capacity', fmtInt.format(capacity)], ['Load', fmtInt.format(load)], ['Upkeep', `¢${fmtInt.format(upkeep)}/day`, 'bad']);
+      bars.push(['Utilisation', clamp01(capacity > 0 ? load / capacity : 0), '']);
+      return { rows, bars };
+  }
+  _refreshInfoValues() {
+    const live = this._infoLive; if (!live || this.leftKind !== 'info') return;
+    const data = this.ctx.world.services.items.get(live.id);
+    if (!data) { this.hideInfo(); return; }
+    const values = this._serviceValues(data);
+    values.rows.forEach((row, i) => this._setLiveText(live.rows[i], row[1]));
+    const percent = (values.bars[0][1] * 100).toFixed(0) + '%';
+    this._setLiveText(live.percent, percent);
+    if (live.fill && live.fill.style.width !== percent) live.fill.style.width = percent;
+  }
+  hideInfo() { this._infoLive = null; if (this.leftKind === 'info') this._setLeft(null); this.infoEl.innerHTML = ''; }
   showInfo({ kind, data, extra = {} }) {
+    this._infoLive = null;
     const p = this.infoEl; p.innerHTML = '';
     const rows = [], bars = [];
     let title = '', sub = '', icon = ICONS.house(), pill = null, level = 0;
@@ -849,8 +993,7 @@ export class Hud {
       const def = SERVICE_KINDS[data.kind] || {}; const cat = SERVICE_CATS.find((c) => c.id === def.cat);
       title = data.name || def.label || String(data.kind); icon = ICONS[cat?.icon || 'parks'](); pill = [cat?.label || 'service', PALETTE.teal];
       sub = `Service #${data.id} · Level ${data.level ?? 1}`; level = data.level || 1;
-      rows.push(['Capacity', fmtInt.format(data.capacity ?? 0)], ['Load', fmtInt.format(data.load ?? 0)], ['Upkeep', `¢${fmtInt.format(Math.round((def.cost || 10000) * 0.04))}/month`, 'bad']);
-      bars.push(['Utilisation', clamp01(data.capacity ? (data.load || 0) / data.capacity : 0), '']);
+      const values = this._serviceValues(data); rows.push(...values.rows); bars.push(...values.bars);
     }
     const head = el('div', 'sb-info-head');
     head.innerHTML = `<div class="sb-ic">${icon}</div><div class="sb-ht"><div class="sb-h1">${esc(title)}</div><div class="sb-h2">${pill ? `<span class="sb-pill" style="background:${pill[1]}">${esc(pill[0])}</span>` : ''}<span>${esc(sub)}</span></div></div>`;
@@ -884,6 +1027,10 @@ export class Hud {
     if (kind === 'building' || kind === 'road' || kind === 'service') actions.appendChild(mk('', ICONS.document(), 'Policies', 'policies'));
     actions.appendChild(mk('danger', ICONS.bulldoze(), 'Demolish', 'demolish'));
     p.append(head, body, actions);
+    if (kind === 'service' && this.ctx.world.services.items.get(data.id) === data) {
+      const status = [...body.querySelectorAll('.sb-barrow')].find(row => row.querySelector('.sb-k')?.textContent === 'Utilisation');
+      this._infoLive = { id: data.id, rows: [...body.querySelectorAll('.sb-rows .sb-v')], percent: status?.querySelector('.sb-v'), fill: status?.querySelector('.sb-bar i') };
+    }
     this._setLeft('info');
   }
 
@@ -902,7 +1049,7 @@ export class Hud {
     const sel = lines.find((l) => l.id === this.transitSel) || lines[0] || null;
     if (sel) this.transitSel = sel.id;
     const head = el('div', 'sb-info-head', `<div class="sb-ic">${ICONS.transitLines()}</div><div class="sb-ht"><div class="sb-h1">Transit Lines</div><div class="sb-h2"><span>${lines.length} line${lines.length === 1 ? '' : 's'} · ${fmtInt.format(lines.reduce((a, l) => a + (l.ridership || 0), 0))} passengers / day</span></div></div>`);
-    const add = btn('sb-action small primary', ICONS.plus() + '<span>New line</span>'); add.addEventListener('click', () => { this.action('transit', 'newLine'); this._toolsSelect('transit', { mode: 'line', kind: 'bus' }); this.setCategory('transit'); });
+    const add = btn('sb-action small primary', ICONS.plus() + '<span>New line</span>'); add.addEventListener('click', () => { this._unlocked = this.unlockedSet(); if (!this.isUnlocked('transit')) { this.setCategory('transit'); return; } this.action('transit', 'newLine'); this._toolsSelect('transit', { mode: 'line', kind: 'bus' }); this.setCategory('transit'); });
     const close = btn('sb-close', ICONS.close()); close.addEventListener('click', () => this.hideLeft(true));
     head.append(add, close);
     const list = el('div', 'sb-linelist');
@@ -918,7 +1065,7 @@ export class Hud {
       body.appendChild(el('div', 'sb-section', 'Line details'));
       const g = el('div', 'sb-rows');
       const cap = (sel.vehicles || 0) * 60 * 8;
-      for (const [k, v, cls] of [['Vehicles', String(sel.vehicles ?? 0)], ['Length', `${((sel.length || 0) / 1000).toFixed(1)} km`], ['Ridership', `${fmtInt.format(sel.ridership || 0)} / day`], ['Ticket price', `¢${sel.fare ?? 2}`], ['Monthly balance', `${(sel.balance || 0) >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(Math.round(sel.balance || 0)))}`, (sel.balance || 0) >= 0 ? 'good' : 'bad']]) { g.appendChild(el('span', 'sb-k', k)); g.appendChild(el('span', 'sb-v sb-num' + (cls ? ' ' + cls : ''), v)); }
+      for (const [k, v, cls] of [['Vehicles', String(sel.vehicles ?? 0)], ['Length', `${((sel.length || 0) / 1000).toFixed(1)} km`], ['Ridership', `${fmtInt.format(sel.ridership || 0)} / day`], ['Ticket price', `¢${sel.fare ?? 2}`], ['30-day forecast', `${(sel.balance || 0) >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(Math.round(sel.balance || 0)))}`, (sel.balance || 0) >= 0 ? 'good' : 'bad']]) { g.appendChild(el('span', 'sb-k', k)); g.appendChild(el('span', 'sb-v sb-num' + (cls ? ' ' + cls : ''), v)); }
       body.appendChild(g);
       const util = el('div', 'sb-barrow'); const u = clamp01(cap ? (sel.ridership || 0) / cap : 0);
       util.innerHTML = `<span class="sb-k">Utilisation</span><div class="sb-bar ${u > 0.85 ? 'yellow' : 'green'}"><i style="width:${(u * 100).toFixed(0)}%"></i></div><span class="sb-v sb-num">${(u * 100).toFixed(0)}%</span>`;

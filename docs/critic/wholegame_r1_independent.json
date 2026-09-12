@@ -1,0 +1,444 @@
+{
+  "module": "wholegame",
+  "round": 1,
+  "reviewer": "independent",
+  "baseline": "W5/r7x supplied whole-game capture set, plus four bridge supplement frames",
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 469,
+  "maxTriangles": 2788342,
+  "maxHeapMB": 715.5,
+  "minFps": 43.7,
+  "apiContractOk": false,
+  "apiContractScope": "False for the confirmed explicit-weather override. No new exhaustive API or ordinary-play audit was performed.",
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "services"
+      ],
+      "title": "Landmarks and distant facilities visibly fall below the surrounding asset quality",
+      "detail": "The park arena is a plain dome with block doors; the suburban hospital and water tower are largely blank, and port cranes are sparse bars on pads. These are close, important subjects, not harmless distant decoration. In downtown views, paid cooling plants become giant featureless boxes while their white plumes remain. Source confirms services proxies use one UNIT_BOX per catalogue footprint and democity landmarks use simple primitive assemblies. Upgrade recognisable silhouette, facade rhythm and access detail, then preserve these features in screen-size-aware LOD. Do not simply remove the paid facilities or raise all geometry budgets.",
+      "evidence": "shots/democity/rwholegame1/park_12.png; shots/democity/rwholegame1/suburb_12.png; shots/democity/rwholegame1/downtown_12.png; shots/democity/rwholegame1/bridge_12.png; src/modules/services/render.js:148; src/modules/democity/landmarks.js"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings"
+      ],
+      "title": "Downtown is a collection of towers in lawns, rather than continuous city blocks",
+      "detail": "The central tower has extensive grass on all sides and many nearby blocks contain one isolated building or a small house. Suburbs and industrial land use are recognisable, but almost all districts share the same oversized parcel rhythm. Repeated stepped crowns strengthen the kit-like appearance. Build purposeful frontage, smaller connected infill and coherent civic/industrial yards through real lots and simulation; retain the visible downtown-to-suburb height transition.",
+      "evidence": "shots/democity/rwholegame1/downtown_12.png; shots/democity/rwholegame1/aerial_cloudy_12.png; shots/democity/rwholegame1/interchange_12.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "owner": "props",
+      "supportingOwners": [],
+      "title": "Tree crowns expose flat cards and inconsistent detail tiers",
+      "detail": "Park and riverfront views show sparse large leaf fans attached to thin trunks; hillside conifers become solid repeated cut-outs. This is much more obvious than the detailed buildings or road surfaces and prevents a common art direction. Preserve species and colour variety, but match crown volume, scale and shading across the existing detail tiers. This is direct spatial evidence; temporal popping or flicker was not measured.",
+      "evidence": "shots/democity/rwholegame1/park_12.png; shots/democity/rwholegame1/riverfront_12.png; shots/democity/rwholegame1/industry_12.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "buildings",
+        "props",
+        "services",
+        "effects"
+      ],
+      "title": "Night has readable light points but weak occupied interiors and generic pools",
+      "detail": "The close night canyon has warm/cool variation but windows remain broad, nearly uniform luminous rectangles. Wide towers reduce to subdued grid textures, and identical roadside dots or equipment ovals do most of the lighting work. Full-frame 480px luma: downtown night mean41.1415, median33.1690, >180 fraction0.5139%; close night mean44.9046, >180 fraction1.7037%. These are descriptive measurements, not imported camera-specific numeric failures. Improve window interior depth and fixture-ground integration while retaining the now-dark sky and readable streets.",
+      "evidence": "shots/democity/rwholegame1/night_downtown_22.png; shots/democity/rwholegame1/downtown_22.png; shots/democity/rwholegame1/industry_22.png; shots/democity/rwholegame1/suburb_22.png"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "roads",
+        "democity",
+        "buildings"
+      ],
+      "title": "Road grading and site boundaries make the landscape implausible",
+      "detail": "Riverfront roads climb abruptly from the bank into warehouses; the highway cuts steeply across the mountain. Pads, shallow shore strips and clean lawn edges expose how separate assets meet. The bridge supplement shows coherent crossings, so the old measured bridge-clearance failure is not repeated as a current failure. Resolve shared terrain, road grades, foundation and site-access rules before adding concealment props. Current stills do not measure every base gap or certify contact everywhere.",
+      "evidence": "shots/democity/rwholegame1/riverfront_12.png; shots/democity/rwholegame1/interchange_12.png; shots/democity/rwholegame1/industry_12.png; shots/democity/rwholegame1/bridge_12.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "environment",
+        "terrain",
+        "effects"
+      ],
+      "title": "Atmosphere and water still resemble layered surfaces",
+      "detail": "The river reflects a broad blotchy cloud sheet; a straight bright horizon strip appears at riverfront 17:30 and22:00. Mountain shading looks stretched and stippled. These layers do not share the continuous depth and natural terrain texture seen in CS2 references2 and6. Golden frames are no longer judged using stale r3 wash measurements; this series retains useful highlight detail. Improve horizon blending, reflection filtering and macro terrain response with current paired evidence.",
+      "evidence": "shots/democity/rwholegame1/riverfront_17p5.png; shots/democity/rwholegame1/riverfront_22.png; shots/democity/rwholegame1/industry_6p5.png"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation"
+      ],
+      "title": "The showcase does not yet communicate much street life",
+      "detail": "There are real visible buses, cars and small pedestrians, especially in suburb views. The standard near canyon nevertheless shows a quiet shelter and largely empty street behind obstructing foliage; the park and port lack visible use. Improve the ordinary destination/frontage composition and believable stop activity using the managed systems. Still images at speed0 cannot prove traffic flow, queue discharge, boarding animation, simulation pacing or enjoyable choices; no such functionality is marked broken from these frames.",
+      "evidence": "shots/democity/rwholegame1/night_downtown_12.png; shots/democity/rwholegame1/night_downtown_22.png; shots/democity/rwholegame1/suburb_12.png; shots/democity/rwholegame1/park_12.png"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic"
+      ],
+      "title": "Geometry now passes, but observed memory and frame-time margins do not",
+      "detail": "Across all35 images, peak469 draws and2,788,342 triangles pass1500/3M. Raw JS heap reaches715.5MB at downtown22;21/35 samples exceed512MB. Minimum43.7fps at downtown17.5 misses50 on the local M4, with9/35 samples below50. 1080p endpoint moduleMs reaches2.4ms props at downtown12 and2.1ms traffic at bridge17.5, above the2ms ceiling. These are raw endpoint samples and short host-dependent FPS measurements, not proof of a retained leak, sustained stall, or GTX1660 equivalence. Earlier forced-GC retained-heap passes are a different metric. Preserve the now-passing geometry while profiling current allocation and update work.",
+      "evidence": "shots/democity/rwholegame1/downtown_22.json; shots/democity/rwholegame1/downtown_17p5.json; shots/democity/rwholegame1/downtown_12.json; shots/democity/rwholegame1/bridge_17p5.json; shots/democity/rwholegame1/summary-full.json"
+    },
+    {
+      "rank": 9,
+      "severity": "major",
+      "owner": "democity",
+      "supportingOwners": [],
+      "title": "The city overrides the requested rain and cloudy weather",
+      "detail": "Both weather URLs are recorded correctly, but the resulting images retain hard sunlight and no visible rain. Their full-frame RGB MAE is 0.746251/255; both record431 draws and1,921,702 triangles. Environment init reads flags.weather, then democity/index.js:109 unconditionally calls setWeather({cloudiness:.38,rain:0,fogDensity:.00004}). Respect explicit weather selection at the composition boundary and recapture active rain/overcast. The present files satisfy the URL request but do not verify those weather states or their performance.",
+      "evidence": "shots/democity/rwholegame1/aerial_rain_12.png; shots/democity/rwholegame1/aerial_cloudy_12.png; src/modules/democity/index.js:109; src/modules/environment/index.js:109"
+    }
+  ],
+  "strengths": [
+    "All35 supplied PNGs render nonempty scenes; all16 modules report ready with zero recorded console errors.",
+    "The eight declared city cameras are now covered at all four required hours; the added bridge views close the initial matrix gap.",
+    "A recognisable height transition, river crossings, road hierarchy, suburbs and industrial district make the city understandable.",
+    "Building reveals, balconies, roof equipment, road markings, signals, shelters and visible managed buses provide useful detail.",
+    "Day/night colour changes, cool shadows and water reflections work; the close night view contains both warm and cool lit windows.",
+    "The1280×720 HUD fits and remains legible; no visible overlap in the supplied compact view.",
+    "Peak draw calls and geometry remain below1500 and3M across every supplied image, including the three extras."
+  ],
+  "summary": "6.0/10 FAIL. A recognisable and functioning-looking city presentation with coherent roads, detailed facades and a usable HUD, but primitive landmarks, sparse block fabric, planar foliage and schematic night lighting keep it clearly synthetic. Draw/triangle gates pass this full series; raw heap, observed local FPS/update ceilings and requested weather handling do not.",
+  "shots": [
+    "shots/democity/rwholegame1/aerial_cloudy_12.png",
+    "shots/democity/rwholegame1/aerial_rain_12.png",
+    "shots/democity/rwholegame1/bridge_12.png",
+    "shots/democity/rwholegame1/bridge_17p5.png",
+    "shots/democity/rwholegame1/bridge_22.png",
+    "shots/democity/rwholegame1/bridge_6p5.png",
+    "shots/democity/rwholegame1/downtown_12.png",
+    "shots/democity/rwholegame1/downtown_12_720p.png",
+    "shots/democity/rwholegame1/downtown_17p5.png",
+    "shots/democity/rwholegame1/downtown_22.png",
+    "shots/democity/rwholegame1/downtown_6p5.png",
+    "shots/democity/rwholegame1/industry_12.png",
+    "shots/democity/rwholegame1/industry_17p5.png",
+    "shots/democity/rwholegame1/industry_22.png",
+    "shots/democity/rwholegame1/industry_6p5.png",
+    "shots/democity/rwholegame1/interchange_12.png",
+    "shots/democity/rwholegame1/interchange_17p5.png",
+    "shots/democity/rwholegame1/interchange_22.png",
+    "shots/democity/rwholegame1/interchange_6p5.png",
+    "shots/democity/rwholegame1/night_downtown_12.png",
+    "shots/democity/rwholegame1/night_downtown_17p5.png",
+    "shots/democity/rwholegame1/night_downtown_22.png",
+    "shots/democity/rwholegame1/night_downtown_6p5.png",
+    "shots/democity/rwholegame1/park_12.png",
+    "shots/democity/rwholegame1/park_17p5.png",
+    "shots/democity/rwholegame1/park_22.png",
+    "shots/democity/rwholegame1/park_6p5.png",
+    "shots/democity/rwholegame1/riverfront_12.png",
+    "shots/democity/rwholegame1/riverfront_17p5.png",
+    "shots/democity/rwholegame1/riverfront_22.png",
+    "shots/democity/rwholegame1/riverfront_6p5.png",
+    "shots/democity/rwholegame1/suburb_12.png",
+    "shots/democity/rwholegame1/suburb_17p5.png",
+    "shots/democity/rwholegame1/suburb_22.png",
+    "shots/democity/rwholegame1/suburb_6p5.png"
+  ],
+  "shotNotes": {
+    "downtown_6p5": "Warm facades, recognisable tower hierarchy and river; large central lawn blocks, repeated stepped crowns and two blank facility proxies break the city fabric.",
+    "downtown_12": "Road markings and facade reveals read clearly. A tall tower occupies a small part of a full grass block; distant cooling plants become large featureless boxes.",
+    "downtown_17p5": "Golden light is controlled enough to retain buildings; broad vacant blocks, repeated roof crowns and hazy mirror-like water still look synthetic.",
+    "downtown_22": "The city stays readable against dark water. Fine dark window grids and regular lamp pools dominate; the blank distant facilities remain conspicuous.",
+    "suburb_6p5": "Detached houses, varied roof colours, hedges and a real bus communicate a suburb; the huge plain water tower and hospital contrast sharply with the detailed school.",
+    "suburb_12": "Bus glazing, road paint and school courtyard are visible. Broad lawns and thin card-like tree crowns weaken the gardens; landmark surfaces are almost blank.",
+    "suburb_17p5": "Warm roofs and long shadows give depth. House shells repeat and the plain water tower, hospital and isolated parcels still read as an asset layout.",
+    "suburb_22": "House windows and the school glow, with a bus on the right. Repeated bright oval pools and pale unlit landmark masses weaken night cohesion.",
+    "industry_6p5": "Two nearly identical cooling-tower plants dominate small sheds, clean lawns and tiny equipment; straight dense steam columns and stippled mountainside look schematic.",
+    "industry_12": "Plant geometry and roof equipment are legible, but the yard is mostly lawn. Dark base edges, simple shed repetition and unnaturally steep access roads are conspicuous.",
+    "industry_17p5": "Low sun gives readable tower shadows. Repeated plant geometry, upright plume columns and sparse working yards still lack industrial complexity.",
+    "industry_22": "Plant walls remain pale while small sheds are very dark. Warm circular equipment pools are visible, but smoke has little visible presence and the scene feels quiet.",
+    "riverfront_6p5": "River reflections, balcony fronts and opposite-bank warehouses read clearly; roads rise steeply from the bank and foreground trees have sparse planar leaves.",
+    "riverfront_12": "Water and architecture are readable, with rooftop tanks and facade detail. The shore is largely undeveloped grass and the opposite roads climb like ramps.",
+    "riverfront_17p5": "Warm reflections retain scene detail. A ruler-straight horizon band, stretched mountain texture and steep opposite-bank road transitions spoil the natural setting.",
+    "riverfront_22": "Near windows vary warm and cool and the river darkens. The far bank stays sparse, while a bright horizontal horizon strip separates water and sky.",
+    "interchange_6p5": "A highway, ramps and smaller streets provide road hierarchy. The network climbs the mountain abruptly; repetitive plots and a plain park dome dominate the backdrop.",
+    "interchange_12": "Road lanes and curved ramps read clearly, with traffic present. Sparse park foliage looks like scattered cut-outs; giant blank civic proxies intrude behind the mid-rise blocks.",
+    "interchange_17p5": "Warm directional light is visible but the left hillside is veiled. Repeated plots, sparse tree cards and abrupt road grades remain.",
+    "interchange_22": "Roads are traceable from repeating light spots, and vehicles are visible. Uniform pools and the pale dome give a diagrammatic night landscape.",
+    "park_6p5": "Long shadows and several tree colours are present. The central dome resembles a simple grey cap, and widely spaced leaf clusters sit above broad undeveloped grass.",
+    "park_12": "Foreground trees clearly show large flat leaf clusters and thin exposed trunks. The plain dome, repeated stepped roofs and empty lawn overwhelm small park details.",
+    "park_17p5": "Warm light gives useful ground contrast. The same sparse planar foliage, primitive dome and repeated skyline crowns remain the principal visual weaknesses.",
+    "park_22": "The path and surrounding streets remain readable. Regular pools, pale dome and very dark trees provide little sense of a populated evening park.",
+    "night_downtown_6p5": "Facade reveals, balconies, shelter and road markings are clear; similar blank window gradients repeat and foreground trees obstruct the street.",
+    "night_downtown_12": "A recognisable street canyon with readable junction and shelter. Repetitive glass interiors and foliage occupy most of the frame; few people or vehicles are visible.",
+    "night_downtown_17p5": "Warm facade edges and cool road shadows are readable. Identical-looking window bays and an almost empty, partly hidden street retain a staged appearance.",
+    "night_downtown_22": "Warm and cool windows visibly glow against dark facades. Broad rectangular panes lack interior variation, halos soften their edges and foreground foliage hides much street activity.",
+    "downtown_12_720p": "The full viewport and HUD fit at 1280×720; icons and city totals remain legible. No visible toolbar overlap. Sparse blocks and distant blank facilities remain obvious.",
+    "aerial_rain_12": "Detailed roads, tower height hierarchy and river are visible, but the scene is sunlit with hard shadows and no convincing rainfall or wet-road response.",
+    "aerial_cloudy_12": "Almost the same sunlit composition as the rain-labelled image. Clear shadows and reflected patchy clouds do not demonstrate a distinct overcast condition.",
+    "bridge_6p5": "Two river crossings and native traffic are visible. Basic cranes, cylinders and stacks sit on individual grass-surrounded pads with little working-port context.",
+    "bridge_12": "Bridge decks and vehicles read clearly. The paired cranes and isolated silos are primitive, and the concrete apron is almost empty.",
+    "bridge_17p5": "Warm river and port view retain detail; clean empty pads, thin cranes and sparse developed shoreline still look like separate placed assets.",
+    "bridge_22": "Both crossings remain readable from lights and vehicles. Port equipment is dark and schematic, while bright repeated roadside dots do most of the visual work."
+  },
+  "referencesViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "gates": [
+    {
+      "name": "Visual quality >=8.5",
+      "status": "FAIL",
+      "detail": "Independent full-frame judgment6.0; no average of module scores."
+    },
+    {
+      "name": "All declared presets and hours",
+      "status": "PASS",
+      "detail": "32 frames:8 cameras ×6.5/12/17.5/22; bridge supplement included; riverfront is the waterfront alias."
+    },
+    {
+      "name": "1280×720",
+      "status": "PASS observed",
+      "detail": "HUD and full scene fit the supplied downtown view."
+    },
+    {
+      "name": "Active rain and cloudy noon",
+      "status": "FAIL",
+      "detail": "Explicit URL weather is overwritten by democity staging; supplied frames cannot certify active weather."
+    },
+    {
+      "name": "Zero errors / all modules ready",
+      "status": "PASS",
+      "detail": "35/35 records errors[];16 ready modules each."
+    },
+    {
+      "name": "Draw calls <=1500 / triangles <=3M",
+      "status": "PASS measured",
+      "detail": "469 draws /2,788,342 triangles maximum."
+    },
+    {
+      "name": "JS heap <=512MB",
+      "status": "FAIL raw snapshot",
+      "detail": "715.5MB maximum,21/35 samples exceed512MB. No forced-GC claim."
+    },
+    {
+      "name": "FPS >=50",
+      "status": "FAIL local observed",
+      "detail": "43.7 minimum on M4 Metal; target-device equivalence and sustained play untested."
+    },
+    {
+      "name": "Each module update <=2ms",
+      "status": "FAIL observed endpoints",
+      "detail": "1080p props2.4ms, traffic2.1ms. These are endpoint observations, not per-frame maxima."
+    },
+    {
+      "name": "No stalls / total JS <=6ms / texture bytes / warm init",
+      "status": "UNVERIFIED",
+      "detail": "The screenshot endpoint and texture-count fields do not certify these. Max recorded frameMs23.3 and max total capture elapsed13,495ms are not corresponding acceptance measurements."
+    }
+  ],
+  "metrics": {
+    "drawCalls": {
+      "maximum": 469,
+      "shot": "shots/democity/rwholegame1/park_17p5.png"
+    },
+    "triangles": {
+      "maximum": 2788342,
+      "shot": "shots/democity/rwholegame1/night_downtown_22.png"
+    },
+    "heapMB": {
+      "maximum": 715.5,
+      "shot": "shots/democity/rwholegame1/downtown_22.png"
+    },
+    "textures": {
+      "maximum": 74,
+      "shot": "shots/democity/rwholegame1/downtown_22.png"
+    },
+    "frameMs": {
+      "maximum": 23.3,
+      "shot": "shots/democity/rwholegame1/interchange_12.png"
+    },
+    "elapsedMs": {
+      "maximum": 13495,
+      "shot": "shots/democity/rwholegame1/aerial_cloudy_12.png"
+    },
+    "fps": {
+      "minimum": 43.7,
+      "maximum": 60.1,
+      "minimumShot": "shots/democity/rwholegame1/downtown_17p5.png",
+      "below50Shots": 9
+    },
+    "rawHeapOver512Shots": 21,
+    "moduleEndpointMaxima": {
+      "props": {
+        "ms": 2.4000000059604645,
+        "shot": "shots/democity/rwholegame1/downtown_12.png"
+      },
+      "traffic": {
+        "ms": 2.0999999940395355,
+        "shot": "shots/democity/rwholegame1/bridge_17p5.png"
+      }
+    }
+  },
+  "pixelMetrics": {
+    "downtown_12": {
+      "mean": 88.94985401851851,
+      "p1": 15.723199999999999,
+      "p50": 87.5736,
+      "p99": 190.19045799999964,
+      "above180Percent": 1.2438271604938271,
+      "above235Percent": 0.11651234567901234
+    },
+    "downtown_22": {
+      "mean": 41.141501703703696,
+      "p1": 8.517399999999999,
+      "p50": 33.169,
+      "p99": 158.90093999999982,
+      "above180Percent": 0.513888888888889,
+      "above235Percent": 0.11651234567901234
+    },
+    "night_downtown_22": {
+      "mean": 44.904615004629626,
+      "p1": 7.075717999999999,
+      "p50": 31.3782,
+      "p99": 194.7312,
+      "above180Percent": 1.7037037037037037,
+      "above235Percent": 0.13580246913580246
+    },
+    "industry_22": {
+      "mean": 43.920707776234565,
+      "p1": 3.0802,
+      "p50": 40.17359999999999,
+      "p99": 162.58744,
+      "above180Percent": 0.5262345679012346,
+      "above235Percent": 0.11496913580246913
+    },
+    "park_22": {
+      "mean": 41.65507788117284,
+      "p1": 9.6446,
+      "p50": 37.93679999999999,
+      "p99": 153.98573199999993,
+      "above180Percent": 0.4722222222222222,
+      "above235Percent": 0.11496913580246913
+    },
+    "suburb_22": {
+      "mean": 44.245499248456795,
+      "p1": 8.449171999999999,
+      "p50": 36.214600000000004,
+      "p99": 162.32789199999996,
+      "above180Percent": 0.5671296296296297,
+      "above235Percent": 0.11805555555555555
+    },
+    "riverfront_17p5": {
+      "mean": 81.38596765277778,
+      "p1": 13.4384,
+      "p50": 83.039,
+      "p99": 169.45447199999984,
+      "above180Percent": 0.5771604938271605,
+      "above235Percent": 0.11496913580246913
+    },
+    "aerial_rain_12": {
+      "mean": 82.84232102469136,
+      "p1": 15.723199999999999,
+      "p50": 83.48219999999999,
+      "p99": 164.25978399999988,
+      "above180Percent": 0.5077160493827161,
+      "above235Percent": 0.11496913580246913
+    },
+    "aerial_cloudy_12": {
+      "mean": 82.84495667283949,
+      "p1": 15.723199999999999,
+      "p50": 83.4876,
+      "p99": 164.285208,
+      "above180Percent": 0.5061728395061729,
+      "above235Percent": 0.11496913580246913
+    }
+  },
+  "pixelMethod": "Whole image including HUD; RGB to Rec.709 luma after Lanczos resize to480×270; diagnostic only. Weather MAE uses full-resolution RGB.",
+  "rainCloudyRGBMAE": 0.7462512860082304,
+  "summaryVerification": {
+    "summary.json": {
+      "rowsVerified": 28,
+      "mismatches": 0
+    },
+    "summary-full.json": {
+      "rowsVerified": 32,
+      "mismatches": 0
+    }
+  },
+  "captureCount": 35,
+  "matrixCount": 32,
+  "reviewedModuleReports": [
+    "docs/critic/terrain_r1.json",
+    "docs/critic/environment_r2.json",
+    "docs/critic/roads_r1.json",
+    "docs/critic/simulation_r1.json",
+    "docs/critic/ui_r1.json",
+    "docs/critic/effects_r1.json",
+    "docs/critic/zoning_r4.json",
+    "docs/critic/buildings_r4.json",
+    "docs/critic/props_r4.json",
+    "docs/critic/traffic_r4.json",
+    "docs/critic/tools_r4.json",
+    "docs/critic/democity_r7v.json",
+    "docs/critic/services_r4.json",
+    "docs/critic/infoviews_r4.json",
+    "docs/critic/transit_r5.json",
+    "docs/critic/integration_transit_load_r7x.json"
+  ],
+  "audioNote": "STATUS marks audio unscored; headless stills cannot grade audio.",
+  "independence": {
+    "capturedBy": "parent workflow; this reviewer independently viewed and measured supplied fresh evidence as explicitly requested",
+    "localWholeGameReportRead": false,
+    "sourceEdits": false,
+    "browserProbesRun": false,
+    "scoreChosenAfterAllImages": true
+  },
+  "environment": {
+    "browser": "152.0.7977.83",
+    "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "quality": "high",
+    "mode": "showcase=democity, headless=1, speed=0, seed=1337",
+    "url": "http://127.0.0.1:5173"
+  },
+  "provenanceNotes": [
+    "Original summary.json covers28 frames; summary-full.json covers32. This report recomputes maxima from all35 sidecar JSON files.",
+    "Bridge JSON png fields retain their original rwholegame1bridge path after copying. Their reviewed files are rwholegame1/bridge_*.png; records were matched by basename and camera/time, not discarded.",
+    "Module reports include historical fixture-specific issues and later local held scores. Neither stale numbers nor previously closed bridge, cross-seed, coverage or autocorrelation failures are reasserted as new current measurements.",
+    "STATUS documents current successful load/rollback and balance work. The ordinary-play subjective loop remains unverified by this visual report."
+  ],
+  "reportFile": "docs/critic/wholegame_r1_independent.md"
+}

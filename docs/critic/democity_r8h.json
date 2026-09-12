@@ -1,0 +1,267 @@
+{
+  "module": "democity",
+  "owningModule": "props",
+  "round": "r8h",
+  "reviewer": "independent",
+  "decision": "ACCEPT",
+  "candidateAccepted": true,
+  "score": 6.0,
+  "pass": false,
+  "wholeGamePass": false,
+  "passThreshold": 8.5,
+  "verdictScope": "Accept a small visible LOD1 crown-core improvement without raising the whole-game score.",
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 21,
+  "imagesInspected": [
+    "shots/democity/r8h-foliage-baseline/park_12.png",
+    "shots/democity/r8h-foliage-baseline/riverfront_12.png",
+    "shots/democity/r8h-foliage-candidate/park_12.png",
+    "shots/democity/r8h-foliage-candidate/park_22.png",
+    "shots/democity/r8h-foliage-candidate/riverfront_12.png",
+    "shots/democity/r8h-foliage-final/downtown_12.png",
+    "shots/democity/r8h-foliage-final/downtown_17p5.png",
+    "shots/democity/r8h-foliage-final/downtown_22.png",
+    "shots/democity/r8h-foliage-final/downtown_6p5.png",
+    "shots/democity/r8h-foliage-final/industry_12.png",
+    "shots/democity/r8h-foliage-final/industry_17p5.png",
+    "shots/democity/r8h-foliage-final/industry_22.png",
+    "shots/democity/r8h-foliage-final/industry_6p5.png",
+    "shots/democity/r8h-foliage-final/park_12.png",
+    "shots/democity/r8h-foliage-final/park_17p5.png",
+    "shots/democity/r8h-foliage-final/park_22.png",
+    "shots/democity/r8h-foliage-final/park_6p5.png",
+    "shots/democity/r8h-foliage-final/suburb_12.png",
+    "shots/democity/r8h-foliage-final/suburb_17p5.png",
+    "shots/democity/r8h-foliage-final/suburb_22.png",
+    "shots/democity/r8h-foliage-final/suburb_6p5.png"
+  ],
+  "derivedImagesInspected": [
+    "shots/democity/r8h-foliage-candidate/park_12_compare.png",
+    "shots/democity/r8h-foliage-candidate/riverfront_12_compare.png",
+    "shots/democity/r8h-foliage-candidate/crop_1.png",
+    "shots/democity/r8h-foliage-candidate/crop_2.png",
+    "shots/democity/r8h-foliage-candidate/crop_3.png",
+    "shots/democity/r8h-foliage-final/contact-sheet.png"
+  ],
+  "allSidecarsInspected": true,
+  "summaryVerifiedAgainstEverySidecar": true,
+  "consoleErrors": 0,
+  "allModulesReady": true,
+  "maxDrawCalls": 469,
+  "maxTriangles": 2264630,
+  "minFps": 46.2,
+  "maxRawHeapMB": 689.7,
+  "matrixMetrics": {
+    "captures": 16,
+    "cameras": [
+      "downtown",
+      "suburb",
+      "industry",
+      "park"
+    ],
+    "times": [
+      6.5,
+      12,
+      17.5,
+      22
+    ],
+    "maxDrawCallsShot": "park_12",
+    "maxTrianglesShot": "downtown_22",
+    "minFpsShot": "downtown_17p5",
+    "maxRawHeapShot": "suburb_12",
+    "framesBelow50": 9,
+    "framesRawHeapAbove512": 5,
+    "maxModuleEndpointMs": 2.2,
+    "maxModuleEndpointOwner": "traffic",
+    "maxModuleEndpointShot": "park_17p5",
+    "forcedGcMeasured": false
+  },
+  "profileMetrics": {
+    "park": {
+      "lod0": 0,
+      "lod1": 160,
+      "impostor": 2175,
+      "lod1Triangles": 26880,
+      "fps": 38.6
+    },
+    "riverfront": {
+      "lod0": 18,
+      "lod1": 135,
+      "impostor": 546,
+      "lod1Triangles": 22680,
+      "fps": 42.6
+    }
+  },
+  "geometry": {
+    "lod1Cards": 72,
+    "innerCards": 24,
+    "outerCards": 48,
+    "lod1TrianglesPerTree": 168,
+    "lod0TrianglesPerTree": 1466,
+    "impostorTrianglesPerTree": 4
+  },
+  "sourceHash": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+  "apiContractOk": null,
+  "apiContractScope": "Supplied API/deserialization/tour, mixed-use and restage evidence independently inspected; no live critic re-execution.",
+  "suppliedContractResults": {
+    "apiPass": true,
+    "deserialize": [
+      true,
+      true
+    ],
+    "tourStopsPassing": 8,
+    "mixedUseSelected": 32,
+    "mixedUseDigestExactTwice": true,
+    "sameSeed1337DigestRecomputed": true,
+    "sameSeed7DigestRecomputed": true,
+    "restageDigestKeys": [
+      "buildings",
+      "services",
+      "transit"
+    ]
+  },
+  "issues": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings",
+        "roads",
+        "services"
+      ],
+      "title": "Sparse and repeated city fabric remains dominant",
+      "detail": "Downtown towers still stand on broad lawns and repeated parcels; the foliage change does not close whole-game r2 rank 1.",
+      "evidence": [
+        "shots/democity/r8h-foliage-final/downtown_12.png",
+        "shots/democity/r8h-foliage-final/park_12.png"
+      ]
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "supportingOwners": [
+        "terrain",
+        "democity"
+      ],
+      "title": "Crown cores improve slightly, but planar foliage and tier mismatch remain",
+      "detail": "Interior leaf overlap is more coherent in directed park/riverfront comparisons. Exposed sticks, separated flat lobes and opaque distant conifers remain obvious. No clear increase in silhouette repetition or unacceptable solid opacity was observed. The former foliage issue is partially improved, not closed.",
+      "evidence": [
+        "shots/democity/r8h-foliage-candidate/crop_1.png",
+        "shots/democity/r8h-foliage-candidate/crop_2.png",
+        "shots/democity/r8h-foliage-candidate/crop_3.png",
+        "shots/democity/r8h-foliage-final/industry_12.png"
+      ]
+    },
+    {
+      "rank": 3,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "buildings",
+        "props",
+        "services",
+        "effects"
+      ],
+      "title": "Night depth and lighting cohesion remain weak",
+      "detail": "Dark leaf clusters, shallow window grids and regular lamp pools still dominate. Candidate park night is readable but does not establish a night-quality breakthrough.",
+      "evidence": [
+        "shots/democity/r8h-foliage-final/park_22.png",
+        "shots/democity/r8h-foliage-final/suburb_22.png"
+      ]
+    },
+    {
+      "rank": 4,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "roads",
+        "democity",
+        "buildings",
+        "services"
+      ],
+      "title": "Road grades and site boundaries remain abrupt",
+      "detail": "Opposite-bank ramps and flat service pads remain visibly schematic; no new numeric grade/collision failure is invented.",
+      "evidence": [
+        "shots/democity/r8h-foliage-candidate/riverfront_12.png",
+        "shots/democity/r8h-foliage-final/industry_12.png"
+      ]
+    },
+    {
+      "rank": 5,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "services",
+        "buildings",
+        "props"
+      ],
+      "title": "Landmarks lack convincing site detail and use",
+      "detail": "The repaired stadium/hospital/water-tower silhouettes remain, but blank grounds and simple site materials are still conspicuous.",
+      "evidence": [
+        "shots/democity/r8h-foliage-final/park_12.png",
+        "shots/democity/r8h-foliage-final/suburb_12.png"
+      ]
+    },
+    {
+      "rank": 6,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "environment",
+        "effects"
+      ],
+      "title": "Terrain and water still read as separate graphic layers",
+      "detail": "Stippled industrial slopes and broad cloud reflections remain. Weather quality and the earlier horizon issue are carried as prior ranking context, not freshly weather-tested here.",
+      "evidence": [
+        "shots/democity/r8h-foliage-final/industry_17p5.png",
+        "shots/democity/r8h-foliage-candidate/riverfront_12.png"
+      ]
+    },
+    {
+      "rank": 7,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation"
+      ],
+      "title": "Limited visible human use remains a presentation issue",
+      "detail": "Cars and buses are present; quiet park grounds still read as an asset layout. Paused stills do not prove flow, boarding, enjoyable gameplay or their failure.",
+      "evidence": [
+        "shots/democity/r8h-foliage-final/park_12.png",
+        "shots/democity/r8h-foliage-final/suburb_12.png"
+      ]
+    },
+    {
+      "rank": 8,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic",
+        "environment",
+        "effects"
+      ],
+      "title": "Local FPS, raw memory and an update endpoint remain outside targets",
+      "detail": "Nine of sixteen standard frames below 50 FPS, minimum 46.2; raw heap peaks 689.7 MB (five matrix frames above 512). Traffic endpoint reaches 2.2 ms. Geometry fits. These do not establish candidate-caused regression or a retained leak.",
+      "evidence": [
+        "shots/democity/r8h-foliage-final/downtown_17p5.json",
+        "shots/democity/r8h-foliage-final/suburb_12.json",
+        "shots/democity/r8h-foliage-final/park_17p5.json"
+      ]
+    }
+  ],
+  "evidenceLimits": [
+    "Independent supplied-evidence review, not independent captures or fresh build/test execution. Build 163 is builder-reported.",
+    "Eight CS2 references calibrated in preceding whole-game review, not re-viewed this bounded round.",
+    "Final matrix is four cameras at four times, not eight-camera whole-game recertification. No new close night_downtown, interchange, bridge, weather or 720p shots.",
+    "Top-down rules unchanged does not mean top-down imagery unchanged: chunks.js forces top-down to changed LOD1; no fresh top-down pair provided.",
+    "Outer 48 cards retain an outer layer but use a changed radial distribution; rn also affects existing AO, so neither outer vertices nor per-vertex shading are identical.",
+    "Restage digest covers buildings/services/transit only; no full-world/props serialized equivalence claim.",
+    "Mixed-use restore harness ignores return values and does not perturb state first; matching digests alone cannot prove successful restore.",
+    "No temporal wind/LOD transition/rotation or angle-wide opacity/repetition test. No claimed absence of popping or flicker.",
+    "Raw heap is not forced-GC retained memory. Profiles are separate shorter instrumented samples, not matrix performance.",
+    "No state mutation path is introduced by this canonical geometry edit; unchanged whole-world state is inferred from scope and bounded tests, not exhaustively certified."
+  ]
+}

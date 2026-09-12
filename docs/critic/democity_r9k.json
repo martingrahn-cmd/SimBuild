@@ -1,0 +1,378 @@
+{
+  "module": "democity",
+  "round": "r9k",
+  "reviewType": "independent performance diagnosis",
+  "decision": "ACCEPT",
+  "decisionScope": "Qualified owner sensitivity and Props component investigation only",
+  "productDecision": "NO_CHANGE",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "inspection": {
+    "fullSeries": [
+      "shots/democity/r9k-owner-sensitivity/sync-on.json",
+      "shots/democity/r9k-owner-sensitivity/sync-off.json",
+      "shots/democity/r9k-owner-sensitivity/sync-off-uncapped.json",
+      "shots/democity/r9k-owner-sensitivity/sync-on-uncapped.json",
+      "shots/democity/r9k-owner-sensitivity/sync-on-services-long.json",
+      "shots/democity/r9k-owner-sensitivity/smoke-metal.json"
+    ],
+    "image": "shots/democity/r9k-owner-sensitivity/smoke-metal.png",
+    "imageViewedOriginalResolution": true,
+    "supersededSoftwareSidecar": "shots/democity/r9k-owner-sensitivity/smoke.json",
+    "softwareImageViewed": false,
+    "browserRerun": false,
+    "buildRerun": false
+  },
+  "evidenceHashes": {
+    "shots/democity/r9k-owner-sensitivity/sync-on.json": "2df890a888f616cb3c6da12243c48a58074ff805dcac0e385e6253e8ea5c2f0f",
+    "shots/democity/r9k-owner-sensitivity/sync-off.json": "fc292f946bec04c112878a78e63160fc50791105138230175b79acd8411dbbf8",
+    "shots/democity/r9k-owner-sensitivity/sync-off-uncapped.json": "e7cb13b3ecdec5915e4dbb0d15d129f862f6d34094e85a5b63ade022004f4711",
+    "shots/democity/r9k-owner-sensitivity/sync-on-uncapped.json": "19df8ddacbbef7599af86751673d2240a356417956100e2ea2276df9633ea0c1",
+    "shots/democity/r9k-owner-sensitivity/sync-on-services-long.json": "edbc2dbd73752842e2acccd31fac60f079a174589f171fc19d5bbe54da359534",
+    "shots/democity/r9k-owner-sensitivity/smoke-metal.json": "08d26cb01617533ad1663d070759bc25a1bd34860b515c3739bab0940863feb1"
+  },
+  "inspectedCurrentSourceHashes": {
+    "tools/interleaved-owner-profile.mjs": "948889d24b4476af71db88636f1b366d17e241142fba03a52d4edb3d79757e8e",
+    "src/core/engine.js": "7c12383883eb0a669b3f370a033d10ee0227007ee31057fb2d5180c2297fbf0f",
+    "src/modules/effects/index.js": "81da14764c22c257b3b2e9f4e4be6958469778006112d4a6fa178f7f827bb57d"
+  },
+  "recomputed": {
+    "series": 5,
+    "ownerRows": 25,
+    "sampleBlocks": 179,
+    "pairCycles": 77,
+    "sampledFrames": 19200,
+    "allPairArithmeticAndPassFlagsVerified": true,
+    "recordedErrors": 0,
+    "rawFpsElapsedDenominatorRetained": false,
+    "rows": [
+      {
+        "series": "sync-on.json",
+        "owner": "terrain",
+        "fullSeriesMedianFpsPct": 14.291712838125804,
+        "stableCycles": 1,
+        "stableConventionalMedianFpsPct": 14.291712838125804,
+        "savedStableUpperMedianFpsPct": 14.291712838125804,
+        "maxControlDriftPct": 14.422221581912552,
+        "medianDrawDelta": -13,
+        "medianTriangleDelta": -251284.80000000005
+      },
+      {
+        "series": "sync-on.json",
+        "owner": "props",
+        "fullSeriesMedianFpsPct": 5.141701341306648,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 5.141701341306648,
+        "savedStableUpperMedianFpsPct": 5.141701341306648,
+        "maxControlDriftPct": 4.391192121069093,
+        "medianDrawDelta": -31,
+        "medianTriangleDelta": -832912
+      },
+      {
+        "series": "sync-on.json",
+        "owner": "roads",
+        "fullSeriesMedianFpsPct": 5.952194593148841,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 4.393697817908615,
+        "savedStableUpperMedianFpsPct": 5.952194593148841,
+        "maxControlDriftPct": 28.121307601417893,
+        "medianDrawDelta": -21,
+        "medianTriangleDelta": -385042.6000000001
+      },
+      {
+        "series": "sync-on.json",
+        "owner": "services",
+        "fullSeriesMedianFpsPct": 2.91602240742177,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 2.91602240742177,
+        "savedStableUpperMedianFpsPct": 2.91602240742177,
+        "maxControlDriftPct": 4.096311074397697,
+        "medianDrawDelta": -33,
+        "medianTriangleDelta": -83700
+      },
+      {
+        "series": "sync-on.json",
+        "owner": "buildings",
+        "fullSeriesMedianFpsPct": 7.042073009497529,
+        "stableCycles": 1,
+        "stableConventionalMedianFpsPct": 1.8364635916310545,
+        "savedStableUpperMedianFpsPct": 1.8364635916310545,
+        "maxControlDriftPct": 31.307178541575887,
+        "medianDrawDelta": -67,
+        "medianTriangleDelta": -124120
+      },
+      {
+        "series": "sync-on.json",
+        "owner": "traffic",
+        "fullSeriesMedianFpsPct": 3.3064756363335723,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 1.0348111028229634,
+        "savedStableUpperMedianFpsPct": 3.3064756363335723,
+        "maxControlDriftPct": 15.809688272023745,
+        "medianDrawDelta": -42,
+        "medianTriangleDelta": -3824
+      },
+      {
+        "series": "sync-on.json",
+        "owner": "transit",
+        "fullSeriesMedianFpsPct": -0.13771026230140482,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": -0.43564561553956493,
+        "savedStableUpperMedianFpsPct": -0.13771026230140482,
+        "maxControlDriftPct": 10.496778812601235,
+        "medianDrawDelta": -15,
+        "medianTriangleDelta": -43950.39999999991
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "terrain",
+        "fullSeriesMedianFpsPct": -0.02000044532829426,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": -0.02000044532829426,
+        "savedStableUpperMedianFpsPct": -0.02000044532829426,
+        "maxControlDriftPct": 0.1799700042009917,
+        "medianDrawDelta": -13,
+        "medianTriangleDelta": -251176
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "props",
+        "fullSeriesMedianFpsPct": 0.0666773429997436,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 0.0666773429997436,
+        "savedStableUpperMedianFpsPct": 0.0666773429997436,
+        "maxControlDriftPct": 0.06664445184937703,
+        "medianDrawDelta": -31,
+        "medianTriangleDelta": -832888
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "roads",
+        "fullSeriesMedianFpsPct": 10.175066191575288,
+        "stableCycles": 1,
+        "stableConventionalMedianFpsPct": 0.009999665087501164,
+        "savedStableUpperMedianFpsPct": 0.009999665087501164,
+        "maxControlDriftPct": 20.408896341304462,
+        "medianDrawDelta": -21,
+        "medianTriangleDelta": -385002.6000000001
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "services",
+        "fullSeriesMedianFpsPct": 1.247073786303643,
+        "stableCycles": 0,
+        "stableConventionalMedianFpsPct": null,
+        "savedStableUpperMedianFpsPct": null,
+        "maxControlDriftPct": 15.699407047950556,
+        "medianDrawDelta": -33,
+        "medianTriangleDelta": -83628.80000000005
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "buildings",
+        "fullSeriesMedianFpsPct": 0.013336450382483989,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 0.013336450382483989,
+        "savedStableUpperMedianFpsPct": 0.013336450382483989,
+        "maxControlDriftPct": 2.8393033182538963,
+        "medianDrawDelta": -67,
+        "medianTriangleDelta": -124040
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "traffic",
+        "fullSeriesMedianFpsPct": 0.023335444428274066,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 1.089350442908621,
+        "savedStableUpperMedianFpsPct": 2.155365441388968,
+        "maxControlDriftPct": 12.702099148567312,
+        "medianDrawDelta": -42,
+        "medianTriangleDelta": -3824
+      },
+      {
+        "series": "sync-off.json",
+        "owner": "transit",
+        "fullSeriesMedianFpsPct": 0.016669891517184787,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 0.016669891517184787,
+        "savedStableUpperMedianFpsPct": 0.016669891517184787,
+        "maxControlDriftPct": 0.046658885417394116,
+        "medianDrawDelta": -15,
+        "medianTriangleDelta": -43880
+      },
+      {
+        "series": "sync-off-uncapped.json",
+        "owner": "terrain",
+        "fullSeriesMedianFpsPct": 12.397679866388401,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 11.792606871568823,
+        "savedStableUpperMedianFpsPct": 12.397679866388401,
+        "maxControlDriftPct": 5.865932468290157,
+        "medianDrawDelta": -13,
+        "medianTriangleDelta": -251248.80000000005
+      },
+      {
+        "series": "sync-off-uncapped.json",
+        "owner": "props",
+        "fullSeriesMedianFpsPct": 10.137503149008786,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 10.137503149008786,
+        "savedStableUpperMedianFpsPct": 10.137503149008786,
+        "maxControlDriftPct": 1.681061069718999,
+        "medianDrawDelta": -31,
+        "medianTriangleDelta": -832961.3999999999
+      },
+      {
+        "series": "sync-off-uncapped.json",
+        "owner": "roads",
+        "fullSeriesMedianFpsPct": 8.873888839907229,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 7.927248210074367,
+        "savedStableUpperMedianFpsPct": 8.873888839907229,
+        "maxControlDriftPct": 6.667928095534524,
+        "medianDrawDelta": -21,
+        "medianTriangleDelta": -385067.59999999986
+      },
+      {
+        "series": "sync-off-uncapped.json",
+        "owner": "services",
+        "fullSeriesMedianFpsPct": 3.165137473526425,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 3.165137473526425,
+        "savedStableUpperMedianFpsPct": 3.165137473526425,
+        "maxControlDriftPct": 0.3583546176607453,
+        "medianDrawDelta": -33,
+        "medianTriangleDelta": -83656.19999999995
+      },
+      {
+        "series": "sync-off-uncapped.json",
+        "owner": "buildings",
+        "fullSeriesMedianFpsPct": 2.771397536917153,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 6.026264062822428,
+        "savedStableUpperMedianFpsPct": 9.281130588727704,
+        "maxControlDriftPct": 12.167656054962533,
+        "medianDrawDelta": -67,
+        "medianTriangleDelta": -124088.80000000005
+      },
+      {
+        "series": "sync-on-uncapped.json",
+        "owner": "terrain",
+        "fullSeriesMedianFpsPct": 9.892574076929561,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 9.892574076929561,
+        "savedStableUpperMedianFpsPct": 9.892574076929561,
+        "maxControlDriftPct": 3.065816612437844,
+        "medianDrawDelta": -13,
+        "medianTriangleDelta": -251187
+      },
+      {
+        "series": "sync-on-uncapped.json",
+        "owner": "props",
+        "fullSeriesMedianFpsPct": 19.43747241957874,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 17.32047590851512,
+        "savedStableUpperMedianFpsPct": 19.43747241957874,
+        "maxControlDriftPct": 8.866225450897954,
+        "medianDrawDelta": -31,
+        "medianTriangleDelta": -832897.2
+      },
+      {
+        "series": "sync-on-uncapped.json",
+        "owner": "roads",
+        "fullSeriesMedianFpsPct": 13.099036237563366,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 15.858761037890833,
+        "savedStableUpperMedianFpsPct": 18.6184858382183,
+        "maxControlDriftPct": 5.046715219929854,
+        "medianDrawDelta": -21,
+        "medianTriangleDelta": -385051.3999999999
+      },
+      {
+        "series": "sync-on-uncapped.json",
+        "owner": "services",
+        "fullSeriesMedianFpsPct": -3.0783957217807467,
+        "stableCycles": 1,
+        "stableConventionalMedianFpsPct": -5.233194517071549,
+        "savedStableUpperMedianFpsPct": -5.233194517071549,
+        "maxControlDriftPct": 20.0636706894493,
+        "medianDrawDelta": -33,
+        "medianTriangleDelta": -83670
+      },
+      {
+        "series": "sync-on-uncapped.json",
+        "owner": "buildings",
+        "fullSeriesMedianFpsPct": 9.155870108109054,
+        "stableCycles": 3,
+        "stableConventionalMedianFpsPct": 9.155870108109054,
+        "savedStableUpperMedianFpsPct": 9.155870108109054,
+        "maxControlDriftPct": 3.022523829196567,
+        "medianDrawDelta": -67,
+        "medianTriangleDelta": -124026.3999999999
+      },
+      {
+        "series": "sync-on-services-long.json",
+        "owner": "services",
+        "fullSeriesMedianFpsPct": 4.744163643657395,
+        "stableCycles": 2,
+        "stableConventionalMedianFpsPct": 5.23362740134643,
+        "savedStableUpperMedianFpsPct": 5.723091159035465,
+        "maxControlDriftPct": 9.470367331863718,
+        "medianDrawDelta": -33,
+        "medianTriangleDelta": -83640
+      }
+    ]
+  },
+  "seriesPass": {
+    "sync-on.json": false,
+    "sync-off.json": false,
+    "sync-off-uncapped.json": true,
+    "sync-on-uncapped.json": false,
+    "sync-on-services-long.json": true
+  },
+  "policyQualification": "CAPTURE_SYNC toggles full headless policy, including preserveDrawingBuffer and readPixels in both Effects and Engine; not isolated readback cost.",
+  "medianQualification": "Saved stableMedian chooses upper middle for even subsets; conventional stable-only medians independently recomputed. Full-series table includes unstable cycles.",
+  "smoke": {
+    "renderer": "ANGLE Metal Renderer: Apple M4",
+    "fps": 55.8,
+    "sampledFrames": 112,
+    "drawCalls": 430,
+    "triangles": 2061474,
+    "endpointDrawCalls": 321,
+    "endpointTriangles": 1548741,
+    "rawHeapMB": 489.6,
+    "readyModules": 16,
+    "errors": 0,
+    "sustainedGatePass": false,
+    "forcedGcMemoryMeasured": false
+  },
+  "limitations": [
+    "Adjacent controls share samples; 5% drift is a diagnostic screen, not significance or stable B assurance.",
+    "Fixed owner order/fresh pages and short blocks retain host drift.",
+    "Whole-group visibility changes multiple render passes and dependent effects; not pure CPU/GPU/additive cost.",
+    "Inventory predates warmup and ignores ancestor/frustum visibility; Points/Lines triangle arithmetic is not true submitted triangle census.",
+    "Cleanup forces visibility/reflection true rather than arbitrary prestate restoration.",
+    "Two initial series are failed or ceiling-limited; synchronized short Services row is rejected.",
+    "Only two stable synchronized cycles for Props, Roads and replacement Services.",
+    "Traffic/Transit lack accepted uncapped comparison.",
+    "Per-page actual GPU identity, framebuffer dimensions, source hashes and reflection-call counts are absent.",
+    "Headless and uncapped policies are diagnosis-only; no isolated readback attribution.",
+    "No sustained FPS, forced-GC memory, full visual matrix, save, simulation or gameplay pass."
+  ],
+  "nextPriority": {
+    "owner": "props",
+    "action": "Actual component masks at fixed scene/headless/reflection policy, with stable-only statistics and precise real-class labels before any product candidate.",
+    "preserve": [
+      "R9a range",
+      "R9c transition/CAP ledger",
+      "R9e atlas structure",
+      "R9f containment closure",
+      "visual integrity"
+    ]
+  },
+  "globalRanking": "Unchanged: sparse fabric; foliage; night depth; grading/contact; sites; environment; activity; performance.",
+  "builderRevisionVerified": "Latest report uses conventional stable-pair medians and labels full headless-on/off policy; both corrections independently checked."
+}

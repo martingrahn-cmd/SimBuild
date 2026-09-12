@@ -1,0 +1,400 @@
+{
+  "module": "services",
+  "round": 3,
+  "summary": "Differentiated civic facades and roof functions, refined industrial material scale, added finished pad boundaries and real frontage access strips, and strengthened mast-centered yard pools. Replaced whole-world static geometry rebuilding with 128 m chunk reuse keyed by actual spatial inputs. Reshaped the intake bank so all 22 facilities place, pump supply reaches 400 and four pads retain meaningful slopes. Preserved live per-facility loads, save determinism and public API. Quality remains below the pass bar.",
+  "drawCalls": 219,
+  "triangles": 1688912,
+  "errors": 0,
+  "screenshotsViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg",
+    "shots/services/r3/aerial_12.png",
+    "shots/services/r3/aerial_17p5.png",
+    "shots/services/r3/aerial_22.png",
+    "shots/services/r3/aerial_6p5.png",
+    "shots/services/r3/all_12.png",
+    "shots/services/r3/civic_12.png",
+    "shots/services/r3/civic_12_720.png",
+    "shots/services/r3/civic_17p5.png",
+    "shots/services/r3/civic_22.png",
+    "shots/services/r3/civic_6p5.png",
+    "shots/services/r3/closeup_12.png",
+    "shots/services/r3/closeup_17p5.png",
+    "shots/services/r3/closeup_22.png",
+    "shots/services/r3/closeup_6p5.png",
+    "shots/services/r3/dev/bank.png",
+    "shots/services/r3/dev/before.png",
+    "shots/services/r3/dev/facades.png",
+    "shots/services/r3/dev/night.png",
+    "shots/services/r3/dev/preflight/coverage_12.png",
+    "shots/services/r3/dev/preflight/coverage_clinic_12.png",
+    "shots/services/r3/dev/preflight/coverage_move_0.png",
+    "shots/services/r3/dev/preflight/coverage_move_1.png",
+    "shots/services/r3/dev/preflight/coverage_move_2.png",
+    "shots/services/r3/dev/preflight/infoview_power.png",
+    "shots/services/r3/dev/preflight/probe_coverage_off.png",
+    "shots/services/r3/dev/preflight/probe_play_fixture.png",
+    "shots/services/r3/dev/preflight/seed7_park.png",
+    "shots/services/r3/dev/preflight/toggle_night_off.png",
+    "shots/services/r3/dev/preflight/toggle_night_on.png",
+    "shots/services/r3/dev/preflight/toggle_noon_off.png",
+    "shots/services/r3/dev/preflight/toggle_noon_on.png",
+    "shots/services/r3/dev/preflight/wind_minus.png",
+    "shots/services/r3/dev/preflight/wind_plus.png",
+    "shots/services/r3/night_civic_22.png",
+    "shots/services/r3/park_12.png",
+    "shots/services/r3/park_17p5.png",
+    "shots/services/r3/park_22.png",
+    "shots/services/r3/park_6p5.png",
+    "shots/services/r3/plant_close_12.png",
+    "shots/services/r3/plant_close_17p5.png",
+    "shots/services/r3/plant_close_22.png",
+    "shots/services/r3/plant_close_6p5.png",
+    "shots/services/r3/probe/coverage_12.png",
+    "shots/services/r3/probe/coverage_clinic_12.png",
+    "shots/services/r3/probe/coverage_move_0.png",
+    "shots/services/r3/probe/coverage_move_1.png",
+    "shots/services/r3/probe/coverage_move_2.png",
+    "shots/services/r3/probe/info_api.png",
+    "shots/services/r3/probe/info_clear.png",
+    "shots/services/r3/probe/info_field.png",
+    "shots/services/r3/probe/info_off.png",
+    "shots/services/r3/probe/infoview_power.png",
+    "shots/services/r3/probe/probe_coverage_off.png",
+    "shots/services/r3/probe/probe_play_fixture.png",
+    "shots/services/r3/probe/seed7_park.png",
+    "shots/services/r3/probe/toggle_night_off.png",
+    "shots/services/r3/probe/toggle_night_on.png",
+    "shots/services/r3/probe/toggle_noon_off.png",
+    "shots/services/r3/probe/toggle_noon_on.png",
+    "shots/services/r3/probe/wind_minus.png",
+    "shots/services/r3/probe/wind_plus.png",
+    "shots/services/r3/skyline_12.png",
+    "shots/services/r3/skyline_17p5.png",
+    "shots/services/r3/skyline_22.png",
+    "shots/services/r3/skyline_6p5.png",
+    "shots/services/r3/street_12.png",
+    "shots/services/r3/street_17p5.png",
+    "shots/services/r3/street_22.png",
+    "shots/services/r3/street_6p5.png",
+    "shots/services/r3/utilities_12.png",
+    "shots/services/r3/utilities_17p5.png",
+    "shots/services/r3/utilities_22.png",
+    "shots/services/r3/utilities_6p5.png"
+  ],
+  "acceptanceMet": [
+    "1: Four hero utility silhouettes, four turbines and forty solar rows remain visible in utilities and plant_close frames.",
+    "3, 4: Correct component utility ratios and road-distance civic fields preserved; maximum of fourteen 20,000-query runs is 1.30 ms. Independent per-facility Floyd-Warshall population oracle passes all twelve civic instances.",
+    "5, 8: Distinct civic plans and designed park paths retained. Seventy service trees, three species, twenty-six benches, thirteen bins and twenty-six path lamps remain deterministic.",
+    "6: All twenty-two facilities are seated 0.04 m over their sampled maximum, with skirts below terrain. Four pads have more than 1.5 m range. Water intake now operates at capacity 400 versus demand 256 using actual water proximity.",
+    "9: Every pad now has a perimeter band and entrance gap. Terrain-conforming access strips connect facility frontage across the verge toward the kerb; bay markings and separated parked vehicles remain.",
+    "11, 20: Solar field remains below clipping threshold; varied wind-driven turbine blade poses retained.",
+    "12, 13: Placement validates and spends once; invalid and unaffordable placement leave state unchanged. Producer removal reaches zero covered power and actual economy/building power zero after 110 ticks. Controlled brownout 0.75 has zero sampled error.",
+    "16, 17: Exact seventeen-kind UI catalogue; nineteen public API functions unchanged. Current saves restore twenty-two items and sampled coverage exactly without changing money or mesh counts.",
+    "18 functional behavior: Owned opaque and foliage materials desaturate. World field and module API produce identical pixels and reset is exact. Literal whole-scene magnitude is not treated as an owned-module pass.",
+    "22: Accepted props and terrain exclusion requests remain explicit. Fresh populated diagnostic counts ninety-seven tree centers within oriented service footprints; root integration remains pending."
+  ],
+  "acceptanceMissed": [
+    "2: Plumes remain attached and wind driven but too smooth, with no safe opaque-depth intersection fade. Noon plume pin mean is 170.022/255, below 190; night/noon ratio is 0.344 and passes. Utilities contains no sky, so plume/sky and isolated apex tests remain unmeasured.",
+    "7, 10: Facade cadence, four-sided reveals, roof functions and tower grain improved, but architecture is still visibly procedural. Civic night pinned isolated-edge fraction 0.585049% exceeds 0.2%; service-only night toggle full-frame mean difference 1.656579/255 remains below 8. Noon difference is exactly zero. Mast-centered pools are visibly stronger, without exposure changes.",
+    "14 partial: Overlay now follows actual road surface and raised service courts and remains explicitly off by default. Whole-frame move differences include scene motion and do not establish an isolated overlay z-fighting pass. Real component utility supply is not replaced with an artificial radial gradient.",
+    "15: Spatial caching removes full-world static rebuilds, but strict CPU limits still fail. Two removals cost 51.1 ms geometry and 85.5 ms next frame; one changed clinic terrain chunk costs 42.3 ms. Initial grid costs 17.8 ms and seed 7 costs 16.1 ms, above 12 ms. Initial static geometry costs 188/147.1 ms. These are Metal measurements, with concurrent capture load possible.",
+    "19 partial: Pads have finished perimeter bands, but access strips and remaining broad yards still look simple. Intake bank is improved, though adjacent road embankments remain steep. No broad claim of AAA material/seam quality.",
+    "21 unmeasured: Contact pools exist and wall-base pin is recorded, but no correctly paired mid-wall and outward-ground comparison was captured. Do not turn missing measurement into a numerical failure."
+  ],
+  "remainingWeaknesses": [
+    "Repeated procedural building kit remains below the CS2 reference bar despite differentiated window rhythm, side walls, industrial ribs/catwalks and quieter concrete.",
+    "Night windows remain white panels and exceed the pinned horizontal speckle limit; ground pools are better but the full-frame service lighting toggle remains below the requested magnitude.",
+    "Attached smoke remains smooth and grey. Safe depth fading is explicitly deferred by root; sky-relative and isolated-apex evidence is unavailable.",
+    "Static chunk rebuilds are bounded spatially but still synchronous and over CPU budget. Initial coverage work is also over budget.",
+    "Water facilities now obtain real full supply and four pads retain meaningful slopes; nearby bank roads still need a more natural civil-engineering transition.",
+    "Automatic props and terrain clutter still overlap service pads until accepted root adapters are integrated. Ninety-seven props tree centers overlap in the populated diagnostic.",
+    "Exact all showcase is still an empty democity staging path: its zero errors are compatibility evidence only, not proof of a populated city or ordinary UI playability.",
+    "Park grass reference includes foliage/shadow; contact darkening lacks a paired reference. Info desaturation whole-frame magnitude is 1.151214/255 although field/API/reset parity passes. No false global magnitude claim."
+  ],
+  "coreRequestFile": "docs/core-requests/services.md",
+  "selfScore": 6.6,
+  "sourceFrozenAt": "2026-09-06T20:49:25.601444+00:00",
+  "sourceHashes": {
+    "src/modules/services/catalog.js": "31dbc94bf805503e526c07066405e3372a160f3840967a784da0942fc55c2ac3",
+    "src/modules/services/coverage.js": "b44f756e72f2e80548c1607d6d1113be7e861ad621e3717d1729b63e90da7aa2",
+    "src/modules/services/index.js": "6a6083818e0c2573affaea114ac8dfaaec89acbc4019699fa247cc6a97d1201c",
+    "src/modules/services/placement.js": "19571507c29cc08b3aed6ab071aafde061e0f7b5f3def7fd4eb6cbb6c602c2ae",
+    "src/modules/services/render.js": "6ee7ab30c396c44650d5ee88d967bd4dc177d445c168331e33042389e781ef7f",
+    "src/modules/services/showcase.js": "cfbb47d04f1c9c5892974974aa4b2be5c4b48a8022bcafb973f94f5c1c6eaae3"
+  },
+  "runtime": {
+    "url": "http://127.0.0.1:5174",
+    "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "browser": "System Chrome 152.0.7977.76",
+    "gl": "metal"
+  },
+  "evidenceScope": {
+    "finalFrames": 35,
+    "finalProbeImages": 19,
+    "developmentImages": 19,
+    "referencesViewed": 8,
+    "allImagesIndividuallyViewed": true,
+    "standardGauntletMinimumFps": 59,
+    "finalRetakeMinimumServicesFps": 58.5,
+    "allShowcaseFps": 35.8,
+    "allShowcasePopulated": false,
+    "note": "API probe precedes the final CPU-only chunk signature refinement. Final seams, supplement and chunk-cache fixtures run on final source. Standard static initial-scene geometry is unchanged by that refinement. Development/preflight images include unsuccessful intermediate bank layouts and are not final acceptance evidence."
+  },
+  "ownedBaseline": {
+    "items": 22,
+    "kinds": {
+      "power_coal": 1,
+      "power_wind": 4,
+      "power_solar": 1,
+      "water_pump": 1,
+      "sewage": 1,
+      "landfill": 1,
+      "incinerator": 1,
+      "clinic": 1,
+      "hospital": 1,
+      "school": 1,
+      "high_school": 1,
+      "university": 1,
+      "police": 1,
+      "fire": 1,
+      "park_small": 3,
+      "park_large": 1,
+      "plaza": 1
+    },
+    "draws": 19,
+    "tris": 165068,
+    "textures": 3,
+    "buildMs": 188,
+    "rebuiltChunks": 11,
+    "plumeQuads": 128,
+    "decor": {
+      "trees": 70,
+      "treeSpecies": [
+        "oak",
+        "spruce",
+        "birch"
+      ],
+      "benches": 26,
+      "bins": 13,
+      "pathLamps": 26,
+      "hedgePerimeterFrac": 0.78,
+      "treeHash": 2271426471
+    },
+    "overlay": null,
+    "gridMs": 17.799999999813735,
+    "coverageVersion": 1,
+    "supply": {
+      "power": 1015.0619515425243,
+      "water": 400,
+      "sewage": 400,
+      "garbage": 1200
+    },
+    "demand": {
+      "power": 320,
+      "water": 255.99999999999935,
+      "sewage": 255.99999999999935,
+      "garbage": 144.00000000000043
+    },
+    "served": {
+      "power": 1,
+      "water": 1,
+      "sewage": 1,
+      "garbage": 1
+    }
+  },
+  "geometryCacheChecks": {
+    "checks": [
+      {
+        "label": "clinic removal rebuilds only the containing spatial chunk",
+        "pass": true,
+        "changed": [
+          "services:static:0,0",
+          "services:foliage:0,0"
+        ],
+        "rebuiltChunks": 1
+      },
+      {
+        "label": "live supply changes do not replace static geometry",
+        "pass": true
+      },
+      {
+        "label": "identical save restoration reuses all static chunks",
+        "pass": true,
+        "buildMs": 0.7000000001862645
+      }
+    ],
+    "pass": true,
+    "errors": [],
+    "scope": "Actual Render geometry UUIDs and public services API, with controlled wind as diagnostic setup."
+  },
+  "measurements": {
+    "images": "shots/services/r3/probe/image-metrics.json",
+    "api": "shots/services/r3/probe/api-probe.json",
+    "seams": "shots/services/r3/probe/seams.json",
+    "supplement": "shots/services/r3/probe/supplement.json",
+    "cache": "shots/services/r3/probe/cache-fixture.json",
+    "maximumHotQueryMs": 1.2999999998137355,
+    "fixedTypedCacheBytes": 1048576,
+    "perFacilityLoadOracle": {
+      "method": "Independent all-pairs Floyd-Warshall oracle over public road graph; source uses per-facility bounded Dijkstra. Occupants assigned a 1-7 pattern, then actual sim:tick listener called without forcing grid rebuild.",
+      "beforeVersion": 118,
+      "afterVersion": 130,
+      "rows": [
+        {
+          "id": 9,
+          "kind": "clinic",
+          "load": 330,
+          "expected": 330,
+          "pass": true
+        },
+        {
+          "id": 10,
+          "kind": "hospital",
+          "load": 644,
+          "expected": 644,
+          "pass": true
+        },
+        {
+          "id": 11,
+          "kind": "school",
+          "load": 346,
+          "expected": 346,
+          "pass": true
+        },
+        {
+          "id": 12,
+          "kind": "high_school",
+          "load": 564,
+          "expected": 564,
+          "pass": true
+        },
+        {
+          "id": 13,
+          "kind": "university",
+          "load": 644,
+          "expected": 644,
+          "pass": true
+        },
+        {
+          "id": 14,
+          "kind": "police",
+          "load": 581,
+          "expected": 581,
+          "pass": true
+        },
+        {
+          "id": 15,
+          "kind": "fire",
+          "load": 536,
+          "expected": 536,
+          "pass": true
+        },
+        {
+          "id": 16,
+          "kind": "park_large",
+          "load": 462,
+          "expected": 462,
+          "pass": true
+        },
+        {
+          "id": 17,
+          "kind": "park_small",
+          "load": 30,
+          "expected": 30,
+          "pass": true
+        },
+        {
+          "id": 18,
+          "kind": "plaza",
+          "load": 115,
+          "expected": 115,
+          "pass": true
+        },
+        {
+          "id": 19,
+          "kind": "park_small",
+          "load": 58,
+          "expected": 58,
+          "pass": true
+        },
+        {
+          "id": 20,
+          "kind": "park_small",
+          "load": 102,
+          "expected": 102,
+          "pass": true
+        }
+      ],
+      "allPass": true,
+      "distinctSmallParkLoads": [
+        30,
+        58,
+        102
+      ]
+    },
+    "dirtyGeometry": {
+      "observed": [
+        {
+          "added": [],
+          "removed": [
+            17,
+            19
+          ],
+          "updated": []
+        }
+      ],
+      "elapsed": 85.5,
+      "versionDelta": 2,
+      "buildMs": 51.10000000055879
+    },
+    "terrainGeometryMs": 42.30000000074506,
+    "populatedPropsOverlapCount": 97,
+    "imageDiffs": {
+      "noon": {
+        "meanAbs": 0.0,
+        "changedPixels": 0.0
+      },
+      "night": {
+        "meanAbs": 0.006496389862149954,
+        "changedPixels": 0.036852334104938274
+      },
+      "wind": {
+        "meanAbs": 0.1014966294169426,
+        "changedPixels": 0.9899710648148148
+      },
+      "overlay_move1": {
+        "meanAbs": 0.012352287769317627,
+        "changedPixels": 0.5163898533950617
+      },
+      "overlay_move2": {
+        "meanAbs": 0.012308606877923012,
+        "changedPixels": 0.5158106674382716
+      },
+      "info": {
+        "meanAbs": 0.004514564760029316,
+        "changedPixels": 0.20557677469135802
+      },
+      "info_reset": {
+        "meanAbs": 0.0,
+        "changedPixels": 0.0
+      },
+      "info_api_equivalence": {
+        "meanAbs": 0.0,
+        "changedPixels": 0.0
+      }
+    }
+  },
+  "assumptions": [
+    "Preserve prescribed civic covered-population loads even when above nominal capacity; utility coverage stays true component supply/demand.",
+    "Do not integrate external root finance, upkeep, history, masks or input candidates during owned builder work.",
+    "No safe opaque-depth owner contract exists; no renderer feedback or extra scene render introduced.",
+    "Keep public API and save schema unchanged this round. Ordinary placement still does not grade terrain."
+  ]
+}

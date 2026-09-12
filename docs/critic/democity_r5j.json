@@ -1,0 +1,9 @@
+{
+  "module":"democity","round":"5j","review":"local-critical","score":6.0,"pass":false,
+  "basis":{"profile":"shots/democity/r5j/mainpass-profile.json","matrix":"shots/democity/r5j/summary.json","api":"shots/democity/r5j/apicheck.json","restage":"shots/democity/r5j/restage-cycle.json"},
+  "matrix":{"shots":16,"errors":0,"maxDrawCalls":801,"maxTriangles":3909080,"minFps":34.5},
+  "contract":{"apiMethods":13,"deserializeTwice":true,"tourStops":8,"invalidTour":false,"sameSeed1337":true,"sameSeed7":true},
+  "change":{"owner":"roads","distanceM":800,"scope":"render-only concrete sidewalls","authoritativePavementChanged":false},
+  "failedGates":["3M triangles","50 fps","512 MB heap","city scale","lighting","visual variety","seating/clearance","fresh-seed lifecycle"],
+  "decision":"hold score; next profile-led owner is props"
+}

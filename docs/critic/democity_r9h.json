@@ -1,0 +1,159 @@
+{
+  "module": "democity",
+  "round": "r9h",
+  "reviewType": "independent verification-only diagnosis",
+  "decision": "ACCEPT",
+  "productDecision": "NO_CHANGE",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "wholeGameScore": 6.0,
+  "passThreshold": 8.5,
+  "pass": false,
+  "summary": "Accept the observed fresh-start allocation explanation; no incremental identity defect or product change is established.",
+  "sources": {
+    "plan": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+    "grid": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+    "routedGrid": "13e375a7d1a9b65450a8be74ad288ebab35d8c2c314777a0f26517c065ba897a",
+    "baselinePlan": "a343db48d00472970d2f312ab51d30e6138c64d68a1e821510e9a0c2a69b46d8",
+    "candidatePlan": "85bf5ce294a26c32508295fbf3c5bc00d18c3c5459f1df23f116f12423963161"
+  },
+  "traceSha256": "9ea07a8e10e0b7d626968ae75ace44db2624f5d8120a34c5b9e153509cb79a39",
+  "traceBytes": 4071978,
+  "inspection": {
+    "fullRead": [
+      "docs/builds/democity_r9h_allocation_trace.md",
+      "tools/staged-allocation-trace.mjs",
+      "shots/democity/r9h-allocation-trace/trace.json"
+    ],
+    "supporting": [
+      "docs/critic/democity_r9g.md",
+      "docs/critic/democity_r9g.json",
+      "shots/democity/r9g-actual-frontage/final/summary.json",
+      "src/modules/zoning/grid.js",
+      "src/modules/zoning/index.js",
+      "src/modules/democity/index.js",
+      "src/modules/democity/plan.js",
+      "src/modules/buildings/index.js",
+      "src/core/rng.js"
+    ],
+    "newScreenshots": 0,
+    "priorVisualInspection": "R9g: 8 originals and 4 differences individually inspected during that review; not recaptured for this diagnosis."
+  },
+  "verification": {
+    "sourceHashesReconstructed": 5,
+    "ordersAndJitterRecomputed": 8,
+    "capturedWorlds": 4,
+    "callsPerCapturedWorld": 2,
+    "readyModulesPerWorld": 16,
+    "recordedErrors": 0,
+    "allCallsPreviousLotCount": 0,
+    "allCallsNextLotBefore": 1,
+    "firstCallEmittedLots": 0,
+    "generatedIdCountersExact": true,
+    "addedRemovedListsExact": true,
+    "lastOwnerNormalizedMembershipExact": true,
+    "r9gFinalLotProjectionExact": true,
+    "existingRelativeEdgeOrderExact": true,
+    "newBrowserRun": false
+  },
+  "seeds": [
+    {
+      "seed": 1337,
+      "newEdgeId": 1073,
+      "insertionIndexZeroBased": 213,
+      "newEdgeLots": 0,
+      "changedExistingEdges": [
+        335
+      ],
+      "baselineLots": 612,
+      "candidateLots": 611,
+      "baselineNextLot": 613,
+      "candidateNextLot": 612,
+      "retainedKeys": 611,
+      "changedRetainedLotIds": 187,
+      "baselineChangedIdInterval": [
+        426,
+        612
+      ],
+      "candidateChangedIdInterval": [
+        425,
+        611
+      ],
+      "idOffset": -1,
+      "normalizedCellReferences": [
+        4882,
+        4870
+      ],
+      "rawWithinLotDuplicateOccurrences": [
+        5,
+        5
+      ],
+      "rawCrossLotRepeatedClaims": [
+        2,
+        2
+      ]
+    },
+    {
+      "seed": 7,
+      "newEdgeId": 1140,
+      "insertionIndexZeroBased": 154,
+      "newEdgeLots": 2,
+      "changedExistingEdges": [
+        348,
+        346
+      ],
+      "baselineLots": 648,
+      "candidateLots": 648,
+      "baselineNextLot": 649,
+      "candidateNextLot": 649,
+      "retainedKeys": 645,
+      "changedRetainedLotIds": 126,
+      "baselineChangedIdInterval": [
+        307,
+        432
+      ],
+      "candidateChangedIdInterval": [
+        309,
+        434
+      ],
+      "idOffset": 2,
+      "normalizedCellReferences": [
+        5176,
+        5170
+      ],
+      "rawWithinLotDuplicateOccurrences": [
+        6,
+        6
+      ],
+      "rawCrossLotRepeatedClaims": [
+        2,
+        2
+      ]
+    }
+  ],
+  "limitations": [
+    "Two calls observed through readiness capture; no later quiescence guarantee.",
+    "No direct paint-cell census or phase/stack marker; startup phase attribution uses source order.",
+    "Trace logs fresh empty-to-painted allocation, not occupied-city regeneration, save restore or migration.",
+    "Buildings event stream not traced; ID-keyed RNG is source-supported explanation, not an exact per-spawn replay.",
+    "No new full-world/RNG/economy equality or candidate-repeat test; R9g is separate prior evidence.",
+    "Instrumentation changes host allocation/timing, so no CPU, FPS or memory conclusion.",
+    "Plan marker uniqueness is not guarded by the verifier, although current marker and reconstructed hashes are exact.",
+    "No visual quality or gameplay improvement; score and all whole-game gates remain unchanged."
+  ],
+  "rankedOpenIssues": [
+    {
+      "rank": 1,
+      "issue": "Sparse urban fabric",
+      "owners": [
+        "democity",
+        "roads",
+        "zoning",
+        "buildings"
+      ],
+      "status": "OPEN",
+      "next": "Test same-pair actual alley yield through owner APIs for seeds 1337 and 7; only advance after useful yield, repeatability, retained geometry, terrain/profile and visual evidence."
+    }
+  ],
+  "nextPriority": "Disposable actual-alley comparison at the same endpoint pair; do not change global allocation identity or claim incremental failure from these fresh worlds."
+}

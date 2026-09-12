@@ -2,10 +2,11 @@
 // one gate — `Placer.tryAdd` — which snaps y by KIND (never by isRoad), rejects asphalt, water and
 // footprint overlaps using the spec's own radii table, and only then writes the item.
 import { makeNoise2D } from '../../core/rng.js';
+import { ServiceFootprints } from '../../core/service-footprints.js';
 import { SPECIES, SPECIES_NAMES, RADII, SCALE_MIN, SCALE_MAX, shapeFor } from './species.js';
 
 const SIDEWALK_LIFT = 0.21;      // ROAD_LIFT 0.08 + SW_H 0.16 - 0.03  (roads/build.js:12,18)
-const SIDEWALK_KINDS = new Set(['bench', 'bin', 'hydrant', 'sign', 'bus_stop']);
+const SIDEWALK_KINDS = new Set(['bench', 'bin', 'hydrant', 'sign', 'bus_stop', 'trafficlight']);
 const NO_ASPHALT = new Set(['tree_oak', 'tree_pine', 'bush', 'fence', 'planter', 'bench', 'bin']);
 const LAMP_CLEAR = new Set(['bench', 'bin', 'sign']);
 const MAX_R = 2.2;
@@ -15,14 +16,20 @@ export class Placer {
     this.ctx = ctx;
     this.world = ctx.world;
     this.T = ctx.world.terrain;
+    this.services = new ServiceFootprints(ctx.world, ctx.modules);
     this.reset();
   }
 
   reset() {
+    this.services.sync();
     this.items = [];
     this.byId = new Map();
     this.hash = new Map();
-    this.nextId = 1;
+    // Rebuilding rules must not make an old selection ID identify a different prop.
+    // Retain retired identities too; explicit demolition is handled by suppressed intents.
+    this.nextId ??= 1;
+    this.identities ??= new Map();
+    this.identitySlots = new Map();
     this.trees = [];
     this.furniture = [];
     this.fenceRuns = [];
@@ -35,6 +42,7 @@ export class Placer {
     this.stops = [];
     this.lampsByEdge = new Map();
     this.signalNodes = new Set();
+    this.furnishedEdges = new Set();
   }
 
   key(x, z) { return `${Math.floor(x / 4)},${Math.floor(z / 4)}`; }
@@ -66,7 +74,7 @@ export class Placer {
     let ok = true;
     this.near(x, z, r + MAX_R + 1.6, (o) => {
       if (kind === 'fence' && o.kind === 'fence') return true;
-      if (opts.group !== undefined && o.group === opts.group) return true;
+      if (typeof opts.group === 'string' && opts.group.startsWith('bs') && o.group === opts.group) return true;
       const dx = o.x - x, dz = o.z - z;
       const d = Math.hypot(dx, dz);
       const need = r + (RADII[o.kind] ?? 0.4) * (o.scale || 1);
@@ -95,15 +103,30 @@ export class Placer {
    * The one gate. Returns the new item or null.
    * opts: {heading, scale, species, variant, side, t, edgeId, lotId, nodeId, y, group, force}
    */
+  // A deleted placement is suppressed at its location even if a later rule offers another variant.
+  intentKey(kind, x, z) { return `${kind}:${x.toFixed(4)}:${z.toFixed(4)}`; }
+
   tryAdd(kind, x, z, opts = {}) {
+    if (!opts.manualPlacement && this.suppressed?.has(this.intentKey(kind, x, z))) return null;
+    // Facilities own the paving and park decoration inside their pads; preserve manual objects.
+    if (!opts.manualPlacement && this.services.contains(x, z, 0.3)) return null;
     const scale = opts.scale ?? 1;
     if (this.T.isWater(x, z)) return null;
     if (NO_ASPHALT.has(kind) && this.onAsphalt(x, z)) return null;
     if ((kind === 'tree_oak' || kind === 'tree_pine') && !this.trunkClear(x, z)) return null;
     if (!opts.force && !this.free(kind, x, z, scale, opts)) return null;
     const y = this.groundY(kind, x, z, opts);
+    const baseIdentity = this.intentKey(kind, x, z);
+    const slot = opts.manualPlacement ? 0 : (this.identitySlots.get(baseIdentity) || 0);
+    const identity = slot ? `${baseIdentity}#${slot}` : baseIdentity;
+    if (!opts.manualPlacement) this.identitySlots.set(baseIdentity, slot + 1);
+    let id = opts.manualPlacement ? undefined : this.identities.get(identity);
+    if (id === undefined) {
+      id = this.nextId++;
+      if (!opts.manualPlacement) this.identities.set(identity, id);
+    }
     const it = {
-      id: this.nextId++, kind, x, y, z,
+      id, kind, x, y, z,
       heading: opts.heading ?? 0, scale,
     };
     if (opts.species) it.species = opts.species;
@@ -268,7 +291,7 @@ export function placeSignals(ctx, placer) {
       if (!item) continue;
       const ang = Math.atan2(dx, dz);
       let d = Math.abs(((ang - base + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
-      const group = d > Math.PI * 0.5 ? 0 : 1;
+      const group = Math.abs(Math.cos(ang - base)) > Math.SQRT1_2 ? 0 : 1;
       placer.furniture.push({ kit: 'trafficlight', x, y, z, heading, scale: 1 });
       sig.arms.push({ edgeId: a.edgeId, atA: a.atA !== false, group, x, y, z, heading, item });
     }
@@ -284,7 +307,7 @@ export function placeLamps(ctx, placer, edgeIds) {
   const ids = edgeIds || [...R.edges.keys()];
   for (const id of ids) {
     const e = R.edges.get(id);
-    if (!e || e.type === 'gravel') continue;
+    if (!e || e.type === 'gravel' || placer.lampsByEdge.has(id)) continue;
     const list = roads.lampPositions(id);
     const mine = [];
     for (const p of list) {
@@ -313,7 +336,8 @@ export function placeEdgeFurniture(ctx, placer, edgeIds) {
   };
   for (const id of ids) {
     const e = R.edges.get(id);
-    if (!e || !FURNITURE_TYPES.has(e.type)) continue;
+    if (!e || !FURNITURE_TYPES.has(e.type) || placer.furnishedEdges.has(id)) continue;
+    placer.furnishedEdges.add(id);
     const Ty = R.types[e.type] || R.types.street;
     if (!Ty.sidewalk) continue;
     const len = e.length;
@@ -497,7 +521,7 @@ export function hedgeLine(ctx, placer, ax, az, bx, bz, opt = {}) {
     if (T.isWater(x, z) || placer.onAsphalt(x, z)) { flushRun(placer, pts, 'hedge'); continue; }
     const it = placer.tryAdd('fence', x, z, { variant: 'hedge', scale: 1, heading: Math.atan2(bx - ax, -(bz - az)) });
     if (!it) { flushRun(placer, pts, 'hedge'); continue; }
-    pts.push({ x: it.x, y: it.y, z: it.z });
+    pts.push({ id: it.id, x: it.x, y: it.y, z: it.z });
     if (pts.length >= 9) { const last = pts[pts.length - 1]; flushRun(placer, pts, 'hedge'); pts.push({ ...last }); }
   }
   flushRun(placer, pts, 'hedge');
@@ -515,7 +539,7 @@ export function fenceLine(ctx, placer, ax, az, bx, bz, variant, opt = {}) {
     if (T.isWater(x, z) || placer.onAsphalt(x, z)) { flushRun(placer, pts, variant); continue; }
     const it = placer.tryAdd('fence', x, z, { variant, scale: 1, heading: Math.atan2(bx - ax, -(bz - az)) });
     if (!it) { flushRun(placer, pts, variant); continue; }
-    pts.push({ x: it.x, y: it.y, z: it.z });
+    pts.push({ id: it.id, x: it.x, y: it.y, z: it.z });
     if (pts.length >= 9) { const last = pts[pts.length - 1]; flushRun(placer, pts, variant); pts.push({ ...last }); }
   }
   flushRun(placer, pts, variant);

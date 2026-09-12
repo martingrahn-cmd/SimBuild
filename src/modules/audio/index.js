@@ -91,12 +91,13 @@ function computeMix(ctx) {
   t.wind = (0.2 + 0.6 * windK) * (0.55 + 0.45 * (1 - f.near)) * (1 - 0.3 * f.rain);
   t.leaves = windK * f.near * 0.95 * (1 - 0.5 * f.rain);
   t.traffic = f.traffic * (1 - 0.6 * f.night) * (0.55 + 0.45 * f.near);
-  t.crickets = f.night * warm * (1 - f.rain) * (0.3 + 0.7 * f.near);
+  const deepNight = smooth(0.35, 0.9, f.night);
+  t.crickets = deepNight * warm * (1 - f.rain) * (0.08 + 0.18 * f.near);
   t.rain = f.rain * (0.6 + 0.4 * f.near);
   const birds = f.day * (1 - 0.85 * f.rain) * (0.25 + 0.75 * f.near) * (1 + 1.3 * f.dawnChorus);
   S.mix.birdRate = birds * 0.55;
   const c = S.mix.cutoff;
-  c.rain = 1400 + 5600 * f.near; c.traffic = 500 + 2800 * f.near; c.wind = 8000; c.leaves = 8000; c.crickets = 3000 + 5000 * f.near;
+  c.rain = 1400 + 5600 * f.near; c.traffic = 500 + 2800 * f.near; c.wind = 8000; c.leaves = 8000; c.crickets = 2600 + 2200 * f.near;
 }
 
 function scheduler(dt, ctx) {

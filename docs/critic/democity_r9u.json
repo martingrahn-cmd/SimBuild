@@ -1,0 +1,1635 @@
+{
+  "round": "r9u",
+  "module": "democity",
+  "decision": "ACCEPT",
+  "decisionScope": "Bounded public single straight-road demolition history and tested one-shot refusal compensation",
+  "productAcceptedWithinScope": true,
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "pass": false,
+  "threshold": 8.5,
+  "sourceHashes": {
+    "src/modules/roads/index.js": "10236c24ec7042e6798b15bcd70c4cfb8d839cef2edc364e73f4590280fda2ad",
+    "src/modules/tools/index.js": "923ca9c86e65f3ca5c92e69c11d98b874c677dfdab2f74f2073ce2e47409741c",
+    "src/modules/tools/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+    "src/modules/zoning/index.js": "1da228b88e43bd797c4652964ede47b7b132320b6ac5c55b1b8bfc26d310f3be",
+    "src/modules/zoning/grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+    "src/modules/buildings/index.js": "7ea45bea2181fafb20d1bc39653a9e7839750b0bf685e6aa8d03a4728fe3b79b",
+    "src/modules/simulation/index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79",
+    "tools/r9u-road-demolition-history.mjs": "3882555a0b6040dc2054ab2b0f8c8c6a58dde37eb8ad9ec905754436604f6040"
+  },
+  "sourceManifest": "shots/democity/r9u-road-demolition-history/source/source-hashes.json",
+  "allLiveAndManifestCopiesMatch": true,
+  "evidenceHashes": {
+    "baseline_seed1337_directed.png": "eaa63c6642d05cc9997cb4fdad06610c1165860f3ed7edad55905015d344c9fa",
+    "seed7_directed_difference_x4.png": "d1ff825d0e7d518ce1b25d6aebecae61b3e6fe6e089eabeb969240c971ffe2f5",
+    "seed7_aerial_difference_x4.png": "0ac4fe9ccc283523e123b9ea53d0f55ab84e44f183791868b9a5596ed593dc40",
+    "save-atomicity.json": "d5dc73767d3f0400be6f739572374074b4cc416bb961a73b79171f36418e1cde",
+    "baseline_seed7_directed.png": "92ab9bbd997ff2ec6df5a8e95150b638c773f205a81212d6fd3b53ebdb5ffc8e",
+    "candidate_seed1337_aerial.png": "1355c6c6fe85638d56feb8db7ef3253666cce9d702b8fd24eaf6ee1a451225d9",
+    "candidate_seed7_aerial.png": "3783b722a15901c90d8a6befd3ea4e6fe92499f77087dcb438834c6688c81a5b",
+    "candidate_seed7_directed.png": "d6dae87c9afa876ee43bfaee9a842c491373d4f4d9599d8ff6a769469e3902aa",
+    "baseline_seed1337_aerial.png": "1c5965c2b6398bd7740016f65f4601cffabd5d4b627f71e58f08fee6f5fac2e4",
+    "seed1337_directed_difference_x4.png": "0781c0070dffff186cf856ad93a4f0e3c586732251278e23911ddaa5cb247f88",
+    "baseline_seed7_aerial.png": "819761ac1f51d2bf42afb9a6b8ed9cf5c796c1f689393b1d55e3c88bb2cec3e3",
+    "seed1337_aerial_difference_x4.png": "6c239a837064cdd969a028317b8c25c80765e136f6096fdc14a5f83bbd013890",
+    "cross-seed.json": "bd51775ed7201e54b398b09d93536e12e336737e50b1f02dde98ae7c4b0fe8b2",
+    "verification.json": "1af9ee9ad549cb38f45e64317f3ad6d3a1a77cdb0eda0600e0c577546289e46c",
+    "contact-sheet.png": "cf75b57155dcbaa707407642af6c00d0c0424e29410827a0b0ab26d33006fe86",
+    "build.log": "58ab83da71bb4fef1a3ad62557a81eb11f69c8c2dcd77de3c378d1c46f739976",
+    "candidate_seed1337_directed.png": "1f677e91a5dfb664ea463d08c35d331dd5cf71abfd7504da74c0a3aaede7765e",
+    "apicheck-seed7/apicheck.json": "e4261e19bf7c42d394efebcf48f46bb6d69f602b5e829b17ae8828eab0e38c11",
+    "source/zoning-index.js": "1da228b88e43bd797c4652964ede47b7b132320b6ac5c55b1b8bfc26d310f3be",
+    "source/simulation-index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79",
+    "source/buildings-index.js": "7ea45bea2181fafb20d1bc39653a9e7839750b0bf685e6aa8d03a4728fe3b79b",
+    "source/tools-index.js": "923ca9c86e65f3ca5c92e69c11d98b874c677dfdab2f74f2073ce2e47409741c",
+    "source/source-hashes.json": "955bdf690c4c2892d69f1ce33e7ded6c46721b1da0819a32f76cb5caff913c0d",
+    "source/roads-index.js": "10236c24ec7042e6798b15bcd70c4cfb8d839cef2edc364e73f4590280fda2ad",
+    "source/grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+    "source/index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79",
+    "source/zoning-grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+    "source/tools-undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+    "source/source-hashes.txt": "46af955de8552578986cc0ce5b7b8a21d324d90998919df5fb68f37c439a0874",
+    "source/r9u-road-demolition-history.mjs": "3882555a0b6040dc2054ab2b0f8c8c6a58dde37eb8ad9ec905754436604f6040",
+    "source/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+    "apicheck-seed1337/apicheck.json": "953579ba8b47fbbfd65417946852a94bfc74dbc16bf7b1e637df4b441dc248f8",
+    "failure-probe/verification.json": "6d9e9ac13563ab9b8ed3366df8e3eb618637f0a47dec3d1082d8f1de46e55c6c"
+  },
+  "recomputed": {
+    "countsMoney": [
+      {
+        "seed": 1337,
+        "delta": {
+          "nodes": 0,
+          "edges": -1,
+          "lots": -7,
+          "buildings": -8
+        },
+        "refund": 21,
+        "laterTick": 121541
+      },
+      {
+        "seed": 7,
+        "delta": {
+          "nodes": 0,
+          "edges": -1,
+          "lots": -4,
+          "buildings": -8
+        },
+        "refund": 46,
+        "laterTick": 121301
+      }
+    ],
+    "pairedSevenOwnerDigestsEqual": true,
+    "imageMetrics": [
+      {
+        "seed": 1337,
+        "view": "aerial",
+        "width": 1440,
+        "height": 900,
+        "normalizedRgbMae": 0.0005802126200274349,
+        "changedPixels": 26429,
+        "strongPixelsGE8": 5913,
+        "differenceExact": true
+      },
+      {
+        "seed": 1337,
+        "view": "directed",
+        "width": 1440,
+        "height": 900,
+        "normalizedRgbMae": 0.007897464294359719,
+        "changedPixels": 138680,
+        "strongPixelsGE8": 83456,
+        "differenceExact": true
+      },
+      {
+        "seed": 7,
+        "view": "aerial",
+        "width": 1440,
+        "height": 900,
+        "normalizedRgbMae": 0.000793265351408053,
+        "changedPixels": 39031,
+        "strongPixelsGE8": 7162,
+        "differenceExact": true
+      },
+      {
+        "seed": 7,
+        "view": "directed",
+        "width": 1440,
+        "height": 900,
+        "normalizedRgbMae": 0.011531616638424917,
+        "changedPixels": 199206,
+        "strongPixelsGE8": 100717,
+        "differenceExact": true
+      }
+    ],
+    "aggregatePass": true
+  },
+  "verification": {
+    "method": "fresh showcase=all paused worlds; public single bulldozer action on a real zoned road; exact SHA-256 over complete serialized owners including Terrain",
+    "sources": {
+      "src/modules/roads/index.js": "10236c24ec7042e6798b15bcd70c4cfb8d839cef2edc364e73f4590280fda2ad",
+      "src/modules/tools/index.js": "923ca9c86e65f3ca5c92e69c11d98b874c677dfdab2f74f2073ce2e47409741c",
+      "src/modules/tools/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+      "src/modules/zoning/index.js": "1da228b88e43bd797c4652964ede47b7b132320b6ac5c55b1b8bfc26d310f3be",
+      "src/modules/zoning/grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+      "src/modules/buildings/index.js": "7ea45bea2181fafb20d1bc39653a9e7839750b0bf685e6aa8d03a4728fe3b79b",
+      "src/modules/simulation/index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79"
+    },
+    "runs": [
+      {
+        "seed": 1337,
+        "target": {
+          "id": 478,
+          "type": "street",
+          "a": 153,
+          "b": 162,
+          "length": 88,
+          "lots": 8,
+          "x": 840,
+          "z": -270.4,
+          "t": 0.2
+        },
+        "action": {
+          "state": {
+            "tool": "bulldoze",
+            "options": {
+              "mode": "single"
+            },
+            "phase": "placing",
+            "points": [
+              {
+                "x": 840,
+                "y": 2.0786418437957765,
+                "z": -270.4
+              }
+            ],
+            "cursor": {
+              "x": 840,
+              "y": 2.0786418437957765,
+              "z": -270.4
+            },
+            "valid": true,
+            "reason": null,
+            "cost": 0,
+            "refund": 21,
+            "affordable": true,
+            "snap": null,
+            "metrics": {
+              "length": 0,
+              "angle": 0,
+              "grade": 0,
+              "cells": 0,
+              "volume": 0,
+              "items": 1
+            }
+          },
+          "click": {
+            "ok": true,
+            "cost": 0
+          },
+          "exists": false,
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "bulldoze:1",
+                "cost": -21
+              }
+            ]
+          }
+        },
+        "undoValue": true,
+        "redoValue": true,
+        "failed": {
+          "value": false,
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "bulldoze:1",
+                "cost": -21
+              }
+            ],
+            "failure": {
+              "reason": "action-returned-false",
+              "label": "demolish:road",
+              "direction": "undo"
+            }
+          }
+        },
+        "normalUndo": true,
+        "re": true,
+        "later": {
+          "id": 1,
+          "lotId": 1,
+          "level": 2,
+          "tick": 121541,
+          "item": {
+            "id": 1,
+            "lotId": 1,
+            "type": "residential",
+            "density": "low",
+            "level": 2,
+            "x": -177.67999999999998,
+            "z": 508,
+            "heading": -1.5707963267948966,
+            "lot": {
+              "x": -174.45,
+              "z": 508,
+              "w": 16,
+              "d": 24,
+              "heading": -1.5707963267948966,
+              "corner": false
+            },
+            "mixedUse": false,
+            "w": 10.879999999999999,
+            "variant": null,
+            "facadeIdx": null,
+            "minFloors": null,
+            "catalog": false
+          }
+        },
+        "laterUndoValue": true,
+        "laterRedoValue": true,
+        "checks": {
+          "removed": true,
+          "candidateRepeat": true,
+          "undoExact": true,
+          "redoExact": true,
+          "failedCompensated": true,
+          "historyRetained": true,
+          "normalUndoExact": true,
+          "laterPreservedUndo": true,
+          "laterPreservedRedo": true,
+          "integrity": true,
+          "sameTarget": true
+        },
+        "counts": {
+          "before": {
+            "nodes": 468,
+            "edges": 604,
+            "lots": 612,
+            "buildings": 612
+          },
+          "candidate": {
+            "nodes": 468,
+            "edges": 603,
+            "lots": 605,
+            "buildings": 604
+          },
+          "undo": {
+            "nodes": 468,
+            "edges": 604,
+            "lots": 612,
+            "buildings": 612
+          },
+          "redo": {
+            "nodes": 468,
+            "edges": 603,
+            "lots": 605,
+            "buildings": 604
+          }
+        },
+        "money": {
+          "before": 25434.727223410573,
+          "candidate": 25455.727223410573,
+          "undo": 25434.727223410573,
+          "redo": 25455.727223410573,
+          "afterFailed": 25455.727223410573
+        },
+        "digests": {
+          "before": {
+            "roads": "39019ea29f818c0d87acc9f482bccf1db1e399d856b0e869cb1435d62210cf01",
+            "zoning": "23e24e8effb2ab39d1f09be908a42c969758f7a2fc034b7d8332154da4807ae1",
+            "buildings": "7bf20ff1e2c9e0ff28704b4b7142a2bf3863e86f5da3e548d21e8a338301eddd",
+            "simulation": "5bd0bb71d1b4951b606ecaf94a0c90e90c71b68cd72b5dd500575e9208d5b60e",
+            "services": "18313a8e24f6dd4708869e78d99759c3603cf3257431ce32c708117d289e7c22",
+            "transit": "23155d245b6e7bd13aeb9d1a2b694fee8ab49fd0035511552ae588c012bb072f",
+            "terrain": "457afe45608e41019f03413ec217b29e5b614ab04818405aa2e12f0a93178ebb"
+          },
+          "candidate": {
+            "roads": "b6529c85b8d306d16b7eaa25bc31a8f0bff377134062b4c7f81085679694ae2e",
+            "zoning": "cdcc38ebe7b6242717ca410b1b4d2a006dc3e471a1889671d5d27ec3d459ce14",
+            "buildings": "3aed53586a5e79498ac79af9ee9eeff6b4b1a367ad00c15d8e0839eaeab1f074",
+            "simulation": "c303ed6d3e8e398511f5baa140045a2405610c453694fd74ee6680cdabad7013",
+            "services": "18313a8e24f6dd4708869e78d99759c3603cf3257431ce32c708117d289e7c22",
+            "transit": "f0aa59c245359b11c27cd94c5b38e51140336598d7de8fe8771a92a0df9a5dad",
+            "terrain": "efa341e52f177ad69493673cc41e8ff63c4677872462ef5ebfba42a7195226b8"
+          },
+          "undo": {
+            "roads": "39019ea29f818c0d87acc9f482bccf1db1e399d856b0e869cb1435d62210cf01",
+            "zoning": "23e24e8effb2ab39d1f09be908a42c969758f7a2fc034b7d8332154da4807ae1",
+            "buildings": "7bf20ff1e2c9e0ff28704b4b7142a2bf3863e86f5da3e548d21e8a338301eddd",
+            "simulation": "5bd0bb71d1b4951b606ecaf94a0c90e90c71b68cd72b5dd500575e9208d5b60e",
+            "services": "18313a8e24f6dd4708869e78d99759c3603cf3257431ce32c708117d289e7c22",
+            "transit": "23155d245b6e7bd13aeb9d1a2b694fee8ab49fd0035511552ae588c012bb072f",
+            "terrain": "457afe45608e41019f03413ec217b29e5b614ab04818405aa2e12f0a93178ebb"
+          },
+          "redo": {
+            "roads": "b6529c85b8d306d16b7eaa25bc31a8f0bff377134062b4c7f81085679694ae2e",
+            "zoning": "cdcc38ebe7b6242717ca410b1b4d2a006dc3e471a1889671d5d27ec3d459ce14",
+            "buildings": "3aed53586a5e79498ac79af9ee9eeff6b4b1a367ad00c15d8e0839eaeab1f074",
+            "simulation": "c303ed6d3e8e398511f5baa140045a2405610c453694fd74ee6680cdabad7013",
+            "services": "18313a8e24f6dd4708869e78d99759c3603cf3257431ce32c708117d289e7c22",
+            "transit": "f0aa59c245359b11c27cd94c5b38e51140336598d7de8fe8771a92a0df9a5dad",
+            "terrain": "efa341e52f177ad69493673cc41e8ff63c4677872462ef5ebfba42a7195226b8"
+          },
+          "afterFailed": {
+            "roads": "b6529c85b8d306d16b7eaa25bc31a8f0bff377134062b4c7f81085679694ae2e",
+            "zoning": "cdcc38ebe7b6242717ca410b1b4d2a006dc3e471a1889671d5d27ec3d459ce14",
+            "buildings": "3aed53586a5e79498ac79af9ee9eeff6b4b1a367ad00c15d8e0839eaeab1f074",
+            "simulation": "c303ed6d3e8e398511f5baa140045a2405610c453694fd74ee6680cdabad7013",
+            "services": "18313a8e24f6dd4708869e78d99759c3603cf3257431ce32c708117d289e7c22",
+            "transit": "f0aa59c245359b11c27cd94c5b38e51140336598d7de8fe8771a92a0df9a5dad",
+            "terrain": "efa341e52f177ad69493673cc41e8ff63c4677872462ef5ebfba42a7195226b8"
+          }
+        },
+        "errors": [],
+        "warnings": [
+          "[props] no roads yet: road furniture deferred until roads:changed",
+          "[democity] No valid reserved university site",
+          "[tools] road demolition history change rejected and compensated: zoning rejected demolition restore"
+        ],
+        "pass": true
+      },
+      {
+        "seed": 7,
+        "target": {
+          "id": 872,
+          "type": "avenue",
+          "a": 285,
+          "b": 301,
+          "length": 88,
+          "lots": 8,
+          "x": -200,
+          "z": 449.6,
+          "t": 0.2
+        },
+        "action": {
+          "state": {
+            "tool": "bulldoze",
+            "options": {
+              "mode": "single"
+            },
+            "phase": "placing",
+            "points": [
+              {
+                "x": -200,
+                "y": 12.152505302429198,
+                "z": 449.6
+              }
+            ],
+            "cursor": {
+              "x": -200,
+              "y": 12.152505302429198,
+              "z": 449.6
+            },
+            "valid": true,
+            "reason": null,
+            "cost": 0,
+            "refund": 46,
+            "affordable": true,
+            "snap": null,
+            "metrics": {
+              "length": 0,
+              "angle": 0,
+              "grade": 0,
+              "cells": 0,
+              "volume": 0,
+              "items": 1
+            }
+          },
+          "click": {
+            "ok": true,
+            "cost": 0
+          },
+          "exists": false,
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "bulldoze:1",
+                "cost": -46
+              }
+            ]
+          }
+        },
+        "undoValue": true,
+        "redoValue": true,
+        "failed": {
+          "value": false,
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "bulldoze:1",
+                "cost": -46
+              }
+            ],
+            "failure": {
+              "reason": "action-returned-false",
+              "label": "demolish:road",
+              "direction": "undo"
+            }
+          }
+        },
+        "normalUndo": true,
+        "re": true,
+        "later": {
+          "id": 2,
+          "lotId": 2,
+          "level": 2,
+          "tick": 121301,
+          "item": {
+            "id": 2,
+            "lotId": 2,
+            "type": "residential",
+            "density": "low",
+            "level": 2,
+            "x": 222.32000000000002,
+            "z": 540,
+            "heading": -1.5707963267948966,
+            "lot": {
+              "x": 225.55,
+              "z": 540,
+              "w": 16,
+              "d": 24,
+              "heading": -1.5707963267948966,
+              "corner": false
+            },
+            "mixedUse": false,
+            "w": 10.879999999999999,
+            "variant": null,
+            "facadeIdx": null,
+            "minFloors": null,
+            "catalog": false
+          }
+        },
+        "laterUndoValue": true,
+        "laterRedoValue": true,
+        "checks": {
+          "removed": true,
+          "candidateRepeat": true,
+          "undoExact": true,
+          "redoExact": true,
+          "failedCompensated": true,
+          "historyRetained": true,
+          "normalUndoExact": true,
+          "laterPreservedUndo": true,
+          "laterPreservedRedo": true,
+          "integrity": true,
+          "sameTarget": true
+        },
+        "counts": {
+          "before": {
+            "nodes": 493,
+            "edges": 646,
+            "lots": 648,
+            "buildings": 648
+          },
+          "candidate": {
+            "nodes": 493,
+            "edges": 645,
+            "lots": 644,
+            "buildings": 640
+          },
+          "undo": {
+            "nodes": 493,
+            "edges": 646,
+            "lots": 648,
+            "buildings": 648
+          },
+          "redo": {
+            "nodes": 493,
+            "edges": 645,
+            "lots": 644,
+            "buildings": 640
+          }
+        },
+        "money": {
+          "before": 25770.71318153628,
+          "candidate": 25816.71318153628,
+          "undo": 25770.71318153628,
+          "redo": 25816.71318153628,
+          "afterFailed": 25816.71318153628
+        },
+        "digests": {
+          "before": {
+            "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+            "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+            "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+            "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+            "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+            "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+            "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+          },
+          "candidate": {
+            "roads": "0c0fde6c93f61ed69615c5e589d73df88157da51550b6af835dfccafa678ff1d",
+            "zoning": "69569cf85fc6a28b026e7050fa5065ca1ce6faf80e5d30041e62b87e60100d03",
+            "buildings": "57ffc33918e6e08531b9bb2bc88783c03efac7431c7fcf9294e85271161c101e",
+            "simulation": "a4f7d25b851ec0c4dc27af8b88f4266d93324ad8a16405c5ebee7722e544e620",
+            "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+            "transit": "d1076c5e44c83397a6c17213b342b93f5c6a8c56f08cb7b95ddf55ddd987d746",
+            "terrain": "af3613b5666bdca83f8f545cd0da2b3bd06629392cb09c675af1fbaf9fb37e6f"
+          },
+          "undo": {
+            "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+            "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+            "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+            "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+            "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+            "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+            "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+          },
+          "redo": {
+            "roads": "0c0fde6c93f61ed69615c5e589d73df88157da51550b6af835dfccafa678ff1d",
+            "zoning": "69569cf85fc6a28b026e7050fa5065ca1ce6faf80e5d30041e62b87e60100d03",
+            "buildings": "57ffc33918e6e08531b9bb2bc88783c03efac7431c7fcf9294e85271161c101e",
+            "simulation": "a4f7d25b851ec0c4dc27af8b88f4266d93324ad8a16405c5ebee7722e544e620",
+            "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+            "transit": "d1076c5e44c83397a6c17213b342b93f5c6a8c56f08cb7b95ddf55ddd987d746",
+            "terrain": "af3613b5666bdca83f8f545cd0da2b3bd06629392cb09c675af1fbaf9fb37e6f"
+          },
+          "afterFailed": {
+            "roads": "0c0fde6c93f61ed69615c5e589d73df88157da51550b6af835dfccafa678ff1d",
+            "zoning": "69569cf85fc6a28b026e7050fa5065ca1ce6faf80e5d30041e62b87e60100d03",
+            "buildings": "57ffc33918e6e08531b9bb2bc88783c03efac7431c7fcf9294e85271161c101e",
+            "simulation": "a4f7d25b851ec0c4dc27af8b88f4266d93324ad8a16405c5ebee7722e544e620",
+            "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+            "transit": "d1076c5e44c83397a6c17213b342b93f5c6a8c56f08cb7b95ddf55ddd987d746",
+            "terrain": "af3613b5666bdca83f8f545cd0da2b3bd06629392cb09c675af1fbaf9fb37e6f"
+          }
+        },
+        "errors": [],
+        "warnings": [
+          "[props] no roads yet: road furniture deferred until roads:changed",
+          "[democity] No valid reserved university site",
+          "[tools] road demolition history change rejected and compensated: zoning rejected demolition restore"
+        ],
+        "pass": true
+      }
+    ],
+    "laterConstruction": {
+      "target": {
+        "id": 872,
+        "type": "avenue",
+        "a": 285,
+        "b": 301,
+        "length": 88,
+        "lots": 8,
+        "x": -200,
+        "z": 449.6,
+        "t": 0.2
+      },
+      "freed": {
+        "id": 51,
+        "lotId": 51
+      },
+      "action": {
+        "state": {
+          "tool": "bulldoze",
+          "options": {
+            "mode": "single"
+          },
+          "phase": "placing",
+          "points": [
+            {
+              "x": -200,
+              "y": 12.152505302429198,
+              "z": 449.6
+            }
+          ],
+          "cursor": {
+            "x": -200,
+            "y": 12.152505302429198,
+            "z": 449.6
+          },
+          "valid": true,
+          "reason": null,
+          "cost": 0,
+          "refund": 46,
+          "affordable": true,
+          "snap": null,
+          "metrics": {
+            "length": 0,
+            "angle": 0,
+            "grade": 0,
+            "cells": 0,
+            "volume": 0,
+            "items": 1
+          }
+        },
+        "click": {
+          "ok": true,
+          "cost": 0
+        },
+        "exists": false,
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "bulldoze:1",
+              "cost": -46
+            }
+          ]
+        }
+      },
+      "built": {
+        "id": 692,
+        "lotId": 51,
+        "tick": 121301,
+        "item": {
+          "id": 692,
+          "lotId": 51,
+          "type": "residential",
+          "density": "low",
+          "level": 1,
+          "x": -62.31999999999999,
+          "z": -428,
+          "heading": 1.5707963267948966,
+          "lot": {
+            "x": -65.55,
+            "z": -428,
+            "w": 16,
+            "d": 24,
+            "heading": 1.5707963267948966,
+            "corner": false
+          },
+          "mixedUse": false,
+          "w": 9.5,
+          "variant": null,
+          "facadeIdx": null,
+          "minFloors": null,
+          "catalog": false
+        }
+      },
+      "undoValue": true,
+      "redoValue": true,
+      "linkedUndo": true,
+      "linkedRedo": true,
+      "tickUndo": true,
+      "tickRedo": true,
+      "integrity": true,
+      "errors": [],
+      "pass": true
+    },
+    "rebuildFailures": {
+      "initial": {
+        "target": {
+          "id": 872,
+          "type": "avenue",
+          "a": 285,
+          "b": 301,
+          "length": 88,
+          "lots": 8,
+          "x": -200,
+          "z": 449.6,
+          "t": 0.2
+        },
+        "action": {
+          "click": {
+            "ok": false,
+            "cost": 0
+          },
+          "history": {
+            "undo": 0,
+            "redo": 0,
+            "capacity": 64,
+            "entries": []
+          }
+        },
+        "exact": true,
+        "ownerEquality": {
+          "roads": true,
+          "zoning": true,
+          "buildings": true,
+          "simulation": true,
+          "services": true,
+          "transit": true,
+          "terrain": true
+        },
+        "money": {
+          "before": 25770.71318153628,
+          "after": 25770.71318153628
+        },
+        "counts": {
+          "before": {
+            "nodes": 493,
+            "edges": 646,
+            "lots": 648,
+            "buildings": 648
+          },
+          "after": {
+            "nodes": 493,
+            "edges": 646,
+            "lots": 648,
+            "buildings": 648
+          }
+        },
+        "historyEmpty": true,
+        "errors": [],
+        "pass": true
+      },
+      "inverse": {
+        "target": {
+          "id": 872,
+          "type": "avenue",
+          "a": 285,
+          "b": 301,
+          "length": 88,
+          "lots": 8,
+          "x": -200,
+          "z": 449.6,
+          "t": 0.2
+        },
+        "commit": {
+          "state": {
+            "tool": "bulldoze",
+            "options": {
+              "mode": "single"
+            },
+            "phase": "placing",
+            "points": [
+              {
+                "x": -200,
+                "y": 12.152505302429198,
+                "z": 449.6
+              }
+            ],
+            "cursor": {
+              "x": -200,
+              "y": 12.152505302429198,
+              "z": 449.6
+            },
+            "valid": true,
+            "reason": null,
+            "cost": 0,
+            "refund": 46,
+            "affordable": true,
+            "snap": null,
+            "metrics": {
+              "length": 0,
+              "angle": 0,
+              "grade": 0,
+              "cells": 0,
+              "volume": 0,
+              "items": 1
+            }
+          },
+          "click": {
+            "ok": true,
+            "cost": 0
+          },
+          "exists": false,
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "bulldoze:1",
+                "cost": -46
+              }
+            ]
+          }
+        },
+        "failed": {
+          "value": false,
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "bulldoze:1",
+                "cost": -46
+              }
+            ],
+            "failure": {
+              "reason": "action-returned-false",
+              "label": "demolish:road",
+              "direction": "undo"
+            }
+          }
+        },
+        "normal": true,
+        "compensated": true,
+        "historyRetained": true,
+        "normalExact": true,
+        "errors": [],
+        "pass": true
+      },
+      "pass": true
+    },
+    "errors": [],
+    "pass": true
+  },
+  "supportingEvidence": {
+    "save-atomicity.json": {
+      "rejection": "City restore rejected by transit. Previous city restored.",
+      "terrainBefore": -35.06043243408203,
+      "terrainAfter": -35.06043243408203,
+      "moduleExact": true,
+      "perModule": {
+        "terrain": true,
+        "roads": true,
+        "zoning": true,
+        "buildings": true,
+        "props": true,
+        "traffic": true,
+        "simulation": true,
+        "tools": true,
+        "services": true,
+        "ui": true,
+        "audio": true,
+        "infoviews": true,
+        "transit": true,
+        "democity": true
+      },
+      "differentModules": [],
+      "timeExact": true,
+      "cameraExact": true,
+      "validRestore": true,
+      "events": {
+        "restoring": 2,
+        "rolledBack": [
+          {
+            "module": "transit",
+            "error": "transit rejected saved data"
+          }
+        ],
+        "loaded": 1,
+        "finished": 2
+      },
+      "errors": [
+        "[transit] deserialize failed: transit rejected saved data transit rejected saved data\nError: transit rejected saved data\n    at apply (http://127.0.0.1:5173/src/core/save.js:35:45)\n    at async Object.restore (http://127.0.0.1:5173/src/core/save.js:65:27)\n    at async eval (eval at evaluate (:311:30), <anonymous>:19:11)\n    at async <anonymous>:337:30"
+      ],
+      "browserErrors": [
+        "[transit] deserialize failed: transit rejected saved data Error: transit rejected saved data\n    at apply (http://127.0.0.1:5173/src/core/save.js:35:45)\n    at async Object.restore (http://127.0.0.1:5173/src/core/save.js:65:27)\n    at async eval (eval at evaluate (:311:30), <anonymous>:19:11)\n    at async <anonymous>:337:30"
+      ],
+      "pass": true
+    },
+    "cross-seed.json": {
+      "fresh7": {
+        "terrainHash": "cfb44c1f",
+        "roadNodeHash": "2b7114f2",
+        "roadDesignHash": "a0d7a3e6",
+        "terrainFeatures": {
+          "river": [
+            -371.3757019042969,
+            -200.22482299804688,
+            -176.34066772460938
+          ],
+          "coast": [
+            -644.0078735351562,
+            -582.705810546875,
+            -681.9179077148438
+          ]
+        },
+        "counts": {
+          "roads": {
+            "nodes": 493,
+            "edges": 646,
+            "lengthM": 38866.30839336706,
+            "byType": {
+              "street": 460,
+              "avenue": 93,
+              "highway": 32,
+              "alley": 45,
+              "gravel": 13,
+              "ramp": 3
+            },
+            "bridges": 16,
+            "ramps": 3
+          },
+          "zoneCells": 10113,
+          "lots": 648,
+          "buildings": 648,
+          "services": 31,
+          "transitLines": 1,
+          "transitStops": 8
+        },
+        "districts": [
+          [
+            "centre",
+            0,
+            20
+          ],
+          [
+            "midtown",
+            0,
+            50
+          ],
+          [
+            "west",
+            -328,
+            472
+          ],
+          [
+            "east",
+            440,
+            488
+          ],
+          [
+            "industry",
+            256,
+            -632
+          ],
+          [
+            "port",
+            -200,
+            -496
+          ],
+          [
+            "park",
+            400,
+            300
+          ],
+          [
+            "waterfront",
+            80,
+            -192
+          ],
+          [
+            "civic",
+            120,
+            472
+          ]
+        ],
+        "errors": []
+      },
+      "initial1337": {
+        "terrainHash": "09da81f9",
+        "roadNodeHash": "59442dfe",
+        "roadDesignHash": "dd3bf268",
+        "terrainFeatures": {
+          "river": [
+            -398.612548828125,
+            -190.0653839111328,
+            -196.45875549316406
+          ],
+          "coast": [
+            -658.3945922851562,
+            -549.353515625,
+            -668.8872680664062
+          ]
+        },
+        "counts": {
+          "roads": {
+            "nodes": 468,
+            "edges": 604,
+            "lengthM": 36485.98482706707,
+            "byType": {
+              "street": 433,
+              "avenue": 85,
+              "highway": 32,
+              "alley": 41,
+              "gravel": 10,
+              "ramp": 3
+            },
+            "bridges": 16,
+            "ramps": 3
+          },
+          "zoneCells": 9964,
+          "lots": 612,
+          "buildings": 612,
+          "services": 31,
+          "transitLines": 1,
+          "transitStops": 8
+        },
+        "districts": [
+          [
+            "centre",
+            0,
+            20
+          ],
+          [
+            "midtown",
+            0,
+            50
+          ],
+          [
+            "west",
+            -328,
+            432
+          ],
+          [
+            "east",
+            416,
+            456
+          ],
+          [
+            "industry",
+            248,
+            -632
+          ],
+          [
+            "port",
+            -200,
+            -488
+          ],
+          [
+            "park",
+            400,
+            300
+          ],
+          [
+            "waterfront",
+            80,
+            -192
+          ],
+          [
+            "civic",
+            120,
+            440
+          ]
+        ],
+        "errors": []
+      },
+      "restaged7": {
+        "terrainHash": "cfb44c1f",
+        "roadNodeHash": "2b7114f2",
+        "roadDesignHash": "a0d7a3e6",
+        "terrainFeatures": {
+          "river": [
+            -371.3757019042969,
+            -200.22482299804688,
+            -176.34066772460938
+          ],
+          "coast": [
+            -644.0078735351562,
+            -582.705810546875,
+            -681.9179077148438
+          ]
+        },
+        "counts": {
+          "roads": {
+            "nodes": 493,
+            "edges": 646,
+            "lengthM": 38866.30839336706,
+            "byType": {
+              "street": 460,
+              "avenue": 93,
+              "highway": 32,
+              "alley": 45,
+              "gravel": 13,
+              "ramp": 3
+            },
+            "bridges": 16,
+            "ramps": 3
+          },
+          "zoneCells": 10113,
+          "lots": 648,
+          "buildings": 648,
+          "services": 31,
+          "transitLines": 1,
+          "transitStops": 8
+        },
+        "districts": [
+          [
+            "centre",
+            0,
+            20
+          ],
+          [
+            "midtown",
+            0,
+            50
+          ],
+          [
+            "west",
+            -328,
+            472
+          ],
+          [
+            "east",
+            440,
+            488
+          ],
+          [
+            "industry",
+            256,
+            -632
+          ],
+          [
+            "port",
+            -200,
+            -496
+          ],
+          [
+            "park",
+            400,
+            300
+          ],
+          [
+            "waterfront",
+            80,
+            -192
+          ],
+          [
+            "civic",
+            120,
+            472
+          ]
+        ],
+        "errors": []
+      },
+      "exact": {
+        "terrainHash": true,
+        "terrainFeatures": true,
+        "counts": true,
+        "districts": true
+      },
+      "terrainDifference": {
+        "changed": 0,
+        "total": 263169,
+        "maxAbs": 0,
+        "meanAbsChanged": 0,
+        "samples": []
+      },
+      "pristine": {
+        "freshHash": "fbb8ea51",
+        "restagedHash": "fbb8ea51",
+        "exact": true
+      },
+      "browserErrors": [],
+      "pass": true
+    },
+    "apicheck-seed7/apicheck.json": {
+      "api": {
+        "plan": "function",
+        "districtAt": "function",
+        "stats": "function",
+        "fallbacks": "function",
+        "tour": "function",
+        "startTour": "function",
+        "stopTour": "function",
+        "gotoStop": "function",
+        "tourState": "function",
+        "restage": "function",
+        "cropRects": "function",
+        "serialize": "function",
+        "deserialize": "function"
+      },
+      "baseline": {
+        "roads": {
+          "nodes": 493,
+          "edges": 646
+        },
+        "zones": {
+          "cells": 10113,
+          "lots": 648
+        },
+        "buildings": 648,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 548,
+        "coverage": {
+          "utilities": 519,
+          "healthEducation": 345
+        }
+      },
+      "deserialize": [
+        true,
+        true
+      ],
+      "afterDeserialize": {
+        "roads": {
+          "nodes": 493,
+          "edges": 646
+        },
+        "zones": {
+          "cells": 10113,
+          "lots": 648
+        },
+        "buildings": 648,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 548,
+        "coverage": {
+          "utilities": 519,
+          "healthEducation": 345
+        }
+      },
+      "tour": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "invalidTour": false,
+      "errors": [],
+      "browserErrors": [],
+      "pass": true
+    },
+    "apicheck-seed1337/apicheck.json": {
+      "api": {
+        "plan": "function",
+        "districtAt": "function",
+        "stats": "function",
+        "fallbacks": "function",
+        "tour": "function",
+        "startTour": "function",
+        "stopTour": "function",
+        "gotoStop": "function",
+        "tourState": "function",
+        "restage": "function",
+        "cropRects": "function",
+        "serialize": "function",
+        "deserialize": "function"
+      },
+      "baseline": {
+        "roads": {
+          "nodes": 468,
+          "edges": 604
+        },
+        "zones": {
+          "cells": 9964,
+          "lots": 612
+        },
+        "buildings": 612,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 507,
+        "coverage": {
+          "utilities": 503,
+          "healthEducation": 306
+        }
+      },
+      "deserialize": [
+        true,
+        true
+      ],
+      "afterDeserialize": {
+        "roads": {
+          "nodes": 468,
+          "edges": 604
+        },
+        "zones": {
+          "cells": 9964,
+          "lots": 612
+        },
+        "buildings": 612,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 507,
+        "coverage": {
+          "utilities": 503,
+          "healthEducation": 306
+        }
+      },
+      "tour": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "invalidTour": false,
+      "errors": [],
+      "browserErrors": [],
+      "pass": true
+    },
+    "failure-probe/verification.json": {
+      "method": "fresh showcase=all paused worlds; public single bulldozer action on a real zoned road; exact SHA-256 over complete serialized owners including Terrain",
+      "sources": {
+        "src/modules/roads/index.js": "10236c24ec7042e6798b15bcd70c4cfb8d839cef2edc364e73f4590280fda2ad",
+        "src/modules/tools/index.js": "923ca9c86e65f3ca5c92e69c11d98b874c677dfdab2f74f2073ce2e47409741c",
+        "src/modules/tools/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+        "src/modules/zoning/index.js": "1da228b88e43bd797c4652964ede47b7b132320b6ac5c55b1b8bfc26d310f3be",
+        "src/modules/zoning/grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+        "src/modules/buildings/index.js": "7ea45bea2181fafb20d1bc39653a9e7839750b0bf685e6aa8d03a4728fe3b79b",
+        "src/modules/simulation/index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79"
+      },
+      "runs": [],
+      "laterConstruction": null,
+      "rebuildFailures": {
+        "initial": {
+          "target": {
+            "id": 872,
+            "type": "avenue",
+            "a": 285,
+            "b": 301,
+            "length": 88,
+            "lots": 8,
+            "x": -200,
+            "z": 449.6,
+            "t": 0.2
+          },
+          "action": {
+            "click": {
+              "ok": false,
+              "cost": 0
+            },
+            "history": {
+              "undo": 0,
+              "redo": 0,
+              "capacity": 64,
+              "entries": []
+            }
+          },
+          "exact": true,
+          "ownerEquality": {
+            "roads": true,
+            "zoning": true,
+            "buildings": true,
+            "simulation": true,
+            "services": true,
+            "transit": true,
+            "terrain": true
+          },
+          "money": {
+            "before": 25770.71318153628,
+            "after": 25770.71318153628
+          },
+          "counts": {
+            "before": {
+              "nodes": 493,
+              "edges": 646,
+              "lots": 648,
+              "buildings": 648
+            },
+            "after": {
+              "nodes": 493,
+              "edges": 646,
+              "lots": 648,
+              "buildings": 648
+            }
+          },
+          "historyEmpty": true,
+          "errors": [],
+          "pass": true
+        },
+        "inverse": {
+          "target": {
+            "id": 872,
+            "type": "avenue",
+            "a": 285,
+            "b": 301,
+            "length": 88,
+            "lots": 8,
+            "x": -200,
+            "z": 449.6,
+            "t": 0.2
+          },
+          "commit": {
+            "state": {
+              "tool": "bulldoze",
+              "options": {
+                "mode": "single"
+              },
+              "phase": "placing",
+              "points": [
+                {
+                  "x": -200,
+                  "y": 12.152505302429198,
+                  "z": 449.6
+                }
+              ],
+              "cursor": {
+                "x": -200,
+                "y": 12.152505302429198,
+                "z": 449.6
+              },
+              "valid": true,
+              "reason": null,
+              "cost": 0,
+              "refund": 46,
+              "affordable": true,
+              "snap": null,
+              "metrics": {
+                "length": 0,
+                "angle": 0,
+                "grade": 0,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              }
+            },
+            "click": {
+              "ok": true,
+              "cost": 0
+            },
+            "exists": false,
+            "history": {
+              "undo": 1,
+              "redo": 0,
+              "capacity": 64,
+              "entries": [
+                {
+                  "label": "bulldoze:1",
+                  "cost": -46
+                }
+              ]
+            }
+          },
+          "failed": {
+            "value": false,
+            "history": {
+              "undo": 1,
+              "redo": 0,
+              "capacity": 64,
+              "entries": [
+                {
+                  "label": "bulldoze:1",
+                  "cost": -46
+                }
+              ],
+              "failure": {
+                "reason": "action-returned-false",
+                "label": "demolish:road",
+                "direction": "undo"
+              }
+            }
+          },
+          "normal": true,
+          "compensated": true,
+          "historyRetained": true,
+          "normalExact": true,
+          "errors": [],
+          "pass": true
+        },
+        "pass": true
+      },
+      "errors": [],
+      "pass": true
+    }
+  },
+  "build": {
+    "pass": true,
+    "modules": 163,
+    "elapsed": "458ms",
+    "performanceClaim": false
+  },
+  "findings": [
+    {
+      "rank": 1,
+      "status": "ACCEPTED_WITHIN_SCOPE",
+      "owner": [
+        "tools",
+        "roads",
+        "zoning",
+        "buildings",
+        "simulation"
+      ],
+      "finding": "Exact single-road demolition inverse and compensation replace endpoint reconstruction",
+      "evidence": "All seven retained undo/redo/failed hash pairs match, with exact21/46 refunds. Current lot-link merge and affected-ID Buildings restore preserve tested later building ownership."
+    },
+    {
+      "rank": 2,
+      "status": "OPEN_VERIFICATION_LIMIT",
+      "owner": [
+        "tools",
+        "verification"
+      ],
+      "finding": "Full bidirectional integrity and recomputable later/repeat/failure records are not retained",
+      "next": "Add per-building reverse-link and per-lot uniqueness checks, retain relevant post-records or digest pairs in next bounded grouped-demolition test."
+    },
+    {
+      "rank": 3,
+      "status": "OPEN",
+      "owner": [
+        "tools",
+        "roads",
+        "core"
+      ],
+      "finding": "Marquee groups and persistent failure recovery need separate owner-safe verification",
+      "next": "Test mixed victims and adjacent roads with failures after completed leaves, exact compensation, affordability, history and later owner changes."
+    },
+    {
+      "rank": 4,
+      "status": "OPEN",
+      "owner": [
+        "democity",
+        "props",
+        "terrain",
+        "environment"
+      ],
+      "finding": "City visual and performance bar remains unmet",
+      "evidence": "Sparse urban fabric, crude foliage, difficult terrain seating and broad water/cloud treatment still visible. R9u supplies no whole-game performance gate."
+    }
+  ],
+  "limitations": [
+    "Positive product scope is one public straight street demolition at seed1337 and one straight avenue at seed7, each inside a one-leaf bulldoze group. No native pointer or marquee coverage.",
+    "The integrity helper checks whether Buildings point to existing lots and whether populated lots point to a Building with matching lotId. It does not enforce building→lot.buildingId for every building, nor reject duplicate buildings on the same lot. Raw owner arrays are not retained for an independent reverse-link audit.",
+    "Retained SHA-256 rows allow independent before/undo, candidate/redo and candidate/failed comparisons over seven owners. Owner bytes are absent, so digest generation cannot be independently repeated. Repeat, normal undo, later state and rebuild-failure equalities are partly or wholly retained booleans rather than paired payloads/digests.",
+    "Later construction checks full serialized building record and inverse lot link, but post-records are absent. requestSpawn/demolish/setLevel are real public owner operations, followed by one Simulation step; this is not long autonomous/native UI growth.",
+    "One-shot Zoning and rebuild refusal overrides return false before the real owner operation. Initial graph mutation and inverse graph/terrain changes do exercise compensation ordering, but arbitrary partial rebuild corruption, thrown late failures and persistent second compensation refusal remain untested.",
+    "Failure-probe is a separate failure-only run with identical retained rebuildFailures; its pass does not stand for full two-seed image/repeat coverage. Some specialized checks omit engine snapshot error arrays/readiness from their final pass, though they capture browser errors; main run integrity includes readiness and engine errors.",
+    "Road construction initial rebuild failure, curved demolition, multi-leaf grouping, saved pending history, long unpaused economy behavior, and persistent recovery are not accepted by this round.",
+    "The cross-seed terrain loop counts differences above1e-6 only. API double deserialize is Democity-specific. Save atomicity compares a normalized canonical baseline and has an expected injected Transit error.",
+    "Eight before/after original PNGs are same product source, not pre-R9u/post-R9u source; no undo/redo screenshots or PNG-specific frame sidecars were supplied. All original images, four differences and contact sheet were individually viewed at original resolution.",
+    "Image changes include Traffic, foliage, water and UI; image MAE is not a road-only quality measure. No new FPS/heap/night/weather/blind/reference or whole-game gate result. Keep6.0 FAIL."
+  ],
+  "inspectionRegister": [
+    {
+      "file": "shots/democity/r9u-road-demolition-history/baseline_seed1337_directed.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/seed7_directed_difference_x4.png",
+      "kind": "derived",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/seed7_aerial_difference_x4.png",
+      "kind": "derived",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/baseline_seed7_directed.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/candidate_seed1337_aerial.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/candidate_seed7_aerial.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/candidate_seed7_directed.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/baseline_seed1337_aerial.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/seed1337_directed_difference_x4.png",
+      "kind": "derived",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/baseline_seed7_aerial.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/seed1337_aerial_difference_x4.png",
+      "kind": "derived",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/contact-sheet.png",
+      "kind": "derived",
+      "individuallyViewed": true,
+      "resolution": "original"
+    },
+    {
+      "file": "shots/democity/r9u-road-demolition-history/candidate_seed1337_directed.png",
+      "kind": "original",
+      "individuallyViewed": true,
+      "resolution": "original"
+    }
+  ],
+  "nextPriority": "Bounded marquee demolition grouping and compensation audit, with full reverse-link/uniqueness oracle and retained comparison rows."
+}

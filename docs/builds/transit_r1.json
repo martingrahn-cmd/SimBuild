@@ -1,0 +1,756 @@
+{
+  "module": "transit",
+  "round": 1,
+  "summary": "Replaced transit stub with an owned deterministic bus fleet, road graph routes including directed return legs, live stop/line records, actual HUD operations, atomic private line drafts, props shelter adoption, road invalidation and save restore including legacy empty-stub migration. Functionally usable owner seam; visual, movement and budget gates remain below target.",
+  "drawCalls": 319,
+  "triangles": 2520089,
+  "errors": 0,
+  "selfScore": 5.2,
+  "screenshotsViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/all12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/bus12-final.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/bus12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/bus22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/line12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/lines12-720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/night_stop22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/overlay12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/probe-bus.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/probe-final.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/seams-final.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/seams.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/seed99.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/smoke.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/stop12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/stop22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_6p5.png"
+  ],
+  "acceptanceMet": [
+    "All 16 standard matrix captures and all six declared presets completed with transit ready and errors zero; integrated all-mode errors zero.",
+    "World section and Maps stay in place; public IDs and directed closed routes are live, lengths equal road sums, road seating and heading conventions are defined.",
+    "Private draft add/hover/cancel and failed commit preserve world bytes/version; valid commit emits exactly one batch. Duplicate New/Edit begins are idempotent.",
+    "Three lines, 24 stops, 12 owned buses, three adopted real props shelters; API operations preserve props records and version.",
+    "Eight-second dwell returns speed zero and doorsOpen true; live fleet setters and same-hour time reversal reproduce poses.",
+    "Actual awaited IndexedDB save/load restores transit fleet; missing stop references and malformed nonempty data reject atomically; exact legacy {} clears outgoing transit.",
+    "Road removal disables affected lines and keeps stops; truly empty module init has zero roads, stops, lines, buses and errors.",
+    "Pinned visible bus/shelter/ribbon crops and honest actual draw attribution; off-camera owned draw count zero."
+  ],
+  "acceptanceMissed": [
+    "Visual quality is below the requested CS2 bar. Buses remain simple rounded body and opaque glass forms with block destination marks, no authored interior, limited wheel and panel detail, and minimal door displacement.",
+    "Owned renderer A/B is exactly 21 calls (158 on minus 137 off), exceeding the 20-call limit by one. Stats now include the three extra DoubleSide transparent passes instead of undercounting them.",
+    "Junction lane-centre discontinuity is 3.5355339059 metres in an actual road-owner one-way square fixture, exceeding 0.5 metres. Buses can visibly overlap independently simulated ambient cars; no collision coordination is claimed.",
+    "Overlay lacks chevrons, white stop rings and stop-name chips. Two shared line ribbons and sparse inner service make full-network reading weak. Literal sample.y +0.02 is replaced by +0.095 to sit above the actual asphalt deck.",
+    "No bus headlight pools, tail pools, interior illumination variation, backlit shelter timetable or tram. Current night lenses illuminate only their own surfaces.",
+    "Transit showcase is a sparse tree-covered district; the standard street camera is substantially obscured by a tree. Fixed central bus/stop presets were moved to actual landmarks and raised to the 15-metre road datum.",
+    "Showcase line lengths are 2160,2160,1800 metres with eight stops each and two shared stops, but strict 220\u2013320 metre spacing is not met throughout and the third short loop is too densely stopped. Two unused stops remain from interchange staging.",
+    "Ridership uses nearby actual building records with geographic distance, not road-distance resident journeys. Only isolated showcase uses seeded fallback weights. Fare and running-cost balance is a forecast and does not affect economy money; no passenger boarding agents are claimed.",
+    "Gauntlet whole-scene minimum 35.2 fps misses 50 fps. It includes traffic, props and terrain costs; own steady update mean measured 0.009 ms/max0.1 ms. Extra line/overlay captures recorded 28/26.8 fps, and all-mode25.7 fps; none were discarded.",
+    "Native canvas tool forwarding and the HUD transitLines toggle race are still awaiting root wave3 integration. Owner draft APIs and actual ui:action fleet changes are verified; no native end-to-end play claim yet.",
+    "No bus LOD ladder or heap-delta audit. Source evaluation is allocation-free for schedule interpolation, but road owner and draw-bound updates still need a thorough allocation profile.",
+    "Exact legacy empty-object deserialize migration intentionally supersedes the old spec rejection clause. Null and malformed nonempty saves are rejected atomically. Initial external empty-boot probe missed a query-string main URL; corrected exact route guard now proves truly empty init."
+  ],
+  "remainingWeaknesses": [
+    "Visual quality is below the requested CS2 bar. Buses remain simple rounded body and opaque glass forms with block destination marks, no authored interior, limited wheel and panel detail, and minimal door displacement.",
+    "Owned renderer A/B is exactly 21 calls (158 on minus 137 off), exceeding the 20-call limit by one. Stats now include the three extra DoubleSide transparent passes instead of undercounting them.",
+    "Junction lane-centre discontinuity is 3.5355339059 metres in an actual road-owner one-way square fixture, exceeding 0.5 metres. Buses can visibly overlap independently simulated ambient cars; no collision coordination is claimed.",
+    "Overlay lacks chevrons, white stop rings and stop-name chips. Two shared line ribbons and sparse inner service make full-network reading weak. Literal sample.y +0.02 is replaced by +0.095 to sit above the actual asphalt deck.",
+    "No bus headlight pools, tail pools, interior illumination variation, backlit shelter timetable or tram. Current night lenses illuminate only their own surfaces.",
+    "Transit showcase is a sparse tree-covered district; the standard street camera is substantially obscured by a tree. Fixed central bus/stop presets were moved to actual landmarks and raised to the 15-metre road datum.",
+    "Showcase line lengths are 2160,2160,1800 metres with eight stops each and two shared stops, but strict 220\u2013320 metre spacing is not met throughout and the third short loop is too densely stopped. Two unused stops remain from interchange staging.",
+    "Ridership uses nearby actual building records with geographic distance, not road-distance resident journeys. Only isolated showcase uses seeded fallback weights. Fare and running-cost balance is a forecast and does not affect economy money; no passenger boarding agents are claimed.",
+    "Gauntlet whole-scene minimum 35.2 fps misses 50 fps. It includes traffic, props and terrain costs; own steady update mean measured 0.009 ms/max0.1 ms. Extra line/overlay captures recorded 28/26.8 fps, and all-mode25.7 fps; none were discarded.",
+    "Native canvas tool forwarding and the HUD transitLines toggle race are still awaiting root wave3 integration. Owner draft APIs and actual ui:action fleet changes are verified; no native end-to-end play claim yet.",
+    "No bus LOD ladder or heap-delta audit. Source evaluation is allocation-free for schedule interpolation, but road owner and draw-bound updates still need a thorough allocation profile.",
+    "Exact legacy empty-object deserialize migration intentionally supersedes the old spec rejection clause. Null and malformed nonempty saves are rejected atomically. Initial external empty-boot probe missed a query-string main URL; corrected exact route guard now proves truly empty init."
+  ],
+  "coreRequestFile": "/Users/martingrahn/Documents/SimBuild/docs/core-requests/transit.md",
+  "metrics": {
+    "gauntlet": {
+      "module": "transit",
+      "round": "dev1",
+      "at": "2026-09-08T07:38:52.368Z",
+      "shots": [
+        {
+          "png": "shots/transit/rdev1/aerial_6p5.png",
+          "camera": "aerial",
+          "time": 6.5,
+          "ok": true,
+          "fps": 60,
+          "drawCalls": 158,
+          "triangles": 1157657,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/aerial_12.png",
+          "camera": "aerial",
+          "time": 12,
+          "ok": true,
+          "fps": 59.6,
+          "drawCalls": 158,
+          "triangles": 1165625,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/aerial_17p5.png",
+          "camera": "aerial",
+          "time": 17.5,
+          "ok": true,
+          "fps": 58.8,
+          "drawCalls": 158,
+          "triangles": 1174937,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/aerial_22.png",
+          "camera": "aerial",
+          "time": 22,
+          "ok": true,
+          "fps": 58.5,
+          "drawCalls": 240,
+          "triangles": 2111590,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/street_6p5.png",
+          "camera": "street",
+          "time": 6.5,
+          "ok": true,
+          "fps": 57.1,
+          "drawCalls": 202,
+          "triangles": 2106829,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/street_12.png",
+          "camera": "street",
+          "time": 12,
+          "ok": true,
+          "fps": 53,
+          "drawCalls": 206,
+          "triangles": 2103825,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/street_17p5.png",
+          "camera": "street",
+          "time": 17.5,
+          "ok": true,
+          "fps": 35.2,
+          "drawCalls": 319,
+          "triangles": 2520089,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/street_22.png",
+          "camera": "street",
+          "time": 22,
+          "ok": true,
+          "fps": 35.9,
+          "drawCalls": 170,
+          "triangles": 2297693,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/skyline_6p5.png",
+          "camera": "skyline",
+          "time": 6.5,
+          "ok": true,
+          "fps": 42.8,
+          "drawCalls": 159,
+          "triangles": 794499,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/skyline_12.png",
+          "camera": "skyline",
+          "time": 12,
+          "ok": true,
+          "fps": 59.8,
+          "drawCalls": 242,
+          "triangles": 966398,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/skyline_17p5.png",
+          "camera": "skyline",
+          "time": 17.5,
+          "ok": true,
+          "fps": 60.2,
+          "drawCalls": 157,
+          "triangles": 815979,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/skyline_22.png",
+          "camera": "skyline",
+          "time": 22,
+          "ok": true,
+          "fps": 59.1,
+          "drawCalls": 155,
+          "triangles": 988115,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/closeup_6p5.png",
+          "camera": "closeup",
+          "time": 6.5,
+          "ok": true,
+          "fps": 45.1,
+          "drawCalls": 199,
+          "triangles": 1904445,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/closeup_12.png",
+          "camera": "closeup",
+          "time": 12,
+          "ok": true,
+          "fps": 52.9,
+          "drawCalls": 203,
+          "triangles": 1909217,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/closeup_17p5.png",
+          "camera": "closeup",
+          "time": 17.5,
+          "ok": true,
+          "fps": 48.3,
+          "drawCalls": 227,
+          "triangles": 1936257,
+          "errors": 0,
+          "moduleStatus": "ready"
+        },
+        {
+          "png": "shots/transit/rdev1/closeup_22.png",
+          "camera": "closeup",
+          "time": 22,
+          "ok": true,
+          "fps": 35.4,
+          "drawCalls": 163,
+          "triangles": 2096201,
+          "errors": 0,
+          "moduleStatus": "ready"
+        }
+      ],
+      "failedShots": [],
+      "maxDrawCalls": 319,
+      "maxTriangles": 2520089,
+      "minFps": 35.2,
+      "totalErrors": 0,
+      "uniqueErrors": []
+    },
+    "ownedRenderer": {
+      "draws": 21,
+      "triangles": 84128,
+      "on": 158,
+      "off": 137,
+      "budgetDraws": 20,
+      "passesBudget": false
+    },
+    "ownStats": {
+      "lines": 3,
+      "stops": 24,
+      "vehicles": 12,
+      "source": "own",
+      "shelters": "mixed",
+      "adoptedStops": 3,
+      "ridership": 1417,
+      "boardings": 561,
+      "occupancy": 112,
+      "meanSpeed": 8.166509004587027,
+      "draws": 21,
+      "tris": 84128,
+      "stepMs": 0,
+      "routeMs": 0,
+      "overlay": true
+    },
+    "apiChecks": {
+      "count": 21,
+      "passed": 21
+    },
+    "seamChecks": {
+      "count": 9,
+      "passed": 9
+    },
+    "emptyInit": {
+      "stats": {
+        "lines": 0,
+        "stops": 0,
+        "vehicles": 0,
+        "source": "own",
+        "shelters": "own",
+        "adoptedStops": 0,
+        "ridership": 0,
+        "boardings": 0,
+        "occupancy": 0,
+        "meanSpeed": 0,
+        "draws": 0,
+        "tris": 0,
+        "stepMs": 0,
+        "routeMs": 0,
+        "overlay": false
+      },
+      "errors": [],
+      "world": {
+        "lines": 0,
+        "stops": 0,
+        "roads": 0
+      },
+      "status": {
+        "status": "ready",
+        "errors": 0,
+        "ms": 0,
+        "initMs": 2
+      }
+    },
+    "graphFixture": {
+      "checks": [
+        {
+          "name": "Directed one-way cycle valid",
+          "pass": true
+        },
+        {
+          "name": "One-way left boarding rejected",
+          "pass": true
+        },
+        {
+          "name": "Nonfinite stop rejected",
+          "pass": true
+        },
+        {
+          "name": "Duplicate stop sequence rejected",
+          "pass": true
+        },
+        {
+          "name": "Pure timetable periodic on actual solver",
+          "pass": true
+        },
+        {
+          "name": "Missing directed return rejects whole route",
+          "pass": true
+        }
+      ],
+      "knownFailure": {
+        "junctionGapMetres": 3.5355339059327378,
+        "threshold": 0.5,
+        "pass": false
+      },
+      "timetable": {
+        "cycle": 88.72727272727265,
+        "meanSpeed": 9.01639344262296
+      }
+    },
+    "allMode": {
+      "url": "http://127.0.0.1:5174/?showcase=all&time=12&camera=aerial&seed=1337&quality=high&headless=1&speed=0",
+      "showcase": "all",
+      "time": 12,
+      "camera": "aerial",
+      "seed": 1337,
+      "width": 1920,
+      "height": 1080,
+      "quality": "high",
+      "gpu": "metal",
+      "browserVersion": "152.0.7977.76",
+      "browserExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "ok": true,
+      "crops": 9,
+      "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "elapsedMs": 11710,
+      "fps": 25.7,
+      "measuredFrames": 53,
+      "frameMs": 34.4,
+      "drawCalls": 511,
+      "triangles": 2949518,
+      "programs": 68,
+      "textures": 71,
+      "geometries": 250,
+      "heapMB": 809.9,
+      "moduleMs": {
+        "terrain": 0,
+        "environment": 0,
+        "roads": 0,
+        "zoning": 0,
+        "buildings": 0,
+        "props": 0.9000000059604645,
+        "traffic": 1.0999999940395355,
+        "simulation": 0,
+        "effects": 0,
+        "tools": 0,
+        "services": 0,
+        "ui": 0,
+        "audio": 0,
+        "infoviews": 0,
+        "transit": 0.10000000894069672,
+        "democity": 0
+      },
+      "hour": 12,
+      "cameraState": {
+        "position": [
+          193.8,
+          404.8,
+          283.2
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "distance": 520
+      },
+      "modules": {
+        "terrain": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1898
+        },
+        "environment": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 39
+        },
+        "roads": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 29
+        },
+        "zoning": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2
+        },
+        "buildings": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 20
+        },
+        "props": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.9,
+          "initMs": 396
+        },
+        "traffic": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 1.1,
+          "initMs": 16
+        },
+        "simulation": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "effects": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 1
+        },
+        "tools": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 2
+        },
+        "services": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 79
+        },
+        "ui": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 3
+        },
+        "audio": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 304
+        },
+        "infoviews": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 97
+        },
+        "transit": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0.1,
+          "initMs": 3
+        },
+        "democity": {
+          "status": "ready",
+          "errors": 0,
+          "ms": 0,
+          "initMs": 0
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "[props] no roads yet: road furniture deferred until roads:changed",
+        "[democity] Bounded real pre-roll ended at 3 people (240 steps)"
+      ],
+      "png": "shots/transit/r1/all12.png"
+    },
+    "captureAudit": [
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/all12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 511,
+        "fps": 25.7
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/bus12-final.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 301,
+        "fps": 59.3
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/bus12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 168,
+        "fps": 49.5
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/bus22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 172,
+        "fps": 51.7
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/line12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 259,
+        "fps": 28
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/lines12-720.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 310,
+        "fps": 60
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/night_stop22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 104,
+        "fps": 49.2
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/overlay12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 168,
+        "fps": 26.8
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/seed99.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 160,
+        "fps": 53.9
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/smoke.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 158,
+        "fps": 55
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/stop12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 114,
+        "fps": 60.1
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/stop22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 104,
+        "fps": 41
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 158,
+        "fps": 59.6
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_17p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 158,
+        "fps": 58.8
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 240,
+        "fps": 58.5
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/aerial_6p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 158,
+        "fps": 60
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 203,
+        "fps": 52.9
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_17p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 227,
+        "fps": 48.3
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 163,
+        "fps": 35.4
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/closeup_6p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 199,
+        "fps": 45.1
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 242,
+        "fps": 59.8
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_17p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 157,
+        "fps": 60.2
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 155,
+        "fps": 59.1
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/skyline_6p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 159,
+        "fps": 42.8
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_12.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 206,
+        "fps": 53
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_17p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 319,
+        "fps": 35.2
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_22.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 170,
+        "fps": 35.9
+      },
+      {
+        "file": "/Users/martingrahn/Documents/SimBuild/shots/transit/r1/gauntlet/street_6p5.json",
+        "errors": 0,
+        "transitStatus": "ready",
+        "draws": 202,
+        "fps": 57.1
+      }
+    ]
+  },
+  "evidenceDirectory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/transit/r1",
+  "sourceHashes": {
+    "src/modules/transit/graph.js": "8273ed6afa52161969462eea1bfcbbb280df381c4b9f6050aea57e8298d66d6d",
+    "src/modules/transit/index.js": "e5733a0af97b05295deda23edecf3ddc5b9e0bce008f5828cc03a3eb9614536e",
+    "src/modules/transit/render.js": "fc8ba7e3f0e325f6221c44da0a574fe789e66cc1c742f93d7b3646372429cc2a",
+    "src/modules/transit/showcase.js": "2cbebee572c16bed64a90293da5a41ad9dbb77e0fda2b4f64d9fb0bfff2fc050"
+  },
+  "notes": [
+    "All eight references were viewed before implementation. Every generated builder PNG, including superseded smoke/probe frames, was individually viewed. No independent critic evidence was read or modified.",
+    "Only owned transit sources, builder evidence and core request were modified. No commits, pushes, score/status edits or consumer candidates applied.",
+    "Final post-gauntlet changes only correct draw instrumentation and add requested legacy-empty save migration; they do not alter normal rendered geometry. Final API and seam regressions were rerun, and both new PNGs were inspected.",
+    "Pinned crop percentiles contain background and glazing and must not be misrepresented as isolated unlit body-panel measurements. Full crop statistics are in pinned-statistics.json.",
+    "System Chrome on actual Apple M4 ANGLE Metal; software-renderer assumptions in older role text do not apply."
+  ]
+}

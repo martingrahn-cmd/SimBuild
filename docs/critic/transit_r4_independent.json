@@ -1,0 +1,22 @@
+{
+  "module": "transit",
+  "round": 4,
+  "score": 6.8,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 230,
+  "maxTriangles": 1763252,
+  "minFps": 59.8,
+  "apiContractOk": true,
+  "auditScope": "Fresh independent evidence re-review within the shared workspace; not a claim of a separate human reviewer.",
+  "issues": [
+    {"rank": 1, "severity": "major", "title": "Bus model remains visibly synthetic", "detail": "Glazing and cabin detail are readable, but slab panels, wheel treatment and roof kit remain simple-prop geometry.", "evidence": "shots/transit/r4i/bus_12.png"},
+    {"rank": 2, "severity": "major", "title": "Night-stop scenario lacks a docked bus", "detail": "The dedicated view has a legible shelter but no bus for arrival or boarding context.", "evidence": "shots/transit/r4i/night_stop_22.png"},
+    {"rank": 3, "severity": "major", "title": "Literal shadow acceptance remains incomplete", "detail": "Recorded W4 flags keep shelter glass/lamps and fleet batches 2–4 from casting after the full-shadow budget regression.", "evidence": "shots/transit/rdev4/verification-final.json"},
+    {"rank": 4, "severity": "minor", "title": "Foliage and unfinished lots obscure the service", "detail": "Foreground foliage blocks the stop scene and aerial views lack developed city context.", "evidence": "shots/transit/r4i/street_12.png"},
+    {"rank": 5, "severity": "minor", "title": "Tram stretch is absent", "detail": "No rail, articulated vehicle, catenary or platform exists.", "evidence": "shots/transit/r4i/line_12.png"}
+  ],
+  "strengths": ["26 fresh captures are ready with zero console errors.", "Three lines, 24 stops and 12 vehicles pass public API and save checks.", "Night body paint remains darker while cabin light stays readable.", "720p route and line panels fit."],
+  "summary": "6.8 FAIL. The fresh review corroborates W4: functional transit and controlled rendering do not clear the bus-art, night-stop, shadow and city-context gates.",
+  "shots": ["shots/transit/r4i/summary.json", "shots/transit/r4i/bus_12.png", "shots/transit/r4i/bus_22.png", "shots/transit/r4i/night_stop_22.png", "shots/transit/r4i/overlay_12_720p.png", "shots/transit/r4i/apicheck.json"]
+}

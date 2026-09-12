@@ -60,6 +60,22 @@ export class Menus {
   _foot(menu) { const f = el('div', 'sb-menu-foot'); menu.appendChild(f); return f; }
   _mbtn(body, icon, label, sub, fn, cls = '') { const b = btn('sb-mbtn ' + cls, icon + `<span>${esc(label)}</span>` + (sub ? `<span class="sb-ms">${esc(sub)}</span>` : '')); b.addEventListener('click', fn); body.appendChild(b); return b; }
   _backBtn(foot, label = 'Back') { const b = btn('sb-action', ICONS.back() + `<span>${label}</span>`); b.addEventListener('click', () => this.back()); foot.appendChild(b); return b; }
+  _fullscreen(body) {
+    const active = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    return this._mbtn(body, ICONS.fullscreen(), active ? 'Exit Fullscreen' : 'Fullscreen', active ? 'Esc' : '', async () => {
+      try {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          const exit = document.exitFullscreen || document.webkitExitFullscreen; if (exit) await exit.call(document);
+        } else {
+          const enter = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen; if (enter) await enter.call(document.documentElement);
+        }
+        this.hud.action('fullscreen', !!(document.fullscreenElement || document.webkitFullscreenElement));
+        this.open(this.kind || 'pause');
+      } catch (error) {
+        this.hud.notify({ type: 'warning', title: 'Fullscreen unavailable', body: 'The browser did not allow fullscreen for this window.', ttl: 6 });
+      }
+    });
+  }
 
   _main(menu, { boot = false } = {}) {
     const c = this.ctx.clock;
@@ -71,6 +87,7 @@ export class Menus {
     this._mbtn(body, ICONS.plus(), 'New Game', 'seed & map', () => this.open('new', { push: true }));
     const lb = this._mbtn(body, ICONS.load(), 'Load Game', auto ? `autosave ${ago(auto.savedAt)}` : (slots.length ? `${slots.length} saves` : 'no saves'), () => this.open('load', { push: true }));
     if (!slots.length) lb.disabled = true;
+    this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', `${this.settings.quality} quality`, () => this.open('settings', { push: true }));
     const foot = this._foot(menu);
     foot.appendChild(el('span', 'sb-version', 'three.js r185 · Vite · CC0 assets'));
@@ -82,7 +99,8 @@ export class Menus {
     const name = el('input', 'sb-input'); name.value = this.hud.cityName; name.maxLength = 32; name.placeholder = 'City name';
     const seed = el('input', 'sb-input'); seed.type = 'number'; seed.value = String(this.ctx.world.seed); seed.min = 1; seed.max = 999999999;
     const rnd = btn('sb-action small', ICONS.chevrons(2) + '<span>Random</span>'); rnd.addEventListener('click', () => { seed.value = String(this._rng.int(1, 999999)); });
-    const maps = (this.ctx.world.terrain?.presets && Object.keys(this.ctx.world.terrain.presets)) || ['riverlands', 'coastal', 'highlands'];
+    const presets = Object.keys(this.ctx.world.terrain?.presets || {});
+    const maps = presets.length ? presets : ['procedural'];
     let map = maps[0], money = 150000;
     const seg = (items, cur, onPick) => { const g = el('div', 'sb-seg'); const bs = items.map(([v, l]) => { const b = btn('sb-btn' + (v === cur ? ' is-active' : ''), l); b.addEventListener('click', () => { bs.forEach((x) => x.classList.toggle('is-active', x === b)); onPick(v); }); g.appendChild(b); return b; }); return g; };
     const field = (k, node, help) => { const f = el('div', 'sb-field'); f.appendChild(el('span', 'sb-k', k)); f.appendChild(node); if (help) f.appendChild(el('span', 'sb-h', help)); form.appendChild(f); };
@@ -116,6 +134,7 @@ export class Menus {
     const slots = this.saves()?.slots?.() || [];
     const lb = this._mbtn(body, ICONS.load(), 'Load Game', slots.length ? `${slots.length} saves` : 'no saves', () => this.open('load', { push: true }));
     if (!slots.length) lb.disabled = true;
+    this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', '', () => this.open('settings', { push: true }));
     this._mbtn(body, ICONS.camera(), 'Photo Mode', 'P', () => { this.close(); this.hud.setPhotoMode(true); });
     this._mbtn(body, ICONS.map(), 'Main Menu', '', () => this.open('main', { push: true }));
@@ -132,10 +151,10 @@ export class Menus {
       const row = el('div', 'sb-slot' + (id === 'auto' ? ' is-autosave' : ''));
       row.innerHTML = `<div class="sb-sic">${id === 'auto' ? ICONS.check() : ICONS.save()}</div><div class="sb-st"><div class="sb-s1">${esc(SLOT_NAMES[id] || id)}</div><div class="sb-s2${s ? '' : ' empty'}">${s ? `Day ${s.day ?? '?'} · saved ${ago(s.savedAt)}` : 'Empty slot'}</div></div>`;
       const bb = el('div', 'sb-sb');
-      if (mode === 'save' && id !== 'auto') { const b = btn('sb-action small primary', ICONS.save() + '<span>Save</span>'); b.addEventListener('click', () => { this.hud.action('save', id); this.hud.notify({ type: 'success', title: 'Game saved', body: `${SLOT_NAMES[id] || id} · ${this.hud.dateString()}`, ttl: 5 }); setTimeout(() => this.refresh(), 50); }); bb.appendChild(b); }
+      if (mode === 'save' && id !== 'auto') { const b = btn('sb-action small primary', ICONS.save() + '<span>Save</span>'); b.addEventListener('click', () => { this.hud.action('save', id); }); bb.appendChild(b); }
       if (s) {
         const l = btn('sb-action small' + (mode === 'load' ? ' primary' : ''), ICONS.load() + '<span>Load</span>'); l.addEventListener('click', () => { this.hud.action('load', id); this.hud.notify({ type: 'info', title: 'Loading game', body: `${SLOT_NAMES[id] || id}`, ttl: 4 }); this.close(); }); bb.appendChild(l);
-        const d = btn('sb-action small danger', ICONS.trash()); d.setAttribute('data-tip', 'Delete'); d.addEventListener('click', () => { this.hud.action('deleteSave', id); saves?.remove?.(id); this.refresh(); }); bb.appendChild(d);
+        const d = btn('sb-action small danger', ICONS.trash()); d.setAttribute('data-tip', 'Delete'); d.addEventListener('click', async () => { d.disabled = true; this.hud.action('deleteSave', id); const removed = await saves?.remove?.(id); if (removed) this.refresh(); else d.disabled = false; }); bb.appendChild(d);
       }
       row.appendChild(bb); list.appendChild(row);
     }

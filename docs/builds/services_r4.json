@@ -1,0 +1,394 @@
+{
+  "module": "services",
+  "round": 4,
+  "summary": "Added material-specific relief and roughness, seeded glazing detail, process pipes and rooftop equipment, civic entrance planters, hedge leaves and curved fountain jets with subtle water movement. Improved attached plume density and daytime luminance. Reduced static geometry allocation and bounded coverage evaluation to reachable road cells, preserving exact field values and spatial chunk reuse. Quality remains below the 8.5 pass bar.",
+  "drawCalls": 213,
+  "triangles": 1748656,
+  "errors": 0,
+  "screenshotsViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg",
+    "shots/services/r4/aerial_12.png",
+    "shots/services/r4/aerial_17p5.png",
+    "shots/services/r4/aerial_22.png",
+    "shots/services/r4/aerial_6p5.png",
+    "shots/services/r4/all_12.png",
+    "shots/services/r4/civic_12.png",
+    "shots/services/r4/civic_12_720.png",
+    "shots/services/r4/civic_17p5.png",
+    "shots/services/r4/civic_22.png",
+    "shots/services/r4/civic_6p5.png",
+    "shots/services/r4/closeup_12.png",
+    "shots/services/r4/closeup_17p5.png",
+    "shots/services/r4/closeup_22.png",
+    "shots/services/r4/closeup_6p5.png",
+    "shots/services/r4/dev/before.png",
+    "shots/services/r4/dev/material.png",
+    "shots/services/r4/dev/night.png",
+    "shots/services/r4/dev/park.png",
+    "shots/services/r4/dev/plume.png",
+    "shots/services/r4/night_civic_22.png",
+    "shots/services/r4/park_12.png",
+    "shots/services/r4/park_17p5.png",
+    "shots/services/r4/park_22.png",
+    "shots/services/r4/park_6p5.png",
+    "shots/services/r4/plant_close_12.png",
+    "shots/services/r4/plant_close_17p5.png",
+    "shots/services/r4/plant_close_22.png",
+    "shots/services/r4/plant_close_6p5.png",
+    "shots/services/r4/probe/coverage_12.png",
+    "shots/services/r4/probe/coverage_clinic_12.png",
+    "shots/services/r4/probe/coverage_move_0.png",
+    "shots/services/r4/probe/coverage_move_1.png",
+    "shots/services/r4/probe/coverage_move_2.png",
+    "shots/services/r4/probe/info_api.png",
+    "shots/services/r4/probe/info_clear.png",
+    "shots/services/r4/probe/info_field.png",
+    "shots/services/r4/probe/info_off.png",
+    "shots/services/r4/probe/infoview_power.png",
+    "shots/services/r4/probe/probe_coverage_off.png",
+    "shots/services/r4/probe/probe_play_fixture.png",
+    "shots/services/r4/probe/seed7_park.png",
+    "shots/services/r4/probe/toggle_night_off.png",
+    "shots/services/r4/probe/toggle_night_on.png",
+    "shots/services/r4/probe/toggle_noon_off.png",
+    "shots/services/r4/probe/toggle_noon_on.png",
+    "shots/services/r4/probe/wind_minus.png",
+    "shots/services/r4/probe/wind_plus.png",
+    "shots/services/r4/skyline_12.png",
+    "shots/services/r4/skyline_17p5.png",
+    "shots/services/r4/skyline_22.png",
+    "shots/services/r4/skyline_6p5.png",
+    "shots/services/r4/street_12.png",
+    "shots/services/r4/street_17p5.png",
+    "shots/services/r4/street_22.png",
+    "shots/services/r4/street_6p5.png",
+    "shots/services/r4/utilities_12.png",
+    "shots/services/r4/utilities_17p5.png",
+    "shots/services/r4/utilities_22.png",
+    "shots/services/r4/utilities_6p5.png"
+  ],
+  "acceptanceMet": [
+    "1: Recognizable utility silhouettes, four turbines and forty solar rows are retained in utilities and plant_close frames.",
+    "3, 4: All twenty keys and fourteen hot query batches pass. Independent Floyd-Warshall oracle matches all twelve civic loads; component brownout remains exactly 0.75. Bounds optimization matches every stored cell in four scenarios.",
+    "5, 7: Civic plans, window reveals, side wings and helipad are retained; facade and roof detail is improved. This is geometric compliance, not a photographic material claim.",
+    "6, 9: Twenty-two facilities seat 0.04 m over sampled maxima with skirts and frontage access. Four sloped pads and full water pump supply 400 remain intact.",
+    "8: Seventy deterministic trees in three species, twenty-six benches, thirteen bins, twenty-six lamps, curved paths and perimeter hedges retained; leaf breakup and fountain detail added.",
+    "11, 20: Solar pin has no clipping; wind-driven turbines retain varied poses.",
+    "12, 13: Actual placement spends once; invalid and poor placement refuse without mutation. Sole producer removal reaches actual economy and building power zero after 110 ticks. Live coverage does not rebuild static chunks.",
+    "16, 17: Exact seventeen-kind catalog and nineteen API functions preserved. Saves restore items, money and mesh counts exactly; identical restoration reuses static geometry.",
+    "18 functional: Direct info field and API are pixel-identical; reset returns exactly to baseline. Raised courts remain covered by the field.",
+    "14 readiness: All thirty-four final service frames and the exact all showcase capture report ready and zero errors. Populated scene integration remains qualified below."
+  ],
+  "acceptanceMissed": [
+    "2 partial: Noon plume luminance 192.409/255 now passes 190\u2013235; night/noon 0.304 passes suppression. Billow depth remains limited and safe opaque-depth fading is root-deferred. The utilities camera has no true sky, so sky-relative comparison remains ungraded.",
+    "10: Civic night horizontal speckle 0.281690% still exceeds 0.2%, although improved from critic r3 0.585049%. Full-frame emissive toggle 1.440/255 misses 8/255. Noon toggle is exactly zero. Near windows remain flat illuminated panels.",
+    "15: Owned 22 draws, 180820 triangles, five textures and 128 plume quads fit geometry budgets. Synchronous two-chunk rebuilding takes 22.5 ms; terrain reseat one chunk 20.9 ms; initial geometry 108 ms. Initial grid 15.9 ms exceeds 12 ms. Dirty work remains above 2 ms.",
+    "19 partial: Added purposeful details still form a recognizably procedural kit; large yards, coarse hedge cores and fountain water remain schematic beside CS2.",
+    "21 unmeasured: Contact pools and wall-base pins exist, but no correctly paired wall and outward-ground metric was captured. Do not fabricate a numerical failure.",
+    "14, 18 integration qualification: Exact all showcase stages an empty world, so it is compatibility evidence only. The separate populated diagnostic still detects 97 props tree centers overlapping service footprints before root consumer adapters. Info full-frame difference is 1.181/255; no global magnitude pass claimed."
+  ],
+  "remainingWeaknesses": [
+    "Procedural walls, repeated glass and broad hardscape still fall clearly below CS2 reference quality. Roof and process additions improve purpose without resolving the overall art gap.",
+    "Night filtering improves but still exceeds the pinned speckle threshold; service lighting toggle remains below its prescribed full-frame magnitude.",
+    "Plumes are attached and sufficiently bright by day, but are still a sprite approximation without opaque-depth soft intersections.",
+    "Dirty chunk construction remains synchronous with visible CPU spikes; initial coverage also misses its time budget.",
+    "Hedge cores remain smooth bars and fountain jets/water look diagrammatic. Grass comparison pin is contaminated by vegetation and shadow.",
+    "Root footprint, history, finance, upkeep and save consumer candidates are intentionally unapplied. The populated diagnostic still has automatic props overlapping service pads.",
+    "The exact all showcase remains empty while democity awaits wave 3; it does not establish populated city playability."
+  ],
+  "coreRequestFile": "docs/core-requests/services.md",
+  "selfScore": 6.9,
+  "sourceHashes": {
+    "src/modules/services/catalog.js": "31dbc94bf805503e526c07066405e3372a160f3840967a784da0942fc55c2ac3",
+    "src/modules/services/coverage.js": "c393efc460f2453eed729046cc981e5b816d1dfd15e0dc84b3f48c4ad1528822",
+    "src/modules/services/index.js": "6a6083818e0c2573affaea114ac8dfaaec89acbc4019699fa247cc6a97d1201c",
+    "src/modules/services/placement.js": "19571507c29cc08b3aed6ab071aafde061e0f7b5f3def7fd4eb6cbb6c602c2ae",
+    "src/modules/services/render.js": "870c40fa5f60785f10cb923a2f03c84d6fbc1023ec374b4ed64001811d016c53",
+    "src/modules/services/showcase.js": "cfbb47d04f1c9c5892974974aa4b2be5c4b48a8022bcafb973f94f5c1c6eaae3"
+  },
+  "sourceFrozen": true,
+  "changedProductionFiles": [
+    "src/modules/services/render.js",
+    "src/modules/services/coverage.js"
+  ],
+  "runtime": {
+    "url": "http://127.0.0.1:5174",
+    "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "browser": "System Chrome 152.0.7977.76",
+    "gl": "metal"
+  },
+  "evidenceScope": {
+    "finalFrames": 35,
+    "finalProbeImages": 19,
+    "developmentImages": 5,
+    "referencesViewed": 8,
+    "allImagesIndividuallyViewed": true,
+    "standardGauntletMinimumFps": 54.4,
+    "allShowcaseFps": 36,
+    "allShowcasePopulated": false,
+    "note": "All final probes and all final captures were rerun on frozen source after an intermediate wind diagnostic exposed separated stack puffs. Five pinned retakes overwrite their same paths; standard summary retains the original full sixteen-camera run, including its lower FPS readings."
+  },
+  "ownedBaseline": {
+    "items": 22,
+    "kinds": {
+      "power_coal": 1,
+      "power_wind": 4,
+      "power_solar": 1,
+      "water_pump": 1,
+      "sewage": 1,
+      "landfill": 1,
+      "incinerator": 1,
+      "clinic": 1,
+      "hospital": 1,
+      "school": 1,
+      "high_school": 1,
+      "university": 1,
+      "police": 1,
+      "fire": 1,
+      "park_small": 3,
+      "park_large": 1,
+      "plaza": 1
+    },
+    "draws": 22,
+    "tris": 180820,
+    "textures": 5,
+    "buildMs": 108,
+    "rebuiltChunks": 11,
+    "plumeQuads": 128,
+    "decor": {
+      "trees": 70,
+      "treeSpecies": [
+        "oak",
+        "spruce",
+        "birch"
+      ],
+      "benches": 26,
+      "bins": 13,
+      "pathLamps": 26,
+      "hedgePerimeterFrac": 0.78,
+      "treeHash": 176958139
+    },
+    "overlay": null,
+    "gridMs": 15.899999999441206,
+    "coverageVersion": 1,
+    "supply": {
+      "power": 1015.0619515425243,
+      "water": 400,
+      "sewage": 400,
+      "garbage": 1200
+    },
+    "demand": {
+      "power": 320,
+      "water": 255.99999999999935,
+      "sewage": 255.99999999999935,
+      "garbage": 144.00000000000043
+    },
+    "served": {
+      "power": 1,
+      "water": 1,
+      "sewage": 1,
+      "garbage": 1
+    }
+  },
+  "geometryCacheChecks": {
+    "checks": [
+      {
+        "label": "clinic removal rebuilds only the containing spatial chunk",
+        "pass": true,
+        "changed": [
+          "services:static:0,0",
+          "services:foliage:0,0"
+        ],
+        "rebuiltChunks": 1
+      },
+      {
+        "label": "live supply changes do not replace static geometry",
+        "pass": true
+      },
+      {
+        "label": "identical save restoration reuses all static chunks",
+        "pass": true,
+        "buildMs": 0.5
+      }
+    ],
+    "pass": true,
+    "errors": [],
+    "scope": "Actual Render geometry UUIDs and public services API, with controlled wind as diagnostic setup."
+  },
+  "measurements": {
+    "images": "shots/services/r4/probe/image-metrics.json",
+    "api": "shots/services/r4/probe/api-probe.json",
+    "seams": "shots/services/r4/probe/seams.json",
+    "supplement": "shots/services/r4/probe/supplement.json",
+    "cache": "shots/services/r4/probe/cache-fixture.json",
+    "bounds": "shots/services/r4/probe/bounds-equivalence.json",
+    "fixedTypedCacheBytes": 1048576,
+    "maximumHotQueryMs": 1.6,
+    "perFacilityLoadOracle": {
+      "method": "Independent all-pairs Floyd-Warshall oracle over public road graph; source uses per-facility bounded Dijkstra. Occupants assigned a 1-7 pattern, then actual sim:tick listener called without forcing grid rebuild.",
+      "beforeVersion": 118,
+      "afterVersion": 130,
+      "rows": [
+        {
+          "id": 9,
+          "kind": "clinic",
+          "load": 330,
+          "expected": 330,
+          "pass": true
+        },
+        {
+          "id": 10,
+          "kind": "hospital",
+          "load": 644,
+          "expected": 644,
+          "pass": true
+        },
+        {
+          "id": 11,
+          "kind": "school",
+          "load": 346,
+          "expected": 346,
+          "pass": true
+        },
+        {
+          "id": 12,
+          "kind": "high_school",
+          "load": 564,
+          "expected": 564,
+          "pass": true
+        },
+        {
+          "id": 13,
+          "kind": "university",
+          "load": 644,
+          "expected": 644,
+          "pass": true
+        },
+        {
+          "id": 14,
+          "kind": "police",
+          "load": 581,
+          "expected": 581,
+          "pass": true
+        },
+        {
+          "id": 15,
+          "kind": "fire",
+          "load": 536,
+          "expected": 536,
+          "pass": true
+        },
+        {
+          "id": 16,
+          "kind": "park_large",
+          "load": 462,
+          "expected": 462,
+          "pass": true
+        },
+        {
+          "id": 17,
+          "kind": "park_small",
+          "load": 30,
+          "expected": 30,
+          "pass": true
+        },
+        {
+          "id": 18,
+          "kind": "plaza",
+          "load": 115,
+          "expected": 115,
+          "pass": true
+        },
+        {
+          "id": 19,
+          "kind": "park_small",
+          "load": 58,
+          "expected": 58,
+          "pass": true
+        },
+        {
+          "id": 20,
+          "kind": "park_small",
+          "load": 102,
+          "expected": 102,
+          "pass": true
+        }
+      ],
+      "allPass": true,
+      "distinctSmallParkLoads": [
+        30,
+        58,
+        102
+      ]
+    },
+    "dirtyGeometry": {
+      "observed": [
+        {
+          "added": [],
+          "removed": [
+            17,
+            19
+          ],
+          "updated": []
+        }
+      ],
+      "elapsed": 38.90000000037253,
+      "versionDelta": 2,
+      "buildMs": 22.5
+    },
+    "terrainGeometryMs": 20.90000000037253,
+    "plumeLuma255": 192.40949943380977,
+    "plumeNightNoonRatio": 0.3036577146245152,
+    "nightSpecklePercent": 0.28169014084507044,
+    "nightToggleMeanAbs255": 1.4404926099814475,
+    "imageDiffs": {
+      "noon": {
+        "meanAbs": 0.0,
+        "changedPixels": 0.0
+      },
+      "night": {
+        "meanAbs": 0.005648990627378225,
+        "changedPixels": 0.03634355709876543
+      },
+      "wind": {
+        "meanAbs": 0.08875156939029694,
+        "changedPixels": 0.9393856095679012
+      },
+      "overlay_move1": {
+        "meanAbs": 0.012423419393599033,
+        "changedPixels": 0.5165586419753087
+      },
+      "overlay_move2": {
+        "meanAbs": 0.012377857230603695,
+        "changedPixels": 0.515934124228395
+      },
+      "info": {
+        "meanAbs": 0.004629603121429682,
+        "changedPixels": 0.20684606481481482
+      },
+      "info_reset": {
+        "meanAbs": 0.0,
+        "changedPixels": 0.0
+      },
+      "info_api_equivalence": {
+        "meanAbs": 0.0,
+        "changedPixels": 0.0
+      }
+    },
+    "populatedPropsOverlapCount": 97
+  },
+  "assumptions": [
+    "Preserve covered-population civic load semantics and component supply/demand utility ratios.",
+    "Preserve public API, save schema, catalog and index.js this round for root guarded integration.",
+    "Do not apply any root external integration candidate during owner work.",
+    "Do not change global lights, camera pins or unrelated assets to inflate image metrics. Safe opaque-depth integration remains deferred.",
+    "Reuse exact stored coverage values; full-domain no-road fallback remains deliberately available and can be slower."
+  ]
+}

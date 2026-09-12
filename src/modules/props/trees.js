@@ -85,19 +85,27 @@ class TreeAccum {
     for (const i of parts.idx) this.index.push(base + i);
     this.n += parts.count;
   }
-  pushCard(centerDir, t, corners, nrm, ao, flex) {
+  pushCard(centerDir, t, corners, nrm, ao, flex, lite = false) {
     const base = this.n;
-    for (let k = 0; k < 4; k++) {
+    // Four triangles bow each small cluster out of its plane. The normals follow both
+    // the crown envelope and the cluster curvature, preserving a shaded volume.
+    const bulge = corners[0].distanceTo(corners[1]) * 0.24;
+    const points = [...corners, nrm.clone().multiplyScalar(bulge)];
+    for (let k = 0; k < (lite ? 4 : 5); k++) {
       this.center.push(centerDir.x, t, centerDir.z);
-      this.offset.push(corners[k].x, corners[k].y, corners[k].z);
-      this.normal.push(nrm.x, nrm.y, nrm.z);
-      this.uv.push(k === 0 || k === 3 ? 0 : 1, k < 2 ? 0 : 1);
+      this.offset.push(points[k].x, points[k].y, points[k].z);
+      const n = nrm.clone().addScaledVector(points[k], k === 4 ? 0 : 0.65).normalize();
+      this.normal.push(n.x, n.y, n.z);
+      this.uv.push(k === 4 ? 0.5 : k === 0 || k === 3 ? 0 : 1, k === 4 ? 0.5 : k < 2 ? 0 : 1);
       this.data.push(1, flex, 0);
-      this.color.push(ao, ao, ao);
+      const shade = ao * (k === 4 ? 1.0 : 0.91);
+      this.color.push(shade, shade, shade);
     }
-    this.index.push(base, base + 1, base + 2, base, base + 2, base + 3);
-    this.n += 4;
+    if (lite) this.index.push(base,base+1,base+2,base,base+2,base+3);
+    else for (let k = 0; k < 4; k++) this.index.push(base+k, base+(k+1)%4, base+4);
+    this.n += lite ? 4 : 5;
   }
+
   build() {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(this.offset, 3));
@@ -116,7 +124,7 @@ class TreeAccum {
 /** Canonical branch skeleton: a main stem plus whorls of primaries, each forking into secondaries. */
 function skeleton(rng, acc, lod) {
   const near = lod === 0;
-  const stemRings = near ? 8 : 5;
+  const stemRings = near ? 8 : 3;
   const stemSides = near ? 6 : 4;
   const nodes = [];
   const lean = rng.range(-0.012, 0.012);
@@ -127,7 +135,7 @@ function skeleton(rng, acc, lod) {
   }
   acc.pushTube(tubeParts(nodes, stemSides), 0.30, 1.0, 1.0);
 
-  const whorls = near ? [0.34, 0.48, 0.62] : [0.42];
+  const whorls = near ? [0.29, 0.47, 0.64] : [];
   const perWhorl = near ? 3 : 3;
   let a0 = rng.float() * Math.PI * 2;
   for (const y0 of whorls) {
@@ -170,11 +178,24 @@ function skeleton(rng, acc, lod) {
 
 /** Leaf cards distributed through the canonical crown (unit direction x radial fraction, height t). */
 function canopy(rng, acc, lod) {
-  const crossed = lod === 0;
-  const cards = lod === 0 ? 150 : 46;
+  const crossed = false;
+  // Mid-distance crowns keep the same atlas/material and nearly the same projected
+  // leaf area, distributed across smaller clusters so individual cards do not read
+  // as isolated fans in park and aerial views.
+  const cards = lod === 0 ? 230 : 72;
   for (let i = 0; i < cards; i++) {
     const t = 0.03 + 0.97 * Math.pow(rng.float(), 0.80);
-    const rn = 0.40 + 0.60 * Math.pow(rng.float(), 0.38);
+    const radial = rng.float();
+    // The elevated park camera never reaches LOD0: its closest tree centre is
+    // about 71 m away. Keep the same 72-card LOD1 budget, but spend one third
+    // inside the crown instead of leaving every cluster in the outer 40%.
+    // The remaining two thirds retain an outer shell and the established
+    // silhouette; random card orientation still supplies the depth cues.
+    const rn = lod === 0
+      ? 0.40 + 0.60 * Math.pow(radial, 0.38)
+      : i < 24
+        ? 0.16 + 0.48 * Math.pow(radial, 0.72)
+        : 0.46 + 0.54 * Math.pow(radial, 0.42);
     const a = rng.float() * Math.PI * 2;
     const dir = new THREE.Vector3(Math.cos(a) * rn, 0, Math.sin(a) * rn);
     // card faces outward, lifted toward the sky, then rolled
@@ -189,16 +210,16 @@ function canopy(rng, acc, lod) {
     _m.lookAt(_v.set(0, 0, 0), face, UP);
     _q.setFromRotationMatrix(_m);
     _q.multiply(new THREE.Quaternion().setFromAxisAngle(ZP, rng.range(-0.42, 0.42)));
-    const sz = (lod === 0 ? 1.10 : 2.00) * rng.range(0.88, 1.18);
+    const sz = (lod === 0 ? 1.25 : 1.42) * rng.range(0.88, 1.18);
     const hw = 0.5 * sz, hh = 0.5 * sz * rng.range(0.90, 1.08);
     const corners = [
       new THREE.Vector3(-hw, -hh, 0), new THREE.Vector3(hw, -hh, 0),
       new THREE.Vector3(hw, hh, 0), new THREE.Vector3(-hw, hh, 0),
     ].map((v) => v.applyQuaternion(_q));
     const nrm = outward.clone().lerp(UP, 0.28).normalize();
-    const ao = Math.min(1.0, (0.74 + 0.26 * rn) * (0.88 + 0.14 * t));
+    const ao = Math.min(1.0, (0.54 + 0.46 * rn) * (0.74 + 0.28 * t));
     const flex = lod === 0 ? 0.70 + rng.float() * 0.55 : 0.85 + rng.float() * 0.4;
-    acc.pushCard(dir, t, corners, nrm, ao, flex);
+    acc.pushCard(dir, t, corners, nrm, ao, flex, lod === 1);
     if (crossed) {
       const cross = [
         new THREE.Vector3(0, -hh, -hw), new THREE.Vector3(0, -hh, hw),
@@ -282,7 +303,9 @@ const TREE_VERT_BODY = `
     float y = crownBot + t * max( 0.05, top - crownBot );
     float prof = pow( t + 0.16, profB ) * pow( max( 0.0, 1.0 - t ), profA );
     float r = crownR * prof;
-    anchor = vec3( aCenter.x * r, y, aCenter.z * r );
+    float phase = instanceMatrix[3].x * 0.073 + instanceMatrix[3].z * 0.11;
+    float irregular = 1.0 + 0.12 * sin(t * 18.0 + phase) + 0.08 * sin(aCenter.x * 9.0 + phase);
+    anchor = vec3( aCenter.x * r * irregular, y, aCenter.z * r / irregular );
     transformed = anchor + position * leafK;
     vBarkUv = vec2( 0.0 );
   }
@@ -344,7 +367,7 @@ uniform sampler2D uBark;
       shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
   if ( vPart < 0.5 ) {
     vec4 bk = texture2D( uBark, vBarkUv );
-    diffuseColor.rgb = bk.rgb * vColor.rgb;
+    diffuseColor.rgb = bk.rgb * vColor.rgb * diffuse;
     diffuseColor.a = 1.0;
   } else {
     diffuseColor.rgb *= vTint;
@@ -395,7 +418,8 @@ const IMP_VERT_BODY = `
 const IMP_UV = `
   {
     float ci = floor( iA.w + 0.5 );
-    float cell = mix( ci, ci + 5.0, uTopDown );
+    float sideCell = mix( ci, ci + 10.0, step( 0.5, iA.z ) );
+    float cell = mix( sideCell, ci + 5.0, uTopDown );
     float cx = mod( cell, ${IMP_GRID}.0 );
     float cy = floor( cell / ${IMP_GRID}.0 );
     float s = ${(1 / IMP_GRID).toFixed(6)};

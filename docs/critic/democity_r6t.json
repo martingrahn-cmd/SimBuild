@@ -1,0 +1,30 @@
+{
+  "module": "democity",
+  "round": "r6t",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "change": "terrain-owned active fixed-camera planar reflection refreshes every fourth frame; camera motion and explicit invalidations remain immediate",
+  "evidence": [
+    "shots/democity/r6t-candidate-water-reflection4/active-averages-v2.json",
+    "shots/democity/r6t-candidate-water-reflection4/cadence-probe.json",
+    "shots/democity/rr6t-candidate-water-reflection4/summary.json",
+    "shots/democity/r6t-candidate-water-reflection4/apicheck.json",
+    "shots/democity/r6t-candidate-water-reflection4/restage-cycle.json"
+  ],
+  "verified": {
+    "matrixErrors": 0,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2997270,
+    "minPausedFps": 46.5,
+    "activeFpsRange": [43.64, 44.46],
+    "cadencePass": true,
+    "apiPass": true,
+    "exactRestagePass": true
+  },
+  "remaining": [
+    "active and paused performance remain below 50 fps",
+    "post-restage memory remains above 512 MB",
+    "broader city scale, lighting, seating, grain, activity and lifecycle gates remain failed"
+  ]
+}

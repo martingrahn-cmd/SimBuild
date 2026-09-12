@@ -52,6 +52,7 @@ function ribbonMaterial() {
         vec3 col = mix(uFill, uEdge, rim * 0.7);
         if (a <= 0.004) discard;
         gl_FragColor = vec4(min(col, vec3(${LINEAR_CAP.toFixed(3)})), clamp(a, 0.0, 1.0));
+        #include <colorspace_fragment>
       }`,
     transparent: true,
     depthWrite: false,
@@ -113,6 +114,7 @@ function flatMaterial() {
         // 0.93 linear, and every cell is drawn at 0.45 alpha so the composite stays far under the
         // night bloom threshold. Opaque whites in this layer are already authored at 0.70.
         gl_FragColor = vec4(min(col, vec3(0.96)), clamp(a, 0.0, 1.0));
+        #include <colorspace_fragment>
       }`,
     transparent: true,
     depthWrite: false,
@@ -174,6 +176,7 @@ function discMaterial() {
         vec3 col = mix(uColor, uRim, clamp((rim + ring2) * 1.4, 0.0, 1.0));
         if (a <= 0.004) discard;
         gl_FragColor = vec4(min(col, vec3(${LINEAR_CAP.toFixed(3)})), clamp(a, 0.0, 1.0));
+        #include <colorspace_fragment>
       }`,
     transparent: true,
     depthWrite: false,
@@ -220,7 +223,6 @@ class DynamicMesh {
     this.mesh.matrixAutoUpdate = false;
     this.mesh.visible = false;
     this.mesh.layers.set(LAYERS.HELPERS);
-    this.mesh.layers.enable(0);
     this.mesh.castShadow = false;
     this.mesh.receiveShadow = false;
     this.n = 0;
@@ -229,10 +231,10 @@ class DynamicMesh {
   quad(p0, p1, p2, p3, uvs, colour, param) {
     if (this.n >= this.max) return this;
     const o = this.n * 4;
-    const P = [p0, p1, p2, p3];
     for (let i = 0; i < 4; i++) {
+      const p = i === 0 ? p0 : i === 1 ? p1 : i === 2 ? p2 : p3;
       const b = (o + i) * 3;
-      this.pos[b] = P[i][0]; this.pos[b + 1] = P[i][1]; this.pos[b + 2] = P[i][2];
+      this.pos[b] = p[0]; this.pos[b + 1] = p[1]; this.pos[b + 2] = p[2];
       const u = (o + i) * 2;
       this.uv[u] = uvs[i * 2]; this.uv[u + 1] = uvs[i * 2 + 1];
       if (this.col) {
@@ -295,13 +297,12 @@ class ConformDisc {
     this.mesh.castShadow = false;
     this.mesh.receiveShadow = false;
     this.mesh.layers.set(LAYERS.HELPERS);   // r1 issue 6: without this the ring enters water reflections
-    this.mesh.layers.enable(0);
     this._cx = NaN; this._cz = NaN; this._r = -1;
   }
   /** Rebuild only when the circle actually moved/resized (drag-friendly, zero allocation). */
   place(terrain, cx, cz, radius, lift = 0.20, force = false) {
-    if (!force && Math.abs(cx - this._cx) < 0.25 && Math.abs(cz - this._cz) < 0.25 && Math.abs(radius - this._r) < 0.25) return;
-    this._cx = cx; this._cz = cz; this._r = radius;
+    if (!force && this._version === terrain.version && Math.abs(cx - this._cx) < 0.25 && Math.abs(cz - this._cz) < 0.25 && Math.abs(radius - this._r) < 0.25) return;
+    this._cx = cx; this._cz = cz; this._r = radius; this._version = terrain.version;
     const { rings, segs, pos } = this;
     for (let i = 0; i <= rings; i++) {
       const rr = (i / rings) * radius;
@@ -350,15 +351,17 @@ export class Gizmos {
     this.matRibbonAlt = ribbonMaterial();
     this.matFlat = flatMaterial();
 
-    this.ghost = new DynamicMesh(1400, this.matRibbon);       // road ghost ribbon
-    this.ghostAlt = new DynamicMesh(600, this.matRibbonAlt);  // second ghost (the invalid pose)
+    this.ghost = new DynamicMesh(4096, this.matRibbon);       // ≤1 m lateral samples
+    this.ghostAlt = new DynamicMesh(2048, this.matRibbonAlt); // second ghost (the invalid pose)
     this.flat = new DynamicMesh(1400, this.matFlat, { attrs: true });
 
     this.discs = [];
     for (let i = 0; i < N_DISCS; i++) this.discs.push(new ConformDisc(discMaterial(), 8, 72));
     this._discN = 0;
 
-    this.lift = { min: Infinity, max: -Infinity, verts: 0 };
+    this.lift = { min: Infinity, max: -Infinity, surfaceMin: Infinity, surfaceMax: -Infinity, verts: 0 };
+    this._stripRows = [Array.from({ length: 257 }, () => [0, 0, 0]), Array.from({ length: 257 }, () => [0, 0, 0])];
+    this._stripUV = new Float32Array(8);
 
     this.root = new THREE.Group();
     this.root.name = 'tools:gizmos';
@@ -403,7 +406,7 @@ export class Gizmos {
   clearGhostAlt() { this.ghostAlt.clear(); }
 
   /** Reset the per-frame ghost-lift statistics (spec §2 stats().ghostLiftMin/Max). */
-  beginLift() { this.lift.min = Infinity; this.lift.max = -Infinity; this.lift.verts = 0; }
+  beginLift() { this.lift.min = this.lift.surfaceMin = Infinity; this.lift.max = this.lift.surfaceMax = -Infinity; this.lift.verts = 0; }
 
   /**
    * Build a ribbon along `path`, subdivided across its width as well as along it, so a 24 m band
@@ -412,11 +415,25 @@ export class Gizmos {
    */
   _strip(m, path, hw, lift) {
     const T = this.terrain;
-    const K = hw > 6 ? 4 : 2;
+    const K = Math.min(256, Math.max(2, Math.ceil(hw * 2)));
     m.begin();
     let s = 0;
     const N = Math.min(path.length, Math.floor(m.max / K) + 1);
     const L = this.lift;
+    let rowA = this._stripRows[0], rowB = this._stripRows[1];
+    const uv = this._stripUV;
+    const vertex = (out, x, z) => {
+      // Roads cut the underlying heightfield below their rendered pavement. Use its authoritative
+      // upper surface when available; the raw terrain clearance remains separately observable.
+      x = Math.fround(x); z = Math.fround(z);
+      const terrain = T.getHeight(x, z);
+      const road = this.ctx.modules.roads?.surfaceHeightAt?.(x, z);
+      const surface = Number.isFinite(road) ? Math.max(terrain, road) : terrain;
+      const y = Math.fround(surface + lift);
+      L.min = Math.min(L.min, y - terrain); L.max = Math.max(L.max, y - terrain);
+      L.surfaceMin = Math.min(L.surfaceMin, y - surface); L.surfaceMax = Math.max(L.surfaceMax, y - surface);
+      out[0] = x; out[1] = y; out[2] = z;
+    };
     for (let i = 1; i < N; i++) {
       const a = path[i - 1], b = path[i];
       let dx = b.x - a.x, dz = b.z - a.z;
@@ -436,25 +453,25 @@ export class Gizmos {
         const nl = Math.hypot(n1x, n1z) || 1; n1x /= nl; n1z /= nl;
       }
       const s0 = s, s1 = s + len;
+      // Adjacent quads share both their lateral edge and their longitudinal row. Sample each
+      // surface point once, then copy from two reusable rows into the preallocated mesh buffer.
+      for (let k = 0; k <= K; k++) {
+        const offset = (k / K * 2 - 1) * hw;
+        if (i === 1) vertex(rowA[k], a.x + n0x * offset, a.z + n0z * offset);
+        vertex(rowB[k], b.x + n1x * offset, b.z + n1z * offset);
+      }
       for (let k = 0; k < K; k++) {
         const u0 = k / K, u1 = (k + 1) / K;
-        const o0 = (u0 * 2 - 1) * hw, o1 = (u1 * 2 - 1) * hw;
-        const ax0 = a.x + n0x * o0, az0 = a.z + n0z * o0;
-        const ax1 = a.x + n0x * o1, az1 = a.z + n0z * o1;
-        const bx1 = b.x + n1x * o1, bz1 = b.z + n1z * o1;
-        const bx0 = b.x + n1x * o0, bz0 = b.z + n1z * o0;
+        uv[0] = uv[6] = u0; uv[2] = uv[4] = u1;
+        uv[1] = uv[3] = s0; uv[5] = uv[7] = s1;
         m.quad(
-          [ax0, T.getHeight(ax0, az0) + lift, az0],
-          [ax1, T.getHeight(ax1, az1) + lift, az1],
-          [bx1, T.getHeight(bx1, bz1) + lift, bz1],
-          [bx0, T.getHeight(bx0, bz0) + lift, bz0],
-          [u0, s0, u1, s0, u1, s1, u0, s1], null, null,
+          rowA[k], rowA[k + 1], rowB[k + 1], rowB[k], uv, null, null,
         );
         L.verts += 4;
       }
       s = s1;
+      const swap = rowA; rowA = rowB; rowB = swap;
     }
-    if (L.verts > 0) { L.min = Math.min(L.min, lift); L.max = Math.max(L.max, lift); }
     m.end();
   }
 
@@ -572,7 +589,7 @@ export class Gizmos {
    * A doomed object: a red translucent volume sized to its footprint (criterion 11).
    * Ground pad + four walls fading upward + a bright top rim.
    */
-  doomVolume(cx, cz, w, d, heading, height, colour = C.bulldoze, alpha = 0.35) {
+  doomVolume(cx, cz, w, d, heading, height, colour = C.bulldoze, alpha = 0.35, baseY) {
     const T = this.terrain;
     const s = Math.sin(heading), c = Math.cos(heading);
     const hw = w * 0.5, hd = d * 0.5;
@@ -580,8 +597,8 @@ export class Gizmos {
     const corner = [pt(-hw, -hd), pt(hw, -hd), pt(hw, hd), pt(-hw, hd)];
     let base = -Infinity;
     for (const [x, z] of corner) base = Math.max(base, T.getHeight(x, z));
-    base += 0.18;
-    const h = Math.max(2, height);
+    base = Number.isFinite(baseY) ? baseY + 0.04 : base + 0.18;
+    const h = Math.max(0.2, height);
     const col = [colour[0], colour[1], colour[2], alpha];
     this.flat.quad(
       [corner[0][0], T.getHeight(corner[0][0], corner[0][1]) + 0.24, corner[0][1]],

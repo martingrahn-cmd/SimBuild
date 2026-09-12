@@ -1,0 +1,334 @@
+{
+  "module": "democity",
+  "round": "r8o",
+  "reviewType": "Independent rejected mountain-material audit",
+  "decision": "REJECT",
+  "candidateDecisions": [
+    {
+      "candidate": 1,
+      "decision": "REJECT",
+      "reason": "Scale/rotation/domain warp leaves the broad pale scree islands and repeated mountain motifs essentially unchanged. Crop correlations are mixed, with industry slightly worse; no convincing full-frame gain."
+    },
+    {
+      "candidate": 2,
+      "decision": "REJECT",
+      "reason": "Reduced mask macro noise exposes larger pale areas and clearer contour-like material borders, especially industry. The resulting material organization is more artificial."
+    },
+    {
+      "candidate": 3,
+      "decision": "REJECT",
+      "reason": "Secondary rock sample earns no visible improvement in city or isolated pairs. Isolated mean absolute RGB change is 0.013635\u20130.061232; extra shader sampling has no demonstrated visual return. Its GPU-time cost was not isolated."
+    },
+    {
+      "candidate": 4,
+      "decision": "REJECT",
+      "reason": "Darker scree reduces brightness and luminance spread but leaves coarse patch layout intact. Less pale is not equivalent to better geology; no clear net improvement in the originals."
+    }
+  ],
+  "retainedSourceDecision": "ACCEPT restoration; retain pre-r8o terrain material",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "wholeGameRank6": "OPEN",
+  "source": {
+    "path": "src/modules/terrain/material.js",
+    "sha256": "fcc1c60e31f321d72be524789ac53da31f0bcdffd68419dc29c04c0ff41478b0",
+    "matchesProvidedPreR8o": true,
+    "gitDiffCheckPass": true,
+    "noR8oCandidateOrMagentaDiagnosticRetained": true,
+    "notEqualToGitHeadDueToPriorWork": true
+  },
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 27,
+  "originalImages": [
+    "shots/democity/r8o-mountain-material-baseline/industry_12.png",
+    "shots/democity/r8o-mountain-material-baseline/interchange_12.png",
+    "shots/democity/r8o-mountain-material-baseline/riverfront_12.png",
+    "shots/democity/r8o-mountain-material-baseline/riverfront_17p5.png",
+    "shots/democity/r8o-mountain-material-baseline-isolated/coast_12.png",
+    "shots/democity/r8o-mountain-material-baseline-isolated/valley_12.png",
+    "shots/democity/r8o-mountain-material-baseline-isolated/valley_17p5.png",
+    "shots/democity/r8o-mountain-material-candidate/industry_12.png",
+    "shots/democity/r8o-mountain-material-candidate/interchange_12.png",
+    "shots/democity/r8o-mountain-material-candidate/riverfront_12.png",
+    "shots/democity/r8o-mountain-material-candidate/riverfront_17p5.png",
+    "shots/democity/r8o-mountain-material-candidate2/industry_12.png",
+    "shots/democity/r8o-mountain-material-candidate2/interchange_12.png",
+    "shots/democity/r8o-mountain-material-candidate2/riverfront_12.png",
+    "shots/democity/r8o-mountain-material-candidate2/riverfront_17p5.png",
+    "shots/democity/r8o-mountain-material-candidate3/industry_12.png",
+    "shots/democity/r8o-mountain-material-candidate3/interchange_12.png",
+    "shots/democity/r8o-mountain-material-candidate3/riverfront_12.png",
+    "shots/democity/r8o-mountain-material-candidate3/riverfront_17p5.png",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/coast_12.png",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/valley_12.png",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/valley_17p5.png",
+    "shots/democity/r8o-mountain-material-candidate4/industry_12.png",
+    "shots/democity/r8o-mountain-material-candidate4/interchange_12.png",
+    "shots/democity/r8o-mountain-material-candidate4/riverfront_12.png",
+    "shots/democity/r8o-mountain-material-candidate4/riverfront_17p5.png",
+    "shots/democity/r8o-mountain-material-layer-diagnosis/industry_scree.png"
+  ],
+  "sidecarsInspected": [
+    "shots/democity/r8o-mountain-material-baseline/industry_12.json",
+    "shots/democity/r8o-mountain-material-baseline/interchange_12.json",
+    "shots/democity/r8o-mountain-material-baseline/riverfront_12.json",
+    "shots/democity/r8o-mountain-material-baseline/riverfront_17p5.json",
+    "shots/democity/r8o-mountain-material-baseline-isolated/coast_12.json",
+    "shots/democity/r8o-mountain-material-baseline-isolated/valley_12.json",
+    "shots/democity/r8o-mountain-material-baseline-isolated/valley_17p5.json",
+    "shots/democity/r8o-mountain-material-candidate/industry_12.json",
+    "shots/democity/r8o-mountain-material-candidate/interchange_12.json",
+    "shots/democity/r8o-mountain-material-candidate/riverfront_12.json",
+    "shots/democity/r8o-mountain-material-candidate/riverfront_17p5.json",
+    "shots/democity/r8o-mountain-material-candidate2/industry_12.json",
+    "shots/democity/r8o-mountain-material-candidate2/interchange_12.json",
+    "shots/democity/r8o-mountain-material-candidate2/riverfront_12.json",
+    "shots/democity/r8o-mountain-material-candidate2/riverfront_17p5.json",
+    "shots/democity/r8o-mountain-material-candidate3/industry_12.json",
+    "shots/democity/r8o-mountain-material-candidate3/interchange_12.json",
+    "shots/democity/r8o-mountain-material-candidate3/riverfront_12.json",
+    "shots/democity/r8o-mountain-material-candidate3/riverfront_17p5.json",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/coast_12.json",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/valley_12.json",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/valley_17p5.json",
+    "shots/democity/r8o-mountain-material-candidate4/industry_12.json",
+    "shots/democity/r8o-mountain-material-candidate4/interchange_12.json",
+    "shots/democity/r8o-mountain-material-candidate4/riverfront_12.json",
+    "shots/democity/r8o-mountain-material-candidate4/riverfront_17p5.json",
+    "shots/democity/r8o-mountain-material-layer-diagnosis/industry_scree.json"
+  ],
+  "metricEvidenceInspected": [
+    "shots/democity/r8o-mountain-material-baseline/material-metrics.json",
+    "shots/democity/r8o-mountain-material-candidate/material-metrics.json",
+    "shots/democity/r8o-mountain-material-candidate3-isolated/matched-diff.json",
+    "shots/democity/r8o-mountain-material-candidate4/crop-luma.json",
+    "shots/democity/r8o-mountain-material-candidate4/matched-diff.json"
+  ],
+  "verification": {
+    "allSidecarsReady": true,
+    "allSidecarsErrors": 0,
+    "cameraTimeSeedQualitySizeMatch": true,
+    "isolatedGeometryCountsMatch": true,
+    "allCityGeometryCountsMatch": false,
+    "exception": "riverfront_12 baseline 241 draws/1311068 triangles versus 246/1312596 in every candidate; last-frame counters differ too. Matching industry_12 last-frame counters also differ in candidate1. This is not proof of changed terrain geometry.",
+    "matchedDiffsRecomputedExactly": true,
+    "cropLumaMaxAbsoluteResidual": 2.288818359375e-05,
+    "repeatCorrelationMaxAbsoluteResidual": 2.9802322387695312e-08,
+    "highFrequencyStdMaxAbsoluteResidual": 1.9073486328125e-06
+  },
+  "candidate3IsolatedMetrics": {
+    "valley_12.png": {
+      "meanAbsRGB": 0.061231674382716046,
+      "changedPctGt2": 1.060474537037037,
+      "changedPctGt8": 0.01398533950617284,
+      "p95": 0.0,
+      "max": 87
+    },
+    "coast_12.png": {
+      "meanAbsRGB": 0.013634902263374486,
+      "changedPctGt2": 0.1675347222222222,
+      "changedPctGt8": 0.009066358024691358,
+      "p95": 0.0,
+      "max": 119
+    },
+    "valley_17p5.png": {
+      "meanAbsRGB": 0.042187339248971195,
+      "changedPctGt2": 0.5282600308641975,
+      "changedPctGt8": 0.011284722222222222,
+      "p95": 0.0,
+      "max": 135
+    }
+  },
+  "candidate4DiffMetrics": {
+    "industry_12.png": {
+      "meanAbsRGB": 0.9742560442386832,
+      "changedPctGt2": 15.391975308641975,
+      "changedPctGt8": 3.7516396604938276,
+      "p95": 8.0,
+      "max": 203
+    },
+    "riverfront_12.png": {
+      "meanAbsRGB": 0.4220191936728395,
+      "changedPctGt2": 7.19945987654321,
+      "changedPctGt8": 1.5213638117283952,
+      "p95": 5.0,
+      "max": 140
+    },
+    "riverfront_17p5.png": {
+      "meanAbsRGB": 0.35251816486625515,
+      "changedPctGt2": 6.626109182098766,
+      "changedPctGt8": 0.7695794753086419,
+      "p95": 4.0,
+      "max": 181
+    },
+    "interchange_12.png": {
+      "meanAbsRGB": 0.7929148984053498,
+      "changedPctGt2": 12.332368827160494,
+      "changedPctGt8": 2.854070216049383,
+      "p95": 7.0,
+      "max": 211
+    }
+  },
+  "candidate4CropLuma": {
+    "industry_12.png": {
+      "baseline": {
+        "mean": 94.23184967041016,
+        "std": 31.12796401977539,
+        "p5": 37.61399841308594,
+        "p95": 142.66880798339844
+      },
+      "candidate4": {
+        "mean": 91.74153137207031,
+        "std": 29.095727920532227,
+        "p5": 37.61399841308594,
+        "p95": 136.2476043701172
+      }
+    },
+    "riverfront_12.png": {
+      "baseline": {
+        "mean": 90.99534606933594,
+        "std": 30.46620750427246,
+        "p5": 34.2505989074707,
+        "p95": 136.53640747070312
+      },
+      "candidate4": {
+        "mean": 88.49118041992188,
+        "std": 28.721721649169922,
+        "p5": 34.2505989074707,
+        "p95": 130.46820068359375
+      }
+    },
+    "riverfront_17p5.png": {
+      "baseline": {
+        "mean": 70.11674499511719,
+        "std": 26.03295135498047,
+        "p5": 28.501399993896484,
+        "p95": 110.86700439453125
+      },
+      "candidate4": {
+        "mean": 68.0809326171875,
+        "std": 24.988914489746094,
+        "p5": 27.931800842285156,
+        "p95": 106.21600341796875
+      }
+    },
+    "interchange_12.png": {
+      "baseline": {
+        "mean": 73.79882049560547,
+        "std": 28.12478256225586,
+        "p5": 25.31599998474121,
+        "p95": 119.82240295410156
+      },
+      "candidate4": {
+        "mean": 71.52964782714844,
+        "std": 26.712696075439453,
+        "p5": 25.072004318237305,
+        "p95": 115.2555923461914
+      }
+    }
+  },
+  "captureGroups": [
+    {
+      "directory": "shots/democity/r8o-mountain-material-baseline",
+      "count": 4,
+      "minFps": 40,
+      "maxFps": 49.6,
+      "maxDrawCalls": 388,
+      "maxTriangles": 1812476,
+      "maxRawHeapMB": 622.4
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-baseline-isolated",
+      "count": 3,
+      "minFps": 59.9,
+      "maxFps": 60.1,
+      "maxDrawCalls": 19,
+      "maxTriangles": 720010,
+      "maxRawHeapMB": 97.9
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-candidate",
+      "count": 4,
+      "minFps": 48.3,
+      "maxFps": 59.7,
+      "maxDrawCalls": 388,
+      "maxTriangles": 1812476,
+      "maxRawHeapMB": 522.4
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-candidate2",
+      "count": 4,
+      "minFps": 49.2,
+      "maxFps": 60,
+      "maxDrawCalls": 388,
+      "maxTriangles": 1812476,
+      "maxRawHeapMB": 666.4
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-candidate3",
+      "count": 4,
+      "minFps": 49.1,
+      "maxFps": 60,
+      "maxDrawCalls": 388,
+      "maxTriangles": 1812476,
+      "maxRawHeapMB": 719.5
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-candidate3-isolated",
+      "count": 3,
+      "minFps": 60.1,
+      "maxFps": 60.2,
+      "maxDrawCalls": 19,
+      "maxTriangles": 720010,
+      "maxRawHeapMB": 90
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-candidate4",
+      "count": 4,
+      "minFps": 49.9,
+      "maxFps": 60,
+      "maxDrawCalls": 388,
+      "maxTriangles": 1812476,
+      "maxRawHeapMB": 738.5
+    },
+    {
+      "directory": "shots/democity/r8o-mountain-material-layer-diagnosis",
+      "count": 1,
+      "minFps": 59.6,
+      "maxFps": 59.6,
+      "maxDrawCalls": 204,
+      "maxTriangles": 1155506,
+      "maxRawHeapMB": 657.5
+    }
+  ],
+  "aggregateEvidenceOnly": {
+    "minFps": 40,
+    "below50": 8,
+    "maxRawHeapMB": 738.5,
+    "notFinalProductionMatrix": true
+  },
+  "diagnosis": "The magenta scree component corresponds to the extensive pale lower-mountain fields and scattered upper patches. Current source maps gravel_floor_02 to scree and rock_face to rock, with slope, altitude and 170/41 m plus fine noise controlling material mix. A single triplanar-rock UV fix does not address the dominant appearance.",
+  "nextOwnerSafePriority": {
+    "owner": "props",
+    "supportingOwner": "core",
+    "task": "Profile actual per-frame props work and allocation in the existing slow interchange/park cases, keeping world state, camera, visibility and simulation semantics fixed. Separate CPU/update cost, reflection/render cadence, GPU work and GC before selecting a bounded optimization.",
+    "evidence": [
+      "shots/democity/r8o-mountain-material-baseline/interchange_12.json",
+      "shots/democity/r8o-mountain-material-candidate3/interchange_12.json",
+      "shots/democity/r8n-sunset-nan-final/park_12.json"
+    ],
+    "constraint": "No wholesale foliage removal, scene simplification or invented timing win. Sparse city fabric remains global visual rank1; performance profiling is the next bounded owner-safe investigation, not a reranking."
+  },
+  "ranking": "Existing whole-game ranks retained: city fabric, foliage, night depth, terrain/site integration, landmark grounds, environment/landscape, human activity, performance. No rank closed.",
+  "limits": [
+    "Independent inspection of all supplied originals and sidecars, independent original-pixel recomputation, source and hash review. No new captures, production build, gameplay or save/restore tests by this critic.",
+    "Current material hash matches the supplied pre-r8o hash. Existing git differences include earlier texture-array work; restored does not mean identical to repository HEAD. Full historical candidate shader snapshots were not supplied in these evidence directories, so exact rejected hunk attribution relies partly on the builder record.",
+    "Screenshots are not pixel-locked world snapshots: vehicle positions/HUD values can differ despite paused simulation, and render/reflection phases differ. Full-frame changed percentages include these unrelated differences. Isolated matched frames provide cleaner but still finite evidence.",
+    "Candidate1 repeat correlations and crop standard deviations are heuristics, not geological realism or perceptual scores. Candidate4 lower spread alone cannot prove a visual regression; rejection rests on inspecting originals.",
+    "Short local M4 Metal measurements from different capture sessions do not isolate shader GPU time, prove a speedup, certify sustained target hardware performance, or measure retained memory. Raw endpoint heap is not forced-GC heap.",
+    "No new full day/night/weather matrix, eight-reference calibration or blind A/B judging. Whole-game 6.0 FAIL and existing ranking remain; no completed visual repair is claimed."
+  ]
+}

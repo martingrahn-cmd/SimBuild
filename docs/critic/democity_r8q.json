@@ -1,0 +1,428 @@
+{
+  "module": "democity",
+  "round": "r8q",
+  "reviewType": "Independent hidden Traffic fallback-mast audit",
+  "decision": "ACCEPT",
+  "acceptedScope": "One early return in updateMasts when the mast group is already hidden",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "source": {
+    "file": "src/modules/traffic/masts.js",
+    "sha256": "3ae0971c7b379aead1db0ecaadba73adce16f26e2d849f0c90e759d78d2f2d4c",
+    "preR8qSha256": "d01fb7ba1355f6ebcb2f7ffc52f897857f79a63bf38ce317116366d453ccc043",
+    "preBytes": 4201,
+    "currentBytes": 4226,
+    "snapshotDirectory": "shots/democity/r8q-hidden-masts/source",
+    "hashesAndByteLengthsVerified": true,
+    "currentSnapshotMatchesProductionExactly": true,
+    "onlyAddedLine": " if(!m.g.visible)return;",
+    "diffWhitespacePass": true,
+    "scope": "After mastGate and draw/triangle accounting; visible path byte-identical to supplied pre-state. No new RNG, signal timing, API, saved state, geometry or ownership branch."
+  },
+  "all18OriginalsIndividuallyInspected": true,
+  "inspectionRegister": [
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/bridge_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/bridge_12.json",
+      "individuallyInspected": true,
+      "fps": 58.3,
+      "drawCalls": 301,
+      "triangles": 1583059,
+      "rawHeapMB": 708.3,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/bridge_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/bridge_22.json",
+      "individuallyInspected": true,
+      "fps": 57.3,
+      "drawCalls": 294,
+      "triangles": 1983739,
+      "rawHeapMB": 469.6,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/downtown_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/downtown_12.json",
+      "individuallyInspected": true,
+      "fps": 54.4,
+      "drawCalls": 425,
+      "triangles": 1892580,
+      "rawHeapMB": 463.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/downtown_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/downtown_22.json",
+      "individuallyInspected": true,
+      "fps": 54.6,
+      "drawCalls": 410,
+      "triangles": 2271574,
+      "rawHeapMB": 474.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/industry_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/industry_12.json",
+      "individuallyInspected": true,
+      "fps": 60,
+      "drawCalls": 204,
+      "triangles": 1155506,
+      "rawHeapMB": 488.8,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/industry_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/industry_22.json",
+      "individuallyInspected": true,
+      "fps": 60,
+      "drawCalls": 202,
+      "triangles": 1550180,
+      "rawHeapMB": 691.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/interchange_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/interchange_12.json",
+      "individuallyInspected": true,
+      "fps": 55.1,
+      "drawCalls": 388,
+      "triangles": 1812476,
+      "rawHeapMB": 464.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/interchange_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/interchange_22.json",
+      "individuallyInspected": true,
+      "fps": 56.5,
+      "drawCalls": 400,
+      "triangles": 2194778,
+      "rawHeapMB": 608.2,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/night_downtown_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/night_downtown_12.json",
+      "individuallyInspected": true,
+      "fps": 56.8,
+      "drawCalls": 418,
+      "triangles": 2460494,
+      "rawHeapMB": 498.9,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/night_downtown_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/night_downtown_22.json",
+      "individuallyInspected": true,
+      "fps": 55.2,
+      "drawCalls": 343,
+      "triangles": 2814092,
+      "rawHeapMB": 638.3,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/park_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/park_12.json",
+      "individuallyInspected": true,
+      "fps": 55.9,
+      "drawCalls": 469,
+      "triangles": 1822002,
+      "rawHeapMB": 629,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/park_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/park_22.json",
+      "individuallyInspected": true,
+      "fps": 55.9,
+      "drawCalls": 443,
+      "triangles": 2189364,
+      "rawHeapMB": 475.1,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/riverfront_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/riverfront_12.json",
+      "individuallyInspected": true,
+      "fps": 60,
+      "drawCalls": 246,
+      "triangles": 1312596,
+      "rawHeapMB": 667.2,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/riverfront_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/riverfront_22.json",
+      "individuallyInspected": true,
+      "fps": 59.8,
+      "drawCalls": 212,
+      "triangles": 1681158,
+      "rawHeapMB": 507,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/suburb_12.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/suburb_12.json",
+      "individuallyInspected": true,
+      "fps": 57.4,
+      "drawCalls": 364,
+      "triangles": 1756810,
+      "rawHeapMB": 481.2,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts-final/suburb_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts-final/suburb_22.json",
+      "individuallyInspected": true,
+      "fps": 57.9,
+      "drawCalls": 329,
+      "triangles": 2137674,
+      "rawHeapMB": 464.6,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts/democity_interchange_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts/democity_interchange_22.json",
+      "individuallyInspected": true,
+      "fps": 53.3,
+      "drawCalls": 400,
+      "triangles": 2194778,
+      "rawHeapMB": 498.3,
+      "allReady": true,
+      "errors": 0
+    },
+    {
+      "png": "shots/democity/r8q-hidden-masts/traffic_fallback_22.png",
+      "sidecar": "shots/democity/r8q-hidden-masts/traffic_fallback_22.json",
+      "individuallyInspected": true,
+      "fps": 60,
+      "drawCalls": 82,
+      "triangles": 766868,
+      "rawHeapMB": 131.2,
+      "allReady": true,
+      "errors": 0
+    }
+  ],
+  "rawEvidenceRead": [
+    "shots/democity/r8q-hidden-masts-final/audit-summary.json",
+    "shots/democity/r8q-hidden-masts-final/r8p-geometry-compare.json",
+    "shots/democity/r8q-hidden-masts-final/summary.json",
+    "shots/democity/r8q-hidden-masts/contract-api/apicheck.json",
+    "shots/democity/r8q-hidden-masts/contract-restage/restage-cycle.json",
+    "shots/democity/r8q-hidden-masts/interchange22-ab.json",
+    "shots/democity/r8q-hidden-masts/interchange22-attribution-candidate.json",
+    "shots/democity/r8q-hidden-masts/interchange22-module-static.json",
+    "shots/democity/r8q-hidden-masts/interchange22-moving-ab.json",
+    "shots/democity/r8q-hidden-masts/mast-gate-contract.json",
+    "shots/democity/r8q-hidden-masts/source/source-hashes.json",
+    "shots/democity/r8q-runtime-attribution/interchange22-static.json"
+  ],
+  "ab": {
+    "static": {
+      "legacy": {
+        "runs": 3,
+        "medianFps": 48.89643463497453,
+        "medianTrafficMeanMs": 0.8852777770823903,
+        "medianTrafficP95Ms": 1.300000011920929,
+        "drawCallsRange": [
+          281,
+          281
+        ],
+        "trianglesRange": [
+          1801197.075,
+          1801206.575
+        ]
+      },
+      "candidate": {
+        "runs": 3,
+        "medianFps": 48.10261892036344,
+        "medianTrafficMeanMs": 0.3902777784400516,
+        "medianTrafficP95Ms": 0.699999988079071,
+        "drawCallsRange": [
+          281,
+          281
+        ],
+        "trianglesRange": [
+          1801196.175,
+          1801208.075
+        ]
+      },
+      "delta": {
+        "fps": -0.7938157146110925,
+        "fpsPct": -1.623463388562274,
+        "trafficMeanMs": -0.4949999986423387,
+        "trafficMeanPct": -55.91465316950687
+      }
+    },
+    "moving": {
+      "legacy": {
+        "runs": 3,
+        "medianFps": 50.50717622782902,
+        "medianTrafficMeanMs": 0.6099999990314245,
+        "medianTrafficP95Ms": 1.2999999821186066,
+        "drawCallsRange": [
+          391.04583333333335,
+          391.06666666666666
+        ],
+        "trianglesRange": [
+          2190799.6333333333,
+          2190801.1333333333
+        ]
+      },
+      "candidate": {
+        "runs": 3,
+        "medianFps": 52.34916895701087,
+        "medianTrafficMeanMs": 0.27250000089406967,
+        "medianTrafficP95Ms": 0.699999988079071,
+        "drawCallsRange": [
+          391.025,
+          391.04583333333335
+        ],
+        "trianglesRange": [
+          2190800.3833333333,
+          2190800.3833333333
+        ]
+      },
+      "delta": {
+        "fps": 1.8419927291818468,
+        "fpsPct": 3.646992104395097,
+        "trafficMeanMs": -0.3374999981373549,
+        "trafficMeanPct": -55.327868634958534
+      }
+    }
+  },
+  "abArithmeticIndependentlyVerified": true,
+  "abGateVersionsIndependentlyVerified": "All six legacy runs increment hidden matrix/color versions by their sample count; all six candidate runs leave both unchanged. Hidden group/lens count2067 in every run.",
+  "direct": {
+    "framesEach": 1200,
+    "legacyTrafficMeanMs": 0.7363333333532015,
+    "candidateTrafficMeanMs": 0.31833333370586236,
+    "deltaMs": -0.41799999964733914,
+    "deltaPercent": -56.76776817148852,
+    "legacyP95Ms": 1.2999999821186066,
+    "candidateP95Ms": 0.699999988079071,
+    "candidateFps": 52.174820431673204,
+    "meansIndependentlyRecomputed": true
+  },
+  "sampledAttribution": {
+    "framesEach": 900,
+    "mastCpuMicrosBefore": 193264,
+    "mastCpuMicrosAfter": 1019,
+    "mastCpuDeltaPercent": -99.47274194883683,
+    "mastSampledBytesBefore": 59091528,
+    "mastSampledBytesAfter": "No row; do not interpret as proven zero",
+    "allSampledBytesBefore": 334812640,
+    "allSampledBytesAfter": 278206328,
+    "candidateReadPixelsMicros": 14222556,
+    "candidateAllCpuMicros": 16605759,
+    "candidateReadPixelsSharePercent": 85.64833441217591,
+    "candidateTrafficRenderMicros": 89549,
+    "candidateUpdateSignalsSampledBytes": 23620344,
+    "notRetainedHeap": true
+  },
+  "mastGateContract": {
+    "hiddenLensCount": 2067,
+    "hiddenSignals": 189,
+    "hiddenMatrixAndColorVersionDeltas": 0,
+    "hiddenHashesUnchanged": true,
+    "visibleLensCount": 180,
+    "visibleSignals": 16,
+    "visibleMatrixAndColorVersionDeltas": 120,
+    "visibleLegacyCandidateHashesEqual": true,
+    "visibleMatrixHash": 3571273628,
+    "visibleColorHash": 2995140163,
+    "visibleDrawCalls": 55,
+    "visibleTriangles": 669756,
+    "errors": 0,
+    "frozenFrames": 120,
+    "time": 22,
+    "hiddenToVisibleRuntimeTest": false,
+    "rawBuffersPersisted": false
+  },
+  "stateContracts": {
+    "apiCensusEqualAfterDoubleDeserialize": true,
+    "deserialize": [
+      true,
+      true
+    ],
+    "validTours": 8,
+    "invalidTourRejected": true,
+    "seed1337Exact": true,
+    "seed7Exact": true,
+    "restageScope": [
+      "buildings",
+      "services",
+      "transit"
+    ],
+    "errors": 0
+  },
+  "geometryComparison": {
+    "matchedPairs": 16,
+    "drawCallsAndTrianglesExact": true,
+    "cameraTimeSeedQualitySizeExact": true,
+    "recomputedFromR8pAndR8qSidecars": true
+  },
+  "finalMatrix": {
+    "count": 16,
+    "ready": 16,
+    "errors": 0,
+    "minFps": 54.4,
+    "below50": 0,
+    "maxDrawCalls": 469,
+    "maxTriangles": 2814092,
+    "maxRawHeapMB": 708.3,
+    "summaryAndAuditRowsMatchSidecars": true
+  },
+  "gates": {
+    "boundedCpuChange": "ACCEPT",
+    "visual": "FAIL",
+    "sustained50fps": "NOT CERTIFIED; prior failure unresolved",
+    "512MB": "NOT PASSED; raw heap exceeds target, retained heap unmeasured"
+  },
+  "nextOwnerSafePriority": {
+    "owner": "core",
+    "supportingOwners": [
+      "props",
+      "traffic",
+      "buildings",
+      "roads"
+    ],
+    "task": "Resolve the remaining render/GPU-wait attribution on accepted source using controlled warmed traces and matched component masks, keeping scene content, LOD, density, lighting and camera policy unchanged. Compare normal interactive and required headless capture paths; retain the headless synchronization when evaluating the established capture gate.",
+    "evidence": "Candidate sampled readPixels time is 14222556 of16605759 microseconds (85.648334%). engine.js55\u201360 explicitly synchronizes the GPU in headless mode. This may charge GPU completion wait to readback; it is not proof of a 14-second application CPU algorithm. Prior stable Props visibility masks give the strongest owner-render sensitivity, while current Traffic.render is the highest remaining sampled project function at89549 microseconds and updateSignals leads sampled project allocation at23620344 bytes.",
+    "constraint": "Do not remove readback to manufacture a gate pass or simplify foliage/pools solely from counts. Determine an actual owner-local bottleneck before another optimization. Sparse city fabric remains the global visual priority."
+  },
+  "ranking": "No global rank closed: city fabric, foliage, night depth, site integration, landmark grounds, environment/landscape, human activity, performance.",
+  "limits": [
+    "All 18 supplied original PNGs were individually inspected and every sidecar was read. Arithmetic and source checks were independently performed on the supplied records. This critic did not rerun browser captures, gameplay, build, API or live fallback probes; the 163-module build pass is the builder record.",
+    "Timing records contain totals/counts and within-run quantiles rather than individual callback samples. Means, run FPS, A/B medians and deltas were independently recomputed. Within-run p95 cannot be reconstructed from absent raw samples; timer quantization is material at sub-millisecond values.",
+    "CPU attribution is sampled leaf/self time, not inclusive callback time. Chrome heap sampling is probabilistic at a 32768-byte interval and includes collected objects. The output discards original CPU nodes/samples and heap call trees, so this audit checks the extraction tool and aggregate records, not a reconstruction of absent raw profiler data. An absent mast allocation row does not prove zero allocation or retained-memory savings.",
+    "The visible fallback probe covers one 16-signal Traffic showcase at 22:00 for 120 frozen frames. It compares 32-bit hashes of buffers, not stored raw arrays. Equal hashes strongly support matching output but are not a critic-side byte-for-byte comparison. No actual hidden-to-visible transition, dynamic clock sweep, topology edit or Props enable/disable cycle is exercised.",
+    "The source places the return after the gate and accounting, preserving first-visible-frame updates by inspection. Changes in shadow flags are deferred while hidden and applied on the visible path. This is source reasoning, not an independently executed transition test.",
+    "API double deserialize verifies selected census equality. Restage compares selected authored building/service/transit fields across 1337\u21927\u21921337\u21927; it does not prove arbitrary whole-save identity or general gameplay determinism.",
+    "Exact R8p/R8q draw and triangle counters are peak/per-capture metrics, not complete scene hashes or pixel-locked animated equivalence. Moving A/B draw averages vary slightly with render phase despite matching frame counts. The directed fallback screenshot has 82 draws/766868 triangles, while the frozen gate record has 55/669756; these are distinct capture conditions.",
+    "Short interleaved fresh-page timings show order/host variation. Static FPS decreases while moving FPS increases. Final matrix samples all exceed 50 FPS but cannot replace previous low runs or certify sustained interactive performance. Headless GPU synchronization affects timing and attribution.",
+    "Maximum raw endpoint heap is 708.3 MB, above the 512 MB target. Raw heap is not forced-GC retained heap; neither memory compliance nor retained-memory reduction is established.",
+    "No fresh 32-frame whole-game/weather matrix, eight-reference recalibration, blind A/B judging or subjective playtest. Democity and whole-game remain 6.0 FAIL with unchanged global visual ranks. No gameplay or visual quality improvement is claimed."
+  ]
+}

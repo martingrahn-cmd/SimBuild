@@ -42,7 +42,7 @@ const EW_Z = [-60, 120];
 const EW_X = [-240, -160, -80, 0, 80, 160, 240];
 
 const SITE = { x0: -250, x1: 250, z0: -100, z1: 200, level: 15, step: 70, brush: 200 };
-const KNOLL = { x: 150, z: -120, size: 120, peak: 30 };
+const KNOLL = { x: 150, z: -120, size: 160, peak: 30 };
 const PAD = { x: 0, z: 0, size: 120 };
 
 /** Drive the road tool over a polyline: select, click every point, commit. */
@@ -164,6 +164,9 @@ export async function stage(ctx, S, api) {
   // 4 — a curved street off the east side, and an alley behind the centre block
   drawRoad(ctx, api, 'street', 'curve', [[160, 120], [232, 8]], { ctrl: { x: 228, z: 96 } });
   drawRoad(ctx, api, 'alley', 'straight', [[-40, 60], [40, 60]]);
+  // Rear access for one small infill lot inside the demolition rectangle. The zoning module's
+  // corner-lot packing fits only three houses on the original frontage.
+  drawRoad(ctx, api, 'alley', 'straight', [[-160, -100], [-100, -100]]);
 
   ctx.modules.roads?.rebuild?.();
   ctx.modules.zoning?.refresh?.();
@@ -171,12 +174,13 @@ export async function stage(ctx, S, api) {
   // 5 — zone eight blocks: all four types in both densities
   paintZone(ctx, api, 'residential', 'low', -232, -96, -88, -8);
   paintZone(ctx, api, 'residential', 'high', -152, 8, -88, 112);
-  paintZone(ctx, api, 'commercial', 'high', 8, -52, 72, 112);
+  paintZone(ctx, api, 'commercial', 'high', 8, -52, 72, -8);
   paintZone(ctx, api, 'commercial', 'low', -72, -52, -8, -8);
   paintZone(ctx, api, 'industrial', 'low', 88, -52, 152, -8);
   paintZone(ctx, api, 'industrial', 'high', 168, -52, 232, -8);
-  paintZone(ctx, api, 'office', 'high', 88, 8, 152, 112);
+  paintZone(ctx, api, 'office', 'high', 88, 72, 152, 112);
   paintZone(ctx, api, 'office', 'low', 168, 8, 232, 112);
+  paintZone(ctx, api, 'residential', 'low', -136, -128, -120, -104);
   ctx.modules.zoning?.refresh?.();
 
   // 6 — let the buildings module fill the lots, so bulldoze has real victims
@@ -190,7 +194,7 @@ export async function stage(ctx, S, api) {
     sculpt(ctx, api, 'raise', KNOLL.x, KNOLL.z, KNOLL.size, 70, 4);
     dabs += 4;
   }
-  sculpt(ctx, api, 'smooth', KNOLL.x, KNOLL.z, KNOLL.size * 1.3, 60, 3);
+  sculpt(ctx, api, 'smooth', KNOLL.x, KNOLL.z, KNOLL.size * 1.3, 100, 20);
 
   // 8 — leave one building selected so the white footprint outline is on screen (criterion 12)
   let sel = null;

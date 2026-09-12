@@ -10,17 +10,65 @@ import { createTerrainMaterial, createTerrainDepthMaterial, createTerrainLiteMat
 import { Water, makeRippleNormal, makeSeaMask } from './water.js';
 import { GrassScatter } from './detail.js';
 import { makeShowcase } from './showcase.js';
+import { RNG } from '../../core/rng.js';
 
 const S = {
-  data: null, gen: null, mesh: null, water: null, grass: null, material: null, depthMaterial: null, liteMaterial: null,
+  ctx: null, data: null, gen: null, mesh: null, water: null, grass: null, material: null, depthMaterial: null, liteMaterial: null,
   macro: null, land: null, seaMask: null, ripple: null, sets: null,
   sunColor: new THREE.Color(), skyColor: new THREE.Color(), lightColor: new THREE.Color(), moonTint: new THREE.Color(0.62, 0.72, 0.95),
   warm: new THREE.Color(1.0, 0.55, 0.28), white: new THREE.Color(1.0, 0.97, 0.92),
-  lastVersion: -1, lastSun: new THREE.Vector3(),
+  lastVersion: -1, lastSun: new THREE.Vector3(), displaySurface: null,
 };
 
-const REFLECTION_SIZE = { low: 512, medium: 640, high: 768, ultra: 1280 };
-const LOD_SCALE = { low: 0.5, medium: 0.65, high: 0.8, ultra: 1.3 };
+const REFLECTION_SIZE = { low: 512, medium: 640, high: 640, ultra: 1280 };
+const LOD_SCALE = { low: 0.5, medium: 0.65, high: 0.65, ultra: 1.3 };
+
+function installFeatures(T, gen, data) {
+  T.features = {
+    river: { zAt: (x) => gen.river.zAt[Math.max(0, Math.min(data.res - 1, Math.round((x + data.half) / data.cell)))],
+             halfWidthAt: (x) => gen.river.halfWidth[Math.max(0, Math.min(data.res - 1, Math.round((x + data.half) / data.cell)))] },
+    coast: { xAt: (z) => gen.coast.xAt[Math.max(0, Math.min(data.res - 1, Math.round((z + data.half) / data.cell)))] },
+    island: { ...gen.island },
+  };
+}
+
+function regenerate(seed) {
+  if (!Number.isInteger(seed) || seed < 0 || !S.ctx || !S.data) return false;
+  const root = new RNG(seed, 'root').fork('terrain');
+  const gen = generateHeightmap(root.fork('heightmap'), { res: S.data.res, size: S.data.size });
+  S.data.flow.set(gen.flow);
+  if (!S.ctx.world.terrain.setHeights(0, 0, S.data.res - 1, S.data.res - 1, gen.heights, { restore: true })) return false;
+  S.gen = gen;
+  installFeatures(S.ctx.world.terrain, gen, S.data);
+
+  const nr = root.fork('macro');
+  const macro = makeMacroNoiseTexture([new Noise2D(nr.fork('a')), new Noise2D(nr.fork('b')), new Noise2D(nr.fork('c')), new Noise2D(nr.fork('d'))], 256);
+  const ripple = makeRippleNormal(new Noise2D(root.fork('ripple')), 256, 1.4);
+  const land = makeLandTexture(generateLandcover(root.fork('landcover'), gen, S.ctx.quality === 'low' ? 512 : 1024));
+  const seaMask = makeSeaMask(gen, 64);
+  for (const material of [S.material, S.liteMaterial]) {
+    const uniforms = material?.userData?.uniforms;
+    if (uniforms?.uMacro) uniforms.uMacro.value = macro;
+    if (uniforms?.uLandTex) uniforms.uLandTex.value = land;
+  }
+  for (const material of S.grass?.materials || []) {
+    const uniforms = material.userData?.uniforms;
+    if (uniforms?.uMacro) uniforms.uMacro.value = macro;
+    if (uniforms?.uLandTex) uniforms.uLandTex.value = land;
+  }
+  if (S.water) {
+    S.water.uniforms.uMacro.value = macro;
+    S.water.uniforms.uRipple.value = ripple;
+    S.water.uniforms.uSeaMask.value = seaMask;
+    S.water.invalidate();
+  }
+  const old = [S.macro, S.ripple, S.land, S.seaMask];
+  S.macro = macro; S.ripple = ripple; S.land = land; S.seaMask = seaMask;
+  for (const texture of old) texture?.dispose();
+  S.mesh?.refreshBounds();
+  S.grass?.invalidate();
+  return true;
+}
 
 export default {
   name: 'terrain',
@@ -28,6 +76,7 @@ export default {
   budget: { drawCalls: 20, triangles: 1_300_000 },   // includes the 3 shadow cascades now cast from the visible LOD
 
   async init(ctx) {
+    S.ctx = ctx;
     const { world, events, assets, log } = ctx;
     const T = world.terrain;
     const t0 = performance.now();
@@ -54,14 +103,21 @@ export default {
       events.emit('terrain:changed', { x: brush.x, z: brush.z, radius: brush.radius ?? 20 });
       return true;
     };
+    T.setHeights = (ix0, iz0, ix1, iz1, values, options = {}) => {
+      if (!data.setHeights(ix0, iz0, ix1, iz1, values)) return false;
+      T.version = data.version; T.minHeight = data.minH; T.maxHeight = data.maxH;
+      S.mesh?.refreshBounds(); S.water?.invalidate();
+      events.emit('terrain:changed', {
+        x: (ix0 + ix1) * data.cell / 2 - data.half,
+        z: (iz0 + iz1) * data.cell / 2 - data.half,
+        radius: Math.hypot(ix1 - ix0, iz1 - iz0) * data.cell / 2 + data.cell,
+        restore: options.restore === true,
+      });
+      return true;
+    };
     T.minHeight = data.minH; T.maxHeight = data.maxH;
     // generation features for other modules (bridges, coast roads, democity layout)
-    T.features = {
-      river: { zAt: (x) => gen.river.zAt[Math.max(0, Math.min(data.res - 1, Math.round((x + data.half) / data.cell)))],
-               halfWidthAt: (x) => gen.river.halfWidth[Math.max(0, Math.min(data.res - 1, Math.round((x + data.half) / data.cell)))] },
-      coast: { xAt: (z) => gen.coast.xAt[Math.max(0, Math.min(data.res - 1, Math.round((z + data.half) / data.cell)))] },
-      island: { ...gen.island },
-    };
+    installFeatures(T, gen, data);
 
     // ---- textures ----
     const [grass, grassFine, dirt, rock, sand, scree] = await Promise.all([
@@ -91,12 +147,19 @@ export default {
     S.water = new Water(data, {
       ripple: S.ripple, macro: S.macro, seaMask: S.seaMask, size: REFLECTION_SIZE[ctx.quality] ?? 1024,
       mainCamera: ctx.camera.camera, seaLevel: data.seaLevel,
-      // the reflection sees the cheap proxies only: LOD meshes and the ground clutter are hidden for that pass
-      onReflection: (begin) => { S.mesh.reflectionPass = begin; if (S.grass) S.grass.group.visible = !begin; },
+      // The reflection keeps terrain proxies while owners may opt their fine detail out of its low-resolution pass.
+      // It is an event rather than terrain reaching into another module's group, so each owner controls its own LOD.
+      onReflection: (begin) => {
+        S.mesh.reflectionPass = begin;
+        if (S.grass) S.grass.group.visible = !begin;
+        events.emit('water:reflection', { active: begin });
+      },
     });
     ctx.group.add(S.water.mesh);
+    // Overlay activation, data changes and clearing must invalidate paused water too.
+    events.on('infoview:changed', () => S.water?.invalidate(), 'terrain');
     // near-camera ground clutter: blades + mid-range tufts (2 draw calls), palette-matched to the ground
-    S.grass = new GrassScatter(data, ctx.rng.fork('grass'), { seaLevel: data.seaLevel, layer: LAYERS.TERRAIN, macro: S.macro, land: S.land, world });
+    S.grass = new GrassScatter(data, ctx.rng.fork('grass'), { seaLevel: data.seaLevel, layer: LAYERS.TERRAIN, macro: S.macro, land: S.land, world, modules: ctx.modules });
     // roads publish a coverage mask (world.roads.isRoad); no blades/tufts on asphalt or sidewalks. The mask is
     // rebuilt after the roads module settles, so we poll its version each frame (cheap) and also listen to the event.
     events.on('roads:changed', () => { if (S.grass) S.grass.invalidate(); }, 'terrain');
@@ -118,11 +181,12 @@ export default {
     if (!S.mesh) return;
     const cam = ctx.camera.camera;
     const t = ctx.world.time;
+    const timeAdvancing = !t.paused && t.speed > 0;
     S.mesh.update(cam);
     S.water.follow(cam);
-    S.grass.update(cam, (!t.paused && t.speed > 0) ? dt : 0, S.data.version);
+    S.grass.update(cam, timeAdvancing ? dt : 0, S.data.version);
     const w = ctx.world.weather;
-    if (!t.paused && t.speed > 0) S.water.update(dt);
+    if (timeAdvancing) S.water.update(dt);
     S.water.refreshSky();
     // sun + sky tint for the water (environment publishes sunDir/sunIntensity; sky tint follows the fog colour)
     const el = w.sunDir.y;
@@ -130,7 +194,12 @@ export default {
     S.sunColor.copy(S.warm).lerp(S.white, THREE.MathUtils.smoothstep(el, 0.0, 0.4)).multiplyScalar(Math.max(0, w.sunIntensity ?? 3) / 3.2);
     if (ctx.scene.fog) S.skyColor.copy(ctx.scene.fog.color); else S.skyColor.copy(w.skyLight || S.white);
     S.skyColor.multiplyScalar(0.35 + 0.65 * day);
-    if (!S.lastSun.equals(w.sunDir)) { S.lastSun.copy(w.sunDir); S.water.invalidate(); }
+    if (!S.lastSun.equals(w.sunDir)) {
+      S.lastSun.copy(w.sunDir);
+      // A paused/manual time change must refresh immediately. During ordinary clock
+      // motion Water's animation cadence already refreshes the reflected lighting.
+      if (!timeAdvancing) S.water.invalidate();
+    }
     // glints follow the environment's active light (sun by day, moon at night)
     const lightDir = w.lightDir || w.sunDir;
     const moonLit = lightDir !== w.sunDir && lightDir.dot(w.sunDir) < 0.99;
@@ -144,14 +213,48 @@ export default {
     if (S.water) { ctx.group.remove(S.water.mesh); S.water.dispose(); }
     if (S.grass) { ctx.group.remove(S.grass.group); S.grass.dispose(); S.grass = null; }
     S.material?.dispose(); S.depthMaterial?.dispose(); S.liteMaterial?.dispose(); S.macro?.dispose(); S.land?.dispose(); S.seaMask?.dispose(); S.ripple?.dispose(); S.data?.dispose();
-    S.mesh = S.water = S.material = S.depthMaterial = S.data = S.gen = null;
+    S.mesh = S.water = S.material = S.depthMaterial = S.data = S.gen = S.displaySurface = null;
   },
 
   api: {
+    serialize() {
+      if (!S.data) return null;
+      const bytes = new Uint8Array(S.data.heights.length * 4), view = new DataView(bytes.buffer);
+      for (let i = 0; i < S.data.heights.length; i++) view.setFloat32(i * 4, S.data.heights[i], true);
+      let text = ''; for (let i = 0; i < bytes.length; i += 32768) text += String.fromCharCode(...bytes.subarray(i, i + 32768));
+      return { version: 1, resolution: S.data.res, encoding: 'float32-le-base64', heights: btoa(text) };
+    },
+    deserialize(saved) {
+      if (!saved || !S.data || saved.resolution !== S.data.res || saved.encoding !== 'float32-le-base64') throw new Error('incompatible terrain save');
+      const text = atob(saved.heights), count = S.data.res * S.data.res;
+      if (text.length !== count * 4) throw new Error('invalid terrain save length');
+      const bytes = Uint8Array.from(text, c => c.charCodeAt(0)), view = new DataView(bytes.buffer), values = new Float32Array(count);
+      for (let i = 0; i < count; i++) values[i] = view.getFloat32(i * 4, true);
+      if (!S.ctx.world.terrain.setHeights(0, 0, S.data.res - 1, S.data.res - 1, values, { restore: true })) throw new Error('invalid terrain heights');
+    },
+    /** Borrowed read-only main-camera topology. Consumers own any cloned geometry/material. */
+    displaySurface() {
+      if (!S.mesh || !S.material) return null;
+      if (!S.displaySurface) {
+        const owner = S.mesh, source = S.material.userData.uniforms, uniforms = {};
+        for (const key of ['uHeightTex', 'uNormalTex', 'uWorldMin', 'uCell', 'uLodDrop', 'uSkirt']) uniforms[key] = source[key];
+        S.displaySurface = Object.freeze({
+          version: 1, vertexPars: VERTEX_PARS, vertexBegin: VERTEX_BEGIN,
+          uniforms: Object.freeze(uniforms),
+          patches: Object.freeze(S.mesh.meshes.map((mesh, lod) => Object.freeze({
+            lod, geometry: mesh.geometry,
+            get visible() { return S.mesh === owner && owner.group.visible && mesh.visible; },
+          }))),
+          reflectionActive: () => S.mesh === owner && owner.reflectionPass,
+        });
+      }
+      return S.displaySurface;
+    },
     data: () => S.data,
     stats: () => (S.mesh ? { ...S.mesh.stats } : null),
     setReflection(enabled) { if (S.water) S.water.enabled = !!enabled; },
     setGrassTufts(enabled) { if (S.grass) S.grass.enabled = !!enabled; },
+    regenerate(seed) { return regenerate(seed); },
     material: () => S.material,
     /** dev/profiling knobs */
     debug: {

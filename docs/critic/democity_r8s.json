@@ -1,0 +1,266 @@
+{
+  "module": "democity",
+  "round": "r8s",
+  "reviewType": "Independent rejected/reverted LOD1 material audit",
+  "decision": "ACCEPT_REJECTION_RECORD",
+  "candidateDecision": "REJECT",
+  "restorationDecision": "ACCEPT: declared three product files restored exactly",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "sourceHashes": {
+    "pre/chunks.js": "123bd2b7d723899efcac8e882ad81e6a8f59efeb9efd60b4382c4d876c1ca3ba",
+    "pre/index.js": "be80cb25874c65a14b90f50702ae2e544850ee430e7f6af7c7400e6062b2156b",
+    "pre/trees.js": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+    "candidate/chunks.js": "c64aa0b1085b2497d2bf2a8efeda92c9dd0b4540baacf11ede0e8fd9e6829c7f",
+    "candidate/index.js": "938021f6e306a4a240bc4f8bb500aad26787f9e34c11ed20a1bb092d43d835d3",
+    "candidate/trees.js": "1255b454f7e0378e136e35599c1980b672310b40840ec7ffa542c6e84033f662",
+    "restored/trees.js": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+    "restored/chunks.js": "123bd2b7d723899efcac8e882ad81e6a8f59efeb9efd60b4382c4d876c1ca3ba",
+    "restored/index.js": "be80cb25874c65a14b90f50702ae2e544850ee430e7f6af7c7400e6062b2156b"
+  },
+  "allNineManifestHashesVerified": true,
+  "currentThreeFilesMatchPreBytesExactly": true,
+  "diffWhitespaceCheckPass": true,
+  "sourceScope": "Separate Lambert color material; LOD1 binding only; time-dependent color copy; candidate-local ENV_WORLDPOS undef after envmap include. Existing geometry, LOD0, impostors and custom depth material unchanged in supplied diff. All candidate changes now absent.",
+  "allFourOriginalsIndividuallyInspected": true,
+  "additionalBaselineViewed": "shots/democity/r8q-hidden-masts-final/interchange_12.png",
+  "inspectionRegister": [
+    {
+      "png": "shots/democity/r8s-lod1-material/smoke.png",
+      "sidecar": "shots/democity/r8s-lod1-material/smoke.json",
+      "individuallyInspected": true,
+      "ok": false,
+      "allModulesReady": true,
+      "errors": [
+        "THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false\n\nMaterial Name: \nMaterial Type: MeshLambertMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\u0000\n\nFRAGMENT\n\nERROR: 0:446: 'ENV_WORLDPOS' : macro redefined\n\u0000\n\n  441: \t\t}\n  442: \t#endif\n  443: #endif\n  444: \n  445: varying vec3 vEnvWorldPos;\n> 446: #define ENV_WORLDPOS 1\n  447: uniform vec4 uEnvFogA;\n  448: uniform vec3 uEnvFogSun;\n  449: uniform vec3 uEnvFogSunCol;\n  450: uniform float uEnvNight;\n  451: uniform sampler2D uEnvSky;\n  452: #ifdef USE_FOG",
+        "WebGL: INVALID_OPERATION: useProgram: program not valid"
+      ],
+      "fps": 57.3,
+      "drawCalls": 388,
+      "triangles": 1812476,
+      "rawHeapMB": 511.9,
+      "time": 12
+    },
+    {
+      "png": "shots/democity/r8s-lod1-material/smoke-toon.png",
+      "sidecar": "shots/democity/r8s-lod1-material/smoke-toon.json",
+      "individuallyInspected": true,
+      "ok": true,
+      "allModulesReady": true,
+      "errors": [],
+      "fps": 47.5,
+      "drawCalls": 388,
+      "triangles": 1812476,
+      "rawHeapMB": 512.3,
+      "time": 12
+    },
+    {
+      "png": "shots/democity/r8s-lod1-material/smoke-lambert.png",
+      "sidecar": "shots/democity/r8s-lod1-material/smoke-lambert.json",
+      "individuallyInspected": true,
+      "ok": true,
+      "allModulesReady": true,
+      "errors": [],
+      "fps": 49.4,
+      "drawCalls": 388,
+      "triangles": 1812476,
+      "rawHeapMB": 549.8,
+      "time": 12
+    },
+    {
+      "png": "shots/democity/r8s-lod1-material/restored-smoke.png",
+      "sidecar": "shots/democity/r8s-lod1-material/restored-smoke.json",
+      "individuallyInspected": true,
+      "ok": true,
+      "allModulesReady": true,
+      "errors": [],
+      "fps": 53.7,
+      "drawCalls": 400,
+      "triangles": 2194778,
+      "rawHeapMB": 477.8,
+      "time": 22
+    }
+  ],
+  "ab": [
+    {
+      "file": "shots/democity/r8s-lod1-material/interchange22-ab.json",
+      "framesPerBlock": 180,
+      "cycles": 3,
+      "inventory": {
+        "meshes": 51,
+        "instances": 2683,
+        "sourceTriangles": 450744,
+        "sameGeometry": true,
+        "sameMap": true,
+        "legacyType": "MeshStandardMaterial",
+        "candidateType": "MeshLambertMaterial",
+        "legacyAlphaTest": 0.45,
+        "candidateAlphaTest": 0.45,
+        "legacySide": 2,
+        "candidateSide": 2
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedLegacyFps": 49.27549962727754,
+          "candidateFps": 49.14675767918089,
+          "fpsPct": -0.2612696960364924,
+          "controlDriftPct": 1.141511887817439,
+          "drawCalls": -0.3777777777777942,
+          "triangles": -1245.9416666666511,
+          "visibleInstances": 2540
+        },
+        {
+          "cycle": 1,
+          "expectedLegacyFps": 50.553119822650956,
+          "candidateFps": 50.0194520091975,
+          "fpsPct": -1.055657524848419,
+          "controlDriftPct": 6.167227834228979,
+          "drawCalls": 0.3777777777777942,
+          "triangles": 1186.3416666667908,
+          "visibleInstances": 2540
+        },
+        {
+          "cycle": 2,
+          "expectedLegacyFps": 50.02403404037243,
+          "candidateFps": 53.94874868874569,
+          "fpsPct": 7.845658039505121,
+          "controlDriftPct": 8.347782663750241,
+          "drawCalls": -0.3777777777777942,
+          "triangles": -1249.0416666667443,
+          "visibleInstances": 2540
+        }
+      ],
+      "summary": {
+        "medianFpsPct": -0.2612696960364924,
+        "maxControlDriftPct": 8.347782663750241,
+        "stableCycles": 1,
+        "medianDrawCalls": -0.3777777777777942,
+        "medianTriangles": -1245.9416666666511
+      },
+      "pass": false,
+      "stableOnlyMedianFpsPct": -0.2612696960364924,
+      "arithmeticIndependentlyRecomputed": true,
+      "allRecordedVisibleInstances": 2540,
+      "allBlockAndBrowserErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8s-lod1-material/interchange22-ab-repeat.json",
+      "framesPerBlock": 240,
+      "cycles": 5,
+      "inventory": {
+        "meshes": 51,
+        "instances": 2683,
+        "sourceTriangles": 450744,
+        "sameGeometry": true,
+        "sameMap": true,
+        "legacyType": "MeshStandardMaterial",
+        "candidateType": "MeshLambertMaterial",
+        "legacyAlphaTest": 0.45,
+        "candidateAlphaTest": 0.45,
+        "legacySide": 2,
+        "candidateSide": 2
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedLegacyFps": 50.563533491485785,
+          "candidateFps": 50.156739811912225,
+          "fpsPct": -0.8045198811947318,
+          "controlDriftPct": 1.1102567071094864,
+          "drawCalls": 0,
+          "triangles": -15.600000000093132,
+          "visibleInstances": 2540
+        },
+        {
+          "cycle": 1,
+          "expectedLegacyFps": 50.52881649109118,
+          "candidateFps": 54.45881552076242,
+          "fpsPct": 7.777738135553114,
+          "controlDriftPct": 1.2484341936669114,
+          "drawCalls": 0,
+          "triangles": -10.199999999953434,
+          "visibleInstances": 2540
+        },
+        {
+          "cycle": 2,
+          "expectedLegacyFps": 51.54540975594064,
+          "candidateFps": 54.260586466578516,
+          "fpsPct": 5.267543169205191,
+          "controlDriftPct": 5.168269231038319,
+          "drawCalls": 0,
+          "triangles": 0,
+          "visibleInstances": 2540
+        },
+        {
+          "cycle": 3,
+          "expectedLegacyFps": 52.09014595316266,
+          "candidateFps": 52.9333921482135,
+          "fpsPct": 1.618820948993016,
+          "controlDriftPct": 3.022708286132676,
+          "drawCalls": 0,
+          "triangles": 0,
+          "visibleInstances": 2540
+        },
+        {
+          "cycle": 4,
+          "expectedLegacyFps": 50.62698446621758,
+          "candidateFps": 50.44878397429259,
+          "fpsPct": -0.35198717404134605,
+          "controlDriftPct": 2.670097439454139,
+          "drawCalls": 0,
+          "triangles": 0,
+          "visibleInstances": 2540
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 1.618820948993016,
+        "maxControlDriftPct": 5.168269231038319,
+        "stableCycles": 4,
+        "medianDrawCalls": 0,
+        "medianTriangles": 0
+      },
+      "pass": false,
+      "stableOnlyMedianFpsPct": 0.633416887475835,
+      "arithmeticIndependentlyRecomputed": true,
+      "allRecordedVisibleInstances": 2540,
+      "allBlockAndBrowserErrorsZero": true
+    }
+  ],
+  "shaderFailure": {
+    "file": "shots/democity/r8s-lod1-material/smoke.json",
+    "errorCount": 2,
+    "cause": "ENV_WORLDPOS macro redefined in Lambert fragment shader; invalid useProgram follows",
+    "allModulesReadyButOkFalse": true,
+    "visibleImpact": "LOD1 vegetation missing",
+    "correctedLambertSmokeErrors": 0
+  },
+  "fullMatrixAndContractsAfterRevert": {
+    "requiredForThisRejectionAudit": false,
+    "reason": "Targeted acceptance failed; all declared production bytes restored; clean restored smoke and builder build evidence retained. No candidate acceptance or new gate pass claimed."
+  },
+  "nextOwnerSafePriority": {
+    "owner": "props",
+    "supportingOwner": "core",
+    "task": "Retain accepted Standard foliage and return to render attribution before selecting another product change. R8r whole-mesh sensitivity includes geometry/raster/submission/shadow work; R8s does not isolate a reliable Lambert material saving. Any future candidate needs a reproducible owner-local gain without content or visual regression.",
+    "globalVisualPriority": "City fabric remains rank1; no global rank closed."
+  },
+  "limits": [
+    "Independent reading of both A/B records, all four originals and sidecars, supplied pre/candidate source, current restored files and tool implementation. No new browser captures, timed runs, build or live API/gameplay tests were run by this critic. Candidate/restored 163-module build passes are builder results.",
+    "No full visual matrix or reference/blind recalibration. Toon is visibly brighter/flatter in the supplied directed view, but one view does not establish behavior everywhere. Corrected Lambert is recognizable and closer to the accepted image; it has no independently established broad visual improvement or regression-free contract. Rejection rests primarily on failed targeted performance validation.",
+    "The initial shader failure is real and its screenshot is invalid evidence for rendering quality/performance acceptance. All modules reporting ready does not override the two shader/useProgram errors or visibly missing trees. Corrected Lambert later compiles in its supplied smoke; the initial failure is not misrepresented as persisting in that later candidate.",
+    "The source archive retains corrected Lambert and pre-state snapshots, not separate exact failed-Lambert/Toon intermediate source trees. Their compile/visual evidence is retained, but exact historical intermediate code attribution is limited to the builder record and error log.",
+    "Interleaved block comparisons use neighboring shared controls, are correlated, short and not randomized. Per-block elapsed times and raw frame samples are absent, so pairing arithmetic can be reproduced but original FPS cannot be independently reconstructed. Failed stability filters stay failed; stable-only medians are diagnostic and cannot replace predefined all-cycle results.",
+    "The tool changes only material pointers on the selected LOD1 mesh set and restores them in finally. Its sameGeometry flag is hardcoded, not a measured digest; inspected source supports identical geometry and alpha/map checks, but the record is not a full geometry/shadow/wind/save contract. Inventory contains51 meshes/2683 instances overall, while all recorded blocks have2540 locally visible instances.",
+    "Legacy material lookup chooses the first matching Standard material with alphaTest0.45 and the same map; it does not independently assert a single legacy material identity. It agrees with the inspected accepted tree material in this source. New layouts/materials would require revalidation.",
+    "Two frames follow each pointer swap; the shared initial warmup is primarily on candidate material. Shader compilation/cache effects and live Traffic/render cadence may contaminate early blocks. The later replication has exact later draw/triangle counts but remains an unstable timing result.",
+    "The retained A/B tool intentionally depends on temporary Lambert LOD1 inventory and cannot run unchanged on restored Standard production. This is an experiment-specific tool limitation, not a product regression.",
+    "Current trees.js/chunks.js/index.js match supplied pre-state byte-for-byte and all9 hash manifest entries verify. This establishes restoration of the three declared product files, not a full-repository historical provenance audit or a guarantee against unrelated concurrent changes.",
+    "No full matrix, API/restage or forced-GC rerun is required to accept rejection of an already reverted rendering-only experiment when exact source restoration and a clean restored smoke are available. Their omission is appropriate here, not evidence that those acceptance gates passed for the rejected candidate.",
+    "Raw heap endpoints and short synchronized FPS are not retained-memory or sustained50FPS measurements. Previous visual/gameplay/memory/performance limits remain. No visual score increase, overall FPS gain, or claim that all LOD1 shading optimizations are impossible is warranted."
+  ]
+}

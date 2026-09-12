@@ -6,15 +6,21 @@ import { RoadBuilder } from './build.js';
 import { createMaterials } from './materials.js';
 import { stage, CAMERAS } from './showcase.js';
 
-const S = { ctx: null, net: null, builder: null, mats: null, pending: false, settle: 0 };
+const S = { ctx: null, net: null, builder: null, mats: null, pending: false, settle: 0, preserveTerrain: false };
 
-function rebuildNow() {
-  if (!S.builder) return;
+function rebuildNow(options = {}) {
+  if (!S.builder) return false;
+  if (options.preserveTerrain !== undefined) S.preserveTerrain = options.preserveTerrain === true;
   S.pending = false; S.settle = 0;
-  try { S.builder.rebuild(); }
-  catch (e) { S.ctx.log.error(`rebuild failed: ${e?.message || e}`, e); }
+  let ok = true;
+  try { S.builder.rebuild({ preserveTerrain: S.preserveTerrain }); }
+  catch (e) { ok = false; S.ctx.log.error(`rebuild failed: ${e?.message || e}`, e); }
   const st = S.builder.stats;
+  // Graph mutation events can fire before derived curve lengths and merge profiles are final.
+  // Consumers of those derived values synchronize from this owner-complete boundary.
+  S.ctx.events.emit('roads:rebuilt', { edges: st.edges, nodes: st.nodes });
   S.ctx.log.info(`rebuilt ${st.edges} edges / ${st.nodes} nodes -> ${st.meshes} meshes, ${st.tris} tris, ${st.bridges} bridge edges, ${st.terrainVerts} terrain vertices cut/filled, ${st.ms.toFixed(0)} ms`);
+  return ok;
 }
 
 export default {
@@ -28,16 +34,26 @@ export default {
     S.net.install();
     S.mats = await createMaterials(ctx);
     S.builder = new RoadBuilder(S.net, ctx.world, S.mats, ctx.group, ctx.log);
-    ctx.events.on('roads:changed', () => { S.pending = true; S.settle = 0; }, 'roads');
+    ctx.events.on('roads:changed', () => { S.pending = true; S.settle = 0; S.preserveTerrain = false; }, 'roads');
     // someone else sculpted the terrain (our own cut/fill is flagged): refresh the design heights of the
     // edges in that region and rebuild
     ctx.events.on('terrain:changed', (region) => {
       if (S.builder?.flattening || !S.net.edges.size) return;
+      if (region?.restore === true) {
+        // A restore replays authoritative terrain and road snapshots. Sampling that restored,
+        // already-conformed terrain back into the immutable road design profile changes the
+        // transaction on every undo/redo cycle.
+        S.preserveTerrain = true;
+        S.pending = true; S.settle = 0;
+        return;
+      }
+      S.preserveTerrain = false;
       if (S.net.resampleDesign(region || { all: true }) > 0) { S.pending = true; S.settle = 0; }
     }, 'roads');
   },
 
   update(dt) {
+    S.builder?.updateLod(S.ctx.camera.camera);
     if (!S.pending) return;
     // coalesce bursts of edits (tools drag) into one rebuild
     S.settle += dt;
@@ -52,13 +68,17 @@ export default {
 
   api: {
     /** Rebuild all road meshes now (also conforms the terrain under roads). Idempotent. */
-    rebuild() { rebuildNow(); },
+    rebuild(options = {}) { return rebuildNow(options); },
     /** Street-lamp anchor points along an edge: [{x,y,z,heading,side,edgeId,t}] */
     lampPositions(edgeId) { return S.builder ? S.builder.lampPositions(edgeId) : []; },
     /** Signalised-intersection candidates: [{id,x,y,z,roundabout,arms:[{edgeId,dir,trim,stopT,lanesIn,width,type,ring}]}] */
     intersections() { return S.builder ? S.builder.intersections() : []; },
     /** Node analysis record (arms, corners, trims) for a node id. */
     nodeInfo(id) { return S.builder?.nodeInfo.get(id) || null; },
+    /** Highest generated asphalt/kerb/sidewalk height, including bridges; null off pavement.
+     * Reflects the last rebuild. Excludes barriers, piers, decals and terrain. */
+    surfaceHeightAt(x, z) { return S.builder?.pavement.heightAt(x, z) ?? null; },
+    surfaceStats() { return S.builder?.pavement.stats() ?? null; },
     stats() { return S.builder ? { ...S.builder.stats } : null; },
     /** dev: the geometry builder (probes only) */
     _builder() { return S.builder; },
@@ -74,18 +94,29 @@ export default {
     serialize() {
       if (!S.net) return null;
       return {
-        nodes: [...S.net.nodes.values()].map((n) => ({ id: n.id, x: n.x, z: n.z })),
-        edges: [...S.net.edges.values()].map((e) => ({ id: e.id, a: e.a, b: e.b, type: e.type, lanes: e.lanes, oneWay: e.oneWay, ctrl: e.ctrl })),
+        version: 2, nextId: S.net._nextId, preserveTerrain: true,
+        nodes: [...S.net.nodes.values()].map((n) => ({ id: n.id, x: n.x, y: n.y, z: n.z, designY: n.designY })),
+        edges: [...S.net.edges.values()].map((e) => ({ id: e.id, a: e.a, b: e.b, type: e.type, lanes: e.lanes, oneWay: e.oneWay, ctrl: e.ctrl, elevation: e.elevation, design: Array.from(S.net.poly(e.id).design) })),
       };
     },
     deserialize(data) {
       if (!S.net || !data) return;
-      for (const id of [...S.net.edges.keys()]) S.net.removeEdge(id, true);
-      S.net.nodes.clear();
-      const map = new Map();
-      for (const n of data.nodes || []) map.set(n.id, S.net.addNode(n.x, n.z));
-      for (const e of data.edges || []) S.net.addEdge(map.get(e.a), map.get(e.b), e.type, { lanes: e.lanes, oneWay: e.oneWay, ctrl: e.ctrl });
-      rebuildNow();
+      S.net.restore(data);
+      rebuildNow({ preserveTerrain: data.preserveTerrain === true });
+    },
+    /** Exact graph/profile restore for one Tools history entry, including the allocator cursor. */
+    restoreTransaction(data) {
+      if (!S.net || !data) return false;
+      S.net.restore(data, { resetIds: true });
+      return rebuildNow({ preserveTerrain: true });
+    },
+    /** Authoring reset for a newly seeded world; ordinary deserialize keeps monotonic IDs. */
+    reset(data) {
+      if (!S.net || !data) return false;
+      S.builder?.resetTerrainBasis();
+      S.net.restore(data, { resetIds: true });
+      rebuildNow({ preserveTerrain: data.preserveTerrain === true });
+      return true;
     },
   },
 

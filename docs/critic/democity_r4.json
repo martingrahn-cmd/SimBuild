@@ -1,0 +1,21 @@
+{
+  "module": "democity",
+  "round": 4,
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 751,
+  "apiContractOk": false,
+  "auditScope": "local critical audit; independent review still pending",
+  "issues": [
+    {"rank": 1, "severity": "blocker", "title": "Night lighting is visibly broken at city scale", "detail": "Oversized white lamp discs cover aerial night views instead of restrained pools of warm light.", "evidence": "shots/democity/r4/aerial_22.png"},
+    {"rank": 2, "severity": "blocker", "title": "Whole-scene triangles and heap exceed budget", "detail": "W4 standard matrix peaks at 5,075,465 triangles; whole-game night reaches 7,498,104 and heap is 1,076.6 MB.", "evidence": "shots/democity/r4/summary.json"},
+    {"rank": 3, "severity": "major", "title": "Golden hour blows out the skyline", "detail": "The 17:30 skyline loses a large part of the city to a near-white sun field.", "evidence": "shots/democity/r4/skyline_17p5.png"},
+    {"rank": 4, "severity": "major", "title": "Density and asset variation remain synthetic", "detail": "612 buildings and repeated tower, foliage and lawn patterns remain below the city-scale target.", "evidence": "shots/democity/r4/downtown_12.png"},
+    {"rank": 5, "severity": "major", "title": "Cross-seed utility reach remains below target", "detail": "Fresh seed 7 reaches only 519/548 = 94.71% utility coverage and has no W4 proof that cross-seed restage is repaired.", "evidence": "shots/democity/rdev4/census-contracts.json"},
+    {"rank": 6, "severity": "major", "title": "Bridge, waterfront and industry composition remain schematic", "detail": "The districts read, but road-to-terrain/water joins, generic cranes and oversized flat smoke still look authored rather than lived-in.", "evidence": "shots/democity/r4/bridge_12.png"}
+  ],
+  "strengths": ["All reviewed W4 frames are ready with zero console errors.", "Primary-seed shared health-and-education coverage is now 60.36% through a real paid school.", "Districts and fresh seed 7 remain readable and playable.", "The 1280x720 HUD fits."],
+  "summary": "6.0 FAIL. W4 fixes primary-seed civic coverage but does not improve the visual tier. Night bloom, golden-hour exposure, density/repetition and whole-scene cost keep Democity far below the 8.5 bar.",
+  "shots": ["shots/democity/r4/summary.json", "shots/democity/r4s7/summary.json", "shots/democity/r4/aerial_12.png", "shots/democity/r4/aerial_22.png", "shots/democity/r4/skyline_17p5.png", "shots/democity/r4/all_aerial_22.png", "shots/democity/r4/aerial_12_720p.png", "shots/democity/rdev4/census-contracts.json"]
+}

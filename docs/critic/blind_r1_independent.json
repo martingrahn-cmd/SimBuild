@@ -1,0 +1,72 @@
+[
+  {
+    "pair": "pair_01",
+    "verdict": "B",
+    "confidence": "high",
+    "why": "B skiljer tydligt mellan mörkt, vågigt vatten, solbelysta fasader och mjukare vegetation; material och ljus ger både djup och en sammanhängande skala. A har tydliga gatunät och byggnadsvolymer, men de upprepade horisontella fasadbanden, likartade taken och stora tomma gräsytorna får kvarteren att likna utplacerade modeller. B har dessutom en övertygande tonövergång från förgrund till avlägsen terräng.",
+    "loserNeeds": "Ge A:s tomtmark sammanhängande, varierad utformning med beläggningar, entréer och tydliga övergångar till gatan, så att byggnaderna känns förankrade i kvarteren.",
+    "tellsA": [
+      "Många nästan identiska torn med upprepade fasadband och takformer.",
+      "Stora öppna gräsytor mellan tätt placerade höghus saknar tydlig användning.",
+      "Trädkronor läses som kantiga, glest sammansatta bladgrupper.",
+      "Vattnet har breda, släta molnliknande partier med svag ytstruktur."
+    ],
+    "tellsB": [
+      "Vissa bostadskvarter har mycket regelbundna rader av likartade byggnader.",
+      "Skogen visar en ganska jämn, upprepad kronstruktur i stora områden."
+    ]
+  },
+  {
+    "pair": "pair_02",
+    "verdict": "A",
+    "confidence": "high",
+    "why": "A:s hus har läsbara materialskillnader mellan panel, tak, solpaneler och fönster, och träden kastar tydliga skuggor över uppfarter och väg. Häckar, staket och entréer binder ihop byggnaderna med deras tomter. B:s vägar är läsbara, men flera stora anläggningar består av nästan detaljlösa ljusa volymer och vegetationen blir platta, mörka silhuetter; det gör platsen mindre övertygande även med hänsyn till den större betraktningsdistansen.",
+    "loserNeeds": "Ersätt B:s stora detaljlösa anläggningsvolymer med fasader och tak som har verkliga öppningar, konstruktionsdelar och tydliga materialskillnader.",
+    "tellsA": [
+      "Upprepade tak- och husmodeller längs vänster sida.",
+      "Flera gräsmattor och uppfarter är mycket jämna och rena.",
+      "Häckar har ibland en ovanligt regelbunden klippt volym."
+    ],
+    "tellsB": [
+      "Vattentorn och den stora vita byggnaden har mycket släta, nästan obearbetade ytor.",
+      "Hus står återkommande mitt i likartade öppna grästomter.",
+      "Flera trädkronor ser skivformade eller klippta ut.",
+      "Takens färgrutor bildar ett tydligt upprepat mönster."
+    ]
+  },
+  {
+    "pair": "pair_03",
+    "verdict": "A",
+    "confidence": "high",
+    "why": "A:s vägbana har mjuk tonvariation, tydliga kanter och små räcken och stolpar som ger konstruktionen tjocklek och skala. Träd och fordon kastar skuggor som binder ihop vägen med den omgivande marken. B:s vägmarkeringar är tydliga, men den breda kurvan möter berg och korsningar med svagt gestaltade kanter, medan samma fläckiga marktäckning fortsätter över stora ytor; helheten känns mer som ett rutnät ovanpå terräng.",
+    "loserNeeds": "Ge B:s stora väg en konsekvent gestaltad anslutning till terrängen med vägrenar, slänter och tydliga nivåövergångar genom hela kurvan.",
+    "tellsA": [
+      "Vägbanan är mycket ren och jämn över långa sammanhängande partier.",
+      "Några trädkronor har likartad form och färg."
+    ],
+    "tellsB": [
+      "Samma fläckiga markmaterial upprepas över stora öppna sluttningar.",
+      "Små träd har likartade smala silhuetter och verkar utspridda utan tydliga bestånd.",
+      "Den breda vägens kant och anslutning till terrängen saknar tydlig konstruktion på flera ställen.",
+      "Byggnadernas takformer och husplaceringar återkommer regelbundet."
+    ]
+  },
+  {
+    "pair": "pair_04",
+    "verdict": "B",
+    "confidence": "high",
+    "why": "B visar flera lokala ljuskällor som faktiskt färgar trottoar, väg och närliggande föremål, och fasaderna varierar i glans, fönsterdjup och ljusnivå. Skyltar, entréer, fordon och människor ger gaturummet en tydlig skala och användning. A har en sammanhållen blå nattton och varierar varma och kalla fönster, men fönstren är mest jämna lysande rektanglar medan markplanet och byggnadsentréerna förblir glest gestaltade och nästan likformigt belysta.",
+    "loserNeeds": "Låt A:s entréer och gatubelysning skapa lokala ljusområden på fasader och mark, så att nattmiljön får ett tydligt bebott gatuplan.",
+    "tellsA": [
+      "Fönster upprepas i mycket regelbundna rutnät med nästan helt jämna lysande ytor.",
+      "Många fasader har samma mörka material och likartade fönsteromfattningar.",
+      "Träden i förgrunden får platta, sönderklippta silhuetter.",
+      "Gatuplanet saknar tydliga entréer, skyltfönster och synlig aktivitet."
+    ],
+    "tellsB": [
+      "Den gröna trafiksignalen har en mycket stark vit kärna och kraftig färgspridning.",
+      "Vissa människor har stela poser och kantiga kläder.",
+      "En del fasader visar upprepade ljusa horisontella band med likartad glans."
+    ]
+  }
+]

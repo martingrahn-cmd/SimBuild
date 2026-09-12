@@ -1,0 +1,542 @@
+{
+  "module": "democity",
+  "round": "r8i",
+  "reviewType": "independent bounded night-depth candidate review",
+  "decision": "ACCEPT",
+  "acceptedScope": "Small local occupied-room silhouette improvement; not closure of whole-game rank 3.",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "pass": false,
+  "threshold": 8.5,
+  "source": {
+    "path": "src/modules/buildings/atlas.js",
+    "sha256": "2d980256e58f9aa24dd29171a3a5188d9faa67837a1d3bbeca3f64fb28fd35f3",
+    "owner": "buildings",
+    "noNewRngCalls": true,
+    "noWorldStateGeometryOrLightChangesInInspectedDiff": true
+  },
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 26,
+  "originalImages": [
+    "shots/democity/r8i-night-depth-baseline/downtown_22.png",
+    "shots/democity/r8i-night-depth-baseline/industry_22.png",
+    "shots/democity/r8i-night-depth-baseline/night_downtown_12.png",
+    "shots/democity/r8i-night-depth-baseline/night_downtown_22.png",
+    "shots/democity/r8i-night-depth-baseline/suburb_22.png",
+    "shots/democity/r8i-night-depth-candidate/downtown_22.png",
+    "shots/democity/r8i-night-depth-candidate/industry_22.png",
+    "shots/democity/r8i-night-depth-candidate/night_downtown_12.png",
+    "shots/democity/r8i-night-depth-candidate/night_downtown_22.png",
+    "shots/democity/r8i-night-depth-candidate/suburb_22.png",
+    "shots/democity/r8i-night-depth-final/bridge_12.png",
+    "shots/democity/r8i-night-depth-final/bridge_22.png",
+    "shots/democity/r8i-night-depth-final/downtown_12.png",
+    "shots/democity/r8i-night-depth-final/downtown_22.png",
+    "shots/democity/r8i-night-depth-final/industry_12.png",
+    "shots/democity/r8i-night-depth-final/industry_22.png",
+    "shots/democity/r8i-night-depth-final/interchange_12.png",
+    "shots/democity/r8i-night-depth-final/interchange_22.png",
+    "shots/democity/r8i-night-depth-final/night_downtown_12.png",
+    "shots/democity/r8i-night-depth-final/night_downtown_22.png",
+    "shots/democity/r8i-night-depth-final/park_12.png",
+    "shots/democity/r8i-night-depth-final/park_22.png",
+    "shots/democity/r8i-night-depth-final/riverfront_12.png",
+    "shots/democity/r8i-night-depth-final/riverfront_22.png",
+    "shots/democity/r8i-night-depth-final/suburb_12.png",
+    "shots/democity/r8i-night-depth-final/suburb_22.png"
+  ],
+  "derivedImagesInspected": [
+    "shots/democity/r8i-night-depth-candidate/compare-left.png",
+    "shots/democity/r8i-night-depth-candidate/compare-right.png",
+    "shots/democity/r8i-night-depth-final/contact-sheet.png"
+  ],
+  "sidecarsVerified": 26,
+  "summaryMatchesSidecars": true,
+  "finalMatrix": {
+    "frames": 16,
+    "ready": 16,
+    "errors": 0,
+    "below50": 7,
+    "minFps": 42.6,
+    "maxDraws": 469,
+    "maxTriangles": 2808896,
+    "maxHeapMB": 740.7,
+    "rows": [
+      {
+        "shot": "bridge_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 55.2,
+        "draws": 301,
+        "triangles": 1574359,
+        "heapMB": 508.7,
+        "elapsedMs": 12745
+      },
+      {
+        "shot": "bridge_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 54,
+        "draws": 294,
+        "triangles": 1975039,
+        "heapMB": 701.1,
+        "elapsedMs": 12672
+      },
+      {
+        "shot": "downtown_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 49.4,
+        "draws": 425,
+        "triangles": 1885620,
+        "heapMB": 740.7,
+        "elapsedMs": 12881
+      },
+      {
+        "shot": "downtown_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 49,
+        "draws": 410,
+        "triangles": 2264614,
+        "heapMB": 476.4,
+        "elapsedMs": 12960
+      },
+      {
+        "shot": "industry_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 60.1,
+        "draws": 204,
+        "triangles": 1152026,
+        "heapMB": 505.2,
+        "elapsedMs": 12579
+      },
+      {
+        "shot": "industry_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 202,
+        "triangles": 1546112,
+        "heapMB": 522.7,
+        "elapsedMs": 12503
+      },
+      {
+        "shot": "interchange_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 47,
+        "draws": 388,
+        "triangles": 1807256,
+        "heapMB": 655.7,
+        "elapsedMs": 13008
+      },
+      {
+        "shot": "interchange_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 46.2,
+        "draws": 400,
+        "triangles": 2189558,
+        "heapMB": 542.4,
+        "elapsedMs": 13158
+      },
+      {
+        "shot": "night_downtown_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 49,
+        "draws": 418,
+        "triangles": 2455298,
+        "heapMB": 673.4,
+        "elapsedMs": 12803
+      },
+      {
+        "shot": "night_downtown_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 50.2,
+        "draws": 343,
+        "triangles": 2808896,
+        "heapMB": 480.6,
+        "elapsedMs": 12710
+      },
+      {
+        "shot": "park_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 42.6,
+        "draws": 469,
+        "triangles": 1816782,
+        "heapMB": 552,
+        "elapsedMs": 12889
+      },
+      {
+        "shot": "park_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 48.1,
+        "draws": 443,
+        "triangles": 2184144,
+        "heapMB": 533.2,
+        "elapsedMs": 12942
+      },
+      {
+        "shot": "riverfront_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 60.1,
+        "draws": 246,
+        "triangles": 1307400,
+        "heapMB": 486.2,
+        "elapsedMs": 12645
+      },
+      {
+        "shot": "riverfront_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 212,
+        "triangles": 1675962,
+        "heapMB": 489.8,
+        "elapsedMs": 12695
+      },
+      {
+        "shot": "suburb_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 53.4,
+        "draws": 364,
+        "triangles": 1755658,
+        "heapMB": 480.2,
+        "elapsedMs": 12906
+      },
+      {
+        "shot": "suburb_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 53.7,
+        "draws": 329,
+        "triangles": 2136522,
+        "heapMB": 539.4,
+        "elapsedMs": 12737
+      }
+    ]
+  },
+  "metrics": {
+    "rawHeapAbove512": 9,
+    "finalMaxModuleMs": 2.0,
+    "finalMaxModuleOwner": "props",
+    "finalMaxEndpointFrameMs": 23.5,
+    "finalMaxTextures": 74,
+    "fpsMeasuredFrameRange": [
+      65,
+      91
+    ],
+    "forcedGCMemoryMeasured": false,
+    "all26ModulesReady": true,
+    "all26Errors": 0
+  },
+  "contracts": {
+    "suppliedApiPass": true,
+    "deserializeResults": [
+      true,
+      true
+    ],
+    "mixedUse32OwnedRecords": true,
+    "stock": 612,
+    "exactBeforeAfterFirstAfterSecond": true,
+    "seed1337DigestEquals": true,
+    "seed7DigestEquals": true,
+    "digestScope": [
+      "buildings",
+      "services",
+      "transit"
+    ],
+    "independentlyExecuted": false
+  },
+  "imageStatistics": {
+    "all8RowsRecomputed": true,
+    "agreement": "Exact apart from <=1.5e-14 floating-point mean/std rounding.",
+    "nearMean": [
+      46.44037477932098,
+      46.07194241512345
+    ],
+    "nearAbove180Pct": [
+      1.8063271604938271,
+      1.7885802469135803
+    ],
+    "nearP99P50": [
+      6.271864289290253,
+      6.286836484582573
+    ],
+    "farDowntownAbove180Pct": [
+      0.5131172839506173,
+      0.5131172839506173
+    ],
+    "conclusion": "Localized darkening/variation, not a new wide lighting solution or exact facade-crop gate pass."
+  },
+  "rankedIssues": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings",
+        "roads",
+        "services"
+      ],
+      "issue": "Sparse city fabric and repeated forms remain dominant.",
+      "evidence": [
+        "downtown_12",
+        "interchange_12",
+        "park_12"
+      ],
+      "status": "Open; atlas change does not alter parcels or massing."
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "supportingOwners": [
+        "terrain",
+        "democity"
+      ],
+      "issue": "Planar crowns and inconsistent foliage tiers remain.",
+      "evidence": [
+        "park_12",
+        "riverfront_12",
+        "industry_12"
+      ],
+      "status": "Open; retain the earlier bounded r8h improvement without implying completion."
+    },
+    {
+      "rank": 3,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "buildings",
+        "props",
+        "services",
+        "effects",
+        "democity"
+      ],
+      "issue": "Night interiors remain flat and lighting remains disconnected from occupancy and ground.",
+      "evidence": [
+        "night_downtown_22",
+        "downtown_22",
+        "suburb_22",
+        "industry_22",
+        "park_22"
+      ],
+      "status": "Small near-window improvement accepted; rank remains open and unchanged."
+    },
+    {
+      "rank": 4,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "roads",
+        "democity",
+        "buildings",
+        "services"
+      ],
+      "issue": "Abrupt grades, banks and site boundaries remain.",
+      "evidence": [
+        "riverfront_12",
+        "interchange_12",
+        "industry_12",
+        "bridge_12"
+      ],
+      "status": "Open; no new numeric collision or bridge-clearance failure asserted."
+    },
+    {
+      "rank": 5,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "services",
+        "buildings",
+        "props"
+      ],
+      "issue": "Landmark materials and working-site context remain schematic.",
+      "evidence": [
+        "park_12",
+        "suburb_12",
+        "industry_12",
+        "bridge_12"
+      ],
+      "status": "Open; acknowledge repaired silhouettes."
+    },
+    {
+      "rank": 6,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "environment",
+        "effects"
+      ],
+      "issue": "Horizon/reflection/terrain layer seams remain.",
+      "evidence": [
+        "riverfront_12",
+        "riverfront_22",
+        "industry_12"
+      ],
+      "status": "Open; explicit weather artistry was not retested in this bounded round."
+    },
+    {
+      "rank": 7,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation",
+        "buildings"
+      ],
+      "issue": "Featured streets and destinations communicate limited human use.",
+      "evidence": [
+        "night_downtown_12",
+        "night_downtown_22",
+        "park_22",
+        "bridge_12"
+      ],
+      "status": "Open presentation issue; paused stills do not establish simulation or boarding failures."
+    },
+    {
+      "rank": 8,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic",
+        "environment",
+        "effects",
+        "buildings"
+      ],
+      "issue": "Local FPS and raw memory targets remain unmet.",
+      "evidence": [
+        "park_12",
+        "downtown_12"
+      ],
+      "status": "42.6 FPS minimum; 7/16 below 50; raw heap 740.7 MB; not a causal atlas regression or retained leak finding."
+    }
+  ],
+  "evidenceLimits": [
+    "Independent source/evidence review, not independent screenshot capture or browser/probe execution. All 26 original PNGs, all 26 sidecars and three derived images individually inspected; derived images do not increase the independent sample count.",
+    "The 16 final frames cover eight presets at noon and 22:00 only. No fresh dawn, sunset, weather, 720p, free-camera motion, LOD flicker or blind A/B test. Eight CS2 references were calibrated in the preceding independent whole-game round, not freshly reopened for this bounded review.",
+    "One seed 1337, High quality, 1920x1080, Chrome 152.0.7977.83, Apple M4 ANGLE Metal, port 5173, headless=1 and speed=0. FPS uses 65–91 measured frames in final sidecars, roughly 1.5 seconds; 12.5–13.2 second total capture elapsed is not the FPS window or warm init.",
+    "Draw/triangle values are reported sampled render counts, not lastTriangles substitutions. Raw endpoint heap is not forced-GC retained memory. Module CPU and frameMs are endpoint samples, not sustained or worst-frame traces; no GTX1660-class certification.",
+    "Current git diff also includes eRoom gradient, albedo reflection and default glass roughness changes. The supplied image pairs mainly isolate the added dark silhouettes; attribution of every older-looking diff hunk to this same pair is not independently established. Daylight pass is observed noon stability, not proof that all albedo/ORM changes are day-neutral.",
+    "Contract files are supplied successful runs. Exact restage digests cover buildings/services/transit, not every world subsystem, atlas pixels or GPU objects. Mixed-use equality after two restores is not a general failed-save or transactional recovery proof.",
+    "480-wide full-frame imgstats are not the buildings specification full-resolution 200x200 facade or 128x128 far-tower crop tests. A p99/p50 ratio above 6 does not certify its separate strongest-10-percent/darkest-50-percent crop requirement.",
+    "No source/status/handoff edits, extra capture files or test scripts were produced. Only the two requested critic reports were written."
+  ],
+  "inspectionRegister": [
+    {
+      "file": "shots/democity/r8i-night-depth-baseline/downtown_22.png",
+      "observation": "Wide window grids and road dots remain essentially unchanged; little city-scale interior-depth gain."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-baseline/industry_22.png",
+      "observation": "Matched industrial view is nearly unchanged; bright repeated equipment pools are not repaired by the building atlas."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-baseline/night_downtown_12.png",
+      "observation": "No obvious noon material or facade readability regression in the matched pair; restrained glass, blinds, retail base and geometry remain legible."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-baseline/night_downtown_22.png",
+      "observation": "Small dark lower blocks and tall slivers make some lit bays less empty; repeating flat panes and ceiling strips still dominate. Warm/cool variation and café strip survive."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-baseline/suburb_22.png",
+      "observation": "Matched night view remains stable; pale civic surfaces and broad yard ovals still look schematic."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-candidate/downtown_22.png",
+      "observation": "Wide window grids and road dots remain essentially unchanged; little city-scale interior-depth gain."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-candidate/industry_22.png",
+      "observation": "Matched industrial view is nearly unchanged; bright repeated equipment pools are not repaired by the building atlas."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-candidate/night_downtown_12.png",
+      "observation": "No obvious noon material or facade readability regression in the matched pair; restrained glass, blinds, retail base and geometry remain legible."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-candidate/night_downtown_22.png",
+      "observation": "Small dark lower blocks and tall slivers make some lit bays less empty; repeating flat panes and ceiling strips still dominate. Warm/cool variation and café strip survive."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-candidate/suburb_22.png",
+      "observation": "Matched night view remains stable; pale civic surfaces and broad yard ovals still look schematic."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/bridge_12.png",
+      "observation": "Coherent crossings and articulated cranes retained; empty apron and isolated industrial pads remain."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/bridge_22.png",
+      "observation": "Bridge and near tower remain readable; schematic port lighting and pale blank site surfaces persist."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/downtown_12.png",
+      "observation": "Readable height hierarchy, but towers remain isolated on broad lawns with repeated forms."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/downtown_22.png",
+      "observation": "Wide window grids and road dots remain essentially unchanged; little city-scale interior-depth gain."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/industry_12.png",
+      "observation": "Service structures and warehouse materials remain coherent; stretched terrain, abrupt grades and sparse site context persist."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/industry_22.png",
+      "observation": "Matched industrial view is nearly unchanged; bright repeated equipment pools are not repaired by the building atlas."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/interchange_12.png",
+      "observation": "Broad empty parcels and repeated tower crowns dominate; no new visible geometry or noon material regression."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/interchange_22.png",
+      "observation": "Regular lamp dots and subdued window grids remain; sparse city composition unchanged."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/night_downtown_12.png",
+      "observation": "No obvious noon material or facade readability regression in the matched pair; restrained glass, blinds, retail base and geometry remain legible."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/night_downtown_22.png",
+      "observation": "Small dark lower blocks and tall slivers make some lit bays less empty; repeating flat panes and ceiling strips still dominate. Warm/cool variation and café strip survive."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/park_12.png",
+      "observation": "Stadium silhouette and foliage colour retained; flat foliage and empty surrounding lawns remain."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/park_22.png",
+      "observation": "Readable paths and skyline; pale stadium and repeated ground lights still lack evening occupancy."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/riverfront_12.png",
+      "observation": "Near glass retains material identity; planar foliage, cloudy water reflections and ramp-like opposite-bank roads remain."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/riverfront_22.png",
+      "observation": "Warm/cool near panes remain readable but flat; ruler-straight bright horizon seam persists."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/suburb_12.png",
+      "observation": "Hospital, braced water tower and house materials remain legible; repetitive garden/lot spacing persists."
+    },
+    {
+      "file": "shots/democity/r8i-night-depth-final/suburb_22.png",
+      "observation": "Matched night view remains stable; pale civic surfaces and broad yard ovals still look schematic."
+    }
+  ]
+}

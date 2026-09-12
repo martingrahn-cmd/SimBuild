@@ -12,7 +12,13 @@ import { installDebug } from './core/debug.js';
 import { MODULE_NAMES } from './core/constants.js';
 import { createSaveSystem } from './core/save.js';
 
-const bootMsg = (m) => { const el = document.getElementById('bootmsg'); if (el) el.textContent = m; };
+const bootMsg = (m, percent) => {
+  const el = document.getElementById('bootmsg'); if (el) el.textContent = m;
+  if (!Number.isFinite(percent)) return;
+  const p = Math.max(0, Math.min(100, Math.round(percent)));
+  const bar = document.getElementById('bootbar'), pct = document.getElementById('bootpct'), box = document.querySelector('#boot .progress');
+  if (bar) bar.style.width = `${p}%`; if (pct) pct.textContent = `${p}%`; if (box) box.setAttribute('aria-valuenow', String(p));
+};
 
 async function loadModuleDefs(showcase, explicit) {
   // Import in isolation: a syntax/import error in one module never blocks the others.
@@ -44,6 +50,7 @@ async function loadModuleDefs(showcase, explicit) {
 }
 
 async function boot() {
+  bootMsg('STARTING ENGINE', 4);
   const params = parseParams();
   const canvas = document.getElementById('c');
   const world = createWorld(params.seed);
@@ -51,6 +58,7 @@ async function boot() {
   world.flags.headless = params.headless;
   world.flags.weather = params.weather;
   world.flags.mode = params.mode;
+  if (params.mode === 'play' && params.money !== null) world.economy.money = params.money;
   const events = new EventBus((err, name, owner) => console.error(`[events:${name}]${owner ? ` (${owner})` : ''}`, err));
   const engine = new Engine(canvas, { quality: params.quality, headless: params.headless });
   const clock = new Clock(world, events);
@@ -69,10 +77,10 @@ async function boot() {
   };
   window.addEventListener('resize', resize); resize();
 
-  bootMsg('LOADING ASSET MANIFEST');
+  bootMsg('LOADING ASSET MANIFEST', 12);
   await assets.loadManifest();
 
-  bootMsg('LOADING MODULES');
+  bootMsg('LOADING GAME SYSTEMS', 22);
   const defs = await loadModuleDefs(params.showcase, params.modules);
   for (const d of defs) registry.register(d);
   const wanted = params.modules || selectModules(params.showcase, defs);
@@ -81,7 +89,12 @@ async function boot() {
   if (params.time !== null) clock.set(params.time);
   if (params.speed !== null) clock.setSpeed(params.speed); else if (params.time !== null) clock.setSpeed(0);
 
-  bootMsg('INITIALISING ' + wanted.join(', '));
+  let readyModules = 0;
+  events.on('module:ready', ({ module }) => {
+    readyModules++;
+    bootMsg(`PREPARING ${String(module || '').toUpperCase()}`, 30 + (readyModules / Math.max(1, wanted.length)) * 52);
+  }, 'boot-progress');
+  bootMsg('PREPARING CITY SYSTEMS', 30);
   await registry.initAll(wanted);
 
   // showcase staging
@@ -89,12 +102,13 @@ async function boot() {
   const rec = registry.get(showcaseName);
   const saveSystem = createSaveSystem(core, registry);
   sim.save = (slot) => saveSystem.save(slot); sim.load = (slot) => saveSystem.load(slot); sim.saves = saveSystem;
+  await saveSystem.ready; // Hydrate slot metadata before the initial menu renders at app:ready.
   const playMode = params.mode === 'play' && showcaseName === 'democity';
   if (playMode) {
-    bootMsg('NEW GAME');
+    bootMsg('PREPARING NEW GAME', 86);
     if (rec?.def.showcase?.cameras) for (const [k, v] of Object.entries(rec.def.showcase.cameras)) camera.registerPreset(k, v);
   } else if (rec && rec.status === 'ready' && rec.def.showcase?.setup) {
-    bootMsg('STAGING ' + showcaseName);
+    bootMsg('BUILDING ' + showcaseName.toUpperCase(), 84);
     if (rec.def.showcase.cameras) for (const [k, v] of Object.entries(rec.def.showcase.cameras)) camera.registerPreset(k, v);
     try { await rec.def.showcase.setup(rec.ctx); }
     catch (e) { rec.ctx.log.error(`showcase.setup failed: ${e?.message}`, e); events.emit('module:error', { module: showcaseName, phase: 'showcase', error: e }); }
@@ -102,13 +116,21 @@ async function boot() {
     console.error(`[main] showcase "${params.showcase}" unavailable (status: ${rec?.status || 'missing'})`);
   }
 
+  // Whole-game review aliases share the authored democity poses without replacing standard cameras.
+  if (showcaseName === 'democity') {
+    for (const [alias, name] of [['industrial', 'industry'], ['riverfront', 'waterfront']]) {
+      const preset = rec?.def.showcase?.cameras?.[name];
+      if (preset) camera.registerPreset(alias, preset);
+    }
+  }
   if (params.camera) { if (!camera.apply(params.camera)) console.warn(`[main] unknown camera preset ${params.camera}`); }
   if (params.time !== null) clock.set(params.time); // re-apply after modules may have touched it
 
-  bootMsg('LOADING ASSETS');
+  bootMsg('FINISHING ASSETS', 92);
   const settled = await assets.settle(20000);
   if (!settled) console.error('[main] asset loading timed out after 20 s; pending=' + assets.pending);
 
+  bootMsg('READY', 100);
   events.emit('app:ready', {});
   document.getElementById('boot')?.classList.add('hidden');
 

@@ -2,8 +2,8 @@
 //
 //  * leaf atlas   4x4 cells of 256 px (1024^2, RGBA, alpha DILATED so leaf edges have no black fringe)
 //  * bark strip   3 columns of 256x512 (broadleaf / conifer / birch), tiles vertically
-//  * impostor     4x4 cells of 256 px: 5 side silhouettes + 5 top-down canopies, softened so a 16 px
-//                 impostor at skyline distance does not alias into speckle
+//  * impostor     4x4 cells of 256 px: 2 deterministic side silhouettes for each of 5 classes plus
+//                 5 top-down canopies, softened so a 16 px impostor does not alias into speckle
 //  * pool/glow    additive decals
 //  * signs        4 faces
 //  * LUT + detail albedo/normal for the one shared street-furniture material
@@ -133,7 +133,7 @@ function blade(g, len, wide, col, dark, lobes) {
 }
 
 function broadCluster(g, x0, y0, S, rnd, opt) {
-  const { hue = 96, sat = 0.42, light = 0.34, n = 210, lobes = true, spread = 0.40, size = 0.09, droop = 0, twig = 1 } = opt;
+  const { hue = 96, sat = 0.42, light = 0.34, n = 210, lobes = true, spread = 0.40, size = 0.09, droop = 0, twig = 0 } = opt;
   const M = S * 0.06;                     // transparent margin inside the cell
   const R = (S - M * 2) * 0.5;
   g.save();
@@ -150,7 +150,7 @@ function broadCluster(g, x0, y0, S, rnd, opt) {
     }
   }
   for (let pass = 0; pass < 2; pass++) {
-    const count = pass === 0 ? Math.round(n * 0.55) : n;
+    const count = pass === 0 ? Math.round(n * 0.24) : Math.round(n * 0.58);
     for (let i = 0; i < count; i++) {
       const a = rnd() * TAU;
       const r = Math.pow(rnd(), 0.55) * S * spread * 0.66;   // <= 0.34 S: r + leaf stays inside the cell
@@ -185,11 +185,11 @@ function needleSpray(g, x0, y0, S, rnd, opt) {
   g.beginPath(); g.rect(x0 + 1, y0 + 1, S - 2, S - 2); g.clip();
   g.translate(x0 + S * 0.5, y0 + S * 0.5);
   for (let s = 0; s < sprays; s++) {
-    const ang = -Math.PI * 0.5 + ((s + 0.5) / sprays - 0.5) * 2.6 + (rnd() - 0.5) * 0.28;
-    const len = S * (0.20 + rnd() * 0.15);
+    const ang = rnd() * TAU;
+    const len = S * (0.14 + rnd() * 0.13);
     g.save();
     g.rotate(ang);
-    g.translate((rnd() - 0.5) * S * 0.10, (rnd() - 0.5) * S * 0.06);
+    g.translate((rnd() - 0.5) * S * 0.36, (rnd() - 0.5) * S * 0.30);
     g.strokeStyle = hsl(26, 0.32, 0.13); g.lineWidth = S * 0.011;
     g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(len * 0.12, len * 0.5, 0, len); g.stroke();
     const nn = 30;
@@ -345,7 +345,7 @@ export function makeBarkStrip(rng, cw = 256, ch = 512) {
   const c = canvas(W, H), g = c.getContext('2d');
   const img = g.createImageData(W, H);
   const specs = [
-    { fx: 7, fy: 2.4, oct: 4, furrow: 1.45, base: [0.44, 0.36, 0.28], dark: [0.10, 0.08, 0.06], plate: 0 },
+    { fx: 7, fy: 2.4, oct: 4, furrow: 1.45, base: [0.62, 0.51, 0.40], dark: [0.10, 0.08, 0.06], plate: 0 },
     { fx: 5, fy: 4.5, oct: 4, furrow: 1.05, base: [0.40, 0.27, 0.19], dark: [0.11, 0.07, 0.05], plate: 1 },
     { fx: 3, fy: 2.0, oct: 3, furrow: 0.40, base: [0.72, 0.70, 0.65], dark: [0.24, 0.23, 0.21], plate: 2 },
   ];
@@ -362,8 +362,10 @@ export function makeBarkStrip(rng, cw = 256, ch = 512) {
         let h = n;
         if (s.plate === 1) { const pl = f2(u * 2.2, v * 2.4); h = h * 0.52 + (pl > 0.52 ? 0.88 : 0.20) * 0.48; }
         if (s.plate === 2) { const band = f2(u * 0.5, v * 1.1); h = 0.66 + band * 0.24; }
-        h = h * 0.86 + f3(u * 3, v * 3) * 0.14;
-        const furrow = Math.pow(Math.max(0, h), s.furrow + 1);
+        h = h * 0.68 + f3(u * 3, v * 3) * 0.12;
+        const ridge = Math.pow(0.5 + 0.5 * Math.sin(u * Math.PI * 21 + f2(u*1.3, v*2.1) * 28 + f3(u,v)*7), 0.6);
+        h += ridge * 0.25;
+        const furrow = Math.max(0, Math.min(1, (Math.pow(Math.max(0, h), s.furrow + 1)-0.26)*2.0+0.26));
         let r = s.base[0] * (0.38 + furrow * 1.05) + s.dark[0] * (1 - furrow) * 0.9;
         let gg = s.base[1] * (0.38 + furrow * 1.05) + s.dark[1] * (1 - furrow) * 0.9;
         let b = s.base[2] * (0.38 + furrow * 1.05) + s.dark[2] * (1 - furrow) * 0.9;
@@ -394,10 +396,13 @@ function impSide(g, x0, y0, S, rnd, kind) {
   const cx = x0 + S * 0.5;
   const blob = (bx, by, r, hue, sat, light, count, lobes, sizeK, flat) => {
     for (let i = 0; i < count; i++) {
-      const a = rnd() * TAU, rr = Math.pow(rnd(), 0.52) * r;
-      const x = bx + Math.cos(a) * rr, y = by + Math.sin(a) * rr * flat;
+      const lobe=i%11, la=lobe*2.39996;
+      const lr=(0.25+0.5*((lobe*7)%11)/11)*r;
+      const a = rnd() * TAU, rr = Math.sqrt(rnd()) * r*0.38;
+      const x = bx + Math.cos(la)*lr + Math.cos(a) * rr, y = by + (Math.sin(la)*lr+Math.sin(a)*rr) * flat;
       const k = 1 - (y - (by - r * flat)) / (r * flat * 2);
-      const l = light * (0.72 + k * 0.98) * (0.86 + rnd() * 0.30);
+      const side=0.74+0.26*(1-(x-bx)/r);
+      const l = light * (0.74 + k * 0.50) * side * (0.93 + rnd() * 0.14);
       const s = r * sizeK * (0.55 + rnd() * 0.6);
       g.save(); g.translate(x, y); g.rotate(rnd() * TAU);
       blade(g, s * 1.6, s * 0.55, hsl(hue + (rnd() - 0.5) * 18, sat, Math.min(0.58, l)), hsl(hue - 10, sat, Math.max(0.05, l * 0.5)), lobes);
@@ -408,22 +413,24 @@ function impSide(g, x0, y0, S, rnd, kind) {
     g.strokeStyle = '#3a2d22'; g.lineWidth = treeH * 0.020; g.lineCap = 'round';
     g.beginPath(); g.moveTo(cx, baseY); g.lineTo(cx, baseY - treeH * 0.96); g.stroke();
     for (let tier = 0; tier < 15; tier++) {
-      const t = tier / 14;
+      const t = (tier+rnd()*0.45) / 14.5;
       const y = baseY - treeH * (0.10 + t * 0.88);
       const rad = treeH * 0.21 * Math.pow(1 - t, 0.75) + treeH * 0.012;
       for (let i = 0; i < 46; i++) {
-        const x = cx + (rnd() * 2 - 1) * rad;
-        const yy = y + (rnd() - 0.45) * treeH * 0.030;
-        const l = 0.40 * (0.60 + (0.35 + t * 0.55) * 0.95) * (0.78 + rnd() * 0.46);
+        const x = cx + Math.sin(t*21)*treeH*0.025 + (rnd() * 2 - 1) * rad;
+        const yy = y + (rnd() - 0.45) * treeH * 0.078;
+        const l = 0.33 * (0.72 + t*0.30) * (0.90 + rnd()*0.16) * (1.0-(x-cx)/treeH);
         g.strokeStyle = hsl(136 + (rnd() - 0.5) * 16, 0.30, Math.min(0.44, l));
-        g.lineWidth = treeH * 0.013;
+        g.lineWidth = treeH * 0.018;
         g.beginPath(); g.moveTo(x, yy); g.lineTo(x + (x > cx ? 1 : -1) * treeH * 0.035, yy + treeH * 0.028); g.stroke();
       }
     }
   } else if (kind === IMP_CELL.narrow) {
     g.strokeStyle = '#b8b1a3'; g.lineWidth = treeH * 0.016; g.lineCap = 'round';
     g.beginPath(); g.moveTo(cx - treeH * 0.006, baseY); g.lineTo(cx + treeH * 0.008, baseY - treeH * 0.62); g.stroke();
-    blob(cx, baseY - treeH * 0.66, treeH * 0.20, 70, 0.46, 0.40, 420, false, 0.075, 1.7);
+    blob(cx - treeH * 0.045, baseY - treeH * 0.57, treeH * 0.125, 70, 0.46, 0.34, 150, false, 0.075, 1.45);
+    blob(cx + treeH * 0.045, baseY - treeH * 0.68, treeH * 0.13, 73, 0.44, 0.43, 150, false, 0.075, 1.45);
+    blob(cx, baseY - treeH * 0.79, treeH * 0.12, 68, 0.42, 0.47, 120, false, 0.075, 1.40);
   } else if (kind === IMP_CELL.wide) {
     g.strokeStyle = '#463a2e'; g.lineWidth = treeH * 0.034; g.lineCap = 'round';
     g.beginPath(); g.moveTo(cx, baseY); g.lineTo(cx, baseY - treeH * 0.30); g.stroke();
@@ -437,7 +444,9 @@ function impSide(g, x0, y0, S, rnd, kind) {
     g.lineWidth = treeH * 0.042; g.beginPath(); g.moveTo(cx, baseY); g.lineTo(cx, baseY - treeH * 0.34); g.stroke();
     g.lineWidth = treeH * 0.022;
     for (const a of [-0.7, 0.6, -0.25, 0.35]) { g.beginPath(); g.moveTo(cx, baseY - treeH * 0.32); g.lineTo(cx + a * treeH * 0.30, baseY - treeH * 0.52); g.stroke(); }
-    blob(cx, baseY - treeH * 0.66, treeH * 0.46, 88, 0.44, 0.40, 520, true, 0.078, 0.94);
+    blob(cx - treeH * 0.16, baseY - treeH * 0.60, treeH * 0.29, 88, 0.44, 0.34, 180, true, 0.075, 0.82);
+    blob(cx + treeH * 0.16, baseY - treeH * 0.61, treeH * 0.29, 91, 0.43, 0.44, 180, true, 0.075, 0.82);
+    blob(cx, baseY - treeH * 0.78, treeH * 0.30, 86, 0.42, 0.43, 160, true, 0.075, 0.80);
   }
 }
 
@@ -474,7 +483,8 @@ export function makeImpostorAtlas(rng, size = 1024) {
   const at = (i) => [(i % IMP_GRID) * S, Math.floor(i / IMP_GRID) * S];
   for (let k = 0; k < 5; k++) { const p = at(k); impSide(g, p[0], p[1], S, R, k); }
   for (let k = 0; k < 5; k++) { const p = at(k + 5); impTop(g, p[0], p[1], S, R, k); }
-  blurCanvas(g, size, size, 2);
+  for (let k = 0; k < 5; k++) { const p = at(k + 10); impSide(g, p[0], p[1], S, R, k); }
+  blurCanvas(g, size, size, 1);
   dilateAlpha(g, size, size, 8);
   return c;
 }
@@ -625,12 +635,13 @@ export function buildTextures(rng, aniso, quality) {
   const leaf = tex(makeLeafAtlas(rng.fork('leaf'), big), { srgb: true, aniso, clamp: true });
   const impostor = tex(makeImpostorAtlas(rng.fork('imp'), big), { srgb: true, aniso, clamp: true });
   const bark = tex(makeBarkStrip(rng.fork('bark'), 256, 512), { srgb: true, aniso, clamp: false });
-  const glow = tex(makeGlowSprite(128), { srgb: false, aniso: 1, clamp: true });
+  const glow = tex(makeGlowSprite(128), { srgb: false, aniso, clamp: true });
   const signs = tex(makeSignAtlas(512), { srgb: true, aniso, clamp: true });
   const furAlbedo = tex(makeFurnitureAlbedo(rng.fork('fur'), 512), { srgb: true, aniso, clamp: false });
   const detail = tex(makeDetailNormal(rng.fork('detail'), 256), { srgb: false, aniso, clamp: false });
   furAlbedo.channel = 1;
   detail.channel = 1;
   const lut = makeSlotLUTs();
+  lut.rm.anisotropy = lut.em.anisotropy = aniso;
   return { leaf, impostor, bark, glow, signs, furAlbedo, detail, lut };
 }

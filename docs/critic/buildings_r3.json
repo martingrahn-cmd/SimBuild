@@ -1,0 +1,89 @@
+{
+  "module": "buildings",
+  "round": 3,
+  "score": 7.1,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 240,
+  "apiContractOk": true,
+  "acceptanceFailed": [
+    "3. Night windows are per-window, baked, and dark between",
+    "17. Budget"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "Reflection-frame triangle budget exceeded",
+      "detail": "Independent closeup_6p5 capture measures 2,328,812 scene triangles against the 2,000,000 cap. Main aerial captures remain below 1,400,000; no blanket aerial failure is asserted. Reduce geometry rendered in secondary/shadow passes while preserving facade relief.",
+      "evidence": "shots/buildings/r3/closeup_6p5.json"
+    },
+    {
+      "rank": 2,
+      "severity": "minor",
+      "title": "Far-window isolated contrast remains above the limit",
+      "detail": "The validated 128\u00d7128 farTower landmark, centre hit building117 at287.246m, measures0.235615% pixels differing from both horizontal neighbours by more than40, against<0.2%. This is a static pixel test, not a claim of observed animation flicker. Near-facade contrast now passes6.9208\u00d7.",
+      "evidence": "shots/buildings/r3/critic-probe/measurements.json"
+    },
+    {
+      "rank": 3,
+      "severity": "minor",
+      "title": "Facade and roof language still reads as a procedural kit",
+      "detail": "At closeup and block, the same narrow window/shadow motifs repeat through many storeys; large blank stepped roof masses and barcode-like shop signs limit realism. Macro crown/style uniqueness and the explicit bay variation checks pass. This is calibrated visual quality feedback, not an invented additional acceptance threshold.",
+      "evidence": "shots/buildings/r3/block_12.png"
+    }
+  ],
+  "strengths": [
+    "All28 prescribed images and API probes render ready with zero errors on AppleM4 Metal.",
+    "Daytime emissive exactly zero; tinted info view restores pixel-identically; all347night items are lit.",
+    "Local facade relief, terrain reseating, stable growth origin, all40catalog classes, roof crowns, lot surfaces and mutation events now work.",
+    "Determinism and serialisation preserve styles and triangle counts; visible own calls independently match reported11."
+  ],
+  "summary": "Good indie city kit with major fixes since6.2r2; secondary-pass triangles and measured far-window isolated contrast still fail. The broad visual gap to CS2 remains.",
+  "shots": [
+    "shots/buildings/r3/critic-probe/aerial_6p5.png",
+    "shots/buildings/r3/critic-probe/aerial_12.png",
+    "shots/buildings/r3/critic-probe/aerial_17p5.png",
+    "shots/buildings/r3/aerial_22.png",
+    "shots/buildings/r3/street_6p5.png",
+    "shots/buildings/r3/street_12.png",
+    "shots/buildings/r3/street_17p5.png",
+    "shots/buildings/r3/street_22.png",
+    "shots/buildings/r3/skyline_6p5.png",
+    "shots/buildings/r3/skyline_12.png",
+    "shots/buildings/r3/skyline_17p5.png",
+    "shots/buildings/r3/skyline_22.png",
+    "shots/buildings/r3/closeup_6p5.png",
+    "shots/buildings/r3/closeup_12.png",
+    "shots/buildings/r3/closeup_17p5.png",
+    "shots/buildings/r3/closeup_22.png",
+    "shots/buildings/r3/downtown_12.png",
+    "shots/buildings/r3/suburb_12.png",
+    "shots/buildings/r3/industry_12.png",
+    "shots/buildings/r3/block_12.png",
+    "shots/buildings/r3/catalog_12.png",
+    "shots/buildings/r3/night_downtown_22.png",
+    "shots/buildings/r3/block_22.png",
+    "shots/buildings/r3/suburb_6p5.png",
+    "shots/buildings/r3/crops_nightdt_22.png",
+    "shots/buildings/r3/all_12.png",
+    "shots/buildings/r3/all_22.png",
+    "shots/buildings/r3_720/block_12.png",
+    "shots/buildings/r3/critic-probe/day_exact0.png",
+    "shots/buildings/r3/critic-probe/day_exact1.png",
+    "shots/buildings/r3/critic-probe/day_lit0.png",
+    "shots/buildings/r3/critic-probe/day_lit1.png",
+    "shots/buildings/r3/critic-probe/lod0.png",
+    "shots/buildings/r3/critic-probe/lod1.png",
+    "shots/buildings/r3/critic-probe/info_off.png",
+    "shots/buildings/r3/critic-probe/info_on.png",
+    "shots/buildings/r3/critic-probe/info_restored.png",
+    "shots/buildings/r3/critic-probe/growth_1.png",
+    "shots/buildings/r3/critic-probe/growth_2.png",
+    "shots/buildings/r3/critic-probe/growth_3.png",
+    "shots/buildings/r3/critic-probe/growth_4.png",
+    "shots/buildings/r3/critic-probe/growth_5.png",
+    "shots/buildings/r3/critic-probe/nightFacade.png",
+    "shots/buildings/r3/critic-probe/farTower.png"
+  ]
+}

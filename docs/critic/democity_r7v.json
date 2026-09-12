@@ -1,0 +1,38 @@
+{
+  "module": "democity",
+  "round": "r7v",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accept-road-margin-reject-service-candidate-score-held",
+  "verified": {
+    "build": true,
+    "api": true,
+    "doubleDeserialize": true,
+    "tour": true,
+    "exactCrossSeedRestage": true,
+    "imagesInspected": 23,
+    "errors": 0
+  },
+  "serviceCandidate": {
+    "distanceBefore": 800,
+    "distanceTested": 640,
+    "accepted": false,
+    "reason": "paid facilities become monolithic beige proxies and two 240-frame controls show no repeatable timing gain"
+  },
+  "roadChange": {
+    "concreteDetailBefore": 800,
+    "concreteDetailAfter": 700,
+    "changedStreetTileDistanceM": 743,
+    "detailTriangles": 34116,
+    "lodTriangles": 16876,
+    "authoritativePavementChanged": false
+  },
+  "matrix": {
+    "shots": 16,
+    "maxDrawCalls": 530,
+    "maxTriangles": 2884298,
+    "minFps": 39.6
+  },
+  "evidence": "shots/democity/r7v-roads-services-profile; shots/democity/r7v-services-visible; shots/democity/r7v-services-640; shots/democity/r7v-roads-visible; shots/democity/r7v-roads-700; shots/democity/r7v",
+  "report": "docs/critic/democity_r7v.md"
+}

@@ -54,3 +54,25 @@ Not applied:
 - `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
   (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
   until then, since that contract now holds by documentation.
+
+## Integrator decision (local continuation, 2026-09-06)
+
+Applied wall-clock fps accounting in `src/core/engine.js`; screenshot measurement now keeps its own frame-count/window fps instead of overwriting it with engine stats. Headless capture pages suppress only `/@vite/client`, eliminating HMR-triggered reloads during a capture while keeping human tabs live.
+
+Save failure events and new-game map/budget parameters remain open; no unsupported map preset is claimed.
+
+Applied `save:failed {action,slot,error}` for storage failure and failed slot reads/parsing/validation, consumed by the HUD as an error notification. `load()` returns false on an invalid save without an unhandled rejection; structural validation precedes clock/world mutation. Verified quota failure, malformed JSON and invalid save structure at 1280×720 with isolated environment/terrain/UI while module builders were editing: `shots/integration/w2_save_probe.json` and `w2_save_failure_720.png`; three expected failure events, time preserved, zero console errors. Whole-game seam pass follows after builders finish.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Retained actual HUD-to-tools binding, wall-clock fps and save:failed error events. Applied finite nonnegative ?money= only to a new play session before module initialization, including zero; invalid/negative/infinite parameters retain the150000 default. The menu now lists the real procedural map when terrain has no preset registry, instead of advertising nonexistent riverlands/coastal/highlands; real preset registries still populate it. City naming remains UI-owned. Capacity-object service inspector adaptation is queued for wave2b against live catalog semantics.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+Applied live finite net/day finance in HUD and Statistics, meaningful service capacity/load/upkeep values with in-place periodic refresh, and fresh milestone tool locks after loading. Native canvas focus, modal/editable keyboard ownership and idle object selection now work together. Removed optimistic save-success toast: notify only after committed IndexedDB transaction. Three manual slots and autosave share IndexedDB, legacy localStorage saves migrate only after successful commit, JSON download/upload remains supported. Startup waits for slot metadata; failed transactions preserve prior saves. Successful/partial restores clear unsafe old-city undo closures; malformed envelopes preserve history. Whole-world restore remains non-atomic if an individual module deserialize fails.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Applied native transit panel dispatch/unlock, navigation-only category card fallback (fixes real New line/Edit route TypeError), public transient-notification cleanup,30-day forecast label and two daily transit statistics rows. Timed notices may be dismissed without touching journal/rewards/permanent warnings. Visual repaint timing in immediate1080p screenshots is disclosed;720p settled panels were viewed. No restyle or quality score change. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.

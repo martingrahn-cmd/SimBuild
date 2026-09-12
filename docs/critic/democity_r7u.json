@@ -1,0 +1,34 @@
+{
+  "module": "democity",
+  "round": "r7u",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accept-bounded-change-score-held",
+  "verified": {
+    "build": true,
+    "api": true,
+    "doubleDeserialize": true,
+    "tour": true,
+    "exactCrossSeedRestage": true,
+    "imagesInspected": 20,
+    "errors": 0
+  },
+  "change": {
+    "furnitureRadiusBefore": 420,
+    "furnitureRadiusAfter": 280,
+    "worldRecordsChanged": 0
+  },
+  "matrix": {
+    "shots": 16,
+    "maxDrawCalls": 530,
+    "maxTriangles": 2918778,
+    "minFps": 44.2
+  },
+  "visualAB": {
+    "maxMeanAbs255": 0.15306262860082304,
+    "maxChangedPctOver2": 0.8548900462962963,
+    "maxP99": 1
+  },
+  "evidence": "shots/democity/r7u-props-profile; shots/democity/r7u-props-280; shots/democity/r7u",
+  "report": "docs/critic/democity_r7u.md"
+}

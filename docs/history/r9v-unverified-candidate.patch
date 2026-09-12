@@ -1,0 +1,114 @@
+--- a/src/modules/tools/index.js
++++ b/src/modules/tools/index.js
+@@ -68,6 +68,7 @@
+   pushUndo(e) { return S.undo.push(e, S.clock); },
+   beginGroup(label) { S.undo.beginGroup(label); },
+   endGroup() { S.undo.endGroup(); },
++  abortGroup() { return S.undo.abortGroup(); },
+   setSelection(kind, id) { return setSelection(kind, id); },
+   clearSelection() { setSelection(null, null); },
+   pick(x, z) { return pick(x, z); },
+@@ -196,6 +197,13 @@
+     if (!inside(s.x, s.z)) continue;
+     const def = serviceDef(s.kind, S.ctx.modules);
+     res.push({ kind: 'service', id: s.id, x: s.x, z: s.z, heading: -(s.heading || 0), w: def.w, d: def.d, height: def.h, label: def.label });
++  }
++  for (const e of w.roads.edges.values()) {
++    const path = edgePath(e.id);
++    if (!path?.some(p => inside(p.x, p.z))) continue;
++    const p = w.roads.sample?.(e.id, 0.5);
++    if (!p) continue;
++    res.push({ kind: 'road', id: e.id, x: p.x, z: p.z, heading: 0, w: e.width || 16, d: 6, height: 3, width: e.width || 16, label: `${e.type} · ${Math.round(e.length)} m` });
+   }
+   for (const p of w.props.items.values()) {
+     if (!inside(p.x, p.z)) continue;
+@@ -331,16 +339,26 @@
+   }
+   if (t.kind === 'building') {
+     const b = w.buildings.items.get(t.id);
+-    const sourceLot = b?.lotId != null ? w.zones.lots?.get(b.lotId) : null;
+-    const lot = b ? { ...(sourceLot || b.lot), type: b.type, density: b.density, level: b.level, buildingId: null } : null;
+-    const x = t.x, z = t.z;
+-    w.buildings.demolish?.(t.id);
+-    S.ctx.modules.buildings?.flush?.();
++    const B = S.ctx.modules.buildings;
++    if (!b || typeof B?.serialize !== 'function' || typeof B?.restoreTransaction !== 'function') return null;
++    const before = typeof structuredClone === 'function' ? structuredClone(B.serialize()) : JSON.parse(JSON.stringify(B.serialize()));
++    if (!w.buildings.demolish?.(t.id) || w.buildings.items.has(t.id)) return null;
++    B.flush?.();
++    const after = typeof structuredClone === 'function' ? structuredClone(B.serialize()) : JSON.parse(JSON.stringify(B.serialize()));
++    const lotId = b.lotId;
+     S.spend(DEMOLISH.building, 'demolish');
+     S.pushUndo({
+       label: 'demolish:building', cost: DEMOLISH.building, key: 'demolish', fromDrag: false,
+-      undo() { if (lot) S.ctx.modules.buildings?.requestSpawn?.(lot); S.ctx.modules.buildings?.flush?.(); S.refund(DEMOLISH.building); },
+-      redo() { const nb = w.buildings.at?.(x, z); if (nb) w.buildings.demolish?.(nb.id); S.ctx.modules.buildings?.flush?.(); S.spend(DEMOLISH.building, 'demolish'); },
++      undo() {
++        if (B.restoreTransaction(before, [lotId]) === false) return false;
++        S.refund(DEMOLISH.building);
++        return true;
++      },
++      redo() {
++        if (B.restoreTransaction(after, [lotId]) === false) return false;
++        S.spend(DEMOLISH.building, 'demolish');
++        return true;
++      },
+     });
+     if (w.selection.kind === 'building' && w.selection.id === t.id) setSelection(null, null);
+     return { refund: 0, cost: DEMOLISH.building };
+--- a/src/modules/tools/undo.js
++++ b/src/modules/tools/undo.js
+@@ -37,6 +37,25 @@
+     if (this.done.length > this.limit) this.done.shift();
+     this.undone.length = 0;
+     return entry;
++  }
++
++  /** Cancel the group currently being authored and undo its successful leaves in reverse order. */
++  abortGroup() {
++    if (this._busy || this.recovery) return false;
++    const g = this.group;
++    this.group = null;
++    if (!g || !g.items.length) return true;
++    const entry = this._compound({ label: g.label, cost: g.cost, key: g.label, fromDrag: false, t: 0 }, g.items);
++    this._busy = true;
++    try {
++      if (this._call(entry, 'undo')) return true;
++      // _compoundRun compensates any completed inverse leaves before returning false. Keep the
++      // still-applied group addressable so a later explicit Undo can retry or finish recovery.
++      this.done.push(entry);
++      if (this.done.length > this.limit) this.done.shift();
++      this.undone.length = 0;
++      return false;
++    } finally { this._busy = false; }
+   }
+
+   push(entry, now = 0) {
+--- a/src/modules/tools/tools.js
++++ b/src/modules/tools/tools.js
+@@ -1139,12 +1139,19 @@
+       const ids = [];
+       let refund = 0, cost = 0;
+       S.beginGroup(`bulldoze:${list.length}`);
+-      try {
+-        for (const t of list) {
+-          const r = S.demolish(t);
+-          if (r) { ids.push(t.id); refund += r.refund || 0; cost += r.cost || 0; }
+-        }
+-      } finally { S.endGroup(); }
++      let rejected = null;
++      for (const t of list) {
++        const r = S.demolish(t);
++        if (!r) { rejected = t; break; }
++        ids.push(t.id); refund += r.refund || 0; cost += r.cost || 0;
++      }
++      if (rejected) {
++        const restored = S.abortGroup();
++        st.marquee = null; S.dirty();
++        return { ok: false, ids: [], cost: 0, refund: 0,
++          reason: restored ? 'Demolition rejected' : 'Demolition rollback requires Undo' };
++      }
++      S.endGroup();
+       st.marquee = null;
+       S.dirty();
+       return { ok: ids.length > 0, ids, cost, refund };

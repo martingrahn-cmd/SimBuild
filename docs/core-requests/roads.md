@@ -63,3 +63,39 @@ Not applied:
 - `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
   (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
   until then, since that contract now holds by documentation.
+
+## Integrator decision (local wave 2, preserving restored terrain)
+
+Added `roads.rebuild({preserveTerrain:true})`. The visual rebuild skips cut/fill and retains that mode across subsequent rebuild calls until a real road mutation or non-restoration terrain edit. A restoration event resamples the road geometry while preserving the restored heightfield. This supports exact tools undo despite props requesting another road rebuild. Normal road construction keeps its existing cut/fill behavior.
+
+## Integrator resolution — preserve network identity on load, 2026-09-06
+`Network.restore` validates and preserves serialized node/edge IDs, design heights and next-ID state, then emits one change event. Version-2 road saves request terrain-preserving rebuild; legacy data can still sample ground. This prevents vehicle routes and references from pointing at renumbered edges after loading. `shots/integration/w2_roundtrip_after.json` and its probe verify all network and related entity IDs match and terrain is byte-exact after load.
+
+## Integrator: authoritative pavement height for overlays (2026-09-06)
+
+Added `ctx.modules.roads.surfaceHeightAt(x,z) -> number|null`. It returns the highest generated asphalt, kerb or sidewalk triangle at XZ (including bridge pavement), excluding terrain, barriers, piers and paint decals. The query reflects the last road rebuild; it returns null off pavement or for invalid coordinates. A 32 m spatial index is rebuilt with geometry and cleared on disposal. Surface heights interpolate the same Float32 vertex positions that Three renders, with concrete pavement vertices explicitly tagged during emission rather than guessed from colour.
+
+The tools ghost can sit 0.15 m above `max(terrain.getHeight(x,z), surfaceHeightAt(x,z) ?? -Infinity)`. A strict 0.10–0.20 m lift above the *bare heightfield* is incompatible with existing road cut/fill: the pavement at (73,10) is 0.408883 m above terrain. Keep both measurements explicit in the tools report; do not claim the original bare-terrain bound passes on that road.
+
+Validation: `shots/integration/w2_pavement_probe.mjs/json` compares 176 pavement samples to an independent downward Three raycast, maximum difference 5.84e-13 m, zero missing hits or console errors. A preserving rebuild keeps the sample identical; off-network and invalid queries return null. No road rendering geometry or materials changed.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Retained the validated terrain.setHeights API, exact network ID/profile restoration, preserveTerrain semantics and authoritative surfaceHeightAt query. Existing straight-edge tools splits remain the workaround. Deferred a new graded node/profile authoring API and exact curved-edge split: these require a roads-owned design change and a dedicated geometry/traffic regression, not a minimal integration patch. surfaceHeightAt returns the highest paved surface and must not be substituted for lane height on overlapping bridges. Documented residual laneCenter/profile vs pavement mismatch without adjusting traffic to a different deck.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+Retained authoritative placement/frontage and exact road/terrain restoration. Deferred curved-edge splits, graded profile authoring and lane-specific surface reconciliation to roads. Highest paved surface must not be substituted for the intended deck on overlapping bridges. Service entrance validation consumes the current published road API.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Retained actual authoritative graph/lane/profile APIs and existing identity-preserving restore. Deferred graded-node/design-height authoring and curved split to roads-owned geometry/traffic regressions. Transit uses public lanes and explicitly marked interior junction connectors; highest-surface rays do not identify stacked lanes. Bridge and slope quality failures remain. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.
+
+## Integrator decision — R9s2 transaction restore (2026-09-10)
+
+Added `roads.restoreTransaction(data) -> bool` for exact Tools history restoration of graph IDs, allocator and saved design profiles. Restoration rebuilds with terrain preservation and propagates rebuild failure. `roads:rebuilt` marks the derived profile/length completion boundary. Normal road construction and non-restoration terrain sculpting retain cut/fill and design resampling. Straight split transactions pass exact two-seed undo/redo; curved-edge splitting remains unsupported and road demolition has not yet migrated to this transaction path.
+## R9u verified candidate — synchronous demolition rebuild
+
+The public `rebuild(options)` API returns the owner completion boolean. Transactional terrain replay propagates a secondary rebuild refusal, and exact demolition restore uses `restoreTransaction()` so graph IDs, allocator cursor and design profiles remain authoritative.

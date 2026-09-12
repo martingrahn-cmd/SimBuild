@@ -1,0 +1,289 @@
+{
+  "module": "democity",
+  "round": "r9c",
+  "reviewType": "independent verification-tool/source/evidence audit",
+  "decision": "ACCEPT_QUALIFIED_VERIFICATION_REPAIR",
+  "verificationAccepted": true,
+  "productDecision": "NO_CHANGE",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "source": {
+    "path": "src/modules/props/chunks.js",
+    "currentSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "startSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "endSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "independentlyHashMatched": true,
+    "route": "single constructor assignment exposing field; runtime wrappers preserve original calls/results",
+    "productEdited": false,
+    "servedResponseHashRetained": false
+  },
+  "build": {
+    "success": true,
+    "modules": 163,
+    "milliseconds": 298,
+    "criticReran": false
+  },
+  "automatic": [
+    {
+      "label": "automatic-155",
+      "sourceBuckets": 1059,
+      "sourceEntries": 2295,
+      "submittedEntries": 2331,
+      "fadeBuckets": 15,
+      "fadeDuplicatedEntries": 36,
+      "histogramMatchesOutput": true
+    },
+    {
+      "label": "automatic-193",
+      "sourceBuckets": 1145,
+      "sourceEntries": 2472,
+      "submittedEntries": 2500,
+      "fadeBuckets": 12,
+      "fadeDuplicatedEntries": 28,
+      "histogramMatchesOutput": true
+    },
+    {
+      "label": "automatic-205",
+      "sourceBuckets": 1145,
+      "sourceEntries": 2472,
+      "submittedEntries": 2517,
+      "fadeBuckets": 18,
+      "fadeDuplicatedEntries": 45,
+      "histogramMatchesOutput": true
+    },
+    {
+      "label": "automatic-217",
+      "sourceBuckets": 1176,
+      "sourceEntries": 2535,
+      "submittedEntries": 2586,
+      "fadeBuckets": 22,
+      "fadeDuplicatedEntries": 51,
+      "histogramMatchesOutput": true
+    },
+    {
+      "label": "automatic-255",
+      "sourceBuckets": 1192,
+      "sourceEntries": 2564,
+      "submittedEntries": 2591,
+      "fadeBuckets": 13,
+      "fadeDuplicatedEntries": 27,
+      "histogramMatchesOutput": true
+    }
+  ],
+  "independentChecks": {
+    "automaticRows": 5717,
+    "boundaryMismatches": 0,
+    "sampledClasses": {
+      "below48": 0,
+      "48to72": 0,
+      "72to193": 266,
+      "193to217": 80,
+      "atOrAbove217": 5371
+    },
+    "uniqueKeysAndDisjointOffsets": true,
+    "cameraMatrixInverseAndPositionChecks": true,
+    "maximumDistanceResidualM": 4.547473508864641e-13,
+    "sourceCensusIsOutputDerived": true,
+    "perInstanceFadeBufferReadback": false
+  },
+  "moving": {
+    "frames": 175,
+    "monotonic": true,
+    "startDistance": 155.0268229300618,
+    "endDistance": 255,
+    "maxQueue": 44,
+    "nonzeroQueueSamples": 75,
+    "finalQueue": 0,
+    "beforeExactHistogram": {
+      "lod0": 0,
+      "lod1": 117,
+      "impostor": 2475
+    },
+    "exactHistogram": {
+      "lod0": 0,
+      "lod1": 114,
+      "impostor": 2477
+    },
+    "cameraToLastEvaluatedM": 5.19778626064147,
+    "movementThresholdM": 6,
+    "exactSourceEntries": 2564,
+    "exactSubmittedEntries": 2591,
+    "ordinaryEventCount": 177,
+    "ordinaryCopyCallCount": 17498,
+    "allRecordedSdFinite": true,
+    "contiguousFrames": true,
+    "distanceReversals": 0,
+    "distanceResetCount": 15,
+    "all177EventHistogramsReconstructed": true,
+    "all17498CallDistanceRulesMatch": true,
+    "maxCopyProducingChunksPerEvent": 8,
+    "exactEndpointSummaryEqualsStatic255": true,
+    "exactStartSummaryEqualsStatic155": true
+  },
+  "capStress": {
+    "method": "direct field.forceLod=1 plus real field.update(...,true) after matrix synchronization",
+    "histogram": {
+      "lod0": 0,
+      "lod1": 520,
+      "impostor": 1775
+    },
+    "sourceEntries": 2295,
+    "submittedEntries": 2295,
+    "sourceBuckets": 1059,
+    "fadeBuckets": 0,
+    "membershipRows": 1059,
+    "allSingleOutput": true,
+    "exactPartition": true,
+    "postUpdateRenderedFramesBeforeScreenshot": 3,
+    "orderedGuardReplayMatches": true,
+    "publicSetLodInvoked": false,
+    "ordinaryView": false,
+    "postForceRenderedFrameGatePresent": true,
+    "notGlobalCapGuarantee": true
+  },
+  "images": {
+    "allRequestedImagesInspected": true,
+    "originals": [
+      "moving_end_auto.png",
+      "moving_end_exact.png",
+      "cap_stress_synced.png"
+    ],
+    "derived": [
+      "moving_end_diff.png",
+      "motion_contact_final.png"
+    ],
+    "originalResolution": [
+      1920,
+      1080
+    ],
+    "contactResolution": [
+      3104,
+      880
+    ],
+    "normalizedRGBMAE": 0.0005800124061970467,
+    "changedPixels": 19418,
+    "changedPixelFraction": 0.009364390432098765,
+    "hashesIndependentlyMatched": true,
+    "foliageOnlyAttribution": false,
+    "reason": "Three rendered frames separate endpoints; real-time Traffic and other rendered state are not independently frozen equivalent.",
+    "finding": "Localized crowns visibly change; no definite major scene loss, black geometry or material failure in supplied samples. No temporal-pop absence claim.",
+    "latestImagesReinspected": true,
+    "autoSha256": "af19777a2db19a2b8c1a044dfbb450e8112b9bb93b38695d2e6e36f34e2dd820",
+    "exactSha256": "a752e4565c75d9dc6f464175eca165cf62ea175b6c915ee5c798f95c427fcef7"
+  },
+  "video": {
+    "path": "shots/democity/r9c-lod1-ledger/session.webm",
+    "ffprobeDurationSeconds": 17.16,
+    "width": 1920,
+    "height": 1080,
+    "fps": 25,
+    "continuousPlaybackExhaustivelyInspected": false,
+    "contactTiles": 32,
+    "claimedSamplingSeconds": 0.2,
+    "samplingTimestampsInLedger": false,
+    "staleFfmpegLog": "older16.96-second input and failed framestep extraction"
+  },
+  "errors": {
+    "aggregate": 0,
+    "fullModuleSnapshots": 7,
+    "modulesReadyPerSnapshot": 16,
+    "moduleErrors": 0,
+    "warnings": [
+      "[props] no roads yet: road furniture deferred until roads:changed",
+      "[democity] No valid reserved university site"
+    ]
+  },
+  "performance": {
+    "recordedEndpointFpsRange": [
+      13.4,
+      52.3
+    ],
+    "rawHeapMBRange": [
+      471.4,
+      497.8
+    ],
+    "sustainedGatePass": false,
+    "forcedGCMemoryMeasured": false,
+    "causalComparison": false
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "Props",
+      "finding": "Exact endpoint threshold refresh visibly changes a few crowns; matched temporal/art continuity remains unresolved. Existing6m threshold explains numerical endpoint discrepancy; no threshold change is justified."
+    },
+    {
+      "priority": 2,
+      "owner": "verification tools",
+      "finding": "Source census is unique membership represented by _copy, not independent eligible input inventory; no per-instance iFade readback. Near-LOD boundaries absent from samples."
+    },
+    {
+      "priority": 3,
+      "owner": "verification tools",
+      "finding": "Cap numeric partition and latest three-rendered-frame screenshot gate verified. Debug mode is directly reproduced rather than public API called."
+    },
+    {
+      "priority": 4,
+      "owner": "verification tools",
+      "finding": "Final video is17.160s; retained ffmpeg.log is stale. Contact sampling is not exhaustive temporal validation. Builder moving figures were corrected and rechecked against the latest ledger."
+    }
+  ],
+  "nextPriority": {
+    "owner": "Props / verification tools",
+    "action": "Hold range/band/cap/movement threshold fixed. Isolate tier silhouette/opacity mismatch in the identified endpoint crown regions using synchronized rendering and controlled unrelated motion, then matched continuous traversal before any bounded visual owner change. Preserve the now-correct three-frame post-force render gate in future visual tests.",
+    "broaderRanking": "City fabric remains higher-ranked; foliage coherence, night quality and sustained performance/memory remain open."
+  },
+  "limitations": [
+    "Independent saved-evidence recomputation/source review; browser not rerun by critic.",
+    "No product candidate, new whole-game reference calibration, blind judging or score improvement.",
+    "Raw disk hashes do not authenticate full transformed served source; no whole-world state digest.",
+    "Output-derived source ledger cannot detect input buckets omitted before copying; submitted fade copies are not unique visible trees.",
+    "No near-LOD or exact-equality boundary test, multi-seed/species/night/weather/top-down traversal or naturally saturated ordinary camera.",
+    "Intermediate moving histograms are partial during amortized rebuild.",
+    "Stills/contact do not establish absence of brief popping; video was not exhaustively played.",
+    "Cap source partition is output-derived; latest screenshot now waits three rendered frames, but remains a forced diagnostic rather than ordinary play.",
+    "Instrumented endpoint FPS/raw heap do not establish ordinary2ms, sustained50FPS or forced-GC512MB gates.",
+    "No save/restore or long-playtest claim. Existing product quality6.0FAIL retained."
+  ],
+  "inspection": {
+    "files": [
+      "docs/builds/democity_r9c_lod1_ledger.md",
+      "tools/lod1-transition-ledger.mjs",
+      "shots/democity/r9c-lod1-ledger/ledger.json",
+      "shots/democity/r9c-lod1-ledger/analysis-summary.json",
+      "shots/democity/r9c-lod1-ledger/build.log",
+      "shots/democity/r9c-lod1-ledger/ffmpeg.log",
+      "src/modules/props/chunks.js",
+      "src/modules/props/index.js (setLod and reflection handlers)",
+      "docs/critic/democity_r9b.md",
+      "docs/critic/democity_r9b.json"
+    ],
+    "images": [
+      "shots/democity/r9c-lod1-ledger/moving_end_auto.png",
+      "shots/democity/r9c-lod1-ledger/moving_end_exact.png",
+      "shots/democity/r9c-lod1-ledger/moving_end_diff.png",
+      "shots/democity/r9c-lod1-ledger/cap_stress_synced.png",
+      "shots/democity/r9c-lod1-ledger/motion_contact_final.png"
+    ]
+  },
+  "reAudit": "latest final retained rerun; all five images re-inspected; earlier R9c measurements superseded",
+  "evidenceHashes": {
+    "ledger.json": "405ffc923999f0d15cd8aa452549ac42d593b7cd66ac01215f1dd861152e19a8",
+    "analysis-summary.json": "a169b7cddaa30fc0d303f9fbb42c77c1f90138a4b0fac98b3f87de6d014943bf",
+    "moving_end_auto.png": "af19777a2db19a2b8c1a044dfbb450e8112b9bb93b38695d2e6e36f34e2dd820",
+    "moving_end_exact.png": "a752e4565c75d9dc6f464175eca165cf62ea175b6c915ee5c798f95c427fcef7",
+    "moving_end_diff.png": "53f9a83759bf04a02f61b2466b607627e98440c38ed51d9e5d7d80acecd8206a",
+    "cap_stress_synced.png": "52cf6ec32f15204dcd500fd069b2f83252fab8645d9623b7f4655f25327b46f0",
+    "motion_contact_final.png": "5483a79b396ba123c2443056dc8f435aa8dc35bd2401aae3023f4d1b03ee2354",
+    "session.webm": "0cb64fa9e8283102fdc48bb5caca01e7d17be293b18a961103f26a8b68e3b445"
+  },
+  "builderCorrectionsVerified": [
+    "moving start155.026823 rounded",
+    "17498 copy calls",
+    "no below72m coverage claim",
+    "output-derived census",
+    "direct field forced state"
+  ]
+}

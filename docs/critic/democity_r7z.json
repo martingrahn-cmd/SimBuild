@@ -1,0 +1,36 @@
+{
+  "module": "democity",
+  "round": "r7z",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "scoreChanged": false,
+  "change": "Kind-specific low-poly silhouettes replace one-box service proxies beyond the unchanged 800 m owner boundary.",
+  "evidence": [
+    "shots/democity/r7z-services-inventory",
+    "shots/democity/r7z-services-profile",
+    "shots/democity/r7z-proxy",
+    "shots/integration/r7z-save-atomicity-regression.json"
+  ],
+  "verified": {
+    "buildModules": 163,
+    "capturesInspected": 4,
+    "errors": 0,
+    "downtownProxyTrianglesBefore": 84,
+    "downtownProxyTrianglesAfter": 900,
+    "downtownFinalTrianglesBefore": 1400447,
+    "downtownFinalTrianglesAfter": 1401463,
+    "drawCallsBefore": 430,
+    "drawCallsAfter": 430,
+    "serialFpsBefore": 52.0,
+    "serialFpsAfter": 51.3,
+    "api": true,
+    "exactCrossSeedRestage": true,
+    "saveRollback": true
+  },
+  "remaining": [
+    "Procedural service silhouettes remain coarse at close inspection.",
+    "Primitive Democity landmarks and sparse frontage remain the highest ranked visible defects.",
+    "Whole-game 50 fps, city scale, foliage, grounding and night-depth gates remain failed."
+  ]
+}

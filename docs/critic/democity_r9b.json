@@ -1,0 +1,304 @@
+{
+  "module": "democity",
+  "round": "r9b",
+  "reviewType": "independent accepted-source diagnostic audit",
+  "decision": "ACCEPT_QUALIFIED_DIAGNOSIS",
+  "productDecision": "NO_CHANGE",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "diagnosisAccepted": true,
+  "passThreshold": 8.5,
+  "source": {
+    "path": "src/modules/props/chunks.js",
+    "startSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "endSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "currentSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "allThreeIndependentlyMatch": true,
+    "hookScope": "single constructor assignment globalThis.__R9B_FIELD=this in routed Vite response",
+    "reconstructedRawHookSourceSha256": "e1dbf6df27da86d813cf8a8608fee177408d6e7baab30ec7a4fed2609c81d6ce",
+    "productEditedByCritic": false
+  },
+  "static": [
+    {
+      "orbitDistanceM": 155,
+      "lod": {
+        "lod0": 0,
+        "lod1": 204,
+        "impostor": 2127
+      },
+      "directTier1Demand": 204,
+      "transitionSource": 36,
+      "consideredSource": 2295,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 175,
+      "lod": {
+        "lod0": 0,
+        "lod1": 185,
+        "impostor": 2255
+      },
+      "directTier1Demand": 185,
+      "transitionSource": 41,
+      "consideredSource": 2399,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 185,
+      "lod": {
+        "lod0": 0,
+        "lod1": 192,
+        "impostor": 2322
+      },
+      "directTier1Demand": 192,
+      "transitionSource": 42,
+      "consideredSource": 2472,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 193,
+      "lod": {
+        "lod0": 0,
+        "lod1": 175,
+        "impostor": 2325
+      },
+      "directTier1Demand": 175,
+      "transitionSource": 28,
+      "consideredSource": 2472,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 199,
+      "lod": {
+        "lod0": 0,
+        "lod1": 175,
+        "impostor": 2331
+      },
+      "directTier1Demand": 175,
+      "transitionSource": 34,
+      "consideredSource": 2472,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 205,
+      "lod": {
+        "lod0": 0,
+        "lod1": 171,
+        "impostor": 2346
+      },
+      "directTier1Demand": 171,
+      "transitionSource": 45,
+      "consideredSource": 2472,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 211,
+      "lod": {
+        "lod0": 0,
+        "lod1": 164,
+        "impostor": 2359
+      },
+      "directTier1Demand": 164,
+      "transitionSource": 51,
+      "consideredSource": 2472,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 217,
+      "lod": {
+        "lod0": 0,
+        "lod1": 163,
+        "impostor": 2423
+      },
+      "directTier1Demand": 163,
+      "transitionSource": 51,
+      "consideredSource": 2535,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 225,
+      "lod": {
+        "lod0": 0,
+        "lod1": 154,
+        "impostor": 2429
+      },
+      "directTier1Demand": 154,
+      "transitionSource": 48,
+      "consideredSource": 2535,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 235,
+      "lod": {
+        "lod0": 0,
+        "lod1": 134,
+        "impostor": 2464
+      },
+      "directTier1Demand": 134,
+      "transitionSource": 34,
+      "consideredSource": 2564,
+      "queue": 0
+    },
+    {
+      "orbitDistanceM": 255,
+      "lod": {
+        "lod0": 0,
+        "lod1": 114,
+        "impostor": 2477
+      },
+      "directTier1Demand": 114,
+      "transitionSource": 27,
+      "consideredSource": 2564,
+      "queue": 0
+    }
+  ],
+  "recomputed": {
+    "staticCount": 11,
+    "allStaticQueuesZero": true,
+    "allStaticDirectDemandEqualsLod1": true,
+    "allStaticHistogramSumEqualsConsideredPlusTransition": true,
+    "all72RecordedModuleStatsReadyAndErrorFree": true,
+    "movingRows": 168,
+    "uniqueContiguousFrames": 168,
+    "movingFirstOrbitDistance": 155.00672707033937,
+    "movingLastOrbitDistance": 255,
+    "distanceReversals": 0,
+    "nonfiniteValues": 0,
+    "negativeCounters": 0,
+    "movingQueueNonzeroSamples": 75,
+    "movingQueueMax": 44,
+    "movingFinalQueue": 0,
+    "movingFirstLod": {
+      "lod0": 0,
+      "lod1": 204,
+      "impostor": 2127
+    },
+    "movingLastLod": {
+      "lod0": 0,
+      "lod1": 117,
+      "impostor": 2475
+    },
+    "staticEndpointLod": {
+      "lod0": 0,
+      "lod1": 114,
+      "impostor": 2477
+    },
+    "lastHistogramChangeFrame": 149,
+    "lastHistogramChangeOrbitDistance": 251.661331290379,
+    "searchCount": 60,
+    "searchTargets": [
+      "park",
+      "downtown",
+      "suburb"
+    ],
+    "searchPerTarget": 20,
+    "allSearchTopDownZeroAndQueueZero": true,
+    "maxDirectDemand": 261,
+    "maxDirectDemandView": {
+      "target": "downtown",
+      "pitch": 0.55,
+      "distance": 80
+    },
+    "maxSubmittedLod1": 266,
+    "maxSubmittedLod1View": {
+      "target": "downtown",
+      "pitch": 0.25,
+      "distance": 80
+    },
+    "allSearchResidualIdentitiesHold": true,
+    "forcedOrdinaryView": false,
+    "forcedLod": {
+      "lod0": 0,
+      "lod1": 520,
+      "impostor": 1775
+    },
+    "forcedHistogramSum": 2295,
+    "copiedPreForceConsideredSource": 2051,
+    "forcedCensusDiscrepancy": 244,
+    "errors": 0,
+    "warnings": [
+      "[props] no roads yet: road furniture deferred until roads:changed",
+      "[democity] No valid reserved university site"
+    ],
+    "buildModules": 163,
+    "buildMs": 285
+  },
+  "visualJudgment": "All six originals inspected at original1920x1080 resolution. No definite black/material failure or missing major scene content in sampled stills; crown/impostor appearance changes with orbit distance, existing coarse separated leaves and flat silhouettes persist. Forced stress shows more multi-card crowns but is not a proposed visual product change. Temporal popping not judged.",
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "props / verification tools",
+      "finding": "Temporal continuity and exact endpoint equivalence remain unverified. Moving final0/117/2475 differs from forced static0/114/2477 at orbit distance255m. Last histogram change is frame149 at251.661331m; it remains unchanged through frame168. Queue drainage is not exact current-camera convergence."
+    },
+    {
+      "priority": 2,
+      "owner": "verification tools",
+      "finding": "Forced cap histogram520+1775=2295 does not partition the copied pre-force consideredSource2051. Recompute source membership and decisions within the same forced update before quantifying demotion. The observed guard result520 is still valid as a bounded numerical observation."
+    },
+    {
+      "priority": 3,
+      "owner": "verification tools / camera",
+      "finding": "Immediate setCamera followed by forced Props update can read a view matrix from before the new lookAt rotation has been propagated. Source inspection establishes a synchronization risk, not the reproduced cause of the census discrepancy; use a post-render forced refresh and record evaluated camera/frustum state."
+    },
+    {
+      "priority": 4,
+      "owner": "props",
+      "finding": "The60 ordinary samples cover three targets, not riverfront. Direct-demand max261 and histogram max266 are different measures. No naturally saturated ordinary view or global CAP1 guarantee is demonstrated."
+    }
+  ],
+  "limitations": [
+    "Diagnosis only on unchanged accepted source; no new product candidate, full-game score, reference calibration, blind judgment or gameplay improvement.",
+    "Independent inspection/recomputation of supplied evidence; browser probe was not independently rerun by this critic.",
+    "Six stills cannot prove absence of transient popping. Camera orbit distances155\u2013255 are not distances from the camera to one tracked32m sub-bucket. No per-tree identity/fade trace or continuous video is supplied.",
+    "Moving counters are partial during amortized rebuilding; previous chunk meshes remain while counters reset. Final zero queue does not imply equivalence to forced endpoint refresh.",
+    "Raw JSON contains aggregate source-demand numbers, not per-sub-bucket records/frustum matrices, so these demand counts cannot be independently regenerated from raw spatial inputs. Their arithmetic and internal identities were checked.",
+    "CAP1 is a normal-tier selection guard, bypassed by top-down and LOD0 blend copies. Forced setLod(1),ordinaryView=false is diagnostic and not ordinary demand.",
+    "Current/start/end hash verifies chunks.js integrity only. The routed constructor hook merely exposes the field, but no served transformed-source hash or whole-world serialized before/after digest is retained.",
+    "One-seed/noon/High path and fixed-yaw search do not cover species, weather, night, top-down boundary, all ordinary cameras, save/restore or retained-memory behavior.",
+    "Reported FPS/raw heap are volatile endpoints, not a causal A/B, sustained timing, forced-GC memory or gate pass. Existing50FPS/512MB and whole-game failures remain open.",
+    "Build log was reviewed:163 modules,successful285ms Vite build; critic did not personally rerun it.",
+    "No individual PNG sidecars exist in this round; five requested-distance rows and capSelected in probe.json are the associated measurements sampled before screenshot freezing. No matched visual baseline or per-frame imagery for the moving path exists."
+  ],
+  "nextPriority": {
+    "owner": "verification tools, then Props if reproduced",
+    "action": "Synchronize camera/frustum and forced refresh; record evaluated camera plus source membership/selected tier/fade per bucket in same update. Capture continuous normal traversal and exact forced endpoint comparison; then determine whether a real visual discontinuity needs an owner fix. No further range/CAP1 change is justified yet.",
+    "broaderRanking": "City fabric, crown/impostor coherence, night readability and sustained-performance/memory issues stay open; no score or ranking closure."
+  },
+  "inspection": {
+    "allSixOriginalsInspected": true,
+    "originalResolution": [
+      1920,
+      1080
+    ],
+    "originals": [
+      "shots/democity/r9b-lod1-transition/static_175.png",
+      "shots/democity/r9b-lod1-transition/static_193.png",
+      "shots/democity/r9b-lod1-transition/static_205.png",
+      "shots/democity/r9b-lod1-transition/static_217.png",
+      "shots/democity/r9b-lod1-transition/static_235.png",
+      "shots/democity/r9b-lod1-transition/cap_stress.png"
+    ],
+    "files": [
+      "docs/builds/democity_r9b_lod1_transition.md",
+      "tools/lod1-transition-probe.mjs",
+      "shots/democity/r9b-lod1-transition/probe.json",
+      "shots/democity/r9b-lod1-transition/build.log",
+      "src/modules/props/chunks.js",
+      "src/modules/props/index.js (setLod/lodHistogram/reflection)",
+      "src/core/camera.js (apply/updateCamera/update)",
+      "src/core/debug.js (setCamera)",
+      "node_modules/three/src/core/Object3D.js (lookAt)",
+      "docs/STATUS.json (current execution/module/whole-game context)",
+      "docs/HANDOFF.md",
+      "docs/critic/democity_r9a.md",
+      "docs/critic/democity_r9a.json"
+    ]
+  },
+  "builderCorrectionsReviewed": [
+    "three targets",
+    "orbit distance versus bucket distance",
+    "no exact endpoint convergence claim",
+    "no forced2051 source partition claim"
+  ]
+}

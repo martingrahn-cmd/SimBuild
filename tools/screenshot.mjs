@@ -25,7 +25,12 @@ if (args.modules) q.set('modules', args.modules);
 const url = `${base}/?${q.toString()}`;
 
 const t0 = Date.now();
-const executablePath = process.env.SIM_CHROME || ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome', '/opt/pw-browsers/chromium/chrome-linux/chrome'].find((p) => fs.existsSync(p));
+const executablePath = process.env.SIM_CHROME || [
+  '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+  '/opt/pw-browsers/chromium/chrome-linux/chrome',
+  chromium.executablePath(),
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+].find((p) => fs.existsSync(p));
 // GL backend: software by default (this CI box has no GPU). On a real GPU (e.g. Apple Silicon) set
 // SIM_GL=metal (or =gl / =d3d11) to measure true fps; headless Chromium needs the new headless mode for that.
 const GL = process.env.SIM_GL || 'swiftshader';
@@ -45,41 +50,90 @@ const browser = await chromium.launch({
 });
 const context = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 const page = await context.newPage();
+// Each capture owns a stable page: live-reload traffic can otherwise replace the scene between
+// measurement and capture when another builder saves. Human browser tabs retain normal Vite HMR.
+await page.route('**/@vite/client', route => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }));
 const consoleErrors = [], consoleWarnings = [], pageErrors = [];
 page.on('response', (r) => { if (r.status() >= 400) consoleErrors.push(`HTTP ${r.status()} ${r.url()}`); });
 page.on('console', (m) => {
   const t = m.type();
   if (t === 'error') { if (!/Failed to load resource/.test(m.text())) consoleErrors.push(m.text().slice(0, 1500)); }
-  else if (t === 'warning') consoleWarnings.push(m.text().slice(0, 500));
+  else if (t === 'warning') {
+    const warning = m.text().slice(0, 500);
+    consoleWarnings.push(warning);
+    // Chromium reports dropped WebGL draw calls as warnings; they are still rendering failures.
+    if (/\b(?:GL_)?(?:INVALID_OPERATION|INVALID_VALUE|INVALID_ENUM|INVALID_FRAMEBUFFER_OPERATION|OUT_OF_MEMORY|CONTEXT_LOST_WEBGL)\b/.test(warning)) consoleErrors.push(warning);
+  }
 });
 page.on('pageerror', (e) => pageErrors.push(String(e?.stack || e).slice(0, 1500)));
 page.on('requestfailed', (r) => consoleWarnings.push(`requestfailed: ${r.url()} ${r.failure()?.errorText || ''}`));
 
-let result = { url, showcase, time, camera, seed, width: W, height: H, quality, gpu: GL, ok: false };
+let result = { url, showcase, time, camera, seed, width: W, height: H, quality, gpu: GL,
+  browserVersion: browser.version(), browserExecutable: executablePath || 'playwright-default', ok: false };
 try {
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout });
   await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
-  // settle: let LOD/shadows update
-  await page.waitForTimeout(400);
+  // Let the asynchronous LOD queue and environment's app-ready material/shadow sweep finish in rendered
+  // frames, not wall-clock milliseconds.  The latter varied with Metal frame timing and produced different
+  // first-pass draw/triangle counts for otherwise identical frozen scenes.
+  const settle = async () => page.evaluate(async () => {
+    const s = window.__sim;
+    const first = s.engine.stats.frames;
+    let lastFrame = first;
+    let lastProgressAt = performance.now();
+    while (s.engine.stats.frames < first + 36) {
+      // A lost WebGL/render loop used to leave gauntlet captures blocked forever because
+      // requestAnimationFrame never resolved. The timer keeps the watchdog observable.
+      await Promise.race([
+        new Promise(requestAnimationFrame),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]);
+      const now = performance.now();
+      if (s.engine.stats.frames !== lastFrame) {
+        lastFrame = s.engine.stats.frames;
+        lastProgressAt = now;
+      } else if (now - lastProgressAt > 15000) {
+        throw new Error(`render settle stalled at frame ${lastFrame}`);
+      }
+    }
+    return s.engine.stats.frames - first;
+  });
+  let settledFrames = await settle();
   // A concurrent save makes Vite full-reload the page; re-wait once so we never capture the boot overlay.
   const stillReady = async () => page.evaluate(() => window.__sim?.ready === true && !!document.getElementById('boot')?.classList.contains('hidden')).catch(() => false);
   if (!(await stillReady())) {
     await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
-    await page.waitForTimeout(600);
+    settledFrames += await settle();
   }
   // fps measurement: count frames over `measure` seconds
   const perf = await page.evaluate(async (secs) => {
     const s = window.__sim;
     const f0 = s.engine.stats.frames; const t0 = performance.now();
-    // software GL can take >1 s per frame: wait for the window OR at least 3 frames (max 12 s)
+    let sampledFrames = 0, lastFrame = f0, maxDrawCalls = 0, maxTriangles = 0;
+    // Sample every rendered frame. Water's planar reflection is intentionally refreshed every eighth frame;
+    // reporting only the final frame made otherwise identical captures alternate between ordinary and
+    // reflection-pass costs.
     while (true) {
-      await new Promise((r) => setTimeout(r, 100));
+      // Keep the wall-clock exit reachable even if the render loop stalls.
+      await Promise.race([
+        new Promise(requestAnimationFrame),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]);
+      const current = s.engine.stats.frames;
+      if (current !== lastFrame) {
+        const st = s.stats();
+        maxDrawCalls = Math.max(maxDrawCalls, st.drawCalls || 0);
+        maxTriangles = Math.max(maxTriangles, st.triangles || 0);
+        sampledFrames += current - lastFrame;
+        lastFrame = current;
+      }
       const el = performance.now() - t0, fr = s.engine.stats.frames - f0;
       if ((el >= secs * 1000 && fr >= 3) || el > 12000) break;
     }
     const frames = s.engine.stats.frames - f0; const ms = performance.now() - t0;
     const st = s.stats();
-    return { fps: +(frames / (ms / 1000)).toFixed(1), measuredFrames: frames, ...st };
+    return { ...st, fps: +(frames / (ms / 1000)).toFixed(1), measuredFrames: frames,
+      sampledFrames, maxDrawCalls, maxTriangles };
   }, measure);
   const gl = await page.evaluate(() => {
     const gl = window.__sim.engine.renderer.getContext();
@@ -88,7 +142,7 @@ try {
   });
   if (!(await stillReady())) {
     await page.waitForFunction(() => window.__sim && window.__sim.ready === true, null, { timeout, polling: 100 });
-    await page.waitForTimeout(600);
+    settledFrames += await settle();
   }
   // Freeze the render loop so the compositor can hand over the finished frame; a busy main thread makes
   // page.screenshot time out on heavy scenes even though the canvas already holds the image.
@@ -106,12 +160,14 @@ try {
   const simErrors = await page.evaluate(() => window.__sim.errors.slice());
   const simWarnings = await page.evaluate(() => window.__sim.warnings.slice());
   result = {
-    ...result, ok: true, gpuRenderer: gl, elapsedMs: Date.now() - t0,
-    fps: perf.fps, measuredFrames: perf.measuredFrames, frameMs: perf.frameMs, drawCalls: perf.drawCalls, triangles: perf.triangles,
+    ...result, ok: simErrors.length === 0 && errors.length === 0, gpuRenderer: gl, elapsedMs: Date.now() - t0,
+    fps: perf.fps, measuredFrames: perf.measuredFrames, sampledFrames: perf.sampledFrames, frameMs: perf.frameMs,
+    drawCalls: perf.maxDrawCalls || perf.drawCalls, triangles: perf.maxTriangles || perf.triangles,
+    lastDrawCalls: perf.drawCalls, lastTriangles: perf.triangles,
     programs: perf.programs, textures: perf.textures, geometries: perf.geometries, heapMB: perf.heapMB, moduleMs: perf.moduleMs,
     hour: perf.hour, cameraState: perf.camera, modules: perf.modules,
     errors: [...new Set([...simErrors, ...errors])], warnings: [...new Set([...simWarnings, ...consoleWarnings])].slice(0, 50),
-    png: out,
+    png: out, settledFrames,
   };
 } catch (e) {
   result.error = String(e?.message || e);

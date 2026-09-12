@@ -8,6 +8,7 @@
 // selection:changed. Everything it changes in another module's world section goes through that
 // section's published API; every charge goes through ctx.modules.simulation.spend / .earn.
 // It creates no DOM: every readout is 3D geometry in ctx.group on LAYERS.HELPERS.
+import { LAYERS } from '../../core/constants.js';
 import { Gizmos, GIZMO_COLORS as GC } from './gizmos.js';
 import { Chips, ICON } from './chips.js';
 import { UndoStack, UNDO_CAPACITY } from './undo.js';
@@ -15,6 +16,8 @@ import { roadTool, zoneTool, terrainTool, serviceTool, propTool, bulldozeTool, f
 import { DEMOLISH, RULES, roadPerMetre, ROAD_MULT, TERRAIN_COST_PER_M3, ZONE_COST, PROP_COST, serviceDef, money } from './costs.js';
 import { ZONE_PREVIEW_ALPHA } from './zonecolors.js';
 import { stage, CAMERAS, POSES, DESCRIPTION } from './showcase.js';
+import { propBounds, propVictim } from './footprints.js';
+import { washCrop, ribbonLandmark } from './landmarks.js';
 
 export const ACCEPTED = ['road', 'zone', 'terrain', 'prop', 'bulldoze', 'service', 'transit', 'infoview'];
 
@@ -32,9 +35,9 @@ const DEFAULTS = {
 const S = {
   ctx: null, giz: null, chips: null, undo: null, tools: null,
   toolName: null, tool: null, options: {},
-  cursor: null, mods: { shift: false, alt: false, ctrl: false },
+  cursor: null, failure: null, _cameraHadHelpers: false, mods: { shift: false, alt: false, ctrl: false },
   poses: [], poseSpec: null,
-  landmark: { ribbon: null, wash: null },
+  landmark: { ribbon: null, wash: null, path: null, width: 0 },
   clock: 0, previewAt: -1, previewDirty: false, _emitting: false,
   _dirty: true, _bound: null, _visible: true, _ms: 0, _freeBuild: false,
   lastEmit: { tool: undefined, options: '' },
@@ -79,10 +82,8 @@ const S = {
 };
 
 // ------------------------------------------------------------------------------- terrain snapshots
-// Reading world.terrain.heights to snapshot is sanctioned (spec §7). Writing it back is legal on the
-// undo path only, because modify()'s radial 1-r²(3-2r) falloff cannot restore recorded heights to
-// 1e-3 m; roads already sets that precedent (roads/build.js:645-661). It goes away the day the
-// setHeights core request lands (docs/core-requests/tools.md).
+// Read snapshots through the published height field; restore through terrain.setHeights so all
+// derived data and road geometry are refreshed without applying cut/fill again.
 
 function snapshotHeightRect(cx, cz, r) {
   const t = S.ctx.world.terrain;
@@ -100,25 +101,20 @@ function snapshotHeightRect(cx, cz, r) {
 }
 
 function snapshotHeights(points) {
-  if (!points || !points.length) return null;
-  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
-  for (const p of points) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); }
-  const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
-  const r = Math.max(x1 - x0, z1 - z0) / 2 + 40;
-  return snapshotHeightRect(cx, cz, r);
+  if (!points?.length) return null;
+  // Road rebuilds cut/fill the entire network, so capture the full height field rather than only
+  // the new segment. A 513² Float32 snapshot is ~1 MiB; retained only with the bounded undo entry.
+  return snapshotHeightRect(0, 0, S.ctx.world.size);
 }
 
 function restoreHeightRect(snap) {
   const t = S.ctx.world.terrain;
   if (!snap || !t.heights) return false;
-  for (let iz = 0; iz < snap.h; iz++) {
-    t.heights.set(snap.data.subarray(iz * snap.w, (iz + 1) * snap.w), (snap.iz0 + iz) * snap.res + snap.ix0);
-  }
-  const cx = (snap.ix0 + snap.w / 2) * snap.cell - snap.half;
-  const cz = (snap.iz0 + snap.h / 2) * snap.cell - snap.half;
-  const r = Math.hypot(snap.w, snap.h) * 0.5 * snap.cell + snap.cell * 2;
-  t.modify({ x: cx, z: cz, radius: r, strength: 0, mode: 'raise' });   // bump version + emit terrain:changed
-  return true;
+  if (typeof t.setHeights !== 'function') return false;
+  const result = t.setHeights(snap.ix0, snap.iz0, snap.ix0 + snap.w - 1, snap.iz0 + snap.h - 1, snap.data, { restore: true });
+  const roads = S.ctx.modules.roads;
+  const rebuilt = typeof roads?.rebuild === 'function' ? roads.rebuild({ preserveTerrain: true }) : true;
+  return result !== false && rebuilt !== false;
 }
 
 // ------------------------------------------------------------------------------------- selection
@@ -162,11 +158,11 @@ function pick(x, z) {
   }
   for (const s of w.services.items.values()) {
     const def = serviceDef(s.kind, S.ctx.modules);
-    const c = Math.cos(-(s.heading || 0)), si = Math.sin(-(s.heading || 0));
+    const c = Math.cos(s.heading || 0), si = Math.sin(s.heading || 0);
     const dx = x - s.x, dz = z - s.z;
     const u = dx * c - dz * si, v = dx * si + dz * c;
     if (Math.abs(u) <= def.w / 2 && Math.abs(v) <= def.d / 2) {
-      return { kind: 'service', id: s.id, x: s.x, z: s.z, heading: s.heading || 0, w: def.w, d: def.d, height: def.h, label: def.label };
+      return { kind: 'service', id: s.id, x: s.x, z: s.z, heading: -(s.heading || 0), w: def.w, d: def.d, height: def.h, label: def.label };
     }
   }
   if (w.props.items.size && w.props.items.size < 40000) {
@@ -175,7 +171,7 @@ function pick(x, z) {
       const d = Math.hypot(p.x - x, p.z - z);
       if (d < bd) { bd = d; best = p; }
     }
-    if (best) return { kind: 'prop', id: best.id, x: best.x, z: best.z, heading: best.heading || 0, w: 2.2, d: 2.2, height: /tree/.test(best.kind) ? 9 : 3.4, label: String(best.kind).replace(/_/g, ' ') };
+    if (best) return propVictim(best, S.ctx.modules);
   }
   const ne = w.roads.nearestEdge?.(x, z, 40);
   if (ne && ne.edge && ne.dist <= (ne.edge.width || 16) / 2 + 2) {
@@ -199,11 +195,11 @@ function pickArea(x0, z0, x1, z1) {
   for (const s of w.services.items.values()) {
     if (!inside(s.x, s.z)) continue;
     const def = serviceDef(s.kind, S.ctx.modules);
-    res.push({ kind: 'service', id: s.id, x: s.x, z: s.z, heading: s.heading || 0, w: def.w, d: def.d, height: def.h, label: def.label });
+    res.push({ kind: 'service', id: s.id, x: s.x, z: s.z, heading: -(s.heading || 0), w: def.w, d: def.d, height: def.h, label: def.label });
   }
   for (const p of w.props.items.values()) {
     if (!inside(p.x, p.z)) continue;
-    res.push({ kind: 'prop', id: p.id, x: p.x, z: p.z, heading: p.heading || 0, w: 2.2, d: 2.2, height: 6, label: String(p.kind) });
+    res.push(propVictim(p, S.ctx.modules));
     if (res.length > 180) break;
   }
   return res.slice(0, 200);
@@ -233,28 +229,113 @@ function demolish(t) {
     if (!e) return null;
     const a = w.roads.nodes.get(e.a), b = w.roads.nodes.get(e.b);
     if (!a || !b) return null;
-    const desc = { ax: a.x, az: a.z, bx: b.x, bz: b.z, type: e.type, lanes: e.lanes, oneWay: e.oneWay, ctrl: e.ctrl ? { ...e.ctrl } : null };
+    const clone = (value) => typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+    const roadsApi = S.ctx.modules.roads, zoningApi = S.ctx.modules.zoning, buildingsApi = S.ctx.modules.buildings;
+    try {
+      if (zoningApi?.settleForHistory?.() === false) return null;
+    } catch (error) {
+      S.ctx.log.warn(`road demolition settlement rejected: ${error?.message || error}`);
+      return null;
+    }
+    const roadsBefore = clone(roadsApi?.serialize?.());
+    const zoningBefore = clone(zoningApi?.serialize?.());
+    const buildingsBefore = clone(buildingsApi?.serialize?.());
+    const heightsBefore = S.snapshotHeights([{ x: a.x, z: a.z }, { x: b.x, z: b.z }]);
+    if (!roadsBefore || !zoningBefore || !buildingsBefore || !heightsBefore ||
+        typeof roadsApi?.restoreTransaction !== 'function' || typeof roadsApi?.rebuild !== 'function' ||
+        typeof buildingsApi?.restoreTransaction !== 'function') return null;
     const refund = refundOf(t);
     w.roads.removeEdge(t.id);
+    if (roadsApi.rebuild() === false) {
+      // The graph changed, but the owner could not complete its derived geometry. Restore the
+      // exact graph/profile/allocator, terrain and dependent owner snapshots before exposing a
+      // failed demolition. The temporary roads:changed event has already dirtied Zoning even
+      // though no successful action will exist to settle it later.
+      const repaired = roadsApi.restoreTransaction(roadsBefore) !== false &&
+        S.restoreHeights(heightsBefore) !== false &&
+        zoningApi.deserialize(zoningBefore) !== false &&
+        buildingsApi.deserialize(buildingsBefore) !== false &&
+        S.ctx.modules.simulation?.reconcileWorld?.() !== false;
+      if (!repaired) S.ctx.log.error('road demolition commit compensation failed');
+      return null;
+    }
+    const roadsAfter = clone(roadsApi.serialize());
+    const heightsAfter = S.snapshotHeights([{ x: a.x, z: a.z }, { x: b.x, z: b.z }]);
     S.refund(refund);
-    let cur = t.id;
+    const changedLotIds = (target, current) => {
+      const left = new Map((target?.lots || []).map(row => [row.key, row.id]));
+      const right = new Map((current?.lots || []).map(row => [row.key, row.id]));
+      const ids = new Set();
+      for (const key of new Set([...left.keys(), ...right.keys()])) {
+        if (left.get(key) === right.get(key)) continue;
+        if (Number.isInteger(left.get(key))) ids.add(left.get(key));
+        if (Number.isInteger(right.get(key))) ids.add(right.get(key));
+      }
+      return [...ids];
+    };
+    const rollbackOwners = (snap) => {
+      if (!roadsApi.restoreTransaction(snap.roads)) return false;
+      if (!S.restoreHeights(snap.heights)) return false;
+      if (zoningApi.deserialize(snap.zoning) === false) return false;
+      if (buildingsApi.deserialize(snap.buildings) === false) return false;
+      return S.ctx.modules.simulation?.reconcileWorld?.() !== false;
+    };
+    const restoreOwners = ({ roads, terrain, zoning = null, buildings = null }) => {
+      try {
+        if (zoningApi.settleForHistory?.() === false) return false;
+      } catch (error) {
+        S.ctx.log.warn(`road demolition history settlement rejected: ${error?.message || error}`);
+        return false;
+      }
+      const rollback = {
+        roads: clone(roadsApi.serialize()), heights: S.snapshotHeights([{ x: a.x, z: a.z }, { x: b.x, z: b.z }]),
+        zoning: clone(zoningApi.serialize()), buildings: clone(buildingsApi.serialize()),
+      };
+      try {
+        if (!roadsApi.restoreTransaction(roads)) throw new Error('roads rejected demolition restore');
+        if (!S.restoreHeights(terrain)) throw new Error('terrain rejected demolition restore');
+        if (zoning) {
+          const affected = new Set(changedLotIds(zoning, rollback.zoning));
+          const currentByKey = new Map((rollback.zoning.lots || []).map(row => [row.key, row]));
+          const targetZoning = clone(zoning);
+          for (const row of targetZoning.lots || []) {
+            const current = currentByKey.get(row.key);
+            if (current?.id === row.id && !affected.has(row.id)) row.buildingId = current.buildingId;
+          }
+          if (zoningApi.deserialize(targetZoning) === false) throw new Error('zoning rejected demolition restore');
+          if (buildingsApi.restoreTransaction(buildings, [...affected]) === false) throw new Error('buildings rejected demolition restore');
+          if (S.ctx.modules.simulation?.reconcileWorld?.() === false) throw new Error('simulation rejected demolition reconcile');
+        }
+        return true;
+      } catch (error) {
+        if (!rollbackOwners(rollback)) S.ctx.log.error('road demolition history compensation failed', error);
+        else S.ctx.log.warn(`road demolition history change rejected and compensated: ${error?.message || error}`);
+        return false;
+      }
+    };
     S.pushUndo({
       label: `demolish:road`, cost: -refund, key: 'demolish', fromDrag: false,
       undo() {
-        const na = w.roads.addNode(desc.ax, desc.az), nb = w.roads.addNode(desc.bx, desc.bz);
-        cur = w.roads.addEdge(na, nb, desc.type, { lanes: desc.lanes, oneWay: desc.oneWay, ctrl: desc.ctrl });
+        if (!restoreOwners({ roads: roadsBefore, terrain: heightsBefore, zoning: zoningBefore, buildings: buildingsBefore })) return false;
         S.spend(refund, 'undo demolish');
+        return true;
       },
-      redo() { w.roads.removeEdge(cur); S.refund(refund); },
+      redo() {
+        if (!restoreOwners({ roads: roadsAfter, terrain: heightsAfter })) return false;
+        S.refund(refund);
+        return true;
+      },
     });
     if (w.selection.kind === 'road' && w.selection.id === t.id) setSelection(null, null);
     return { refund, cost: 0 };
   }
   if (t.kind === 'building') {
     const b = w.buildings.items.get(t.id);
-    const lot = b?.lot || (b?.lotId != null ? w.zones.lots?.get(b.lotId) : null);
+    const sourceLot = b?.lotId != null ? w.zones.lots?.get(b.lotId) : null;
+    const lot = b ? { ...(sourceLot || b.lot), type: b.type, density: b.density, level: b.level, buildingId: null } : null;
     const x = t.x, z = t.z;
     w.buildings.demolish?.(t.id);
+    S.ctx.modules.buildings?.flush?.();
     S.spend(DEMOLISH.building, 'demolish');
     S.pushUndo({
       label: 'demolish:building', cost: DEMOLISH.building, key: 'demolish', fromDrag: false,
@@ -264,18 +345,54 @@ function demolish(t) {
     if (w.selection.kind === 'building' && w.selection.id === t.id) setSelection(null, null);
     return { refund: 0, cost: DEMOLISH.building };
   }
+  if (t.kind === 'prop') {
+    const P = S.ctx.modules.props, item = w.props.items.get(t.id);
+    if (!item || typeof P?.remove !== 'function' || typeof P?.place !== 'function') return null;
+    const saved = { ...item }, refund = refundOf(t);
+    if (!P.remove(t.id)) return null;
+    S.refund(refund);
+    let currentId = t.id;
+    S.pushUndo({ label: 'demolish:prop', cost: -refund, key: 'demolish', fromDrag: false,
+      undo() { currentId = P.place(saved.kind, saved.x, saved.z, saved); S.spend(refund, 'undo demolish'); },
+      redo() { P.remove(currentId); S.refund(refund); },
+    });
+    if (w.selection.kind === 'prop' && w.selection.id === t.id) setSelection(null, null);
+    return { refund, cost: 0 };
+  }
   if (t.kind === 'service') {
     const s = w.services.items.get(t.id);
     if (!s) return null;
     const kind = s.kind, x = s.x, z = s.z, heading = s.heading || 0;
-    const refund = refundOf(t);
-    w.services.remove?.(t.id);
+    const refund = refundOf(t), cost = serviceDef(kind, S.ctx.modules).cost;
+    if (w.services.remove?.(t.id) === false || w.services.items.has(t.id)) return null;
     S.refund(refund);
     let cur = t.id;
     S.pushUndo({
       label: 'demolish:service', cost: -refund, key: 'demolish', fromDrag: false,
-      undo() { cur = w.services.place?.(kind, x, z, heading); S.spend(refund, 'undo'); },
-      redo() { w.services.remove?.(cur); S.refund(refund); },
+      undo() {
+        if (!S.afford(refund)) return false;
+        // Recreating charges full price in the owner. Credit only its non-refunded portion first,
+        // so restoring a demolition costs exactly the refund, even when that is the entire balance.
+        const credit = Math.max(0, cost - refund);
+        S.refund(credit);
+        let next;
+        try { next = w.services.restore({ id: cur, kind, x, z, heading }); }
+        catch (error) {
+          if (!S._freeBuild) S.ctx.modules.simulation?.spend?.(credit, true);
+          throw error;
+        }
+        if (!Number.isInteger(next) || next < 1 || !w.services.items.has(next)) {
+          if (!S._freeBuild) S.ctx.modules.simulation?.spend?.(credit, true);
+          return false;
+        }
+        cur = next;
+        return true;
+      },
+      redo() {
+        if (!w.services.items.has(cur) || w.services.remove(cur) === false) return false;
+        S.refund(refund);
+        return true;
+      },
     });
     if (w.selection.kind === 'service' && w.selection.id === t.id) setSelection(null, null);
     return { refund, cost: 0 };
@@ -298,22 +415,33 @@ function edgePath(id) {
 
 // --------------------------------------------------------------------------------- tool selection
 
-function sameOptions(a, b) {
-  if (a === b) return true;
-  if (!a || !b) return false;
-  const ka = Object.keys(a), kb = Object.keys(b);
-  if (ka.length !== kb.length) return false;
-  for (const k of ka) {
-    const va = a[k], vb = b[k];
-    if (Array.isArray(va) && Array.isArray(vb)) { if (va.length !== vb.length || va.some((v, i) => v !== vb[i])) return false; }
-    else if (va !== vb) return false;
-  }
-  return true;
+function normalizeOptions(name, options = {}) {
+  const o = { ...DEFAULTS[name], ...options };
+  const choice = (key, values) => { if (!values.includes(o[key])) o[key] = DEFAULTS[name][key]; };
+  const range = (key, min, max, step = 1) => { const n = Number(o[key]); o[key] = Number.isFinite(n) ? Math.max(min, Math.min(max, Math.round(n / step) * step)) : DEFAULTS[name][key]; };
+  if (name === 'road') {
+    choice('type', ['street','avenue','highway','alley','gravel']); choice('mode', ['straight','curve','free','grid']);
+    choice('junction', ['crossing','lights','roundabout']); range('elevation', -20, 60, 5);
+    o.oneWay = !!o.oneWay; o.snap = ['snap','parallel','magnet'].filter(v => Array.isArray(o.snap) && o.snap.includes(v));
+  } else if (name === 'zone') {
+    choice('type', S.ctx.world.zones.types); choice('density', S.ctx.world.zones.densities); choice('brush', ['fill','paint','marquee']); range('size', 8, 96, 8);
+  } else if (name === 'terrain') {
+    choice('mode', ['raise','lower','flatten','smooth']); range('size', 10, 200, 10); range('strength', 10, 100);
+  } else if (name === 'prop') {
+    choice('kind', S.ctx.world.props.kinds); choice('mode', ['single','line','brush']); range('spacing', 2, 40);
+  } else if (name === 'service') choice('kind', S.ctx.world.services.kinds);
+  else if (name === 'bulldoze') choice('mode', ['single','marquee']);
+  return o;
+}
+function optionKey(value) {
+  if (Array.isArray(value)) return '[' + value.map(optionKey).join(',') + ']';
+  if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + optionKey(value[k])).join(',') + '}';
+  return JSON.stringify(value);
 }
 
 function emitChanged() {
   // de-duplicated: identical tool + deep-equal options emits nothing (spec §2)
-  const key = JSON.stringify(S.options);
+  const key = optionKey(S.options);
   if (S.lastEmit.tool === S.toolName && S.lastEmit.options === key) return;
   S.lastEmit.tool = S.toolName;
   S.lastEmit.options = key;
@@ -326,7 +454,7 @@ function emitChanged() {
 function selectTool_(name, opts) {
   if (name === null || name === undefined) {
     if (S.tool) { try { S.tool.deactivate(); } catch (e) { /* isolated */ } }
-    S.toolName = null; S.tool = null; S.options = {};
+    S.toolName = null; S.tool = null; S.options = {}; S.cursor = null; S.failure = null;
     S.giz.hideAll(); S.chips.reset();
     S.dirty();
     emitChanged();
@@ -337,11 +465,14 @@ function selectTool_(name, opts) {
     S.ctx.log.warn(`select("${key}") — not one of ${ACCEPTED.join('/')}`);
     return null;
   }
+  const nextOptions = normalizeOptions(key, opts);
+  if (S.toolName === key && optionKey(S.options) === optionKey(nextOptions)) return api.current();
   const prev = S.toolName;
   if (prev !== key && S.tool) { try { S.tool.deactivate(); } catch (e) { /* isolated */ } }
   S.toolName = key;
   S.tool = S.tools[key];
-  S.options = { ...(DEFAULTS[key] || {}), ...(opts || {}) };
+  S.options = nextOptions;
+  S.failure = null;
   try { S.tool.activate(S.options); } catch (e) { S.ctx.log.error(`${key}.activate failed`, e); }
   S.dirty();
   emitChanged();
@@ -365,9 +496,9 @@ function drawSelection() {
   }
   let x = data.x ?? 0, z = data.z ?? 0, wd = 12, dp = 12, h = 8, heading = data.heading || 0, label = sel.kind;
   if (sel.kind === 'building') { wd = data.footprint?.w || 16; dp = data.footprint?.d || 16; h = data.height || 12; label = `${data.type} · level ${data.level || 1}`; }
-  else if (sel.kind === 'service') { const d = serviceDef(data.kind, S.ctx.modules); wd = d.w; dp = d.d; h = d.h; label = d.label; }
+  else if (sel.kind === 'service') { const d = serviceDef(data.kind, S.ctx.modules); wd = d.w; dp = d.d; h = d.h; label = d.label; heading = -heading; }
   else if (sel.kind === 'node') { wd = dp = 14; h = 3; label = 'Intersection'; }
-  else if (sel.kind === 'prop') { wd = dp = 2.6; h = 6; label = String(data.kind).replace(/_/g, ' '); }
+  else if (sel.kind === 'prop') { const b = propBounds(data, S.ctx.modules); x = b.x; z = b.z; wd = b.w; dp = b.d; h = b.height; heading = b.heading; label = String(data.kind).replace(/_/g, ' '); }
   g.selectionOutline(x, z, wd, dp, heading);
   S.chips.add(x, w.terrain.getHeight(x, z) + h + 1, z, ICON.info, label, '', 0, -20, '', 1);
 }
@@ -380,7 +511,7 @@ function rebuild() {
   S.giz.beginDiscs();
   S.giz.clearGhost();
   S.giz.clearGhostAlt();
-  S.landmark.ribbon = null; S.landmark.wash = null;
+  S.landmark.ribbon = null; S.landmark.wash = null; S.landmark.path = null;
   if (S._visible) {
     try {
       if (S.poses.length) { for (const p of S.poses) S.tools[p.tool]?.draw(p); }
@@ -416,46 +547,82 @@ function groundAt(clientX, clientY) {
 function bindInput(ctx) {
   const el = ctx.renderer.domElement;
   const guard = (fn) => { try { return fn(); } catch (e) { ctx.log.error(`${S.toolName} input failed: ${e?.message || e}`, e); return undefined; } };
-  let down = false, moved = 0;
+  let down = false, moved = 0, lastDab = -1, pressButton = -1, pressPointer = null, pressX = 0, pressY = 0;
+  const resetGesture = () => { down = false; moved = 0; pressButton = -1; pressPointer = null; };
+  const clearPointer = () => { S.cursor = null; guard(() => S.tool?.pointer(null)); S.dirty(); };
+  const onInterrupted = (e) => { if (e.type === 'blur' || e.pointerId === pressPointer) { resetGesture(); clearPointer(); } };
 
   const onMove = (e) => {
-    const p = groundAt(e.clientX, e.clientY);
-    if (!p) return;
+    if (ctx.modules.ui?.hud?.menus?.isOpen?.()) { resetGesture(); clearPointer(); return; }
+    if (down && e.pointerId !== pressPointer) return;
     moved += Math.abs(e.movementX || 0) + Math.abs(e.movementY || 0);
+    const p = groundAt(e.clientX, e.clientY);
+    if (!p) { clearPointer(); return; }
     guard(() => api.pointer(p.x, p.z));
+    if (!S._restoring && !S.undo.recovery && down && pressButton === 0 && moved > 2 && S.clock - lastDab >= 0.05 && S.tool?.drag) {
+      guard(() => S.tool.drag()); lastDab = S.clock;
+    }
   };
   const onDown = (e) => {
+    if (down || ctx.modules.ui?.hud?.menus?.isOpen?.()) return;
     if (e.button === 1 || (e.button === 0 && e.shiftKey)) return;   // camera owns MMB / shift-LMB
     const p = groundAt(e.clientX, e.clientY);
     if (!p) return;
-    down = true; moved = 0;
+    down = true; moved = 0; pressButton = e.button; pressPointer = e.pointerId; pressX = e.clientX; pressY = e.clientY;
     guard(() => api.pointer(p.x, p.z));
-    if (e.button === 0) { guard(() => api.click(0)); e.preventDefault(); }
+    if (e.button === 0) {
+      // A world click transfers keyboard ownership from the previously focused HUD control.
+      // tabindex=-1 permits programmatic focus without adding a new tab stop.
+      if (!el.hasAttribute('tabindex')) el.tabIndex = -1;
+      if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) el.setAttribute('aria-label', 'City view');
+      el.focus({ preventScroll: true });
+      guard(() => {
+        if (S.tool) return api.click(0);
+        const hit = pick(p.x, p.z);
+        setSelection(hit?.kind ?? null, hit?.id ?? null);
+      });
+      e.preventDefault();
+    }
   };
   const onUp = (e) => {
-    if (e.button === 2 && moved < 6) guard(() => api.rightClick());
-    down = false;
+    if (!down || e.pointerId !== pressPointer || e.button !== pressButton) return;
+    const travelled = Math.abs(e.clientX - pressX) + Math.abs(e.clientY - pressY);
+    if (pressButton === 2 && e.target === el && moved < 6 && travelled < 6 && !ctx.modules.ui?.hud?.menus?.isOpen?.()) guard(() => api.rightClick());
+    resetGesture();
   };
-  const onLeave = () => { S.cursor = null; S.dirty(); };
+  const onLeave = () => { resetGesture(); clearPointer(); };
   const onKey = (e) => {
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('input,textarea,select')) return;
+    const target = e.target && typeof e.target.closest === 'function' ? e.target : null;
+    if (e.defaultPrevented || target?.closest('input,textarea,select') || target?.isContentEditable || ctx.modules.ui?.hud?.menus?.isOpen?.()) return;
+    if (e.code === 'Enter' && target?.closest('button,[role="button"]')) return;
     S.mods.shift = e.shiftKey; S.mods.alt = e.altKey; S.mods.ctrl = e.ctrlKey || e.metaKey;
     if (e.ctrlKey || e.metaKey) {
       if (e.code === 'KeyZ' && !e.shiftKey) { api.undo(); e.preventDefault(); return; }
       if (e.code === 'KeyY' || (e.code === 'KeyZ' && e.shiftKey)) { api.redo(); e.preventDefault(); return; }
       return;
     }
-    if (e.code === 'Escape') { api.cancel(); api.select(null); api.clearSelection(); return; }
-    if (e.code === 'Enter') { api.commit(); return; }
-    const map = { Digit1: 'road', Digit2: 'zone', Digit3: 'terrain', Digit4: 'prop', Digit5: 'service', Digit6: 'bulldoze', KeyB: 'bulldoze' };
-    if (map[e.code]) api.select(map[e.code]);
-    else if (e.code === 'Digit0') api.select(null);
+    if (e.code === 'Escape') {
+      // Let the HUD own Escape while already in the neutral inspect state so it can open
+      // the pause/save menu. A first Escape from an active tool still exits cleanly without
+      // also opening the menu on the same key press.
+      if (!S.toolName) return;
+      api.cancel(); api.select(null); api.clearSelection();
+      e.preventDefault(); e.stopImmediatePropagation();
+      return;
+    }
+    if (e.altKey) return;
+    if (e.code === 'Enter') { api.commit(); e.preventDefault(); return; }
+    // Numeric keys belong to the HUD's simulation speed controls; the toolbar selects tools.
+    if (e.code === 'KeyB') api.select('bulldoze');
   };
   const onKeyUp = (e) => { S.mods.shift = e.shiftKey; S.mods.alt = e.altKey; S.mods.ctrl = e.ctrlKey || e.metaKey; };
 
   el.addEventListener('pointermove', onMove);
   el.addEventListener('pointerdown', onDown);
   window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onInterrupted);
+  el.addEventListener('lostpointercapture', onInterrupted);
+  window.addEventListener('blur', onInterrupted);
   el.addEventListener('pointerleave', onLeave);
   window.addEventListener('keydown', onKey);
   window.addEventListener('keyup', onKeyUp);
@@ -463,6 +630,9 @@ function bindInput(ctx) {
     el.removeEventListener('pointermove', onMove);
     el.removeEventListener('pointerdown', onDown);
     window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('pointercancel', onInterrupted);
+    el.removeEventListener('lostpointercapture', onInterrupted);
+    window.removeEventListener('blur', onInterrupted);
     el.removeEventListener('pointerleave', onLeave);
     window.removeEventListener('keydown', onKey);
     window.removeEventListener('keyup', onKeyUp);
@@ -483,8 +653,10 @@ const api = {
   select(name, options) { return selectTool_(name, options); },
   setOption(id, value) {
     if (!S.tool || !id) return { ...S.options };
-    S.options[id] = value;
-    if (DEFAULTS[S.toolName]) DEFAULTS[S.toolName][id] = value;
+    const next = normalizeOptions(S.toolName, { ...S.options, [id]: value });
+    if (optionKey(next) === optionKey(S.options)) return { ...S.options };
+    S.options = next; S.failure = null;
+    if (S.cursor) S.tool.pointer(S.cursor);
     S.dirty();
     emitChanged();
     return { ...S.options };
@@ -494,6 +666,8 @@ const api = {
 
   // ---- virtual cursor
   pointer(x, z) {
+    if (!Number.isFinite(x) || !Number.isFinite(z)) return api.state();
+    S.failure = null;
     const y = S.ctx.world.terrain.getHeight(x, z);
     S.cursor = { x, y, z };
     try { S.tool?.pointer(S.cursor); } catch (e) { S.ctx.log.error(`${S.toolName}.pointer failed`, e); }
@@ -507,29 +681,47 @@ const api = {
     return api.pointer(p.x, p.z);
   },
   click(button = 0, ...rest) {
+    if (S._restoring) return {ok:false,cost:0,reason:'City is loading'};
+    if (S.undo.recovery) return {ok:false,cost:0,reason:'Retry Undo to recover the previous action'};
     if (!S.tool) return { ok: false, cost: 0, reason: 'No tool' };
     try {
       const r = S.tool.click(button, ...rest) || { ok: false, cost: 0 };
+      S.failure = r.ok ? null : (r.reason || null);
+      if (r.ok && ['service', 'prop'].includes(S.toolName)) api.cancel();
       S.dirty();
       return { ok: !!r.ok, id: r.id, cost: Math.max(0, Math.round(r.cost || 0)), reason: r.reason ?? undefined };
     } catch (e) { S.ctx.log.error(`${S.toolName}.click failed`, e); return { ok: false, cost: 0, reason: 'error' }; }
   },
   rightClick() {
+    if (S._restoring) return {ok:false,reason:'City is loading'};
+    if (S.undo.recovery) return {ok:false,reason:'Retry Undo to recover the previous action'};
     if (!S.tool) return { ok: false, reason: 'No tool' };
     try { const r = S.tool.rightClick() || { ok: false }; S.dirty(); return { ok: !!r.ok, reason: r.reason ?? undefined }; }
     catch (e) { S.ctx.log.error(`${S.toolName}.rightClick failed`, e); return { ok: false, reason: 'error' }; }
   },
   commit() {
+    if (S._restoring) return {ok:false,ids:[],cost:0,reason:'City is loading'};
+    if (S.undo.recovery) return {ok:false,ids:[],cost:0,reason:'Retry Undo to recover the previous action'};
     if (!S.tool) return null;
     try {
       const r = S.tool.commit() || { ok: false, ids: [], cost: 0 };
+      S.failure = r.ok ? null : (r.reason || null);
+      if (r.ok) api.cancel();
       S.dirty();
       return { ok: !!r.ok, ids: r.ids || [], cost: Math.max(0, Math.round(r.cost || 0)), reason: r.reason ?? undefined };
     } catch (e) { S.ctx.log.error(`${S.toolName}.commit failed`, e); return { ok: false, ids: [], cost: 0, reason: 'error' }; }
   },
-  cancel() { try { S.tool?.cancel(); } catch (e) { /* isolated */ } S.dirty(); },
+  cancel() { S.cursor = null; S.failure = null; try { S.tool?.cancel(); S.tool?.pointer(null); } catch (e) { /* isolated */ } S.dirty(); },
 
   state() {
+    if (!S.tool && S.poses.length) {
+      const d = S.poses[0], ev = S.tools.road.evalDraft(d), T = S.ctx.world.terrain;
+      return { ...EMPTY_STATE(), tool: d.tool, options: { type: d.type, mode: d.mode, elevation: d.elevation, oneWay: d.oneWay }, phase: 'drawing',
+        points: ev.points.map(p => ({ x:p.x, y:T.getHeight(p.x,p.z), z:p.z })), cursor: { ...d.cursor, y:T.getHeight(d.cursor.x,d.cursor.z) },
+        valid:ev.ok, reason:ev.reason, cost:ev.cost, affordable:S.afford(ev.cost),
+        snap: d.cursor.kind ? { ...d.cursor } : null,
+        metrics: { length:+ev.length.toFixed(2), angle:+ev.angle.toFixed(1), grade:+(ev.grade*100).toFixed(2), cells:0, volume:0, items:ev.segs.length } };
+    }
     if (!S.tool) return { ...EMPTY_STATE(), cursor: S.cursor ? { ...S.cursor } : null };
     let s;
     try { s = S.tool.state(); } catch (e) { S.ctx.log.error(`${S.toolName}.state failed`, e); s = null; }
@@ -538,11 +730,11 @@ const api = {
     return {
       tool: S.toolName,
       options: { ...S.options },
-      phase: s?.phase || 'idle',
+      phase: S.cursor ? (s?.phase || 'idle') : 'idle',
       points: s?.points || [],
       cursor: S.cursor ? { x: S.cursor.x, y: S.cursor.y, z: S.cursor.z } : null,
-      valid: !!s?.valid,
-      reason: s?.reason ?? null,
+      valid: !!s?.valid && !S.failure,
+      reason: S.failure || s?.reason || null,
       cost,
       refund: Math.max(0, Math.round(s?.refund || 0)),
       affordable: S.afford(cost),
@@ -552,8 +744,8 @@ const api = {
   },
 
   // ---- history
-  undo() { const e = S.undo.undo(); if (e) { S.dirty(); S.ctx.events.emit('tool:undo', { label: e.label }); } return !!e; },
-  redo() { const e = S.undo.redo(); if (e) { S.dirty(); S.ctx.events.emit('tool:redo', { label: e.label }); } return !!e; },
+  undo() { if (S._restoring) return false; const e = S.undo.undo(); if (e) { S.dirty(); S.ctx.events.emit('tool:undo', { label: e.label }); } return !!e; },
+  redo() { if (S._restoring) return false; const e = S.undo.redo(); if (e) { S.dirty(); S.ctx.events.emit('tool:redo', { label: e.label }); } return !!e; },
   history() { return S.undo.report(); },
 
   /** Integer ¢, never NaN/Infinity, with or without simulation. */
@@ -562,17 +754,7 @@ const api = {
     try {
       if (tool === 'road') {
         const pts = geometry.points || geometry.path || [];
-        if (pts.length < 2) return 0;
-        let c = 0;
-        for (let i = 1; i < pts.length; i++) {
-          const sub = sampleCurve(pts[i - 1], pts[i], null);
-          let len = 0;
-          for (let k = 1; k < sub.length; k++) len += Math.hypot(sub[k].x - sub[k - 1].x, sub[k].z - sub[k - 1].z);
-          let seg = roadPerMetre(options.type || 'street', options.oneWay) * len;
-          if (Math.abs(options.elevation || 0) > 1) seg *= ROAD_MULT.elevated;
-          c += seg;
-        }
-        return fin(c);
+        return fin(S.tools.road.evalDraft({ ...options, points: pts, cursor: null, ctrl: geometry.ctrl || options.ctrl }).cost);
       }
       if (tool === 'zone') return fin((geometry.cells || 0) * (ZONE_COST[options.density || 'low'] ?? ZONE_COST.low));
       if (tool === 'terrain') {
@@ -611,6 +793,9 @@ const api = {
       ms: +S._ms.toFixed(3),
       ghostLiftMin: Number.isFinite(L.min) ? L.min : 0,
       ghostLiftMax: Number.isFinite(L.max) ? L.max : 0,
+      ghostSurfaceLiftMin: Number.isFinite(L.surfaceMin) ? L.surfaceMin : 0,
+      ghostSurfaceLiftMax: Number.isFinite(L.surfaceMax) ? L.surfaceMax : 0,
+      ghostSurfaceSource: typeof S.ctx.modules.roads?.surfaceHeightAt === 'function' ? 'terrain+pavement' : 'terrain',
       zonePreviewAlpha: ZONE_PREVIEW_ALPHA,
       undoCapacity: UNDO_CAPACITY,
     };
@@ -619,20 +804,20 @@ const api = {
   /**
    * Named landmark rects (ARCHITECTURE §8): a 64×64 box inside the ghost ribbon, the same box one
    * ribbon-width to the side of it on plain ground, and a 32×32 box on the affected-area wash.
-   * The boxes shrink if the ribbon is narrower than 64 px on screen, so every sample stays *inside*
+   * The boxes scale with viewport height and shrink if the ribbon is narrower, so every sample stays *inside*
    * the thing it claims to measure.
    */
   cropRects({ project, width, height }) {
     const out = {};
     const T = S.ctx.world.terrain;
-    const rb = S.landmark.ribbon;
+    const rb = ribbonLandmark(S);
     const fits = (r) => r && r[0] >= 0 && r[1] >= 0 && r[0] + r[2] <= width && r[1] + r[3] <= height;
     if (rb) {
       const c = project(rb.x, T.getHeight(rb.x, rb.z) + RULES.ghostLift, rb.z);
       const e = project(rb.x + rb.nx * rb.width * 0.5, T.getHeight(rb.x + rb.nx * rb.width * 0.5, rb.z + rb.nz * rb.width * 0.5) + RULES.ghostLift, rb.z + rb.nz * rb.width * 0.5);
       if (c && e && c[2] <= 1 && e[2] <= 1) {
         const halfPx = Math.hypot(e[0] - c[0], e[1] - c[1]);
-        const size = Math.max(8, Math.min(64, Math.round(halfPx * 1.1)));
+        const size = Math.max(8, Math.min(Math.round(64 * height / 1080), Math.round(halfPx * 1.1)));
         const h = size >> 1;
         const r1 = [Math.round(c[0]) - h, Math.round(c[1]) - h, size, size];
         if (fits(r1)) out.ribbon = r1;
@@ -651,14 +836,8 @@ const api = {
         if (bestG) out.ground = bestG;
       }
     }
-    const wsh = S.landmark.wash;
-    if (wsh) {
-      const p = project(wsh.x, T.getHeight(wsh.x, wsh.z) + 0.19, wsh.z);
-      if (p && p[2] <= 1) {
-        const r = [Math.round(p[0]) - 16, Math.round(p[1]) - 16, 32, 32];
-        if (fits(r)) out.wash = r;
-      }
-    }
+    const wash = washCrop(S, project, width, height);
+    if (wash) out.wash = wash;
     return out;
   },
 
@@ -698,16 +877,27 @@ export default {
 
   async init(ctx) {
     S.ctx = ctx;
+    S._cameraHadHelpers = ctx.camera.camera.layers.isEnabled(LAYERS.HELPERS);
+    ctx.camera.camera.layers.enable(LAYERS.HELPERS);
     S.giz = new Gizmos(ctx);
     S.chips = new Chips(ctx);
     ctx.group.add(S.chips.mesh);
-    S.undo = new UndoStack(ctx.log);
+    S.undo = new UndoStack(ctx.log, UNDO_CAPACITY, S.afford);
+    S._restoring = 0;
+    ctx.events.on('save:restoring', () => {
+      S._restoring++;
+      api.cancel(); api.select(null); api.clearSelection();
+      // Abandon the old world's closures and recovery journal without replaying compensation
+      // against incoming IDs. Ordinary UndoStack.clear() still refuses pending recovery.
+      S.undo = new UndoStack(ctx.log, UNDO_CAPACITY, S.afford);
+    }, 'tools');
+    ctx.events.on('save:restore-finished', () => { S._restoring = Math.max(0, S._restoring - 1); }, 'tools');
     S.tools = {
       road: roadTool(S), zone: zoneTool(S), terrain: terrainTool(S), service: serviceTool(S),
       prop: propTool(S), bulldoze: bulldozeTool(S),
       transit: forwardTool(S, 'transit'), infoview: forwardTool(S, 'infoview'),
     };
-    S.toolName = null; S.tool = null; S.options = {};
+    S.toolName = null; S.tool = null; S.options = {}; S.cursor = null; S.failure = null;
     S.poses = []; S.poseSpec = null; S._visible = true; S._freeBuild = false;
     S.clock = 0; S.previewAt = -1;
     S.lastEmit.tool = undefined; S.lastEmit.options = '';
@@ -730,6 +920,8 @@ export default {
     }, 'tools');
     ctx.events.on('terrain:changed', () => S.dirty(), 'tools');
     ctx.events.on('buildings:changed', () => S.dirty(), 'tools');
+    ctx.events.on('props:changed', () => S.dirty(), 'tools');
+    ctx.events.on('services:changed', () => S.dirty(), 'tools');
 
     if (!ctx.headless) bindInput(ctx);
     ctx.log.info(`ready — ${ACCEPTED.length} tools, budget ${this.budget.drawCalls} draws / ${this.budget.triangles} tris`);
@@ -749,6 +941,7 @@ export default {
   dispose(ctx) {
     S._bound?.(); S._bound = null;
     ctx.events.offOwner?.('tools');
+    if (!S._cameraHadHelpers) ctx.camera.camera.layers.disable(LAYERS.HELPERS);
     S.chips?.dispose();
     S.giz?.dispose();
     S.undo?.clear();

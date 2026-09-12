@@ -1,0 +1,22 @@
+{
+  "module": "transit",
+  "round": 5,
+  "score": 6.8,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 229,
+  "maxTriangles": 1927692,
+  "minFps": 58.8,
+  "apiContractOk": true,
+  "auditScope": "Local W5 evidence review after a real scheduled docked-stop change; not a claim of independent or human review.",
+  "issues": [
+    {"rank": 1, "severity": "major", "title": "Bus art remains one tier below the target", "detail": "Slab side panels, block-like wheels and simple door treatment retain a game-prop appearance.", "evidence": "shots/transit/r5/bus_12.png"},
+    {"rank": 2, "severity": "major", "title": "Docked night-stop remains visually unpolished", "detail": "The real bus now dwells with open doors but the composition and sparse surroundings do not sell a boarding moment.", "evidence": "shots/transit/r5/night_stop_22_final.png"},
+    {"rank": 3, "severity": "major", "title": "Shadow acceptance remains unproven", "detail": "W5 preserves the W4 budget-safe shadow configuration and does not establish full shadow coverage.", "evidence": "shots/transit/r4i/apicheck.json"},
+    {"rank": 4, "severity": "minor", "title": "Fixture remains sparse", "detail": "Routes are legible, but empty green blocks and foliage dominate city context.", "evidence": "shots/transit/r5/line_12.png"},
+    {"rank": 5, "severity": "minor", "title": "Tram remains absent", "detail": "No rail, articulated vehicle, catenary or platforms are present.", "evidence": "shots/transit/r5/lines_12.png"}
+  ],
+  "strengths": ["16 standard and 10 directed captures are ready with zero errors.", "The docked bus is a real, route-table scheduled vehicle.", "All public API/save/control probes pass."],
+  "summary": "6.8 FAIL. W5 repairs the evidence gap for a docked night stop but does not meet the visual standard for a higher score.",
+  "shots": ["shots/transit/r5/summary.json", "shots/transit/r5/night_stop_22_final.png", "shots/transit/r5/bus_12.png", "shots/transit/r5/lines_12_720p.png", "shots/transit/r5/apicheck.json"]
+}

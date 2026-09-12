@@ -1,0 +1,30 @@
+{
+  "round": "r7x",
+  "scope": "successful whole-city load continuity for Transit and Simulation",
+  "decision": "accept",
+  "scoreChanges": {
+    "transit": 0,
+    "democity": 0
+  },
+  "checks": {
+    "sameStateTransitExact": true,
+    "sameStateSimulationExact": true,
+    "sameStateGameplayExact": true,
+    "changedStateTransitExact": true,
+    "changedStateSimulationExact": true,
+    "changedStateGameplayExact": true,
+    "nextDayExact": true,
+    "allocatorExact": true,
+    "atomicRollbackRegression": true,
+    "buildModules": 163,
+    "errors": 0
+  },
+  "evidence": [
+    "shots/integration/r7x-transit-load-continuity.json",
+    "shots/integration/r7x-save-atomicity-regression.json"
+  ],
+  "remaining": [
+    "Transit vehicle art, incomplete shadow coverage, sparse inspection context, and tram remain open.",
+    "Subjective ordinary-play pacing remains unverified."
+  ]
+}

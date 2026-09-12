@@ -23,7 +23,7 @@ export class Engine {
     this.composer = null;
     this._before = []; this._after = [];
     this.stats = { fps: 0, frameMs: 0, drawCalls: 0, triangles: 0, programs: 0, textures: 0, geometries: 0, frames: 0, updateMs: 0, moduleMs: {} };
-    this._fpsAcc = 0; this._fpsFrames = 0;
+    this._fpsAt = performance.now(); this._fpsFrames = 0;
     this.width = 1; this.height = 1;
     this._resizeHandlers = [];
   }
@@ -64,8 +64,9 @@ export class Engine {
     s.frameMs = ms; s.drawCalls = info.render.calls; s.triangles = info.render.triangles;
     s.programs = info.programs?.length || 0; s.textures = info.memory.textures; s.geometries = info.memory.geometries;
     s.frames++;
-    this._fpsAcc += dt; this._fpsFrames++;
-    if (this._fpsAcc >= 0.5) { s.fps = this._fpsFrames / this._fpsAcc; this._fpsAcc = 0; this._fpsFrames = 0; }
+    this._fpsFrames++;
+    const elapsed = performance.now() - this._fpsAt;
+    if (elapsed >= 500) { s.fps = this._fpsFrames * 1000 / elapsed; this._fpsAt = performance.now(); this._fpsFrames = 0; }
     info.autoReset = true;
   }
 }

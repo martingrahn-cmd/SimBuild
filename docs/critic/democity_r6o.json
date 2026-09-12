@@ -1,0 +1,9 @@
+{
+  "module": "democity", "round": "6o", "review": "local-critical", "score": 6.0, "pass": false,
+  "basis": {"shadowProfile": "shots/democity/r6n-buildings-shadow-distance/street-planar.json", "aerialProfile": "shots/democity/r6n-buildings-shadow-distance/aerial-planar.json", "candidateProfile": "shots/democity/r6o-candidate-building-shadow400/mainpass-profile.json", "matrix": "shots/democity/rr6o-candidate-building-shadow400/summary.json", "api": "shots/democity/r6o-candidate-building-shadow400/apicheck.json", "restage": "shots/democity/r6o-candidate-building-shadow400/restage-cycle.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 532, "maxTriangles": 3006462, "minFps": 44.9},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true},
+  "change": {"owner": "buildings", "scope": "chunk shadow submission", "horizontalShadowDistanceM": 400, "tileSizeM": 128, "visibleGeometryChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept horizontal building shadow distance and hold score; test the owner-natural 384 m three-tile boundary separately"
+}

@@ -1,0 +1,30 @@
+{
+  "module": "democity",
+  "round": "r8c",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "scoreChanged": false,
+  "change": "The same Southbank hospital landmark gains camera-facing facade rhythm, entrance identity and rooftop articulation.",
+  "verified": {
+    "buildModules": 163,
+    "matrixCapturesInspected": 16,
+    "errors": 0,
+    "maxDrawCalls": 473,
+    "maxTriangles": 2260248,
+    "minFps": 44.9,
+    "landmarks": 13,
+    "landmarkDrawsBefore": 8,
+    "landmarkDrawsAfter": 8,
+    "landmarkTrianglesBefore": 4076,
+    "landmarkTrianglesAfter": 4724,
+    "hospitalCropMaeNormalized": 0.0386243,
+    "api": true,
+    "exactCrossSeedRestage": true
+  },
+  "remaining": [
+    "The adjacent water tower and port landmark assets remain visibly primitive.",
+    "The hospital remains procedural rather than production asset quality.",
+    "Scale,50fps, broad frontage, foliage, grounding and subjective play gates remain failed."
+  ]
+}

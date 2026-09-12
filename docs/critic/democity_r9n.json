@@ -1,0 +1,7264 @@
+{
+  "round": "r9n",
+  "module": "democity",
+  "decision": "ACCEPT",
+  "decisionScope": "Qualified read-only screen; advance only1,0:v to disposable actual-owner staging, not product adoption",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "pass": false,
+  "threshold": 8.5,
+  "screenPass": true,
+  "productChange": false,
+  "verification": {
+    "seeds": [
+      {
+        "seed": 1337,
+        "reportedGridNodes": 268,
+        "reportedCandidateCount": 281,
+        "screened": 100,
+        "valid": 89,
+        "proxySafeBeforeValidity": 20,
+        "proxySafeAndValid": 19,
+        "before": {
+          "nodes": 468,
+          "edges": 604,
+          "lots": 612,
+          "buildings": 612,
+          "cells": 9964
+        },
+        "after": {
+          "nodes": 468,
+          "edges": 604,
+          "lots": 612,
+          "buildings": 612,
+          "cells": 9964
+        },
+        "snapKinds": {
+          "node/node": 39,
+          "edge/node": 6,
+          "edge/edge": 53,
+          "node/edge": 2
+        },
+        "snapMovedEndpoints": 0,
+        "edgeSnapDifferentFromPrefilter": 0,
+        "edgeEdgePairs": 53,
+        "reasonCounts": {
+          "valid": 89,
+          "Grade 13 % > 12 %": 2,
+          "Grade 16 % > 12 %": 1,
+          "Grade 17 % > 12 %": 2,
+          "Grade 15 % > 12 %": 2,
+          "Grade 12 % > 12 %": 1,
+          "Grade 20 % > 12 %": 1,
+          "Grade 14 % > 12 %": 2
+        },
+        "selected": {
+          "key": "1,0:v",
+          "a": {
+            "x": 80,
+            "z": 40
+          },
+          "b": {
+            "x": 80,
+            "z": 120
+          },
+          "length": 80,
+          "boundaryEdges": [
+            613,
+            656
+          ],
+          "boundaryDistances": [
+            0,
+            0
+          ],
+          "unclaimedBand": 21,
+          "paintedBand": 21,
+          "claimedCore": 0,
+          "claimedEndpoint": 3,
+          "waterSamples": 0,
+          "maxSlope": 0.18359257447522753,
+          "rank": 78,
+          "firstSnap": {
+            "kind": "edge",
+            "id": 613,
+            "x": 80,
+            "z": 40
+          },
+          "firstClick": {
+            "ok": true,
+            "cost": 0
+          },
+          "secondSnap": {
+            "kind": "edge",
+            "id": 656,
+            "x": 80,
+            "z": 120
+          },
+          "draft": {
+            "valid": true,
+            "reason": null,
+            "cost": 96,
+            "points": [
+              {
+                "x": 80,
+                "y": 17.071456909179688,
+                "z": 40
+              },
+              {
+                "x": 80,
+                "y": 19.316421508789062,
+                "z": 120
+              }
+            ],
+            "metrics": {
+              "length": 80,
+              "angle": 90,
+              "grade": 2.81,
+              "cells": 0,
+              "volume": 0,
+              "items": 1
+            },
+            "snap": {
+              "kind": "edge",
+              "id": 656,
+              "x": 80,
+              "z": 120
+            }
+          }
+        },
+        "selectedRankIndex": 12
+      },
+      {
+        "seed": 7,
+        "reportedGridNodes": 280,
+        "reportedCandidateCount": 318,
+        "screened": 100,
+        "valid": 82,
+        "proxySafeBeforeValidity": 28,
+        "proxySafeAndValid": 17,
+        "before": {
+          "nodes": 493,
+          "edges": 646,
+          "lots": 648,
+          "buildings": 648,
+          "cells": 10113
+        },
+        "after": {
+          "nodes": 493,
+          "edges": 646,
+          "lots": 648,
+          "buildings": 648,
+          "cells": 10113
+        },
+        "snapKinds": {
+          "node/node": 42,
+          "edge/node": 8,
+          "edge/edge": 48,
+          "node/edge": 2
+        },
+        "snapMovedEndpoints": 0,
+        "edgeSnapDifferentFromPrefilter": 0,
+        "edgeEdgePairs": 48,
+        "reasonCounts": {
+          "Grade 13 % > 12 %": 5,
+          "valid": 82,
+          "Grade 12 % > 12 %": 5,
+          "Grade 30 % > 12 %": 1,
+          "Grade 15 % > 12 %": 3,
+          "Grade 17 % > 12 %": 2,
+          "Grade 25 % > 12 %": 1,
+          "Grade 16 % > 12 %": 1
+        },
+        "selected": {
+          "key": "1,0:v",
+          "a": {
+            "x": 80,
+            "z": 40
+          },
+          "b": {
+            "x": 80,
+            "z": 120
+          },
+          "length": 80,
+          "boundaryEdges": [
+            661,
+            707
+          ],
+          "boundaryDistances": [
+            0,
+            0
+          ],
+          "unclaimedBand": 17,
+          "paintedBand": 17,
+          "claimedCore": 0,
+          "claimedEndpoint": 3,
+          "waterSamples": 0,
+          "maxSlope": 0.37673243905709003,
+          "rank": 62,
+          "firstSnap": {
+            "kind": "edge",
+            "id": 661,
+            "x": 80,
+            "z": 40
+          },
+          "firstClick": {
+            "ok": true,
+            "cost": 0
+          },
+          "secondSnap": {
+            "kind": "edge",
+            "id": 707,
+            "x": 80,
+            "z": 120
+          },
+          "draft": {
+            "valid": true,
+            "reason": null,
+            "cost": 96,
+            "points": [
+              {
+                "x": 80,
+                "y": 16.169572830200195,
+                "z": 40
+              },
+              {
+                "x": 80,
+                "y": 19.23406982421875,
+                "z": 120
+              }
+            ],
+            "metrics": {
+              "length": 80,
+              "angle": 90,
+              "grade": 3.83,
+              "cells": 0,
+              "volume": 0,
+              "items": 1
+            },
+            "snap": {
+              "kind": "edge",
+              "id": 707,
+              "x": 80,
+              "z": 120
+            }
+          }
+        },
+        "selectedRankIndex": 23
+      }
+    ],
+    "common": [
+      {
+        "key": "-1,-6:h",
+        "minUnclaimedBand": 26,
+        "maxClaimedCore": 6,
+        "maxClaimedEndpoint": 15,
+        "maxGradePct": 11.38,
+        "seeds": {
+          "7": {
+            "key": "-1,-6:h",
+            "a": {
+              "x": -120,
+              "z": -416
+            },
+            "b": {
+              "x": -40,
+              "z": -416
+            },
+            "length": 80,
+            "boundaryEdges": [
+              408,
+              410
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 6,
+            "claimedEndpoint": 15,
+            "waterSamples": 0,
+            "maxSlope": 0.44928541463751304,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 408,
+              "x": -120,
+              "z": -416
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 410,
+              "x": -40,
+              "z": -416
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 107,
+              "points": [
+                {
+                  "x": -120,
+                  "y": 9.669560432434082,
+                  "z": -416
+                },
+                {
+                  "x": -40,
+                  "y": 17.87679100036621,
+                  "z": -416
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 10.26,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 410,
+                "x": -40,
+                "z": -416
+              }
+            }
+          },
+          "1337": {
+            "key": "-1,-6:h",
+            "a": {
+              "x": -120,
+              "z": -408
+            },
+            "b": {
+              "x": -40,
+              "z": -408
+            },
+            "length": 80,
+            "boundaryEdges": [
+              388,
+              390
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 29,
+            "paintedBand": 35,
+            "claimedCore": 6,
+            "claimedEndpoint": 10,
+            "waterSamples": 0,
+            "maxSlope": 0.37806650681880777,
+            "rank": 48,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 388,
+              "x": -120,
+              "z": -408
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 390,
+              "x": -40,
+              "z": -408
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 109,
+              "points": [
+                {
+                  "x": -120,
+                  "y": 6.432197093963623,
+                  "z": -408
+                },
+                {
+                  "x": -40,
+                  "y": 15.53933334350586,
+                  "z": -408
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 11.38,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 390,
+                "x": -40,
+                "z": -408
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "0,0:h",
+        "minUnclaimedBand": 26,
+        "maxClaimedCore": 8,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 0.12,
+        "seeds": {
+          "7": {
+            "key": "0,0:h",
+            "a": {
+              "x": -40,
+              "z": 80
+            },
+            "b": {
+              "x": 40,
+              "z": 80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              660,
+              662
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 8,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.22862322027388104,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 660,
+              "x": -40,
+              "z": 80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 662,
+              "x": 40,
+              "z": 80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -40,
+                  "y": 16.000991821289062,
+                  "z": 80
+                },
+                {
+                  "x": 40,
+                  "y": 16.07123565673828,
+                  "z": 80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 0.09,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 662,
+                "x": 40,
+                "z": 80
+              }
+            }
+          },
+          "1337": {
+            "key": "0,0:h",
+            "a": {
+              "x": -40,
+              "z": 80
+            },
+            "b": {
+              "x": 40,
+              "z": 80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              612,
+              614
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 8,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.140785637203,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 612,
+              "x": -40,
+              "z": 80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 614,
+              "x": 40,
+              "z": 80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -40,
+                  "y": 17.404396057128906,
+                  "z": 80
+                },
+                {
+                  "x": 40,
+                  "y": 17.496580123901367,
+                  "z": 80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 0.12,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 614,
+                "x": 40,
+                "z": 80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "0,0:v",
+        "minUnclaimedBand": 26,
+        "maxClaimedCore": 8,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 6.64,
+        "seeds": {
+          "7": {
+            "key": "0,0:v",
+            "a": {
+              "x": 0,
+              "z": 40
+            },
+            "b": {
+              "x": 0,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              659,
+              705
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 8,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.15291640771687554,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 659,
+              "x": 0,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 705,
+              "x": 0,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 101,
+              "points": [
+                {
+                  "x": 0,
+                  "y": 12.618508338928223,
+                  "z": 40
+                },
+                {
+                  "x": 0,
+                  "y": 17.92994499206543,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 6.64,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 705,
+                "x": 0,
+                "z": 120
+              }
+            }
+          },
+          "1337": {
+            "key": "0,0:v",
+            "a": {
+              "x": 0,
+              "z": 40
+            },
+            "b": {
+              "x": 0,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              611,
+              654
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 8,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.15594054865476506,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 611,
+              "x": 0,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 654,
+              "x": 0,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 0,
+                  "y": 15.513930320739746,
+                  "z": 40
+                },
+                {
+                  "x": 0,
+                  "y": 17.36578369140625,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 2.31,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 654,
+                "x": 0,
+                "z": 120
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-2,0:h",
+        "minUnclaimedBand": 26,
+        "maxClaimedCore": 8,
+        "maxClaimedEndpoint": 9,
+        "maxGradePct": 3.78,
+        "seeds": {
+          "7": {
+            "key": "-2,0:h",
+            "a": {
+              "x": -200,
+              "z": 80
+            },
+            "b": {
+              "x": -120,
+              "z": 80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              656,
+              658
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 8,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.09607280569702115,
+            "rank": 22,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 656,
+              "x": -200,
+              "z": 80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 658,
+              "x": -120,
+              "z": 80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -200,
+                  "y": 14.52491569519043,
+                  "z": 80
+                },
+                {
+                  "x": -120,
+                  "y": 15.179024696350098,
+                  "z": 80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 0.82,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 658,
+                "x": -120,
+                "z": 80
+              }
+            }
+          },
+          "1337": {
+            "key": "-2,0:h",
+            "a": {
+              "x": -200,
+              "z": 80
+            },
+            "b": {
+              "x": -120,
+              "z": 80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              608,
+              610
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 34,
+            "claimedCore": 8,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.1377237784530319,
+            "rank": 22,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 608,
+              "x": -200,
+              "z": 80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 610,
+              "x": -120,
+              "z": 80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -200,
+                  "y": 13.753174781799316,
+                  "z": 80
+                },
+                {
+                  "x": -120,
+                  "y": 16.77757453918457,
+                  "z": 80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 3.78,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 610,
+                "x": -120,
+                "z": 80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "6,-6:v",
+        "minUnclaimedBand": 25,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 10,
+        "maxGradePct": 5.2,
+        "seeds": {
+          "7": {
+            "key": "6,-6:v",
+            "a": {
+              "x": 492,
+              "z": -456
+            },
+            "b": {
+              "x": 492,
+              "z": -376
+            },
+            "length": 80,
+            "boundaryEdges": [
+              421,
+              465
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 31,
+            "paintedBand": 61,
+            "claimedCore": 3,
+            "claimedEndpoint": 10,
+            "waterSamples": 0,
+            "maxSlope": 0.24830320411985926,
+            "rank": 80,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 421,
+              "x": 492,
+              "z": -456
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 464,
+              "x": 492,
+              "z": -376
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 492,
+                  "y": 15.786619186401367,
+                  "z": -456
+                },
+                {
+                  "x": 492,
+                  "y": 13.188342094421387,
+                  "z": -376
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -3.25,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 464,
+                "x": 492,
+                "z": -376
+              }
+            }
+          },
+          "1337": {
+            "key": "6,-6:v",
+            "a": {
+              "x": 468,
+              "z": -448
+            },
+            "b": {
+              "x": 468,
+              "z": -368
+            },
+            "length": 80,
+            "boundaryEdges": [
+              399,
+              425
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 61,
+            "claimedCore": 0,
+            "claimedEndpoint": 1,
+            "waterSamples": 0,
+            "maxSlope": 0.11887815637112255,
+            "rank": 98,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 399,
+              "x": 468,
+              "z": -448
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 424,
+              "x": 468,
+              "z": -368
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 98,
+              "points": [
+                {
+                  "x": 468,
+                  "y": 18.470596313476562,
+                  "z": -448
+                },
+                {
+                  "x": 468,
+                  "y": 14.311322212219238,
+                  "z": -368
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -5.2,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 424,
+                "x": 468,
+                "z": -368
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-5,1:v",
+        "minUnclaimedBand": 25,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 12,
+        "maxGradePct": 5.3,
+        "seeds": {
+          "7": {
+            "key": "-5,1:v",
+            "a": {
+              "x": -424,
+              "z": 120
+            },
+            "b": {
+              "x": -424,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              690,
+              735
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 34,
+            "claimedCore": 3,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.32958503136209544,
+            "rank": 58,
+            "firstSnap": {
+              "kind": "node",
+              "id": 689,
+              "x": -424,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 734,
+              "x": -424,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 98,
+              "points": [
+                {
+                  "x": -424,
+                  "y": 17.099857330322266,
+                  "z": 120
+                },
+                {
+                  "x": -424,
+                  "y": 12.858749389648438,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -5.3,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 734,
+                "x": -424,
+                "z": 200
+              }
+            }
+          },
+          "1337": {
+            "key": "-5,1:v",
+            "a": {
+              "x": -416,
+              "z": 120
+            },
+            "b": {
+              "x": -416,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              639,
+              682
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 26,
+            "paintedBand": 35,
+            "claimedCore": 3,
+            "claimedEndpoint": 12,
+            "waterSamples": 0,
+            "maxSlope": 0.16663700236080506,
+            "rank": 56,
+            "firstSnap": {
+              "kind": "node",
+              "id": 638,
+              "x": -416,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 681,
+              "x": -416,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 98,
+              "points": [
+                {
+                  "x": -416,
+                  "y": 16.490568161010742,
+                  "z": 120
+                },
+                {
+                  "x": -416,
+                  "y": 12.413352966308594,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -5.1,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 681,
+                "x": -416,
+                "z": 200
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-5,1:h",
+        "minUnclaimedBand": 25,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 13,
+        "maxGradePct": 11.15,
+        "seeds": {
+          "7": {
+            "key": "-5,1:h",
+            "a": {
+              "x": -464,
+              "z": 160
+            },
+            "b": {
+              "x": -384,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              692,
+              696
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 27,
+            "paintedBand": 36,
+            "claimedCore": 3,
+            "claimedEndpoint": 13,
+            "waterSamples": 0,
+            "maxSlope": 0.4921628586055615,
+            "rank": 58,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 692,
+              "x": -464,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 696,
+              "x": -384,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 108,
+              "points": [
+                {
+                  "x": -464,
+                  "y": 9.151679992675781,
+                  "z": 160
+                },
+                {
+                  "x": -384,
+                  "y": 18.073984146118164,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 11.15,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 696,
+                "x": -384,
+                "z": 160
+              }
+            }
+          },
+          "1337": {
+            "key": "-5,1:h",
+            "a": {
+              "x": -456,
+              "z": 160
+            },
+            "b": {
+              "x": -376,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              641,
+              645
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 37,
+            "claimedCore": 0,
+            "claimedEndpoint": 11,
+            "waterSamples": 0,
+            "maxSlope": 0.526020196074795,
+            "rank": 78,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 641,
+              "x": -456,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 645,
+              "x": -376,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -456,
+                  "y": 10.595632553100586,
+                  "z": 160
+                },
+                {
+                  "x": -376,
+                  "y": 13.821489334106445,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 4.03,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 645,
+                "x": -376,
+                "z": 160
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "7,-6:v",
+        "minUnclaimedBand": 24,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 16,
+        "maxGradePct": 2.42,
+        "seeds": {
+          "7": {
+            "key": "7,-6:v",
+            "a": {
+              "x": 576,
+              "z": -456
+            },
+            "b": {
+              "x": 576,
+              "z": -376
+            },
+            "length": 80,
+            "boundaryEdges": [
+              423,
+              469
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 24,
+            "paintedBand": 42,
+            "claimedCore": 0,
+            "claimedEndpoint": 16,
+            "waterSamples": 0,
+            "maxSlope": 0.25855886835612407,
+            "rank": 64,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 423,
+              "x": 576,
+              "z": -456
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 468,
+              "x": 576,
+              "z": -376
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 576,
+                  "y": 15.93099308013916,
+                  "z": -456
+                },
+                {
+                  "x": 576,
+                  "y": 14.699789047241211,
+                  "z": -376
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.54,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 468,
+                "x": 576,
+                "z": -376
+              }
+            }
+          },
+          "1337": {
+            "key": "7,-6:v",
+            "a": {
+              "x": 556,
+              "z": -448
+            },
+            "b": {
+              "x": 556,
+              "z": -368
+            },
+            "length": 80,
+            "boundaryEdges": [
+              401,
+              429
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 61,
+            "claimedCore": 0,
+            "claimedEndpoint": 10,
+            "waterSamples": 0,
+            "maxSlope": 0.10955523426270364,
+            "rank": 80,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 401,
+              "x": 556,
+              "z": -448
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 428,
+              "x": 556,
+              "z": -368
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 556,
+                  "y": 18.0072021484375,
+                  "z": -448
+                },
+                {
+                  "x": 556,
+                  "y": 16.072425842285156,
+                  "z": -368
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -2.42,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 428,
+                "x": 556,
+                "z": -368
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-3,-2:v",
+        "minUnclaimedBand": 24,
+        "maxClaimedCore": 5,
+        "maxClaimedEndpoint": 13,
+        "maxGradePct": 1.59,
+        "seeds": {
+          "7": {
+            "key": "-3,-2:v",
+            "a": {
+              "x": -248,
+              "z": -120
+            },
+            "b": {
+              "x": -248,
+              "z": -40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              565,
+              613
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 47,
+            "claimedCore": 5,
+            "claimedEndpoint": 13,
+            "waterSamples": 0,
+            "maxSlope": 0.0878786896399552,
+            "rank": 34,
+            "firstSnap": {
+              "kind": "node",
+              "id": 564,
+              "x": -248,
+              "z": -120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 613,
+              "x": -248,
+              "z": -40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -248,
+                  "y": 13.590584754943848,
+                  "z": -120
+                },
+                {
+                  "x": -248,
+                  "y": 13.437771797180176,
+                  "z": -40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -0.19,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 613,
+                "x": -248,
+                "z": -40
+              }
+            }
+          },
+          "1337": {
+            "key": "-3,-2:v",
+            "a": {
+              "x": -248,
+              "z": -120
+            },
+            "b": {
+              "x": -248,
+              "z": -40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              517,
+              562
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 24,
+            "paintedBand": 43,
+            "claimedCore": 4,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.059882279887809906,
+            "rank": 46,
+            "firstSnap": {
+              "kind": "node",
+              "id": 516,
+              "x": -248,
+              "z": -120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 562,
+              "x": -248,
+              "z": -40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -248,
+                  "y": 17.878326416015625,
+                  "z": -120
+                },
+                {
+                  "x": -248,
+                  "y": 16.604387283325195,
+                  "z": -40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.59,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 562,
+                "x": -248,
+                "z": -40
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "1,-1:v",
+        "minUnclaimedBand": 23,
+        "maxClaimedCore": 8,
+        "maxClaimedEndpoint": 3,
+        "maxGradePct": 7.83,
+        "seeds": {
+          "7": {
+            "key": "1,-1:v",
+            "a": {
+              "x": 80,
+              "z": -40
+            },
+            "b": {
+              "x": 80,
+              "z": 40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              621,
+              661
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 28,
+            "paintedBand": 40,
+            "claimedCore": 8,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.2819561829919281,
+            "rank": 42,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 621,
+              "x": 80,
+              "z": -40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 661,
+              "x": 80,
+              "z": 40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 13.636144638061523,
+                  "z": -40
+                },
+                {
+                  "x": 80,
+                  "y": 16.169572830200195,
+                  "z": 40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 3.17,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 661,
+                "x": 80,
+                "z": 40
+              }
+            }
+          },
+          "1337": {
+            "key": "1,-1:v",
+            "a": {
+              "x": 80,
+              "z": -40
+            },
+            "b": {
+              "x": 80,
+              "z": 40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              570,
+              613
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 23,
+            "paintedBand": 35,
+            "claimedCore": 8,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.329984348642796,
+            "rank": 22,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 570,
+              "x": 80,
+              "z": -40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 613,
+              "x": 80,
+              "z": 40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 103,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 10.80591869354248,
+                  "z": -40
+                },
+                {
+                  "x": 80,
+                  "y": 17.071456909179688,
+                  "z": 40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 7.83,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 613,
+                "x": 80,
+                "z": 40
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "4,-7:h",
+        "minUnclaimedBand": 20,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 9,
+        "maxGradePct": 3.59,
+        "seeds": {
+          "7": {
+            "key": "4,-7:h",
+            "a": {
+              "x": 280,
+              "z": -492
+            },
+            "b": {
+              "x": 360,
+              "z": -492
+            },
+            "length": 80,
+            "boundaryEdges": [
+              398,
+              399
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 21,
+            "paintedBand": 21,
+            "claimedCore": 0,
+            "claimedEndpoint": 6,
+            "waterSamples": 0,
+            "maxSlope": 0.13590134117637967,
+            "rank": 72,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 398,
+              "x": 280,
+              "z": -492
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 399,
+              "x": 360,
+              "z": -492
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 280,
+                  "y": 13.715767860412598,
+                  "z": -492
+                },
+                {
+                  "x": 360,
+                  "y": 16.589937210083008,
+                  "z": -492
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 3.59,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 399,
+                "x": 360,
+                "z": -492
+              }
+            }
+          },
+          "1337": {
+            "key": "4,-7:h",
+            "a": {
+              "x": 264,
+              "z": -484
+            },
+            "b": {
+              "x": 344,
+              "z": -484
+            },
+            "length": 80,
+            "boundaryEdges": [
+              380,
+              381
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 20,
+            "paintedBand": 20,
+            "claimedCore": 0,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.10855143817947514,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 380,
+              "x": 264,
+              "z": -484
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 381,
+              "x": 344,
+              "z": -484
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 264,
+                  "y": 12.859074592590332,
+                  "z": -484
+                },
+                {
+                  "x": 344,
+                  "y": 14.027461051940918,
+                  "z": -484
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.46,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 381,
+                "x": 344,
+                "z": -484
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "6,-5:h",
+        "minUnclaimedBand": 20,
+        "maxClaimedCore": 6,
+        "maxClaimedEndpoint": 20,
+        "maxGradePct": 6.61,
+        "seeds": {
+          "7": {
+            "key": "6,-5:h",
+            "a": {
+              "x": 448,
+              "z": -336
+            },
+            "b": {
+              "x": 536,
+              "z": -336
+            },
+            "length": 88,
+            "boundaryEdges": [
+              467,
+              471
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 20,
+            "paintedBand": 47,
+            "claimedCore": 0,
+            "claimedEndpoint": 16,
+            "waterSamples": 0,
+            "maxSlope": 0.41466052770073214,
+            "rank": 48,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 467,
+              "x": 448,
+              "z": -336
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 471,
+              "x": 536,
+              "z": -336
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 106,
+              "points": [
+                {
+                  "x": 448,
+                  "y": 8.122015953063965,
+                  "z": -336
+                },
+                {
+                  "x": 536,
+                  "y": 11.481744766235352,
+                  "z": -336
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 0,
+                "grade": 3.82,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 471,
+                "x": 536,
+                "z": -336
+              }
+            }
+          },
+          "1337": {
+            "key": "6,-5:h",
+            "a": {
+              "x": 424,
+              "z": -328
+            },
+            "b": {
+              "x": 512,
+              "z": -328
+            },
+            "length": 88,
+            "boundaryEdges": [
+              427,
+              431
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 28,
+            "paintedBand": 49,
+            "claimedCore": 6,
+            "claimedEndpoint": 20,
+            "waterSamples": 0,
+            "maxSlope": 0.5644101970298719,
+            "rank": 24,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 427,
+              "x": 424,
+              "z": -328
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 431,
+              "x": 512,
+              "z": -328
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 111,
+              "points": [
+                {
+                  "x": 424,
+                  "y": 7.080214500427246,
+                  "z": -328
+                },
+                {
+                  "x": 512,
+                  "y": 12.896568298339844,
+                  "z": -328
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 0,
+                "grade": 6.61,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 431,
+                "x": 512,
+                "z": -328
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-3,1:v",
+        "minUnclaimedBand": 19,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 8,
+        "maxGradePct": 3.07,
+        "seeds": {
+          "7": {
+            "key": "-3,1:v",
+            "a": {
+              "x": -248,
+              "z": 120
+            },
+            "b": {
+              "x": -248,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              698,
+              743
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 19,
+            "paintedBand": 19,
+            "claimedCore": 0,
+            "claimedEndpoint": 8,
+            "waterSamples": 0,
+            "maxSlope": 0.07727552883807846,
+            "rank": 60,
+            "firstSnap": {
+              "kind": "node",
+              "id": 697,
+              "x": -248,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 742,
+              "x": -248,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -248,
+                  "y": 14.573742866516113,
+                  "z": 120
+                },
+                {
+                  "x": -248,
+                  "y": 16.12360191345215,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 1.94,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 742,
+                "x": -248,
+                "z": 200
+              }
+            }
+          },
+          "1337": {
+            "key": "-3,1:v",
+            "a": {
+              "x": -248,
+              "z": 120
+            },
+            "b": {
+              "x": -248,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              647,
+              690
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 19,
+            "paintedBand": 19,
+            "claimedCore": 0,
+            "claimedEndpoint": 8,
+            "waterSamples": 0,
+            "maxSlope": 0.16540281220611366,
+            "rank": 60,
+            "firstSnap": {
+              "kind": "node",
+              "id": 646,
+              "x": -248,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 689,
+              "x": -248,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -248,
+                  "y": 12.965214729309082,
+                  "z": 120
+                },
+                {
+                  "x": -248,
+                  "y": 15.417582511901855,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 3.07,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 689,
+                "x": -248,
+                "z": 200
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "1,-6:v",
+        "minUnclaimedBand": 19,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 13,
+        "maxGradePct": 1.67,
+        "seeds": {
+          "7": {
+            "key": "1,-6:v",
+            "a": {
+              "x": 80,
+              "z": -456
+            },
+            "b": {
+              "x": 80,
+              "z": -376
+            },
+            "length": 80,
+            "boundaryEdges": [
+              411,
+              445
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 21,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 13,
+            "waterSamples": 0,
+            "maxSlope": 0.053065307567306215,
+            "rank": 58,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 411,
+              "x": 80,
+              "z": -456
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 444,
+              "x": 80,
+              "z": -376
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 17.819625854492188,
+                  "z": -456
+                },
+                {
+                  "x": 80,
+                  "y": 16.48273277282715,
+                  "z": -376
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.67,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 444,
+                "x": 80,
+                "z": -376
+              }
+            }
+          },
+          "1337": {
+            "key": "1,-6:v",
+            "a": {
+              "x": 80,
+              "z": -448
+            },
+            "b": {
+              "x": 80,
+              "z": -368
+            },
+            "length": 80,
+            "boundaryEdges": [
+              391,
+              419
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 19,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 6,
+            "waterSamples": 0,
+            "maxSlope": 0.062374605180019645,
+            "rank": 64,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 391,
+              "x": 80,
+              "z": -448
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 418,
+              "x": 80,
+              "z": -368
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 14.068561553955078,
+                  "z": -448
+                },
+                {
+                  "x": 80,
+                  "y": 15.126660346984863,
+                  "z": -368
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 1.32,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 418,
+                "x": 80,
+                "z": -368
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-1,1:v",
+        "minUnclaimedBand": 18,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 15,
+        "maxGradePct": 1.76,
+        "seeds": {
+          "7": {
+            "key": "-1,1:v",
+            "a": {
+              "x": -80,
+              "z": 120
+            },
+            "b": {
+              "x": -80,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              703,
+              748
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 18,
+            "paintedBand": 18,
+            "claimedCore": 0,
+            "claimedEndpoint": 15,
+            "waterSamples": 0,
+            "maxSlope": 0.07407931743365741,
+            "rank": 42,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 703,
+              "x": -80,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 748,
+              "x": -80,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -80,
+                  "y": 17.23488426208496,
+                  "z": 120
+                },
+                {
+                  "x": -80,
+                  "y": 17.077072143554688,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -0.2,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 748,
+                "x": -80,
+                "z": 200
+              }
+            }
+          },
+          "1337": {
+            "key": "-1,1:v",
+            "a": {
+              "x": -80,
+              "z": 120
+            },
+            "b": {
+              "x": -80,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              652,
+              695
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 18,
+            "paintedBand": 18,
+            "claimedCore": 0,
+            "claimedEndpoint": 15,
+            "waterSamples": 0,
+            "maxSlope": 0.050687702685545226,
+            "rank": 42,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 652,
+              "x": -80,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 695,
+              "x": -80,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -80,
+                  "y": 16.8980655670166,
+                  "z": 120
+                },
+                {
+                  "x": -80,
+                  "y": 15.489686965942383,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.76,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 695,
+                "x": -80,
+                "z": 200
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-3,1:h",
+        "minUnclaimedBand": 17,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 3,
+        "maxGradePct": 5.78,
+        "seeds": {
+          "7": {
+            "key": "-3,1:h",
+            "a": {
+              "x": -296,
+              "z": 160
+            },
+            "b": {
+              "x": -200,
+              "z": 160
+            },
+            "length": 96,
+            "boundaryEdges": [
+              700,
+              702
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.07378410131200658,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 700,
+              "x": -296,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 702,
+              "x": -200,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 115,
+              "points": [
+                {
+                  "x": -296,
+                  "y": 16.25165557861328,
+                  "z": 160
+                },
+                {
+                  "x": -200,
+                  "y": 16.946880340576172,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 0,
+                "grade": 0.72,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 702,
+                "x": -200,
+                "z": 160
+              }
+            }
+          },
+          "1337": {
+            "key": "-3,1:h",
+            "a": {
+              "x": -296,
+              "z": 160
+            },
+            "b": {
+              "x": -200,
+              "z": 160
+            },
+            "length": 96,
+            "boundaryEdges": [
+              649,
+              651
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.1877801531175135,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 649,
+              "x": -296,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 651,
+              "x": -200,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 119,
+              "points": [
+                {
+                  "x": -296,
+                  "y": 11.803767204284668,
+                  "z": 160
+                },
+                {
+                  "x": -200,
+                  "y": 17.351404190063477,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 0,
+                "grade": 5.78,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 651,
+                "x": -200,
+                "z": 160
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "1,0:v",
+        "minUnclaimedBand": 17,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 3,
+        "maxGradePct": 3.83,
+        "seeds": {
+          "7": {
+            "key": "1,0:v",
+            "a": {
+              "x": 80,
+              "z": 40
+            },
+            "b": {
+              "x": 80,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              661,
+              707
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.37673243905709003,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 661,
+              "x": 80,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 707,
+              "x": 80,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 16.169572830200195,
+                  "z": 40
+                },
+                {
+                  "x": 80,
+                  "y": 19.23406982421875,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 3.83,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 707,
+                "x": 80,
+                "z": 120
+              }
+            }
+          },
+          "1337": {
+            "key": "1,0:v",
+            "a": {
+              "x": 80,
+              "z": 40
+            },
+            "b": {
+              "x": 80,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              613,
+              656
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 21,
+            "paintedBand": 21,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.18359257447522753,
+            "rank": 78,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 613,
+              "x": 80,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 656,
+              "x": 80,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 17.071456909179688,
+                  "z": 40
+                },
+                {
+                  "x": 80,
+                  "y": 19.316421508789062,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 2.81,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 656,
+                "x": 80,
+                "z": 120
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-5,-4:v",
+        "minUnclaimedBand": 16,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 2.53,
+        "seeds": {
+          "7": {
+            "key": "-5,-4:v",
+            "a": {
+              "x": -424,
+              "z": -296
+            },
+            "b": {
+              "x": -424,
+              "z": -200
+            },
+            "length": 96,
+            "boundaryEdges": [
+              485,
+              529
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 21,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 6,
+            "waterSamples": 0,
+            "maxSlope": 0.5480154749225588,
+            "rank": 72,
+            "firstSnap": {
+              "kind": "node",
+              "id": 484,
+              "x": -424,
+              "z": -296
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 528,
+              "x": -424,
+              "z": -200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 115,
+              "points": [
+                {
+                  "x": -424,
+                  "y": 15.125039100646973,
+                  "z": -296
+                },
+                {
+                  "x": -424,
+                  "y": 17.551877975463867,
+                  "z": -200
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 90,
+                "grade": 2.53,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 528,
+                "x": -424,
+                "z": -200
+              }
+            }
+          },
+          "1337": {
+            "key": "-5,-4:v",
+            "a": {
+              "x": -416,
+              "z": -288
+            },
+            "b": {
+              "x": -416,
+              "z": -200
+            },
+            "length": 88,
+            "boundaryEdges": [
+              446,
+              488
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 16,
+            "paintedBand": 46,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.08420578572893252,
+            "rank": 50,
+            "firstSnap": {
+              "kind": "node",
+              "id": 445,
+              "x": -416,
+              "z": -288
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 487,
+              "x": -416,
+              "z": -200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 106,
+              "points": [
+                {
+                  "x": -416,
+                  "y": 15.73335075378418,
+                  "z": -288
+                },
+                {
+                  "x": -416,
+                  "y": 16.17569923400879,
+                  "z": -200
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 90,
+                "grade": 0.5,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 487,
+                "x": -416,
+                "z": -200
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-1,1:h",
+        "minUnclaimedBand": 16,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 9,
+        "maxGradePct": 1.56,
+        "seeds": {
+          "7": {
+            "key": "-1,1:h",
+            "a": {
+              "x": -120,
+              "z": 160
+            },
+            "b": {
+              "x": -40,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              704,
+              706
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 16,
+            "paintedBand": 16,
+            "claimedCore": 0,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.033750786556870416,
+            "rank": 46,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 704,
+              "x": -120,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 706,
+              "x": -40,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -120,
+                  "y": 16.65504264831543,
+                  "z": 160
+                },
+                {
+                  "x": -40,
+                  "y": 16.606348037719727,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": -0.06,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 706,
+                "x": -40,
+                "z": 160
+              }
+            }
+          },
+          "1337": {
+            "key": "-1,1:h",
+            "a": {
+              "x": -120,
+              "z": 160
+            },
+            "b": {
+              "x": -40,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              653,
+              655
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 16,
+            "paintedBand": 16,
+            "claimedCore": 0,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.08601255368639688,
+            "rank": 46,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 653,
+              "x": -120,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 655,
+              "x": -40,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -120,
+                  "y": 17.395605087280273,
+                  "z": 160
+                },
+                {
+                  "x": -40,
+                  "y": 16.15052604675293,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": -1.56,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 655,
+                "x": -40,
+                "z": 160
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-4,-3:v",
+        "minUnclaimedBand": 16,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 9,
+        "maxGradePct": 2.62,
+        "seeds": {
+          "7": {
+            "key": "-4,-3:v",
+            "a": {
+              "x": -340,
+              "z": -200
+            },
+            "b": {
+              "x": -340,
+              "z": -120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              533,
+              561
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 61,
+            "claimedCore": 3,
+            "claimedEndpoint": 4,
+            "waterSamples": 0,
+            "maxSlope": 0.08051856391860834,
+            "rank": 68,
+            "firstSnap": {
+              "kind": "node",
+              "id": 532,
+              "x": -340,
+              "z": -200
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 560,
+              "x": -340,
+              "z": -120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -340,
+                  "y": 17.533349990844727,
+                  "z": -200
+                },
+                {
+                  "x": -340,
+                  "y": 15.621786117553711,
+                  "z": -120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -2.39,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 560,
+                "x": -340,
+                "z": -120
+              }
+            }
+          },
+          "1337": {
+            "key": "-4,-3:v",
+            "a": {
+              "x": -336,
+              "z": -200
+            },
+            "b": {
+              "x": -336,
+              "z": -120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              492,
+              513
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 16,
+            "paintedBand": 37,
+            "claimedCore": 0,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.1374260086631705,
+            "rank": 46,
+            "firstSnap": {
+              "kind": "node",
+              "id": 491,
+              "x": -336,
+              "z": -200
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 512,
+              "x": -336,
+              "z": -120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -336,
+                  "y": 17.55657196044922,
+                  "z": -200
+                },
+                {
+                  "x": -336,
+                  "y": 19.65275764465332,
+                  "z": -120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 2.62,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 512,
+                "x": -336,
+                "z": -120
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "0,-6:v",
+        "minUnclaimedBand": 16,
+        "maxClaimedCore": 4,
+        "maxClaimedEndpoint": 12,
+        "maxGradePct": 0.88,
+        "seeds": {
+          "7": {
+            "key": "0,-6:v",
+            "a": {
+              "x": 0,
+              "z": -456
+            },
+            "b": {
+              "x": 0,
+              "z": -376
+            },
+            "length": 80,
+            "boundaryEdges": [
+              409,
+              441
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 18,
+            "paintedBand": 38,
+            "claimedCore": 4,
+            "claimedEndpoint": 12,
+            "waterSamples": 0,
+            "maxSlope": 0.09819669788003525,
+            "rank": 16,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 409,
+              "x": 0,
+              "z": -456
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 440,
+              "x": 0,
+              "z": -376
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 0,
+                  "y": 17.967845916748047,
+                  "z": -456
+                },
+                {
+                  "x": 0,
+                  "y": 17.261743545532227,
+                  "z": -376
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -0.88,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 440,
+                "x": 0,
+                "z": -376
+              }
+            }
+          },
+          "1337": {
+            "key": "0,-6:v",
+            "a": {
+              "x": 0,
+              "z": -448
+            },
+            "b": {
+              "x": 0,
+              "z": -368
+            },
+            "length": 80,
+            "boundaryEdges": [
+              389,
+              415
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 16,
+            "paintedBand": 36,
+            "claimedCore": 4,
+            "claimedEndpoint": 10,
+            "waterSamples": 0,
+            "maxSlope": 0.0983079804273378,
+            "rank": 12,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 389,
+              "x": 0,
+              "z": -448
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 414,
+              "x": 0,
+              "z": -368
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 0,
+                  "y": 16.07217788696289,
+                  "z": -448
+                },
+                {
+                  "x": 0,
+                  "y": 15.586210250854492,
+                  "z": -368
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -0.61,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 414,
+                "x": 0,
+                "z": -368
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "6,6:v",
+        "minUnclaimedBand": 16,
+        "maxClaimedCore": 6,
+        "maxClaimedEndpoint": 2,
+        "maxGradePct": 6.72,
+        "seeds": {
+          "7": {
+            "key": "6,6:v",
+            "a": {
+              "x": 492,
+              "z": 520
+            },
+            "b": {
+              "x": 492,
+              "z": 608
+            },
+            "length": 88,
+            "boundaryEdges": [
+              963,
+              1016
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 16,
+            "paintedBand": 54,
+            "claimedCore": 6,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.46550416526933874,
+            "rank": 12,
+            "firstSnap": {
+              "kind": "node",
+              "id": 962,
+              "x": 492,
+              "z": 520
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 1015,
+              "x": 492,
+              "z": 608
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 111,
+              "points": [
+                {
+                  "x": 492,
+                  "y": 14.710553169250488,
+                  "z": 520
+                },
+                {
+                  "x": 492,
+                  "y": 20.62409782409668,
+                  "z": 608
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 90,
+                "grade": 6.72,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 1015,
+                "x": 492,
+                "z": 608
+              }
+            }
+          },
+          "1337": {
+            "key": "6,6:v",
+            "a": {
+              "x": 468,
+              "z": 488
+            },
+            "b": {
+              "x": 468,
+              "z": 584
+            },
+            "length": 96,
+            "boundaryEdges": [
+              904,
+              957
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 24,
+            "paintedBand": 38,
+            "claimedCore": 0,
+            "claimedEndpoint": 1,
+            "waterSamples": 0,
+            "maxSlope": 0.23131403217884675,
+            "rank": 94,
+            "firstSnap": {
+              "kind": "node",
+              "id": 903,
+              "x": 468,
+              "z": 488
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 956,
+              "x": 468,
+              "z": 584
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 115,
+              "points": [
+                {
+                  "x": 468,
+                  "y": 16.708866119384766,
+                  "z": 488
+                },
+                {
+                  "x": 468,
+                  "y": 15.567886352539062,
+                  "z": 584
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 90,
+                "grade": -1.19,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 956,
+                "x": 468,
+                "z": 584
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-4,2:v",
+        "minUnclaimedBand": 15,
+        "maxClaimedCore": 6,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 3.38,
+        "seeds": {
+          "7": {
+            "key": "-4,2:v",
+            "a": {
+              "x": -340,
+              "z": 200
+            },
+            "b": {
+              "x": -340,
+              "z": 272
+            },
+            "length": 72,
+            "boundaryEdges": [
+              739,
+              781
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 53,
+            "claimedCore": 6,
+            "claimedEndpoint": 6,
+            "waterSamples": 0,
+            "maxSlope": 0.07884803996435656,
+            "rank": 8,
+            "firstSnap": {
+              "kind": "node",
+              "id": 738,
+              "x": -340,
+              "z": 200
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 780,
+              "x": -340,
+              "z": 272
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 86,
+              "points": [
+                {
+                  "x": -340,
+                  "y": 17.01569938659668,
+                  "z": 200
+                },
+                {
+                  "x": -340,
+                  "y": 17.764892578125,
+                  "z": 272
+                }
+              ],
+              "metrics": {
+                "length": 72,
+                "angle": 90,
+                "grade": 1.04,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 780,
+                "x": -340,
+                "z": 272
+              }
+            }
+          },
+          "1337": {
+            "key": "-4,2:v",
+            "a": {
+              "x": -336,
+              "z": 200
+            },
+            "b": {
+              "x": -336,
+              "z": 264
+            },
+            "length": 64,
+            "boundaryEdges": [
+              686,
+              723
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 15,
+            "paintedBand": 33,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.10433001904295577,
+            "rank": 46,
+            "firstSnap": {
+              "kind": "node",
+              "id": 685,
+              "x": -336,
+              "z": 200
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 722,
+              "x": -336,
+              "z": 264
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 77,
+              "points": [
+                {
+                  "x": -336,
+                  "y": 12.427016258239746,
+                  "z": 200
+                },
+                {
+                  "x": -336,
+                  "y": 14.590734481811523,
+                  "z": 264
+                }
+              ],
+              "metrics": {
+                "length": 64,
+                "angle": 90,
+                "grade": 3.38,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 722,
+                "x": -336,
+                "z": 264
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "7,0:v",
+        "minUnclaimedBand": 14,
+        "maxClaimedCore": 6,
+        "maxClaimedEndpoint": 9,
+        "maxGradePct": 1.37,
+        "seeds": {
+          "7": {
+            "key": "7,0:v",
+            "a": {
+              "x": 576,
+              "z": 40
+            },
+            "b": {
+              "x": 576,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              678,
+              726
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 14,
+            "paintedBand": 35,
+            "claimedCore": 3,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.07840572776200724,
+            "rank": 14,
+            "firstSnap": {
+              "kind": "node",
+              "id": 677,
+              "x": 576,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 725,
+              "x": 576,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 576,
+                  "y": 17.866365432739258,
+                  "z": 40
+                },
+                {
+                  "x": 576,
+                  "y": 16.769695281982422,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.37,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 725,
+                "x": 576,
+                "z": 120
+              }
+            }
+          },
+          "1337": {
+            "key": "7,0:v",
+            "a": {
+              "x": 556,
+              "z": 40
+            },
+            "b": {
+              "x": 556,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              630,
+              673
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 18,
+            "paintedBand": 54,
+            "claimedCore": 6,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.06852738904177884,
+            "rank": 10,
+            "firstSnap": {
+              "kind": "node",
+              "id": 629,
+              "x": 556,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 672,
+              "x": 556,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 556,
+                  "y": 14.512934684753418,
+                  "z": 40
+                },
+                {
+                  "x": 556,
+                  "y": 13.700262069702148,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.02,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 672,
+                "x": 556,
+                "z": 120
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "5,-2:h",
+        "minUnclaimedBand": 13,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 8,
+        "maxGradePct": 7.12,
+        "seeds": {
+          "7": {
+            "key": "5,-2:h",
+            "a": {
+              "x": 360,
+              "z": -80
+            },
+            "b": {
+              "x": 448,
+              "z": -80
+            },
+            "length": 88,
+            "boundaryEdges": [
+              587,
+              588
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 13,
+            "paintedBand": 13,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.37148068995849753,
+            "rank": 38,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 587,
+              "x": 360,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 588,
+              "x": 448,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 109,
+              "points": [
+                {
+                  "x": 360,
+                  "y": 10.201875686645508,
+                  "z": -80
+                },
+                {
+                  "x": 448,
+                  "y": 5.320908069610596,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 0,
+                "grade": -5.55,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 588,
+                "x": 448,
+                "z": -80
+              }
+            }
+          },
+          "1337": {
+            "key": "5,-2:h",
+            "a": {
+              "x": 344,
+              "z": -80
+            },
+            "b": {
+              "x": 424,
+              "z": -80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              536,
+              537
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 27,
+            "paintedBand": 36,
+            "claimedCore": 0,
+            "claimedEndpoint": 8,
+            "waterSamples": 0,
+            "maxSlope": 0.43823422562530456,
+            "rank": 92,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 536,
+              "x": 344,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 537,
+              "x": 424,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 101,
+              "points": [
+                {
+                  "x": 344,
+                  "y": 13.287495613098145,
+                  "z": -80
+                },
+                {
+                  "x": 424,
+                  "y": 7.5890421867370605,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": -7.12,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 537,
+                "x": 424,
+                "z": -80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-5,-2:v",
+        "minUnclaimedBand": 13,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 10,
+        "maxGradePct": 3.53,
+        "seeds": {
+          "7": {
+            "key": "-5,-2:v",
+            "a": {
+              "x": -424,
+              "z": -120
+            },
+            "b": {
+              "x": -424,
+              "z": -40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              557,
+              606
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 24,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 10,
+            "waterSamples": 0,
+            "maxSlope": 0.0842678085538823,
+            "rank": 76,
+            "firstSnap": {
+              "kind": "node",
+              "id": 556,
+              "x": -424,
+              "z": -120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 605,
+              "x": -424,
+              "z": -40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -424,
+                  "y": 15.976655006408691,
+                  "z": -120
+                },
+                {
+                  "x": -424,
+                  "y": 13.336487770080566,
+                  "z": -40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -3.3,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 605,
+                "x": -424,
+                "z": -40
+              }
+            }
+          },
+          "1337": {
+            "key": "-5,-2:v",
+            "a": {
+              "x": -416,
+              "z": -120
+            },
+            "b": {
+              "x": -416,
+              "z": -40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              509,
+              555
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 13,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.06321560294074145,
+            "rank": 34,
+            "firstSnap": {
+              "kind": "node",
+              "id": 508,
+              "x": -416,
+              "z": -120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 554,
+              "x": -416,
+              "z": -40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -416,
+                  "y": 14.974489212036133,
+                  "z": -120
+                },
+                {
+                  "x": -416,
+                  "y": 17.798927307128906,
+                  "z": -40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 3.53,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 554,
+                "x": -416,
+                "z": -40
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "1,0:h",
+        "minUnclaimedBand": 13,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 10,
+        "maxGradePct": 5.15,
+        "seeds": {
+          "7": {
+            "key": "1,0:h",
+            "a": {
+              "x": 40,
+              "z": 80
+            },
+            "b": {
+              "x": 120,
+              "z": 80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              662,
+              664
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 13,
+            "paintedBand": 13,
+            "claimedCore": 0,
+            "claimedEndpoint": 10,
+            "waterSamples": 0,
+            "maxSlope": 0.3201042182385993,
+            "rank": 32,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 662,
+              "x": 40,
+              "z": 80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 664,
+              "x": 120,
+              "z": 80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 98,
+              "points": [
+                {
+                  "x": 40,
+                  "y": 16.07123565673828,
+                  "z": 80
+                },
+                {
+                  "x": 120,
+                  "y": 20.192447662353516,
+                  "z": 80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 5.15,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 664,
+                "x": 120,
+                "z": 80
+              }
+            }
+          },
+          "1337": {
+            "key": "1,0:h",
+            "a": {
+              "x": 40,
+              "z": 80
+            },
+            "b": {
+              "x": 120,
+              "z": 80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              614,
+              616
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 0,
+            "waterSamples": 0,
+            "maxSlope": 0.15492495772504147,
+            "rank": 68,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 614,
+              "x": 40,
+              "z": 80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 616,
+              "x": 120,
+              "z": 80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 40,
+                  "y": 17.496580123901367,
+                  "z": 80
+                },
+                {
+                  "x": 120,
+                  "y": 18.672826766967773,
+                  "z": 80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.47,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 616,
+                "x": 120,
+                "z": 80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-5,-5:h",
+        "minUnclaimedBand": 11,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 12,
+        "maxGradePct": 5.74,
+        "seeds": {
+          "7": {
+            "key": "-5,-5:h",
+            "a": {
+              "x": -464,
+              "z": -336
+            },
+            "b": {
+              "x": -384,
+              "z": -336
+            },
+            "length": 80,
+            "boundaryEdges": [
+              431,
+              432
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 11,
+            "claimedCore": 0,
+            "claimedEndpoint": 12,
+            "waterSamples": 0,
+            "maxSlope": 0.36529714659695867,
+            "rank": 20,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 431,
+              "x": -464,
+              "z": -336
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 432,
+              "x": -384,
+              "z": -336
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -464,
+                  "y": 5.872831344604492,
+                  "z": -336
+                },
+                {
+                  "x": -384,
+                  "y": 6.155411720275879,
+                  "z": -336
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 0.35,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 432,
+                "x": -384,
+                "z": -336
+              }
+            }
+          },
+          "1337": {
+            "key": "-5,-5:h",
+            "a": {
+              "x": -456,
+              "z": -328
+            },
+            "b": {
+              "x": -376,
+              "z": -328
+            },
+            "length": 80,
+            "boundaryEdges": [
+              409,
+              410
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 18,
+            "paintedBand": 18,
+            "claimedCore": 0,
+            "claimedEndpoint": 12,
+            "waterSamples": 0,
+            "maxSlope": 0.4654633208596609,
+            "rank": 48,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 409,
+              "x": -456,
+              "z": -328
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 410,
+              "x": -376,
+              "z": -328
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 99,
+              "points": [
+                {
+                  "x": -456,
+                  "y": 4.6897358894348145,
+                  "z": -328
+                },
+                {
+                  "x": -376,
+                  "y": 9.279449462890625,
+                  "z": -328
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 5.74,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 410,
+                "x": -376,
+                "z": -328
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "5,1:v",
+        "minUnclaimedBand": 11,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 13,
+        "maxGradePct": 3.35,
+        "seeds": {
+          "7": {
+            "key": "5,1:v",
+            "a": {
+              "x": 404,
+              "z": 120
+            },
+            "b": {
+              "x": 404,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              718,
+              762
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 22,
+            "paintedBand": 61,
+            "claimedCore": 0,
+            "claimedEndpoint": 4,
+            "waterSamples": 0,
+            "maxSlope": 0.0991635686035834,
+            "rank": 80,
+            "firstSnap": {
+              "kind": "node",
+              "id": 717,
+              "x": 404,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 761,
+              "x": 404,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 404,
+                  "y": 16.696836471557617,
+                  "z": 120
+                },
+                {
+                  "x": 404,
+                  "y": 15.042611122131348,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -2.07,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 761,
+                "x": 404,
+                "z": 200
+              }
+            }
+          },
+          "1337": {
+            "key": "5,1:v",
+            "a": {
+              "x": 384,
+              "z": 120
+            },
+            "b": {
+              "x": 384,
+              "z": 200
+            },
+            "length": 80,
+            "boundaryEdges": [
+              665,
+              709
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 46,
+            "claimedCore": 0,
+            "claimedEndpoint": 13,
+            "waterSamples": 0,
+            "maxSlope": 0.12057090338047516,
+            "rank": 18,
+            "firstSnap": {
+              "kind": "node",
+              "id": 664,
+              "x": 384,
+              "z": 120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 708,
+              "x": 384,
+              "z": 200
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 384,
+                  "y": 16.274200439453125,
+                  "z": 120
+                },
+                {
+                  "x": 384,
+                  "y": 13.590970993041992,
+                  "z": 200
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -3.35,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 708,
+                "x": 384,
+                "z": 200
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "3,-2:h",
+        "minUnclaimedBand": 11,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 8,
+        "maxGradePct": 7.55,
+        "seeds": {
+          "7": {
+            "key": "3,-2:h",
+            "a": {
+              "x": 200,
+              "z": -80
+            },
+            "b": {
+              "x": 280,
+              "z": -80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              579,
+              583
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 12,
+            "paintedBand": 39,
+            "claimedCore": 3,
+            "claimedEndpoint": 8,
+            "waterSamples": 0,
+            "maxSlope": 0.5306091588412315,
+            "rank": 8,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 579,
+              "x": 200,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 583,
+              "x": 280,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 200,
+                  "y": 9.10206413269043,
+                  "z": -80
+                },
+                {
+                  "x": 280,
+                  "y": 8.8936128616333,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": -0.26,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 583,
+                "x": 280,
+                "z": -80
+              }
+            }
+          },
+          "1337": {
+            "key": "3,-2:h",
+            "a": {
+              "x": 200,
+              "z": -80
+            },
+            "b": {
+              "x": 264,
+              "z": -80
+            },
+            "length": 64,
+            "boundaryEdges": [
+              530,
+              532
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 20,
+            "claimedCore": 0,
+            "claimedEndpoint": 1,
+            "waterSamples": 0,
+            "maxSlope": 0.5907151672172438,
+            "rank": 42,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 530,
+              "x": 200,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 532,
+              "x": 264,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 82,
+              "points": [
+                {
+                  "x": 200,
+                  "y": 7.722346782684326,
+                  "z": -80
+                },
+                {
+                  "x": 264,
+                  "y": 12.555058479309082,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 64,
+                "angle": 0,
+                "grade": 7.55,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 532,
+                "x": 264,
+                "z": -80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "6,5:v",
+        "minUnclaimedBand": 11,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 9,
+        "maxGradePct": 2.15,
+        "seeds": {
+          "7": {
+            "key": "6,5:v",
+            "a": {
+              "x": 492,
+              "z": 432
+            },
+            "b": {
+              "x": 492,
+              "z": 520
+            },
+            "length": 88,
+            "boundaryEdges": [
+              902,
+              963
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 28,
+            "claimedCore": 0,
+            "claimedEndpoint": 9,
+            "waterSamples": 0,
+            "maxSlope": 0.12768022127075046,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "node",
+              "id": 901,
+              "x": 492,
+              "z": 432
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 962,
+              "x": 492,
+              "z": 520
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 106,
+              "points": [
+                {
+                  "x": 492,
+                  "y": 16.600017547607422,
+                  "z": 432
+                },
+                {
+                  "x": 492,
+                  "y": 14.710553169250488,
+                  "z": 520
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 90,
+                "grade": -2.15,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 962,
+                "x": 492,
+                "z": 520
+              }
+            }
+          },
+          "1337": {
+            "key": "6,5:v",
+            "a": {
+              "x": 468,
+              "z": 408
+            },
+            "b": {
+              "x": 468,
+              "z": 488
+            },
+            "length": 80,
+            "boundaryEdges": [
+              843,
+              904
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 18,
+            "paintedBand": 48,
+            "claimedCore": 3,
+            "claimedEndpoint": 8,
+            "waterSamples": 0,
+            "maxSlope": 0.07699565677690301,
+            "rank": 32,
+            "firstSnap": {
+              "kind": "node",
+              "id": 842,
+              "x": 468,
+              "z": 408
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 903,
+              "x": 468,
+              "z": 488
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 468,
+                  "y": 15.130274772644043,
+                  "z": 408
+                },
+                {
+                  "x": 468,
+                  "y": 16.708866119384766,
+                  "z": 488
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 1.97,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 903,
+                "x": 468,
+                "z": 488
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "5,-1:v",
+        "minUnclaimedBand": 9,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 5,
+        "maxGradePct": 2.67,
+        "seeds": {
+          "7": {
+            "key": "5,-1:v",
+            "a": {
+              "x": 404,
+              "z": -40
+            },
+            "b": {
+              "x": 404,
+              "z": 40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              630,
+              670
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 18,
+            "claimedCore": 0,
+            "claimedEndpoint": 1,
+            "waterSamples": 0,
+            "maxSlope": 0.11888724017427618,
+            "rank": 42,
+            "firstSnap": {
+              "kind": "node",
+              "id": 629,
+              "x": 404,
+              "z": -40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 669,
+              "x": 404,
+              "z": 40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 404,
+                  "y": 16.103620529174805,
+                  "z": -40
+                },
+                {
+                  "x": 404,
+                  "y": 18.238000869750977,
+                  "z": 40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 2.67,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 669,
+                "x": 404,
+                "z": 40
+              }
+            }
+          },
+          "1337": {
+            "key": "5,-1:v",
+            "a": {
+              "x": 384,
+              "z": -40
+            },
+            "b": {
+              "x": 384,
+              "z": 40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              579,
+              622
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 9,
+            "paintedBand": 15,
+            "claimedCore": 3,
+            "claimedEndpoint": 5,
+            "waterSamples": 0,
+            "maxSlope": 0.19307154691345196,
+            "rank": 2,
+            "firstSnap": {
+              "kind": "node",
+              "id": 578,
+              "x": 384,
+              "z": -40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 621,
+              "x": 384,
+              "z": 40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 384,
+                  "y": 17.295753479003906,
+                  "z": -40
+                },
+                {
+                  "x": 384,
+                  "y": 18.77269172668457,
+                  "z": 40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 1.85,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 621,
+                "x": 384,
+                "z": 40
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "4,-2:h",
+        "minUnclaimedBand": 8,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 4,
+        "maxGradePct": 1.64,
+        "seeds": {
+          "7": {
+            "key": "4,-2:h",
+            "a": {
+              "x": 280,
+              "z": -80
+            },
+            "b": {
+              "x": 360,
+              "z": -80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              583,
+              587
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 8,
+            "paintedBand": 19,
+            "claimedCore": 0,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.48802158382622707,
+            "rank": 28,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 583,
+              "x": 280,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 587,
+              "x": 360,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 280,
+                  "y": 8.8936128616333,
+                  "z": -80
+                },
+                {
+                  "x": 360,
+                  "y": 10.201875686645508,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.64,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 587,
+                "x": 360,
+                "z": -80
+              }
+            }
+          },
+          "1337": {
+            "key": "4,-2:h",
+            "a": {
+              "x": 264,
+              "z": -80
+            },
+            "b": {
+              "x": 344,
+              "z": -80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              532,
+              536
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 22,
+            "paintedBand": 22,
+            "claimedCore": 0,
+            "claimedEndpoint": 4,
+            "waterSamples": 0,
+            "maxSlope": 0.5331228053772625,
+            "rank": 80,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 532,
+              "x": 264,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 536,
+              "x": 344,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 264,
+                  "y": 12.555058479309082,
+                  "z": -80
+                },
+                {
+                  "x": 344,
+                  "y": 13.287495613098145,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 0.92,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 536,
+                "x": 344,
+                "z": -80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-4,3:v",
+        "minUnclaimedBand": 6,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 1.8,
+        "seeds": {
+          "7": {
+            "key": "-4,3:v",
+            "a": {
+              "x": -340,
+              "z": 272
+            },
+            "b": {
+              "x": -340,
+              "z": 352
+            },
+            "length": 80,
+            "boundaryEdges": [
+              781,
+              816
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 6,
+            "paintedBand": 6,
+            "claimedCore": 0,
+            "claimedEndpoint": 4,
+            "waterSamples": 0,
+            "maxSlope": 0.11609521163715436,
+            "rank": 16,
+            "firstSnap": {
+              "kind": "node",
+              "id": 780,
+              "x": -340,
+              "z": 272
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 815,
+              "x": -340,
+              "z": 352
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -340,
+                  "y": 17.764892578125,
+                  "z": 272
+                },
+                {
+                  "x": -340,
+                  "y": 17.342121124267578,
+                  "z": 352
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -0.53,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 815,
+                "x": -340,
+                "z": 352
+              }
+            }
+          },
+          "1337": {
+            "key": "-4,3:v",
+            "a": {
+              "x": -336,
+              "z": 264
+            },
+            "b": {
+              "x": -336,
+              "z": 328
+            },
+            "length": 64,
+            "boundaryEdges": [
+              723,
+              754
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 12,
+            "paintedBand": 33,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.11097264483632609,
+            "rank": 34,
+            "firstSnap": {
+              "kind": "node",
+              "id": 722,
+              "x": -336,
+              "z": 264
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 753,
+              "x": -336,
+              "z": 328
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 77,
+              "points": [
+                {
+                  "x": -336,
+                  "y": 14.590734481811523,
+                  "z": 264
+                },
+                {
+                  "x": -336,
+                  "y": 15.745511054992676,
+                  "z": 328
+                }
+              ],
+              "metrics": {
+                "length": 64,
+                "angle": 90,
+                "grade": 1.8,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 753,
+                "x": -336,
+                "z": 328
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "1,5:v",
+        "minUnclaimedBand": 6,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 3.3,
+        "seeds": {
+          "7": {
+            "key": "1,5:v",
+            "a": {
+              "x": 80,
+              "z": 432
+            },
+            "b": {
+              "x": 80,
+              "z": 520
+            },
+            "length": 88,
+            "boundaryEdges": [
+              882,
+              943
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 6,
+            "paintedBand": 19,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.07066314785509605,
+            "rank": 10,
+            "firstSnap": {
+              "kind": "node",
+              "id": 881,
+              "x": 80,
+              "z": 432
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 942,
+              "x": 80,
+              "z": 520
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 106,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 16.16478157043457,
+                  "z": 432
+                },
+                {
+                  "x": 80,
+                  "y": 15.159648895263672,
+                  "z": 520
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 90,
+                "grade": -1.14,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 942,
+                "x": 80,
+                "z": 520
+              }
+            }
+          },
+          "1337": {
+            "key": "1,5:v",
+            "a": {
+              "x": 80,
+              "z": 408
+            },
+            "b": {
+              "x": 80,
+              "z": 488
+            },
+            "length": 80,
+            "boundaryEdges": [
+              823,
+              884
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.06994408373210864,
+            "rank": 38,
+            "firstSnap": {
+              "kind": "node",
+              "id": 822,
+              "x": 80,
+              "z": 408
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 883,
+              "x": 80,
+              "z": 488
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 13.717591285705566,
+                  "z": 408
+                },
+                {
+                  "x": 80,
+                  "y": 16.355159759521484,
+                  "z": 488
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 3.3,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 883,
+                "x": 80,
+                "z": 488
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-4,-2:v",
+        "minUnclaimedBand": 6,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 11,
+        "maxGradePct": 2.82,
+        "seeds": {
+          "7": {
+            "key": "-4,-2:v",
+            "a": {
+              "x": -340,
+              "z": -120
+            },
+            "b": {
+              "x": -340,
+              "z": -40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              561,
+              610
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 22,
+            "paintedBand": 61,
+            "claimedCore": 0,
+            "claimedEndpoint": 5,
+            "waterSamples": 0,
+            "maxSlope": 0.09451187096818155,
+            "rank": 78,
+            "firstSnap": {
+              "kind": "node",
+              "id": 560,
+              "x": -340,
+              "z": -120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 609,
+              "x": -340,
+              "z": -40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -340,
+                  "y": 15.621786117553711,
+                  "z": -120
+                },
+                {
+                  "x": -340,
+                  "y": 13.364211082458496,
+                  "z": -40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -2.82,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 609,
+                "x": -340,
+                "z": -40
+              }
+            }
+          },
+          "1337": {
+            "key": "-4,-2:v",
+            "a": {
+              "x": -336,
+              "z": -120
+            },
+            "b": {
+              "x": -336,
+              "z": -40
+            },
+            "length": 80,
+            "boundaryEdges": [
+              513,
+              559
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 6,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 11,
+            "waterSamples": 0,
+            "maxSlope": 0.16674062849402718,
+            "rank": 2,
+            "firstSnap": {
+              "kind": "node",
+              "id": 512,
+              "x": -336,
+              "z": -120
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 558,
+              "x": -336,
+              "z": -40
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -336,
+                  "y": 19.65275764465332,
+                  "z": -120
+                },
+                {
+                  "x": -336,
+                  "y": 18.56389045715332,
+                  "z": -40
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -1.36,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 558,
+                "x": -336,
+                "z": -40
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "-5,4:v",
+        "minUnclaimedBand": 6,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 12,
+        "maxGradePct": 2.29,
+        "seeds": {
+          "7": {
+            "key": "-5,4:v",
+            "a": {
+              "x": -424,
+              "z": 352
+            },
+            "b": {
+              "x": -424,
+              "z": 432
+            },
+            "length": 80,
+            "boundaryEdges": [
+              812,
+              858
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 6,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.06773814721204525,
+            "rank": 10,
+            "firstSnap": {
+              "kind": "node",
+              "id": 811,
+              "x": -424,
+              "z": 352
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 857,
+              "x": -424,
+              "z": 432
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -424,
+                  "y": 18.35752296447754,
+                  "z": 352
+                },
+                {
+                  "x": -424,
+                  "y": 16.524721145629883,
+                  "z": 432
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": -2.29,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 857,
+                "x": -424,
+                "z": 432
+              }
+            }
+          },
+          "1337": {
+            "key": "-5,4:v",
+            "a": {
+              "x": -416,
+              "z": 328
+            },
+            "b": {
+              "x": -416,
+              "z": 408
+            },
+            "length": 80,
+            "boundaryEdges": [
+              750,
+              799
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 6,
+            "paintedBand": 45,
+            "claimedCore": 0,
+            "claimedEndpoint": 12,
+            "waterSamples": 0,
+            "maxSlope": 0.06774569854159375,
+            "rank": 0,
+            "firstSnap": {
+              "kind": "node",
+              "id": 749,
+              "x": -416,
+              "z": 328
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 798,
+              "x": -416,
+              "z": 408
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -416,
+                  "y": 15.50341796875,
+                  "z": 328
+                },
+                {
+                  "x": -416,
+                  "y": 16.991052627563477,
+                  "z": 408
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 1.86,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 798,
+                "x": -416,
+                "z": 408
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "2,-7:h",
+        "minUnclaimedBand": 5,
+        "maxClaimedCore": 8,
+        "maxClaimedEndpoint": 5,
+        "maxGradePct": 3.38,
+        "seeds": {
+          "7": {
+            "key": "2,-7:h",
+            "a": {
+              "x": 120,
+              "z": -492
+            },
+            "b": {
+              "x": 200,
+              "z": -492
+            },
+            "length": 80,
+            "boundaryEdges": [
+              396,
+              397
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 5,
+            "paintedBand": 5,
+            "claimedCore": 0,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.11006133085028069,
+            "rank": 16,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 396,
+              "x": 120,
+              "z": -492
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 397,
+              "x": 200,
+              "z": -492
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 120,
+                  "y": 17.359037399291992,
+                  "z": -492
+                },
+                {
+                  "x": 200,
+                  "y": 14.651763916015625,
+                  "z": -492
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": -3.38,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 397,
+                "x": 200,
+                "z": -492
+              }
+            }
+          },
+          "1337": {
+            "key": "2,-7:h",
+            "a": {
+              "x": 120,
+              "z": -484
+            },
+            "b": {
+              "x": 200,
+              "z": -484
+            },
+            "length": 80,
+            "boundaryEdges": [
+              378,
+              379
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 25,
+            "paintedBand": 33,
+            "claimedCore": 8,
+            "claimedEndpoint": 5,
+            "waterSamples": 0,
+            "maxSlope": 0.0474676740701316,
+            "rank": 26,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 378,
+              "x": 120,
+              "z": -484
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 379,
+              "x": 200,
+              "z": -484
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 120,
+                  "y": 14.291863441467285,
+                  "z": -484
+                },
+                {
+                  "x": 200,
+                  "y": 15.755270004272461,
+                  "z": -484
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.83,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 379,
+                "x": 200,
+                "z": -484
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "0,1:h",
+        "minUnclaimedBand": 4,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 2,
+        "maxGradePct": 2.05,
+        "seeds": {
+          "7": {
+            "key": "0,1:h",
+            "a": {
+              "x": -40,
+              "z": 160
+            },
+            "b": {
+              "x": 40,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              706,
+              708
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 4,
+            "paintedBand": 22,
+            "claimedCore": 0,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.0927311334573241,
+            "rank": 12,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 706,
+              "x": -40,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 708,
+              "x": 40,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -40,
+                  "y": 16.606348037719727,
+                  "z": 160
+                },
+                {
+                  "x": 40,
+                  "y": 18.249675750732422,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 2.05,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 708,
+                "x": 40,
+                "z": 160
+              }
+            }
+          },
+          "1337": {
+            "key": "0,1:h",
+            "a": {
+              "x": -40,
+              "z": 160
+            },
+            "b": {
+              "x": 40,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              655,
+              657
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 4,
+            "paintedBand": 22,
+            "claimedCore": 0,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.1025695236336598,
+            "rank": 12,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 655,
+              "x": -40,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 657,
+              "x": 40,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -40,
+                  "y": 16.15052604675293,
+                  "z": 160
+                },
+                {
+                  "x": 40,
+                  "y": 17.454204559326172,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.63,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 657,
+                "x": 40,
+                "z": 160
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "2,-2:h",
+        "minUnclaimedBand": 4,
+        "maxClaimedCore": 5,
+        "maxClaimedEndpoint": 7,
+        "maxGradePct": 4.52,
+        "seeds": {
+          "7": {
+            "key": "2,-2:h",
+            "a": {
+              "x": 120,
+              "z": -80
+            },
+            "b": {
+              "x": 200,
+              "z": -80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              577,
+              579
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 27,
+            "paintedBand": 39,
+            "claimedCore": 5,
+            "claimedEndpoint": 6,
+            "waterSamples": 0,
+            "maxSlope": 0.3946187405304264,
+            "rank": 56,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 577,
+              "x": 120,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 579,
+              "x": 200,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 120,
+                  "y": 8.008744239807129,
+                  "z": -80
+                },
+                {
+                  "x": 200,
+                  "y": 9.10206413269043,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.37,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 579,
+                "x": 200,
+                "z": -80
+              }
+            }
+          },
+          "1337": {
+            "key": "2,-2:h",
+            "a": {
+              "x": 120,
+              "z": -80
+            },
+            "b": {
+              "x": 200,
+              "z": -80
+            },
+            "length": 80,
+            "boundaryEdges": [
+              528,
+              530
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 4,
+            "paintedBand": 4,
+            "claimedCore": 0,
+            "claimedEndpoint": 7,
+            "waterSamples": 0,
+            "maxSlope": 0.486196639136985,
+            "rank": 2,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 528,
+              "x": 120,
+              "z": -80
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 530,
+              "x": 200,
+              "z": -80
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 97,
+              "points": [
+                {
+                  "x": 120,
+                  "y": 4.108658790588379,
+                  "z": -80
+                },
+                {
+                  "x": 200,
+                  "y": 7.722346782684326,
+                  "z": -80
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 4.52,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 530,
+                "x": 200,
+                "z": -80
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "7,6:v",
+        "minUnclaimedBand": 2,
+        "maxClaimedCore": 3,
+        "maxClaimedEndpoint": 6,
+        "maxGradePct": 3.87,
+        "seeds": {
+          "7": {
+            "key": "7,6:v",
+            "a": {
+              "x": 576,
+              "z": 520
+            },
+            "b": {
+              "x": 576,
+              "z": 608
+            },
+            "length": 88,
+            "boundaryEdges": [
+              967,
+              1019
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 11,
+            "paintedBand": 32,
+            "claimedCore": 3,
+            "claimedEndpoint": 6,
+            "waterSamples": 0,
+            "maxSlope": 0.4587183229306773,
+            "rank": 8,
+            "firstSnap": {
+              "kind": "node",
+              "id": 966,
+              "x": 576,
+              "z": 520
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 1018,
+              "x": 576,
+              "z": 608
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 106,
+              "points": [
+                {
+                  "x": 576,
+                  "y": 17.47669792175293,
+                  "z": 520
+                },
+                {
+                  "x": 576,
+                  "y": 20.880403518676758,
+                  "z": 608
+                }
+              ],
+              "metrics": {
+                "length": 88,
+                "angle": 90,
+                "grade": 3.87,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 1018,
+                "x": 576,
+                "z": 608
+              }
+            }
+          },
+          "1337": {
+            "key": "7,6:v",
+            "a": {
+              "x": 556,
+              "z": 488
+            },
+            "b": {
+              "x": 556,
+              "z": 584
+            },
+            "length": 96,
+            "boundaryEdges": [
+              908,
+              960
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 2,
+            "paintedBand": 2,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.26692317097421325,
+            "rank": 2,
+            "firstSnap": {
+              "kind": "node",
+              "id": 907,
+              "x": 556,
+              "z": 488
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "node",
+              "id": 959,
+              "x": 556,
+              "z": 584
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 115,
+              "points": [
+                {
+                  "x": 556,
+                  "y": 17.50446319580078,
+                  "z": 488
+                },
+                {
+                  "x": 556,
+                  "y": 17.71397590637207,
+                  "z": 584
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 90,
+                "grade": 0.22,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "node",
+                "id": 959,
+                "x": 556,
+                "z": 584
+              }
+            }
+          }
+        }
+      }
+    ],
+    "hashes": {
+      "shots/democity/r9n-coordinated-infill/screen-v1.json": "6c958ce19cf834414135fc1d6701062a7a8ffef696bc170a84773565db9a8271",
+      "tools/r9n-coordinated-infill-screen.mjs": "b1641658f6e9296aa63d50a19365fafaa6a8419610b698de18af3f1d53e42460",
+      "src/modules/democity/plan.js": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+      "src/modules/tools/tools.js": "c4af6548f03fd9167955e44fd2cfd9554bde3b7abc3a5bf38e8f3f7b57a8ac47",
+      "src/modules/tools/index.js": "442cbc17622dc1ccbe6cf62c3942dd6ff2131e34dea9c5829b7df84b7970c02a",
+      "src/modules/tools/costs.js": "b900c913fddece598bf294c5fea7274709cfb1b0f2a00b16f1a6d4bc53fbfe94",
+      "src/modules/roads/network.js": "fb63d41853d360e6a6c79a3cb589f761ae709ec20211af8da467f41558af43e8"
+    },
+    "safeCommon": [
+      {
+        "key": "-3,1:h",
+        "minUnclaimedBand": 17,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 3,
+        "maxGradePct": 5.78,
+        "seeds": {
+          "7": {
+            "key": "-3,1:h",
+            "a": {
+              "x": -296,
+              "z": 160
+            },
+            "b": {
+              "x": -200,
+              "z": 160
+            },
+            "length": 96,
+            "boundaryEdges": [
+              700,
+              702
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.07378410131200658,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 700,
+              "x": -296,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 702,
+              "x": -200,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 115,
+              "points": [
+                {
+                  "x": -296,
+                  "y": 16.25165557861328,
+                  "z": 160
+                },
+                {
+                  "x": -200,
+                  "y": 16.946880340576172,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 0,
+                "grade": 0.72,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 702,
+                "x": -200,
+                "z": 160
+              }
+            }
+          },
+          "1337": {
+            "key": "-3,1:h",
+            "a": {
+              "x": -296,
+              "z": 160
+            },
+            "b": {
+              "x": -200,
+              "z": 160
+            },
+            "length": 96,
+            "boundaryEdges": [
+              649,
+              651
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.1877801531175135,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 649,
+              "x": -296,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 651,
+              "x": -200,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 119,
+              "points": [
+                {
+                  "x": -296,
+                  "y": 11.803767204284668,
+                  "z": 160
+                },
+                {
+                  "x": -200,
+                  "y": 17.351404190063477,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 96,
+                "angle": 0,
+                "grade": 5.78,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 651,
+                "x": -200,
+                "z": 160
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "1,0:v",
+        "minUnclaimedBand": 17,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 3,
+        "maxGradePct": 3.83,
+        "seeds": {
+          "7": {
+            "key": "1,0:v",
+            "a": {
+              "x": 80,
+              "z": 40
+            },
+            "b": {
+              "x": 80,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              661,
+              707
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 17,
+            "paintedBand": 17,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.37673243905709003,
+            "rank": 62,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 661,
+              "x": 80,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 707,
+              "x": 80,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 16.169572830200195,
+                  "z": 40
+                },
+                {
+                  "x": 80,
+                  "y": 19.23406982421875,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 3.83,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 707,
+                "x": 80,
+                "z": 120
+              }
+            }
+          },
+          "1337": {
+            "key": "1,0:v",
+            "a": {
+              "x": 80,
+              "z": 40
+            },
+            "b": {
+              "x": 80,
+              "z": 120
+            },
+            "length": 80,
+            "boundaryEdges": [
+              613,
+              656
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 21,
+            "paintedBand": 21,
+            "claimedCore": 0,
+            "claimedEndpoint": 3,
+            "waterSamples": 0,
+            "maxSlope": 0.18359257447522753,
+            "rank": 78,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 613,
+              "x": 80,
+              "z": 40
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 656,
+              "x": 80,
+              "z": 120
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": 80,
+                  "y": 17.071456909179688,
+                  "z": 40
+                },
+                {
+                  "x": 80,
+                  "y": 19.316421508789062,
+                  "z": 120
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 90,
+                "grade": 2.81,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 656,
+                "x": 80,
+                "z": 120
+              }
+            }
+          }
+        }
+      },
+      {
+        "key": "0,1:h",
+        "minUnclaimedBand": 4,
+        "maxClaimedCore": 0,
+        "maxClaimedEndpoint": 2,
+        "maxGradePct": 2.05,
+        "seeds": {
+          "7": {
+            "key": "0,1:h",
+            "a": {
+              "x": -40,
+              "z": 160
+            },
+            "b": {
+              "x": 40,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              706,
+              708
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 4,
+            "paintedBand": 22,
+            "claimedCore": 0,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.0927311334573241,
+            "rank": 12,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 706,
+              "x": -40,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 708,
+              "x": 40,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -40,
+                  "y": 16.606348037719727,
+                  "z": 160
+                },
+                {
+                  "x": 40,
+                  "y": 18.249675750732422,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 2.05,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 708,
+                "x": 40,
+                "z": 160
+              }
+            }
+          },
+          "1337": {
+            "key": "0,1:h",
+            "a": {
+              "x": -40,
+              "z": 160
+            },
+            "b": {
+              "x": 40,
+              "z": 160
+            },
+            "length": 80,
+            "boundaryEdges": [
+              655,
+              657
+            ],
+            "boundaryDistances": [
+              0,
+              0
+            ],
+            "unclaimedBand": 4,
+            "paintedBand": 22,
+            "claimedCore": 0,
+            "claimedEndpoint": 2,
+            "waterSamples": 0,
+            "maxSlope": 0.1025695236336598,
+            "rank": 12,
+            "firstSnap": {
+              "kind": "edge",
+              "id": 655,
+              "x": -40,
+              "z": 160
+            },
+            "firstClick": {
+              "ok": true,
+              "cost": 0
+            },
+            "secondSnap": {
+              "kind": "edge",
+              "id": 657,
+              "x": 40,
+              "z": 160
+            },
+            "draft": {
+              "valid": true,
+              "reason": null,
+              "cost": 96,
+              "points": [
+                {
+                  "x": -40,
+                  "y": 16.15052604675293,
+                  "z": 160
+                },
+                {
+                  "x": 40,
+                  "y": 17.454204559326172,
+                  "z": 160
+                }
+              ],
+              "metrics": {
+                "length": 80,
+                "angle": 0,
+                "grade": 1.63,
+                "cells": 0,
+                "volume": 0,
+                "items": 1
+              },
+              "snap": {
+                "kind": "edge",
+                "id": 657,
+                "x": 40,
+                "z": 160
+              }
+            }
+          }
+        }
+      }
+    ],
+    "commonCount": 41,
+    "pass": true,
+    "routedSha256": "bb95e06de52aededb99989e04cb747626bdf52a3bf5377f29d53f82d06e78d75"
+  },
+  "corrections": [
+    "Latest builder correctly calls four corner-node combinations rather than proven closed road blocks.",
+    "Latest builder distinguishes reported full totals/geometric aggregates from independently reconstructible retained results.",
+    "Latest builder correctly identifies displayed grade as rounded endpoint rise/run.",
+    "Candidate selection is editorial prioritization:1,0:v is ranked12/23 per seed and second of three common proxy-safe options; lower displayed grade does not imply lower maximum sampled slope."
+  ],
+  "limitations": [
+    "Only100 ranked candidates per seed are retained. The281/318 filtered totals and268/280 grid-node totals are reported metadata, not independently reconstructible from an absent complete node/edge/cell map or untruncated candidate list.",
+    "All four corner nodes are required, but the screen checks only two nearby straight distinct endpoint edges within8m. It does not prove a closed block, identify all crossings or validate service/landmark/building footprints.",
+    "Cell ranking uses currently painted, unclaimed cell centers7–34m from the segment at8–92% along it. Core and endpoint contact are conservative proxies, not emitted frontage, full footprints or lost parcels. Raw cell keys and terrain sample arrays are not retained, so only their aggregate arithmetic is recomputed.",
+    "Water is sampled21 times along a line; maximum terrain slope is recorded but not penalized in rank. Public evaluator uses its own2m sampling, mean endpoint grade, cut/water/bounds/angle/funds checks. Neither a zero water count nor lower mean grade establishes an easier earthworks profile.",
+    "Rank weights4/−8/−2/−20 and safe threshold core0/endpoints<=3 are heuristics. The three safe common candidates are not universally safe or the only promising designs.41common covers separate rank-truncated sets only.",
+    "Magnet snaps prioritize nodes within12m and then edges within10m; prefilter radius is8m. Many candidates snap existing midpoint nodes rather than split edges. All retained coordinates match proposed endpoints, and every recorded edge snap matches its prefilter edge ID; this does not generalize beyond retained records.",
+    "Public validity is preview validity only. No commit, actual edge split, payment, regeneration, owner allocation, service/transit response, undo/redo or save/load is tested.",
+    "Count equality plus the inspected no-commit tool path supports no intended structural world mutation, not bit-identical payloads, finance, services or terrain. Public drafts and the diagnostic global are temporary runtime changes; caches/preview state may change.",
+    "No before/after renderer identity, source-response byte manifest, screenshots, performance, forced-GC memory, visual quality, or full API/save gate is established. Chrome/Metal and viewport are launch configuration, not retained renderer telemetry.",
+    "No broad search exhaustion or optimality claim. R8y/R9j exhausted only the two common positive existing-node/cardinal shortlist entries, leaving this different design class open."
+  ],
+  "selected": {
+    "key": "1,0:v",
+    "endpoints": [
+      [
+        80,
+        40
+      ],
+      [
+        80,
+        120
+      ]
+    ],
+    "lengthM": 80,
+    "costEachSeed": 96,
+    "seed1337": {
+      "edges": [
+        613,
+        656
+      ],
+      "rank": 78,
+      "unclaimedBand": 21,
+      "claimedCore": 0,
+      "claimedEndpoint": 3,
+      "waterSamples": 0,
+      "maxSampledTerrainSlope": 0.18359257447522753,
+      "endpointRise": 2.244964599609375,
+      "exactMeanGradePct": 2.8062057495117188,
+      "displayedGradePct": 2.81
+    },
+    "seed7": {
+      "edges": [
+        661,
+        707
+      ],
+      "rank": 62,
+      "unclaimedBand": 17,
+      "claimedCore": 0,
+      "claimedEndpoint": 3,
+      "waterSamples": 0,
+      "maxSampledTerrainSlope": 0.37673243905709003,
+      "endpointRise": 3.0644969940185547,
+      "exactMeanGradePct": 3.8306212425231934,
+      "displayedGradePct": 3.83
+    }
+  },
+  "nextPriority": {
+    "owners": [
+      "democity",
+      "tools",
+      "roads",
+      "zoning",
+      "buildings",
+      "simulation",
+      "transit",
+      "services"
+    ],
+    "task": "Commit only1,0:v through public Tools in disposable baseline worlds for both seeds. Observe actual two-edge split journal and topology, terrain changes, cost/undo/redo, lot/building and membership yield, retained identities, service/transit references and saved-state restore; capture matched directed visuals. Repeat deterministic staging. Accept no product or score change until useful cross-seed yield, integrity and visible coherence are demonstrated.",
+    "expectedGraphChangeIsHypothesis": "Two distinct interior straight-edge splits would ordinarily add2nodes and net3edges (replace2 by4 plus1connector); verify actual owner result and edge-reference consumers rather than assume it."
+  },
+  "inspectionRegister": [
+    "docs/builds/democity_r9n_coordinated_infill_screen.md (latest revised)",
+    "tools/r9n-coordinated-infill-screen.mjs",
+    "shots/democity/r9n-coordinated-infill/screen-v1.json (all767918bytes)",
+    "src/modules/democity/plan.js",
+    "src/modules/tools/tools.js (road evaluator/snap/click/commit/cancel)",
+    "src/modules/tools/index.js (public API and state)",
+    "src/modules/tools/costs.js",
+    "src/modules/roads/network.js (nearestEdge and published queries)",
+    "docs/critic/democity_r8y.md",
+    "docs/critic/democity_r9j.md"
+  ],
+  "imagesInspected": []
+}

@@ -1,0 +1,35 @@
+{
+  "module": "democity",
+  "round": "r7r",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accept-bounded-change-score-held",
+  "verified": {
+    "build": true,
+    "api": true,
+    "doubleDeserialize": true,
+    "tour": true,
+    "exactCrossSeedRestage": true,
+    "deterministicInitialTraffic": true,
+    "differentSeedTraffic": true,
+    "imagesInspected": 19,
+    "errors": 0
+  },
+  "streetActivity": {
+    "vehiclesWithin150m": 13,
+    "vehicleKindsWithin150m": 7,
+    "pedestriansWithin150m": 12,
+    "totalVehicles": 157,
+    "totalPedestrians": 186,
+    "numericClausePass": true,
+    "broadVisualLivelinessPass": false
+  },
+  "matrix": {
+    "shots": 16,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2998792,
+    "minFps": 43.2
+  },
+  "evidence": "shots/democity/r7r-activity-weighting; shots/democity/r7r",
+  "report": "docs/critic/democity_r7r.md"
+}

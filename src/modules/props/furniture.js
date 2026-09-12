@@ -93,7 +93,9 @@ function trafficLight(lut) {
     b.box(0.10, 0.26, 0.10, { pos: [hx, hy + 0.80, 0], slot: SLOT.paintedMetal, color: dark });
     for (const dy of LENS_DY) {
       b.add(new THREE.CylinderGeometry(0.170, 0.150, 0.20, 8, 1, true), { pos: [hx, hy + dy + 0.035, LENS_Z - 0.06], rot: [Math.PI / 2, 0, 0], slot: SLOT.plastic, color: body });
-      b.add(new THREE.CylinderGeometry(0.150, 0.150, 0.02, 7), { pos: [hx, hy + dy, LENS_Z + 0.02], rot: [Math.PI / 2, 0, 0], slot: SLOT.plastic, color: 0x1a1c1e });
+      // The live signal lens is a separate disc over this face. Keep only the
+      // narrow dark bezel instead of drawing a fully covered cylinder cap.
+      b.add(new THREE.RingGeometry(0.135, 0.150, 6), { pos: [hx, hy + dy, LENS_Z + 0.02], rot: [0, Math.PI, 0], slot: SLOT.plastic, color: 0x1a1c1e });
     }
   }
   // pedestrian head at 2.62 m
@@ -182,17 +184,23 @@ function busStop(lut) {
   b.box(W + 0.34, 0.10, D + 0.42, { pos: [0, 2.60, 0.02], slot: SLOT.paintedMetal, color: 0x3f464c, detail: 1.2 });
   b.box(W + 0.34, 0.16, 0.10, { pos: [0, 2.49, -(D / 2 + 0.20)], slot: SLOT.paintedMetal, color: 0x2c5a80, detail: 2 });
   b.box(W - 0.5, 0.05, 0.20, { pos: [0, 2.51, 0.16], slot: SLOT.lamp, color: 0xfff3d8 });
-  // glass: rear wall + two ends
-  b.box(W - 0.30, 2.06, 0.030, { pos: [0, 1.34, D / 2 - 0.09], slot: SLOT.glass, color: 0x2b3339, detail: 1 });
-  for (const sx of [-W / 2 + 0.09, W / 2 - 0.09]) b.box(0.030, 2.06, D - 0.30, { pos: [sx, 1.34, 0], slot: SLOT.glass, color: 0x2b3339, detail: 1 });
-  // timetable panel on the right-hand end
-  b.box(0.045, 0.86, 0.62, { pos: [W / 2 - 0.16, 1.52, 0.10], slot: SLOT.paintedMetal, color: 0x1c2126, detail: 2 });
-  b.box(0.020, 0.74, 0.52, { pos: [W / 2 - 0.20, 1.52, 0.10], slot: SLOT.plastic, color: 0xd8dde2 });
+  // Separate low-opacity glazing retains a clear view of the seat and timetable.
+  const glass = new Builder(lut);
+  glass.box(W - 0.30, 2.06, 0.030, { pos: [0, 1.34, D / 2 - 0.09], slot: SLOT.glass, color: 0x2b3339, detail: 1 });
+  for (const sx of [-W / 2 + 0.09, W / 2 - 0.09]) glass.box(0.030, 2.06, D - 0.30, { pos: [sx, 1.34, 0], slot: SLOT.glass, color: 0x2b3339, detail: 1 });
+  // Front-facing timetable with header, route strip and printed row rhythm.
+  b.box(0.56, 0.90, 0.055, {pos:[1.53,1.50,0.54],slot:SLOT.paintedMetal,color:0x253d4b});
+  b.box(0.47, 0.79, 0.010, {pos:[1.53,1.50,0.505],slot:SLOT.plastic,color:0xe4dfcd});
+  b.box(0.43, 0.10, 0.012, {pos:[1.53,1.81,0.495],slot:SLOT.plastic,color:0x245b7e});
+  for (let row=0;row<8;row++) {
+    b.box(0.035,0.025,0.013,{pos:[1.36,1.69-row*0.073,0.494],slot:SLOT.plastic,color:0x357daa});
+    b.box(0.25+(row%3)*0.018,0.014,0.013,{pos:[1.58,1.69-row*0.073,0.494],slot:SLOT.plastic,color:0x565d62});
+  }
   // seat
   b.box(W - 0.3, 0.09, 0.09, { pos: [0, 0.52, D / 2 - 0.24], slot: SLOT.paintedMetal, color: frame });
   for (let i = 0; i < 3; i++) b.box(W - 0.7, 0.05, 0.13, { pos: [0, 0.49, D / 2 - 0.54 + i * 0.16], slot: SLOT.wood, color: 0x8a6038, detail: 3 });
   for (const sx of [-0.9, 0.9]) b.box(0.07, 0.48, 0.42, { pos: [sx, 0.25, D / 2 - 0.38], slot: SLOT.paintedMetal, color: frame });
-  return { geo: b.build() };
+  return { geo: b.build(), glass: glass.build() };
 }
 
 // ------------------------------------------------------------------ planter
@@ -257,10 +265,10 @@ export function fenceRun(lut, pts, variant, rng) {
     const head = Math.atan2(c.x - a.x, -(c.z - a.z));
     const pitch = Math.atan2(c.y - a.y, Math.max(1e-4, L));
     if (variant === 'wall') {
-      b.box(L, H * 0.86, 0.14, { pos: [mx, my + H * 0.43 + 0.04, mz], rot: [0, -head, pitch], slot: SLOT.concrete, color: 0xbdb7ab, ao: { y0: my, y1: my + 1.2, bottom: 0.66, top: 1 }, detail: 1.2 });
-      b.box(L, 0.09, 0.20, { pos: [mx, my + H * 0.90, mz], rot: [0, -head, pitch], slot: SLOT.concrete, color: 0xa39d92, detail: 1.4 });
+      b.box(L, H * 0.86, 0.14, { pos: [mx, my + H * 0.43 + 0.04, mz], rot: [0, -head + Math.PI / 2, pitch], slot: SLOT.concrete, color: 0xbdb7ab, ao: { y0: my, y1: my + 1.2, bottom: 0.66, top: 1 }, detail: 1.2 });
+      b.box(L, 0.09, 0.20, { pos: [mx, my + H * 0.90, mz], rot: [0, -head + Math.PI / 2, pitch], slot: SLOT.concrete, color: 0xa39d92, detail: 1.4 });
     } else if (variant === 'railing') {
-      for (const ry of [0.10, H - 0.06]) b.box(L, 0.055, 0.045, { pos: [mx, my + ry, mz], rot: [0, -head, pitch], slot: SLOT.paintedMetal, color: 0x23282c, detail: 2 });
+      for (const ry of [0.10, H - 0.06]) b.box(L, 0.055, 0.045, { pos: [mx, my + ry, mz], rot: [0, -head + Math.PI / 2, pitch], slot: SLOT.paintedMetal, color: 0x23282c, detail: 2 });
       const bars = Math.max(2, Math.round(L / 0.20));
       for (let k = 0; k < bars; k++) {
         const t = (k + 0.5) / bars;
@@ -268,7 +276,7 @@ export function fenceRun(lut, pts, variant, rng) {
         b.box(0.022, H - 0.14, 0.022, { pos: [px, py + 0.10 + (H - 0.14) / 2, pz], rot: [0, -head, 0], slot: SLOT.paintedMetal, color: 0x23282c });
       }
     } else {
-      for (const ry of [0.11, 0.38, 0.86]) b.box(L, 0.06, 0.042, { pos: [mx, my + ry, mz], rot: [0, -head, pitch], slot: SLOT.wood, color: 0xc9c3b4, detail: 3 });
+      for (const ry of [0.11, 0.38, 0.86]) b.box(L, 0.06, 0.042, { pos: [mx, my + ry, mz], rot: [0, -head + Math.PI / 2, pitch], slot: SLOT.wood, color: 0xc9c3b4, detail: 3 });
       const pick = Math.max(2, Math.round(L / 0.32));
       for (let k = 0; k < pick; k++) {
         const t = (k + 0.5) / pick;
@@ -315,63 +323,36 @@ const newOut = () => ({ pos: [], nrm: [], uv: [], col: [], idx: [] });
  * leaf cards breaking the silhouette. Nothing repeats, so the tiling NCC test has nothing to find.
  */
 export function hedgeRun(pts, rng, opt = {}) {
-  const out = newOut();
-  const height = opt.height ?? 1.45;
-  const halfW = opt.width ? opt.width * 0.5 : 0.42;
-  const AO_TOP = 1.06, AO_SIDE = 0.46, AO_LOW = 0.26;
-  const N = pts.length;
-  if (N < 2) return null;
-  const nx = [], nz = [], top = [];
-  for (let i = 0; i < N; i++) {
-    const a = pts[Math.max(0, i - 1)], c = pts[Math.min(N - 1, i + 1)];
-    let tx = c.x - a.x, tz = c.z - a.z;
-    const l = Math.hypot(tx, tz) || 1; tx /= l; tz /= l;
-    nx.push(-tz); nz.push(tx);
-    const w = Math.sin(pts[i].x * 0.9 + pts[i].z * 0.7) * 0.105 + Math.sin(pts[i].x * 2.3 - pts[i].z * 1.9) * 0.070 + Math.sin(pts[i].z * 4.1) * 0.040;
-    top.push(height + w);
+  if (pts.length < 2) return null;
+  const samples=[];
+  for(let i=0;i<pts.length-1;i++) {
+    const a=pts[i],b=pts[i+1],n=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.z-a.z)/0.4));
+    for(let j=0;j<n;j++) {const t=j/n;samples.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,z:a.z+(b.z-a.z)*t});}
   }
-  const V3 = (x, y, z) => ({ x, y, z });
-  for (let i = 0; i < N - 1; i++) {
-    const a = pts[i], c = pts[i + 1];
-    for (const s of [1, -1]) {
-      const p0 = V3(a.x + nx[i] * halfW * s - a.x, 0, a.z + nz[i] * halfW * s - a.z);
-      const p1 = V3(c.x + nx[i + 1] * halfW * s - a.x, c.y - a.y, c.z + nz[i + 1] * halfW * s - a.z);
-      // side quad, bottom to top
-      foliageQuad(out, a.x, a.y, a.z, [
-        V3(p0.x, 0.02, p0.z), V3(p1.x, p1.y + 0.02, p1.z),
-        V3(p1.x, p1.y + top[i + 1], p1.z), V3(p0.x, top[i], p0.z),
-      ], { x: nx[i] * s, y: 0.12, z: nz[i] * s }, LEAF_CELL.solid, s > 0 ? AO_SIDE : AO_SIDE * 0.88, rng.bool(),
-        [rng.range(0, 0.55), rng.range(0, 0.5), 0.45, 0.5]);
-    }
-    // top quad
-    foliageQuad(out, a.x, a.y, a.z, [
-      V3(nx[i] * halfW, top[i], nz[i] * halfW),
-      V3(c.x - a.x + nx[i + 1] * halfW, c.y - a.y + top[i + 1], c.z - a.z + nz[i + 1] * halfW),
-      V3(c.x - a.x - nx[i + 1] * halfW, c.y - a.y + top[i + 1], c.z - a.z - nz[i + 1] * halfW),
-      V3(-nx[i] * halfW, top[i], -nz[i] * halfW),
-    ], { x: 0, y: 1, z: 0 }, LEAF_CELL.solid, AO_TOP, rng.bool(), [rng.range(0, 0.55), rng.range(0, 0.5), 0.45, 0.5]);
-    // silhouette-breaking leaf cards along the top edge and the shoulders
-    const cards = 4;
-    for (let k = 0; k < cards; k++) {
-      const t = (k + 0.5) / cards;
-      const px = a.x + (c.x - a.x) * t, pz = a.z + (c.z - a.z) * t, py = a.y + (c.y - a.y) * t;
-      const th = top[i] + (top[i + 1] - top[i]) * t;
-      const s = rng.bool() ? 1 : -1;
-      const w = rng.range(0.42, 0.76);
-      const ang = rng.range(0, Math.PI * 2);
-      const ca = Math.cos(ang), sa = Math.sin(ang);
-      foliageQuad(out, px + nx[i] * halfW * s * 0.7, py + th - w * 0.2, pz + nz[i] * halfW * s * 0.7, [
-        V3(-w * ca, -w * 0.5, -w * sa), V3(w * ca, -w * 0.5, w * sa),
-        V3(w * ca, w * 0.5, w * sa), V3(-w * ca, w * 0.5, -w * sa),
-      ], { x: nx[i] * s * 0.4, y: 0.9, z: nz[i] * s * 0.4 }, LEAF_CELL.hedge, rng.range(0.72, 1.0), rng.bool());
-    }
-    // a darker skirt at the base so the interior reads deep
-    foliageQuad(out, a.x, a.y, a.z, [
-      V3(nx[i] * halfW * 0.7, 0.0, nz[i] * halfW * 0.7),
-      V3(c.x - a.x + nx[i + 1] * halfW * 0.7, c.y - a.y, c.z - a.z + nz[i + 1] * halfW * 0.7),
-      V3(c.x - a.x - nx[i + 1] * halfW * 0.7, c.y - a.y, c.z - a.z - nz[i + 1] * halfW * 0.7),
-      V3(-nx[i] * halfW * 0.7, 0.0, -nz[i] * halfW * 0.7),
-    ], { x: 0, y: 1, z: 0 }, LEAF_CELL.solid, AO_LOW, rng.bool(), [rng.range(0, 0.55), rng.range(0, 0.5), 0.45, 0.5]);
+  samples.push(pts[pts.length-1]);
+  const out=newOut(), height=opt.height??1.45, halfW=(opt.width??0.9)/2;
+  // Rounded clipped crown, closed at both ends. Each texel has the same world scale on
+  // the side, shoulder and cap; tall stretched leaf streaks are avoided.
+  const profile=[[-1,.02],[-1,.65],[-.90,.86],[-.55,.98],[0,1],[.55,.98],[.90,.86],[1,.65],[1,.02]];
+  const rings=samples.map((p,i)=>{
+    const a=samples[Math.max(0,i-1)],b=samples[Math.min(samples.length-1,i+1)];
+    const d=Math.hypot(b.x-a.x,b.z-a.z)||1,nx=-(b.z-a.z)/d,nz=(b.x-a.x)/d;
+    const h=height+Math.sin(p.x*.9+p.z*.7)*.105+Math.sin(p.x*2.3-p.z*1.9)*.07;
+    const w=halfW*(1+.055*Math.sin(p.x*2.1+p.z*1.7));
+    return profile.map(([u,v])=>({x:p.x+nx*u*w,y:p.y+v*h,z:p.z+nz*u*w}));
+  });
+  for(let i=0;i<rings.length-1;i++) for(let k=0;k<profile.length-1;k++) {
+    const a=rings[i][k],b=rings[i+1][k],c=rings[i+1][k+1],d=rings[i][k+1];
+    const tangent=new THREE.Vector3(b.x-a.x,b.y-a.y,b.z-a.z),up=new THREE.Vector3(d.x-a.x,d.y-a.y,d.z-a.z);
+    const normal=new THREE.Vector3().crossVectors(tangent,up).normalize();
+    if(normal.y<0) normal.negate();
+    const ao=.46+.50*Math.max(0,normal.y), ux=rng.range(0,.65),uy=rng.range(0,.5);
+    foliageQuad(out,0,0,0,[a,b,c,d],normal,LEAF_CELL.solid,ao,false,[ux,uy,Math.min(.35,tangent.length()*.65),Math.min(.5,up.length()*.65)]);
+  }
+  for(const end of [0,rings.length-1]) {
+    const ring=rings[end],p=samples[end],q=samples[end===0?1:end-1];
+    const normal=new THREE.Vector3(p.x-q.x,0,p.z-q.z).normalize();
+    for(let k=0;k<4;k++) foliageQuad(out,0,0,0,[ring[k],ring[8-k],ring[7-k],ring[k+1]],normal,LEAF_CELL.solid,.52,false,[.1,.1,.65,.7]);
   }
   return foliageBuild(out);
 }

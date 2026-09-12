@@ -64,6 +64,14 @@ float terrainH(vec2 p) {
   return mix(mix(mix(h00, h10, f.x), mix(h01, h11, f.x), f.y), -45.0, outK);
 }
 
+// Match the visible sky dome's camera-only exposure while leaving the shared LUT physically bright
+// for PMREM and direct lighting. Direction matters at low sun; night remains a uniform exposure scale.
+float skyDisplayGain(vec3 dir) {
+  float lowSunDisplay = (1.0 - smoothstep(0.12, 0.32, uSunDir.y)) * smoothstep(-0.02, 0.05, uSunDir.y);
+  float sunwardDisplay = smoothstep(0.0, 0.80, max(dot(dir, uSunDir), 0.0));
+  return (1.0 - 0.96 * lowSunDisplay * sunwardDisplay) * mix(1.0, 0.25, uEnvNight);
+}
+
 void main() {
   vec3 toCam = cameraPosition - vWPos;
   float dist = length(toCam);
@@ -71,6 +79,10 @@ void main() {
   vec2 p = vWPos.xz;
   float depth = uSeaLevel - terrainH(p);
   if (depth < -0.05) discard;
+  // The open sea can carry a broad sky mirror. Inland water needs more body colour so an
+  // aerial river still reads as water contained by banks instead of a cut-out in the ground.
+  float sea = texture2D(uSeaMask, (p - uWorldMin) / (uCell * (uRes - 1.0))).r;
+  float inland = 1.0 - sea;
 
   // ripples: three scrolling layers, damped with distance and in the shallows
   vec3 n1 = texture2D(uRipple, p / 21.0 + uTime * vec2(0.020, 0.012)).xyz * 2.0 - 1.0;
@@ -91,8 +103,8 @@ void main() {
   R.y = max(R.y, 0.03);
   R = normalize(R);
   vec2 suv = vec2(atan(R.z, R.x) * 0.15915494309 + 0.5, asin(clamp(R.y, -1.0, 1.0)) * 0.31830988618 + 0.5);
-  vec3 skyRefl = uHasEnvSky > 0.5 ? texture2D(uEnvSky, suv).rgb : uSkyColor * (0.9 + 0.6 * (1.0 - R.y));
-  vec3 refl = mix(skyRefl, rt.rgb, clamp(rt.a, 0.0, 1.0)) * uReflStrength;
+  vec3 skyRefl = uHasEnvSky > 0.5 ? texture2D(uEnvSky, suv).rgb * skyDisplayGain(R) : uSkyColor * (0.9 + 0.6 * (1.0 - R.y));
+  vec3 refl = mix(skyRefl, rt.rgb, clamp(rt.a, 0.0, 1.0)) * uReflStrength * mix(0.48, 1.0, sea);
 
   // body colour: absorption with depth, lit by sky + sun
   float absorb = 1.0 - exp(-depth * 0.22);
@@ -102,7 +114,8 @@ void main() {
 
   float NdV = max(0.0, dot(N, V));
   float F = 0.02 + 0.98 * pow(1.0 - NdV, 5.0);
-  vec3 col = mix(body, refl, clamp(F * 0.9 + 0.24, 0.0, 0.93));
+  float reflectionMix = clamp(F * mix(0.72, 0.9, sea) + mix(0.10, 0.24, sea), 0.0, 0.93);
+  vec3 col = mix(body, refl, reflectionMix);
 
   // sun / moon glints (the environment's current light: sun by day, moon at night)
   vec3 H = normalize(uLightDir + V);
@@ -115,7 +128,6 @@ void main() {
   // shore foam + waterline
   float fn = texture2D(uMacro, p / 26.0 + uTime * vec2(0.012, 0.004)).r * 0.6
            + texture2D(uMacro, p / 8.5 - uTime * vec2(0.02, 0.011)).g * 0.4;
-  float sea = texture2D(uSeaMask, (p - uWorldMin) / (uCell * (uRes - 1.0))).r;
   float band = smoothstep(2.4, 0.0, depth) * (0.25 + 0.75 * sea);
   float wave = 0.5 + 0.5 * sin(depth * 3.2 - uTime * 1.3 + fn * 4.0);
   float foam = band * smoothstep(0.45, 0.75, fn * 0.7 + wave * 0.3 + band * 0.15);
@@ -124,10 +136,16 @@ void main() {
   float foamK = clamp(foam * 0.6 + edge * 0.18, 0.0, 1.0);
   col = mix(col, foamCol, foamK);
 
+  // A restrained downstream tonal ripple survives the high aerial view where fine normals vanish.
+  // It follows the generated river's east-west course and is suppressed for the sea and shoreline.
+  float flowCue = inland * smoothstep(0.8, 4.5, depth) * (1.0 - farW)
+                * (0.5 + 0.5 * sin(p.x * 0.055 - uTime * 0.65 + fn * 5.0));
+  col *= mix(vec3(1.0), vec3(0.84, 0.94, 0.91), flowCue * 0.08);
+
   // horizon: blend into the sky so the plane edge / far clip never shows
   vec3 hd = -V; hd.y = 0.012; hd = normalize(hd);
   vec2 huv = vec2(atan(hd.z, hd.x) * 0.15915494309 + 0.5, asin(hd.y) * 0.31830988618 + 0.5);
-  vec3 horizonCol = (uHasEnvSky > 0.5 ? texture2D(uEnvSky, huv).rgb : uSkyColor) * 0.9;   // matches the sky dome just below the horizon
+  vec3 horizonCol = (uHasEnvSky > 0.5 ? texture2D(uEnvSky, huv).rgb * skyDisplayGain(hd) : uSkyColor) * 0.9;   // matches the displayed sky dome just below the horizon
   col = mix(col, horizonCol, smoothstep(1500.0, 4200.0, dist));
 
   float alpha = clamp(depth * 0.75 + 0.15, 0.0, 1.0);
@@ -231,10 +249,13 @@ export class Water {
     const seaY = this.mesh.position.y;
     this._camPos.setFromMatrixPosition(camera.matrixWorld);
     if (this._camPos.y <= seaY + 0.5) return; // below the surface: keep the last reflection
-    // refresh policy: only when something changed (camera, water time, explicit invalidate) or every 8th frame
+    // Camera and explicit scene invalidations refresh immediately. Water animation is
+    // continuous, but the half-resolution city reflection only needs a 4-frame cadence;
+    // ripples and foam still animate in the water shader every frame.
     this._frame = (this._frame || 0) + 1;
     const camSame = this._lastCamM.equals(camera.matrixWorld) && this._lastProjM.equals(camera.projectionMatrix);
-    if (camSame && !this._dirty && !this._animDirty && (this._frame % 8) !== 0) return;
+    const cadence = this._animDirty ? 4 : 8;
+    if (camSame && !this._dirty && (this._frame % cadence) !== 0) return;
     this._lastCamM.copy(camera.matrixWorld); this._lastProjM.copy(camera.projectionMatrix);
     this._dirty = false; this._animDirty = false;
     const rc = this.reflCam;

@@ -1,0 +1,623 @@
+{
+  "module": "democity",
+  "round": "r8r",
+  "reviewType": "Independent diagnostic-only Props render attribution audit",
+  "decision": "ACCEPT_DIAGNOSTIC_WITH_LIMITS",
+  "productChangeDecision": "NONE: no product code changed",
+  "nextCandidateDecision": "SUPPORT LOD1-only shading experiment; not proven shading attribution or candidate acceptance",
+  "score": 6.0,
+  "democityScore": 6.0,
+  "wholeGameScore": 6.0,
+  "wholeGameVerdict": "FAIL",
+  "threshold": 8.5,
+  "scoreChange": 0,
+  "allSixJsonFilesRead": true,
+  "allPairAndSummaryArithmeticRecomputed": true,
+  "allErrorsZero": true,
+  "screenshotInspection": "None, explicitly outside this task",
+  "records": [
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-lod1-sync-off-reflection-off.json",
+      "component": "lod1",
+      "inventory": {
+        "objects": 34,
+        "instances": 2540,
+        "sourceTriangles": 426720,
+        "baseTriangles": [
+          168
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 60.01951268297554,
+          "maskedFps": 60.00300014982867,
+          "fpsPct": -0.027511941381608285,
+          "controlDriftPct": 0.0650211309732038,
+          "drawCalls": -28,
+          "triangles": -404988
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 60.0300163590833,
+          "maskedFps": 59.997000150171296,
+          "fpsPct": -0.054999500107588695,
+          "controlDriftPct": 0.030015007205357835,
+          "drawCalls": -28,
+          "triangles": -405014.3999999999
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 59.99700974828592,
+          "maskedFps": 59.994000600297554,
+          "fpsPct": -0.005015496607230219,
+          "controlDriftPct": 0.0799959999016124,
+          "drawCalls": -28,
+          "triangles": -404988
+        }
+      ],
+      "summary": {
+        "medianFpsPct": -0.027511941381608285,
+        "maxControlDriftPct": 0.0799959999016124,
+        "stableCycles": 3,
+        "medianDrawCalls": -28,
+        "medianTriangles": -404988
+      },
+      "stableOnlyMedianFpsPct": -0.027511941381608285,
+      "filePass": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-lod1-sync-on-reflection-off.json",
+      "component": "lod1",
+      "inventory": {
+        "objects": 37,
+        "instances": 2630,
+        "sourceTriangles": 441840,
+        "baseTriangles": [
+          168
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 52.63656381685907,
+          "maskedFps": 57.12109672554332,
+          "fpsPct": 8.519805594239571,
+          "controlDriftPct": 5.404457691931241,
+          "drawCalls": -28,
+          "triangles": -405009.6000000001
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 53.47516028021431,
+          "maskedFps": 57.9206487109323,
+          "fpsPct": 8.313183929553936,
+          "controlDriftPct": 2.183308828136498,
+          "drawCalls": -28,
+          "triangles": -405079.19999999995
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 53.25894390983272,
+          "maskedFps": 59.94305409932022,
+          "fpsPct": 12.55021166173269,
+          "controlDriftPct": 1.38022855980658,
+          "drawCalls": -28,
+          "triangles": -405087.6000000001
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 8.519805594239571,
+        "maxControlDriftPct": 5.404457691931241,
+        "stableCycles": 2,
+        "medianDrawCalls": -28,
+        "medianTriangles": -405079.19999999995
+      },
+      "stableOnlyMedianFpsPct": 10.431697795643313,
+      "filePass": false,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-lod1-sync-on-reflection-on.json",
+      "component": "lod1",
+      "inventory": {
+        "objects": 37,
+        "instances": 2630,
+        "sourceTriangles": 441840,
+        "baseTriangles": [
+          168
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 53.7610349095793,
+          "maskedFps": 58.73715124816446,
+          "fpsPct": 9.25599060165878,
+          "controlDriftPct": 0.04480086017663201,
+          "drawCalls": -28,
+          "triangles": -404989.94999999995
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 53.1120332733193,
+          "maskedFps": 56.79397983797695,
+          "fpsPct": 6.932415006049619,
+          "controlDriftPct": 2.39854847937182,
+          "drawCalls": -28,
+          "triangles": -405061.6499999999
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 52.45672961885377,
+          "maskedFps": 57.84247565729341,
+          "fpsPct": 10.267025942280483,
+          "controlDriftPct": 0.06994229864686836,
+          "drawCalls": -28,
+          "triangles": -405074.25
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 9.25599060165878,
+        "maxControlDriftPct": 2.39854847937182,
+        "stableCycles": 3,
+        "medianDrawCalls": -28,
+        "medianTriangles": -405061.6499999999
+      },
+      "stableOnlyMedianFpsPct": 9.25599060165878,
+      "filePass": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-other-sync-on-reflection-off.json",
+      "component": "pools",
+      "inventory": {
+        "objects": 1,
+        "instances": 1325,
+        "sourceTriangles": 381600,
+        "baseTriangles": [
+          288
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 54.21182124545817,
+          "maskedFps": 54.35767349172132,
+          "fpsPct": 0.26904140630650275,
+          "controlDriftPct": 1.4139543293581502,
+          "drawCalls": -1,
+          "triangles": -381559.19999999995
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 54.44100188558042,
+          "maskedFps": 54.56033463657125,
+          "fpsPct": 0.21919646380064162,
+          "controlDriftPct": 2.2499432988814605,
+          "drawCalls": -1,
+          "triangles": -381636
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 53.36985604865444,
+          "maskedFps": 53.51647861542257,
+          "fpsPct": 0.27472917789859164,
+          "controlDriftPct": 6.309148266300017,
+          "drawCalls": -1,
+          "triangles": -381648
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 0.26904140630650275,
+        "maxControlDriftPct": 6.309148266300017,
+        "stableCycles": 2,
+        "medianDrawCalls": -1,
+        "medianTriangles": -381636
+      },
+      "stableOnlyMedianFpsPct": 0.24411893505357218,
+      "filePass": false,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-other-sync-on-reflection-off.json",
+      "component": "lenses",
+      "inventory": {
+        "objects": 1,
+        "instances": 3858,
+        "sourceTriangles": 46296,
+        "baseTriangles": [
+          12
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 49.00114758860467,
+          "maskedFps": 50.838840874299684,
+          "fpsPct": 3.7503066277622787,
+          "controlDriftPct": 1.1269906093851425,
+          "drawCalls": -1,
+          "triangles": -46274.39999999991
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 50.231535612304356,
+          "maskedFps": 50.19870320016733,
+          "fpsPct": -0.06536215096116793,
+          "controlDriftPct": 3.7994811273843707,
+          "drawCalls": -1,
+          "triangles": -46348.799999999814
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 51.30975963513981,
+          "maskedFps": 54.11011408244805,
+          "fpsPct": 5.457742283770894,
+          "controlDriftPct": 0.4831640838875808,
+          "drawCalls": -1,
+          "triangles": -46352.39999999991
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 3.7503066277622787,
+        "maxControlDriftPct": 3.7994811273843707,
+        "stableCycles": 3,
+        "medianDrawCalls": -1,
+        "medianTriangles": -46348.799999999814
+      },
+      "stableOnlyMedianFpsPct": 3.7503066277622787,
+      "filePass": false,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-other-sync-on-reflection-off.json",
+      "component": "halos",
+      "inventory": {
+        "objects": 1,
+        "instances": 1,
+        "sourceTriangles": null,
+        "baseTriangles": [
+          null
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 50.47666603288222,
+          "maskedFps": 50.047962631103395,
+          "fpsPct": -0.8493100584328506,
+          "controlDriftPct": 0.4837318875958345,
+          "drawCalls": -1,
+          "triangles": 24
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 50.932784589652435,
+          "maskedFps": 50.44984444643938,
+          "fpsPct": -0.9481911250365238,
+          "controlDriftPct": 2.2704606713603463,
+          "drawCalls": -1,
+          "triangles": -52.200000000186265
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 51.597513628521874,
+          "maskedFps": 51.8246599006694,
+          "fpsPct": 0.4402271663376478,
+          "controlDriftPct": 0.33538289470304683,
+          "drawCalls": -1,
+          "triangles": -60.60000000009313
+        }
+      ],
+      "summary": {
+        "medianFpsPct": -0.8493100584328506,
+        "maxControlDriftPct": 2.2704606713603463,
+        "stableCycles": 3,
+        "medianDrawCalls": -1,
+        "medianTriangles": -52.200000000186265
+      },
+      "stableOnlyMedianFpsPct": -0.8493100584328506,
+      "filePass": false,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-reflection-on.json",
+      "component": "lod1",
+      "inventory": {
+        "objects": 37,
+        "instances": 2630,
+        "sourceTriangles": 441840,
+        "baseTriangles": [
+          168
+        ]
+      },
+      "summary": {
+        "medianFpsPct": 4.960018364080354,
+        "maxControlDriftPct": 4.417252981834141,
+        "stableCycles": 1,
+        "medianDrawCalls": -26.48888888888888,
+        "medianTriangles": -400028.43333333335
+      },
+      "filePass": false,
+      "shortSingleCycle": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-reflection-on.json",
+      "component": "pools",
+      "inventory": {
+        "objects": 1,
+        "instances": 1325,
+        "sourceTriangles": 381600,
+        "baseTriangles": [
+          288
+        ]
+      },
+      "summary": {
+        "medianFpsPct": -5.248959601941716,
+        "maxControlDriftPct": 8.085633938467236,
+        "stableCycles": 0,
+        "medianDrawCalls": 0.51111111111112,
+        "medianTriangles": -376575.2333333334
+      },
+      "filePass": false,
+      "shortSingleCycle": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-reflection-on.json",
+      "component": "lenses",
+      "inventory": {
+        "objects": 1,
+        "instances": 3858,
+        "sourceTriangles": 46296,
+        "baseTriangles": [
+          12
+        ]
+      },
+      "summary": {
+        "medianFpsPct": -2.899983499509984,
+        "maxControlDriftPct": 11.846689896480964,
+        "stableCycles": 0,
+        "medianDrawCalls": 0.51111111111112,
+        "medianTriangles": -41274.83333333349
+      },
+      "filePass": false,
+      "shortSingleCycle": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/interchange22-reflection-on.json",
+      "component": "halos",
+      "inventory": {
+        "objects": 1,
+        "instances": 1,
+        "sourceTriangles": null,
+        "baseTriangles": [
+          null
+        ]
+      },
+      "summary": {
+        "medianFpsPct": -7.37153937417917,
+        "maxControlDriftPct": 10.34783392928869,
+        "stableCycles": 0,
+        "medianDrawCalls": 0.51111111111112,
+        "medianTriangles": 5023.566666666651
+      },
+      "filePass": false,
+      "shortSingleCycle": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/park22-sync-on-reflection-off.json",
+      "component": "lod1",
+      "inventory": {
+        "objects": 10,
+        "instances": 455,
+        "sourceTriangles": 76440,
+        "baseTriangles": [
+          168
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 51.83251781392788,
+          "maskedFps": 55.52213945280069,
+          "fpsPct": 7.118353100495867,
+          "controlDriftPct": 1.6153414246969564,
+          "drawCalls": -5.291666666666629,
+          "triangles": -27308.833333333256
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 52.4998318268985,
+          "maskedFps": 55.75171901118179,
+          "fpsPct": 6.1940906687193875,
+          "controlDriftPct": 4.136965933175161,
+          "drawCalls": -3.5249999999999773,
+          "triangles": -27193.333333333256
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 54.32719410561553,
+          "maskedFps": 53.561863952723066,
+          "fpsPct": -1.4087422799797356,
+          "controlDriftPct": 2.72943306605956,
+          "drawCalls": -3.816666666666663,
+          "triangles": -26879.249999999767
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 6.1940906687193875,
+        "maxControlDriftPct": 4.136965933175161,
+        "stableCycles": 3,
+        "medianDrawCalls": -3.816666666666663,
+        "medianTriangles": -27193.333333333256
+      },
+      "stableOnlyMedianFpsPct": 6.1940906687193875,
+      "filePass": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/park22-sync-on-reflection-off.json",
+      "component": "impostors",
+      "inventory": {
+        "objects": 22,
+        "instances": 1861,
+        "sourceTriangles": 7444,
+        "baseTriangles": [
+          4
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 53.970295915678136,
+          "maskedFps": 56.890911676538096,
+          "fpsPct": 5.4115244530492435,
+          "controlDriftPct": 2.8598408199242327,
+          "drawCalls": -23.85833333333335,
+          "triangles": -7824.483333333395
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 53.187955044807744,
+          "maskedFps": 52.84713964815036,
+          "fpsPct": -0.6407755221464417,
+          "controlDriftPct": 0.03989096496085635,
+          "drawCalls": -22.09166666666664,
+          "triangles": -7663.466666666791
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 53.950949766535786,
+          "maskedFps": 55.02820195380198,
+          "fpsPct": 1.9967251585520485,
+          "controlDriftPct": 2.8678023995160347,
+          "drawCalls": -23.083333333333314,
+          "triangles": -7392.550000000047
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 1.9967251585520485,
+        "maxControlDriftPct": 2.8678023995160347,
+        "stableCycles": 3,
+        "medianDrawCalls": -23.083333333333314,
+        "medianTriangles": -7663.466666666791
+      },
+      "stableOnlyMedianFpsPct": 1.9967251585520485,
+      "filePass": true,
+      "allErrorsZero": true
+    },
+    {
+      "file": "shots/democity/r8r-props-components/park22-sync-on-reflection-off.json",
+      "component": "furniture",
+      "inventory": {
+        "objects": 4,
+        "instances": 4,
+        "sourceTriangles": 36304,
+        "baseTriangles": [
+          44,
+          74,
+          12616,
+          23570
+        ]
+      },
+      "pairs": [
+        {
+          "cycle": 0,
+          "expectedFps": 55.109576323212266,
+          "maskedFps": 55.13945687680282,
+          "fpsPct": 0.054220256412973455,
+          "controlDriftPct": 0.606199771195908,
+          "drawCalls": -17.991666666666674,
+          "triangles": -145613.3999999999
+        },
+        {
+          "cycle": 1,
+          "expectedFps": 55.60511940850053,
+          "maskedFps": 54.562815440981026,
+          "fpsPct": -1.874474830028261,
+          "controlDriftPct": 1.1815675462747959,
+          "drawCalls": -16.274999999999977,
+          "triangles": -145437.18333333335
+        },
+        {
+          "cycle": 2,
+          "expectedFps": 54.88954447542105,
+          "maskedFps": 56.49983520865541,
+          "fpsPct": 2.9336930168102127,
+          "controlDriftPct": 3.8042981247406917,
+          "drawCalls": -17.283333333333303,
+          "triangles": -145158.5499999998
+        }
+      ],
+      "summary": {
+        "medianFpsPct": 0.054220256412973455,
+        "maxControlDriftPct": 3.8042981247406917,
+        "stableCycles": 3,
+        "medianDrawCalls": -17.283333333333303,
+        "medianTriangles": -145437.18333333335
+      },
+      "stableOnlyMedianFpsPct": 0.054220256412973455,
+      "filePass": true,
+      "allErrorsZero": true
+    }
+  ],
+  "acceptedR8qAttribution": {
+    "file": "shots/democity/r8q-hidden-masts/interchange22-attribution-candidate.json",
+    "readPixelsMicros": 14222556,
+    "allCpuMicros": 16605759,
+    "readPixelsSharePercent": 85.64833441217591
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "props",
+      "title": "LOD1 is the strongest measured render component lead",
+      "decision": "SUPPORT bounded experiment",
+      "evidence": "Interchange with required sync and normal reflection: +9.255991% median, all3 controls stable; all cycles +6.932415% to+10.267026%.",
+      "next": "Test isolated LOD1 shading/material cost, keeping all content and other rendering behavior fixed. Require synchronized same-source A/B and subsequent independent visual checks; reject if it worsens crowns/depth or fails to reproduce a gain."
+    },
+    {
+      "priority": 2,
+      "owner": "verification/core",
+      "title": "Preserve measurement and scope qualifications",
+      "decision": "OPEN",
+      "evidence": "Sync-off changes the headless mode rather than only readback; masks remove full mesh contribution; inventory is prewarmup; halo triangle counts are null.",
+      "next": "Do not interpret these records as isolated shader timings or sustained gate passes. Keep exact source/camera/config comparisons in the next experiment."
+    }
+  ],
+  "nextOwnerSafePriority": {
+    "priority": 1,
+    "owner": "props",
+    "title": "LOD1 is the strongest measured render component lead",
+    "decision": "SUPPORT bounded experiment",
+    "evidence": "Interchange with required sync and normal reflection: +9.255991% median, all3 controls stable; all cycles +6.932415% to+10.267026%.",
+    "next": "Test isolated LOD1 shading/material cost, keeping all content and other rendering behavior fixed. Require synchronized same-source A/B and subsequent independent visual checks; reject if it worsens crowns/depth or fails to reproduce a gain."
+  },
+  "builderCorrections": [
+    "The park file and sync-off file also pass their all-cycle5% test; the statement that only the interchange reflection-on file passes is overbroad. Lenses and halos individually have3 stable cycles despite their combined file failing due to pools.",
+    "Equal LOD1 visibility-mask response with reflection on/off supports a non-reflection workload, but does not prove shading in isolation.",
+    "All settings restored is bounded to normal successful default-reflection-on completion, not exception-safe restoration."
+  ],
+  "limits": [
+    "Diagnostic only. No product candidate is accepted by this report. No screenshots were inspected or captured in R8r, as requested; no visual improvement or regression judgment, new reference calibration, whole-game critic, blind judging, gameplay or save verification is claimed.",
+    "Visibility masks remove the selected object rendering workload, including submission, vertex processing, alpha rasterization, shading and eligible shadow draws. They do not isolate fragment shading and do not directly measure GPU time. Props update callbacks keep running. Gains are not additive across components.",
+    "Each component runs on a separate page with only three short A-B-A comparisons; neighboring pairs share controls, so these are correlated observations. No confidence interval or long sustained trace is present. Per-block elapsed times/raw frame samples are not retained; stored FPS can be used to recompute pairing arithmetic but not independently reconstruct original timing.",
+    "The first short pool/lens/halo series is rejected for drift. Reflection-off LOD1 and other-component files remain pass:false where any component/cycle breaches5%. Stable control drift is a timing filter, not proof that a positive/negative response is causal.",
+    "captureSync=false omits the headless URL flag. This also changes preserveDrawingBuffer, pixel-ratio/readiness policy and world flags, not just readPixels. Inventory differs2630\u21922540. The near60FPS result is consistent with a browser cadence ceiling but does not isolate a readback-only causal effect or prove native performance.",
+    "Objects are selected before the180-frame warmup in the repeated tool, using local visible flags rather than effective ancestor visibility or the eventual settled render inventory. The set is then fixed. Counts are selection-time inventory; later LOD changes or newly visible objects can escape the mask. Source triangles do not equal submitted triangles, especially park.",
+    "The triangle helper divides an optional index count before nullish coalescing; absent indices produce NaN and defeat the position-count fallback. Halo sourceTriangles/baseTriangles therefore serialize as null. Points are not triangle meshes in any case. This does not invalidate the object-type halo mask or its timing, but its source-triangle count is unusable.",
+    "Classification is structural, not semantic IDs: 168-triangle Standard instancing agrees with current LOD1,4 with impostors,288 Shader instancing with pools,12 Basic instancing with lenses; Shader Points selects halos. The broad non-instanced Standard furniture class can also include foliage or miscellaneous opaque meshes. Future geometry/material changes require rematching.",
+    "Normal completion restores saved visibility descriptors and reflection to true, then closes each page. The evaluate body lacks try/finally and neither captures nor verifies the actual prior reflection state. Thus restoration is supported on the observed successful default-on path, not robustly proven for exceptions or an initially disabled setting. No source/persisted state is written.",
+    "Props hides its entire group during water reflection; reflection-off results are consistent with a contribution outside that pass. No raw per-pass GPU timer or recorded per-object castShadow inventory is retained, so main-pass shading remains a hypothesis. The tool cannot separate main shading from shadow/render submission work.",
+    "Accepted R8q native readPixels sample14222556/16605759\u00b5s is85.648334%, including possible completion wait for previous GPU work. Required synchronized captures must retain the sync gate; removal cannot be sold as a product optimization.",
+    "LOD0 and LOD1 currently share treeMat in chunks.js. A LOD1-only candidate must use an explicitly separate material/owner path while preserving existing texture, alpha silhouette/test, tint, wind, geometry, population, LOD thresholds, culling, shadows and restore behavior. A shared-material edit would exceed the claimed scope.",
+    "No memory data or sustained50FPS certification is supplied by this diagnostic. Previous raw708.3MB and unresolved sustained timing limitations are carried forward without declaring retained-memory failure from raw heap alone. Democity/whole-game6.0FAIL and global visual ranks remain unchanged."
+  ],
+  "ranking": "No global rank closed: city fabric, foliage, night depth, site integration, landmark grounds, environment/landscape, human activity, performance."
+}

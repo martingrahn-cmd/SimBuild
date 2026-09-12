@@ -1,0 +1,331 @@
+{
+  "module": "democity",
+  "round": 1,
+  "score": 5.5,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 668,
+  "apiContractOk": false,
+  "acceptanceFailed": [
+    "1. The city is at the scale of \u00a712",
+    "2. The four default cameras frame the city",
+    "3. Night is night, and the city is drawn by its own lights",
+    "4. Noon is neither washed out nor crushed",
+    "5. Golden hour is not milky",
+    "6. District structure, readable from the air",
+    "9. Everything is seated in the ground",
+    "10. Suburbs read as suburbs",
+    "13. Services placed and covering",
+    "16. Street level is alive",
+    "19. Budget, whole scene",
+    "21. Deterministic, and it round-trips",
+    "22. Camera tour exists and never moves during a capture",
+    "23. The simulation is running a real city"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "title": "Build dense inhabited neighbourhoods around the fixed cameras",
+      "detail": "684 buildings/684 lots miss the scale requirement; only one street-anchor building and nine night-anchor towers leave grass and tree gaps. Create viable frontage around the fixed targets, then enlarge suburbs (122 low residential now) without multiplying costly visible ornament. A plausible centre exists but the street experience is not a dense city.",
+      "evidence": "shots/democity/r1/probe.json; street_12.png; night_street_22.png; downtown_12.png"
+    },
+    {
+      "rank": 2,
+      "severity": "blocker",
+      "title": "The authored city exceeds triangle and memory budgets",
+      "detail": "Whole-scene peak7,114,730 triangles and919.5MB; overview2,880,816 triangles also fails. Own landmark layer is small (38 actual all-pass draws), so density/visibility and owner integration must be budgeted together. Do not solve the sparse neighbourhoods by indiscriminate additions.",
+      "evidence": "shots/democity/r1/summary.json; supplement.json; closeup_22.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "The pre-roll produces only three residents and poor civic coverage",
+      "detail": "240 real ticks end at population3. Health AND education reaches39/499 residential centres. Redistribute/size actual services and make the native simulation viable; retain honest population and the existing payment path. More tick calls alone are not proven sufficient.",
+      "evidence": "shots/democity/r1/probe.json; speed1.json; all_aerial_12.png"
+    },
+    {
+      "rank": 4,
+      "severity": "blocker",
+      "title": "Noon near views are crushed and golden skyline washes out",
+      "detail": "Street p1=.0722/p50=39.163; closeup p1=.361 and pinned light ratio1.072. Golden skyline has11.787% above235 and26.444% connected flat patch. Tune the public environment/effects choice and framing, and provide useful pinned physical patches.",
+      "evidence": "shots/democity/r1/imgstats.json; street_12.png; closeup_12_repeat.png; skyline_17p5.png"
+    },
+    {
+      "rank": 5,
+      "severity": "blocker",
+      "title": "Night city light is sparse and the lamp-pool probe is absent",
+      "detail": "Aerial/skyline bright fractions.5347%/.4977% fail.314 clusters and alltile distribution do pass: do not increase undifferentiated glowing pools just to raise cluster count. Supply the missing physical lamp_pool crop and strengthen believable occupied facades/retail at night anchors.",
+      "evidence": "shots/democity/r1/aerial_22.png; night_street_22.crops.json; imgstats.json"
+    },
+    {
+      "rank": 6,
+      "severity": "blocker",
+      "title": "Terrain siting and district spacing remain artificial",
+      "detail": "Industry/suburb area contrast passes, but suburbs are closer-spaced than downtown and outer-ring median height rises. Interchange/industry cameras expose abrupt mountain road cuts; landfill occupies park scenery beside a stark arena. Choose buildable corridors and coherent civic/industrial sites through supported APIs; grade separation itself is not required.",
+      "evidence": "shots/democity/r1/probe.json; interchange_12.png; industry_12.png; park_12.png; shots/democity/r1s7/interchange_12.png"
+    },
+    {
+      "rank": 7,
+      "severity": "blocker",
+      "title": "A sampled building base exceeds the seating tolerance",
+      "detail": "Hashed sample building395 highest-corner base gap.413362m, exceeding.25m; all13 landmark samples pass. Keep deliberate cuts within valid terrain support and use the owner ground-support contract.",
+      "evidence": "shots/democity/r1/probe.json#seating"
+    },
+    {
+      "rank": 8,
+      "severity": "major",
+      "title": "Cross-seed restaging and district adaptation do not meet contract",
+      "detail": "Same-seed restage counts pass, but seed7 restage gives733 buildings versus750 on a fresh seed7 page; all9 district centroids are fixed. Coordinated terrain seed reset needs an owner API, while moving/adapting district centres is a democity responsibility.",
+      "evidence": "shots/democity/r1/contracts.json; seed7-probe.json; src/modules/democity/plan.js"
+    },
+    {
+      "rank": 9,
+      "severity": "major",
+      "title": "Street activity and suburban layout are below the required levels",
+      "detail": "Only5 vehicles and5 pedestrians near street target; five distinct vehicle kinds already pass. Suburbs have122 low homes and9 nearby duplicate footprint/roof pairs; driveway/hedge122/122 and style variety pass. Improve routable local neighbourhoods without uncontrolled extra fleets.",
+      "evidence": "shots/democity/r1/probe.json#traffic; #suburb; suburb_12.png"
+    },
+    {
+      "rank": 10,
+      "severity": "minor",
+      "title": "Tour cuts instantly between stops",
+      "detail": "startTour and update invoke gotoStop, which uses camera.apply exclusively; required camera.flyTo transitions absent. Preserve immediate gotoStop and headless immobility while giving running tours smooth transitions.",
+      "evidence": "src/modules/democity/index.js:89; shots/democity/r1/contracts.json; supplement.json"
+    }
+  ],
+  "strengths": [
+    "Zero errors and all16 modules ready in all37 independent required captures, including720p and both final whole-game frames.",
+    "Clear tower/river silhouette, distinct low roofs and industrial fixtures; real textured geometry and visible warm/cool night windows.",
+    "Real paid services and native8-stop/4-bus transit use public owners; no fabricated population or duplicated democity fleet.",
+    "Two designated bridge samples clear water and meet abutment tolerance; all13 landmark highest-corner samples pass.",
+    "Same-seed restage counts and repeated closeup stability pass; no headless camera drift; own rendering comfortably within50 draws.",
+    "142 park trees represent seven actual species; keep this variety, and update the stale three-kind grading assumption."
+  ],
+  "summary": "5.5/10 FAIL. A visible textured city and real public-owner services/transit exist, but sparse camera neighbourhoods, three residents, weak civic coverage, crushed/blown lighting, seed adaptation and whole-scene triangle/heap budgets prevent a playable-city showcase at the required bar.",
+  "shots": [
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/aerial_12_720p.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/all_aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/all_aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/bridge_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/closeup_12_repeat.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/downtown_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/industry_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/interchange_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/night_downtown_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/night_street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/overview_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/park_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/roadmask-off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/roadmask-on.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/suburb_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/suburb_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1/waterfront_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1s7/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1s7/bridge_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1s7/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1s7/interchange_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1s7/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/democity/r1s7/street_12.png"
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/democity_r1.md",
+  "acceptance": [
+    {
+      "item": 1,
+      "title": "The city is at the scale of \u00a712",
+      "status": "FAIL",
+      "detail": "401 nodes, 533 edges, 40,798.07 m roads; byType street334/avenue96/highway32/alley48/gravel20/ramp3. 11,383 cells, 6,840 residential (60.09%), all four zone types, 13 landmarks. Only 684 lots and 684 buildings, below 1,400/1,200. Built union 542 64m cells =2.220032 km\u00b2 (roads sampled every <=4m, lots/landmark centres; approximate rather than exact edge supercover). Whole-map water exclusion not exhaustively checked."
+    },
+    {
+      "item": 2,
+      "title": "The four default cameras frame the city",
+      "status": "FAIL",
+      "detail": "Aerial 40x40 grid: sky0/1600, water157/1600 (9.81%), dry ground1443; city1409/1443=97.64%, hard built1112/1443=77.06% pass. 23 towers >60m within260m pass count and skyline silhouette is clearly visible above river. Street target distance0 but only one building within45m, all on one side (needs3 each); closeup5 within80m (needs6); night target9 towers (needs12). Exact skyline width percentage unmeasured."
+    },
+    {
+      "item": 3,
+      "title": "Night is night, and the city is drawn by its own lights",
+      "status": "FAIL",
+      "detail": "At480px aerial/skyline/night_street/night_downtown mean33.848/49.293/38.939/44.408, p50 27.743/38.956/25.815/29.819, p99:p50 5.855/4.067/7.177/6.320 all pass. Above180 fractions .5347%/.4977%/1.0818%/1.3025%: first two fail .8% minimum. Full-resolution aerial has314 qualifying clusters, with at least4 in every one of16 tiles, so built-tile distribution passes. lamp_pool pinned rect missing: API/crop defect, peak comparison ungraded, never invented."
+    },
+    {
+      "item": 4,
+      "title": "Noon is neither washed out nor crushed",
+      "status": "FAIL",
+      "detail": "Noon street p1=.0722 and p50=39.1632 fail; closeup p1=.361 fails. Aerial p1/p50/p99=12.583/66.286/158.924, std32.996, saturation.314 pass. Other frame statistics saved in imgstats.json. Official full-resolution closeup repeat sun/shadow crops means79.0651/73.7419 give1.07219:1, below2.5. Rects are author-pinned; their weak separation is not repaired by critic-selected crops."
+    },
+    {
+      "item": 5,
+      "title": "Golden hour is not milky",
+      "status": "FAIL",
+      "detail": "Skyline17.5 above235=11.7870%, largest union of connected low-std24px windows=26.4444%, failing1.5%/5%. Horizon band y329..448 std61.409 passes. Other three golden frames pass their bright/flat tests. One-session road diff has196,782 pixels, eroded68,926, darkest40%=27,520 pixels: hue200.109\u00b0, saturation.27309 pass. This is an available environment/effects preset composition choice."
+    },
+    {
+      "item": 6,
+      "title": "District structure, readable from the air",
+      "status": "FAIL",
+      "detail": "Nine districts with required kinds and two suburbs. First five150m ring medians about downtown(0,20):90.30295,31.60714,13.18,5.67369,5.75374; last rises. Industry/suburb district-filtered mean footprint378.129/147.204=2.569 passes. Mean nearest-neighbour centre spacing suburb20.722m/downtown35.927m=.577, below2.0. Twenty districtAt queries return a containing declared polygon; overlapping-polygon priority checked against source, not an independent designer map."
+    },
+    {
+      "item": 7,
+      "title": "Highway with an interchange",
+      "status": "PARTIAL",
+      "detail": "32 highway edges total2200.336m, connected authored corridor; maximum sampled within-edge turning .04827\u00b0/m (<=4m intervals), three real oneWay single-lane ramps. Median/barriers visible. Sharp join curvature not separately measured. Severe hillside cuts and vertical ribbons in interchange are a siting/composition concern. Grade separation remains explicitly ungraded under the roads capability exception."
+    },
+    {
+      "item": 8,
+      "title": "River with two bridges, no floating decks",
+      "status": "PARTIAL",
+      "detail": "Designated avenue844 and street845 are distinct bridges near x=-80/400 (>300m apart). Forty samples each: channel clearance minima4.25691/4.45274m above water, endpoint terrain gaps approximately.250m, pass. Aggregate175 bridge flags include hillside spans, not175 river crossings. Exact 60% in-city developed riverbank length not measured. Seed7 probe and bridge image saved; no unsupported full bank pass."
+    },
+    {
+      "item": 9,
+      "title": "Everything is seated in the ground",
+      "status": "FAIL",
+      "detail": "Independent deterministic hashed-ID sample of200 buildings, four corners each: one counterexample id395 has base38.67261, highest ground38.25925, gap.41336m >.25. All other sampled building gaps0..25cm, none negative. All13 landmark four-corner highest-ground gaps.045..21842m pass. 852 terrain coordinates total; there are zero democity-owned props with real props active, so100 own-prop objects are inapplicable rather than fabricated. Seating is composition-owned under this item."
+    },
+    {
+      "item": 10,
+      "title": "Suburbs read as suburbs",
+      "status": "FAIL",
+      "detail": "District-filtered low residential count122 across both suburbs, below250. All122 have driveway plus hedge/fence (passes70%); seven roof tiles and12 style IDs pass variety. Nine nearby pairs within25m share roof tile and footprint within1m (fails). Probe reports0 lots with two garden trees; current props no longer matches the spec historical garden-pass assumption, so that cross-owner branch is ungraded here, not an additional democity failure."
+    },
+    {
+      "item": 11,
+      "title": "Industrial park and port",
+      "status": "PARTIAL",
+      "detail": "63 industrial buildings in industry,73 street/gravel edge midpoints there, district704.716m from centre; three silos/two stacks/two cranes/one apron. Both crane sites find water within44/26m via2m radial samples at5\u00b0 intervals, passing80m. Water separates the main industrial lobe visually; exact nearest-residential/downwind predicate not fully instrumented. Fixture silhouettes are readable but simple."
+    },
+    {
+      "item": 12,
+      "title": "Park, waterfront and the green edge",
+      "status": "PARTIAL / CONTRACT CORRECTION",
+      "detail": "Park38,400m\u00b2, zero lots,142 trees, five lamps, native alley. Actual seven species (spruce,oak,fir,birch,maple,blossom,poplar) are represented by two kind classes. The spec says three kind values including tree_birch, but current props/species.js exposes birch under tree_oak. Do not fail democity for this obsolete enum. One heading/scale near-duplicate pair is reported; inherited scatter attribution not independently reproduced, so no score penalty for that branch. Promenade and forested edge visible, exact length/plaza predicates not independently measured. Landfill inside the park and coal close to centre harm authored composition."
+    },
+    {
+      "item": 13,
+      "title": "Services placed and covering",
+      "status": "FAIL",
+      "detail": "Real services lane:14 placements across9 kinds, each nearestRoad within60m. All499 residential centres have nonzero power AND water, passes85%; no invented .5 magnitude requirement. Health39/499=7.82%, education88/499=17.64%, both39/499=7.82%, below60%. Supply power600/water140 vs demand2626/2100.8 is contextual evidence of inadequate capacity, not a substitute threshold."
+    },
+    {
+      "item": 14,
+      "title": "One bus line running",
+      "status": "PARTIAL",
+      "detail": "Real transit lane: one coloured native line, eight stops,3739.423m closed road route, four actual buses; democity owns zero buses. Correct actual createLine(type,stopIds,options) signature used rather than the stale object example. Kerb shelters present; a bus in the required1337 street/downtown view was not identified confidently, so the precise visibility branch remains ungraded (a bus clearly appears in park/seed7 closeup)."
+    },
+    {
+      "item": 15,
+      "title": "The fallback layer is correct and self-disabling",
+      "status": "PASS current owners / ungraded absent owners",
+      "detail": "All four specified function-presence tests resolve real; flags allfalse; own trees/lamps/parked/vehicles/buses all0, public props8168. No duplicate fallback fleet. Absent-owner injection and fallback render budgets not exercised; do not claim those branches pass."
+    },
+    {
+      "item": 16,
+      "title": "Street level is alive",
+      "status": "FAIL",
+      "detail": "Within150m ofstreet target: five actual vehicles, five kinds (van,hatchback,police,sedan,semi), five pedestrians. Kind diversity passes5; vehicle12 and pedestrian8 minima fail. No invented residents or private fleet spawning used. Native traffic visual/material behaviour not independently scored as democity."
+    },
+    {
+      "item": 17,
+      "title": "No z-fighting, no flicker, no seams",
+      "status": "PASS measured stability / partial surfaces",
+      "detail": "Identical closeup URL repeat full-frame RGB mean absolute difference .00372042 on0..255 scale, below1.5; no rectangles excluded. Camera drift0 over3s with tour off. No visible coplanar flicker in viewed shots. Small ground-plate offsets and all material seams not exhaustively isolated; building seating handled once under9."
+    },
+    {
+      "item": 18,
+      "title": "No tiling, no specular sparkle at city scale",
+      "status": "PARTIAL",
+      "detail": "All three required full-resolution frames pass both detrended autocorrelation signals: aerial12 col/row.26094/.45111; overview.35532/.43066; aerial17.5 .42724/.42852, all<=.55.101px edge-padded moving mean and overlap Pearson lags24..400. Own material roughness.88/normalScale.18 pass. Non-window bright-pixel segmentation absent, ungraded rather than substituting whole-frame glare."
+    },
+    {
+      "item": 19,
+      "title": "Budget, whole scene",
+      "status": "FAIL",
+      "detail": "37 captures: max668 draws (passes bothdraw budgets),7,114,730 triangles(closeup22),919.5MB heap,74 textures. Overview2,880,816 triangles exceeds2.2M; multiple views exceed3M; heap exceeds512MB. Idle democity max.100000009ms passes1ms. Independent renderBufferDirect instrumentation over36frames gives own max38 all-pass draws/17,616 triangles; own geometry8 draws/3,600 triangles. Own layer passes50draws. Sustained tour CPU unmeasured. M4 Metal fps17.2..41.2 recorded, no fps failure."
+    },
+    {
+      "item": 20,
+      "title": "Zero console errors, everything ready, and 720p",
+      "status": "PASS",
+      "detail": "All37 fresh official captures have errors[] and16ready modules, including final whole-game aerial12/22.1280x720 scene fills viewport, HUD remains within it. Both same-session extra road-mask images reviewed. Browser probe errors alsozero."
+    },
+    {
+      "item": 21,
+      "title": "Deterministic, and it round-trips",
+      "status": "FAIL",
+      "detail": "Two own deserialize calls and two same-seed restages preserve counts and own3,600 triangles. Fresh seed7 has750 buildings vs restage({seed:7})733 on original terrain. All nine declared district centroids move0m, below30% moving>50m. Seed7 still fails scale. Full serialize\u2192page reload\u2192deserialize was not independently executed; no borrowed builder save verdict. No Math.random/Date.now in module; performance.now is timing only."
+    },
+    {
+      "item": 22,
+      "title": "Camera tour exists and never moves during a capture",
+      "status": "FAIL minor",
+      "detail": "Eight named stops, seven-second dwell, explicit start/stop work, invalid100 rejected, headless3s no movement. Source startTour/update call gotoStop which always camera.apply; no camera.flyTo exists in module, so tour jumps between stops rather than smooth flights. Full56s loop not timed; no headless failure counted again."
+    },
+    {
+      "item": 23,
+      "title": "The simulation is running a real city",
+      "status": "FAIL",
+      "detail": "Actual speed1 fresh page population3, jobs44,478(capacity, not employment), cash24,646.69. Speed0 census after240 genuine steps: population3,cash24,652.30,happiness.501675, all four demand values>.15, grids present. Industry centre pollution.200878; sampled waterfront land value.5612 exceeds centre.4448, but global250m maximum unmeasured.8,000 population requirement fails; no fabricated cash/population or claim longer preroll would safely solve it."
+    },
+    {
+      "item": 24,
+      "title": "Staging cost",
+      "status": "PASS measured Metal / partial other paths",
+      "detail": "Fresh independent stage3528.5ms at1337,3404.1ms at7; democity init0ms. All37 elapsed ready+capture <=13,970ms. Actual M4 Metal, not requested legacy SwiftShader baseline; no claim of measured SwiftShader CPU. Play mode stageszero roads/lots/buildings/landmarks and idle0ms. Missing dependencies/catch branches not injected."
+    }
+  ],
+  "referencesViewed": [
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "sourceHashes": {
+    "index.js": "856b625cb81bb1c496fee8bda7ba908445b40d4183faf0d005b717c940f7c02b",
+    "landmarks.js": "ad30a2f66faccff21e9d4af1bb882b16cf01cf67f7884001ddd28c11b36a3a23",
+    "plan.js": "9b8fc0c8b620a5ad51a1ecb67d2063d305cb011095081c1cf6b93bbcd20d9f67"
+  },
+  "evidence": {
+    "probe": "shots/democity/r1/probe.json",
+    "cityfill": "shots/democity/r1/cityfill.json",
+    "imgstats": "shots/democity/r1/imgstats.json",
+    "tiling": "shots/democity/r1/tiling.json",
+    "contracts": "shots/democity/r1/contracts.json",
+    "supplement": "shots/democity/r1/supplement.json",
+    "roadmask": "shots/democity/r1/roadmask.json",
+    "parkSpecies": "shots/democity/r1/park-species.json"
+  },
+  "wholeScene": {
+    "captures": 37,
+    "maxTriangles": 7114730,
+    "maxHeapMB": 919.5,
+    "maxTextures": 74,
+    "fpsRange": [
+      17.2,
+      41.2
+    ],
+    "renderer": "ANGLE Metal Apple M4",
+    "browser": "Chrome152.0.7977.76"
+  }
+}

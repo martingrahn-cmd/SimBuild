@@ -1,0 +1,47 @@
+{
+  "module": "democity",
+  "round": "r7h",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "change": "terrain and roads regenerate from the requested root seed during new-world restage; service static attributes use compact normalized or exact integer encodings",
+  "evidence": [
+    "shots/democity/r7f-cross-seed-diagnosis/probe.json",
+    "shots/democity/r7h-candidate-services-attributes16/cross-seed-final.json",
+    "shots/democity/r7h-candidate-services-attributes16/restage-cycle.json",
+    "shots/democity/r7h-candidate-services-attributes16/apicheck.json",
+    "shots/democity/r7h-candidate-services-attributes16/seed7-memory/memory-inventory.json",
+    "shots/democity/r7h-candidate-services-attributes16/ab/comparison.json",
+    "shots/democity/r7h-candidate-services-attributes16/summary.json"
+  ],
+  "verified": {
+    "crossSeedExact": true,
+    "terrainSamplesCompared": 263169,
+    "terrainSamplesDifferent": 0,
+    "freshSeed7Roads": 646,
+    "freshSeed7ZoneCells": 10113,
+    "freshSeed7Buildings": 648,
+    "restagedSeed7Roads": 646,
+    "restagedSeed7ZoneCells": 10113,
+    "restagedSeed7Buildings": 648,
+    "districtCentroidsOver50m": 0,
+    "districtCentroidsTotal": 9,
+    "serviceBufferBytesBefore": 43949092,
+    "serviceBufferBytesAfter": 22662136,
+    "seed7PostRestageForcedGcHeapMB": 509.1,
+    "matrixErrors": 0,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2997270,
+    "minMatrixFps": 48.1,
+    "noonWholeImageMaePercent": 0.00570824,
+    "nightWholeImageMaePercent": 0.0051422,
+    "apiPass": true,
+    "exactRestageCyclePass": true
+  },
+  "remaining": [
+    "50 fps remains failed",
+    "seed spatial variation remains below the 30% centroid threshold",
+    "city scale, night and golden lighting, seating, grain and activity remain failed",
+    "ordinary progression and whole-world atomic restore remain unverified or failed"
+  ]
+}

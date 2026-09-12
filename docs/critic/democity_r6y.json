@@ -1,0 +1,38 @@
+{
+  "module": "democity",
+  "round": "r6y",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "change": "building normals and UVs use normalized 16-bit static attributes; exact building tint slots use uint16",
+  "evidence": [
+    "shots/democity/r6w-nonreflection-owner-profile/owner-controls.json",
+    "shots/democity/r6w-nonreflection-owner-profile/memory-inventory.json",
+    "shots/democity/r6x-candidate-building-orm-single-sample/controls.json",
+    "shots/democity/r6y-candidate-building-attributes16/memory-inventory.json",
+    "shots/democity/r6y-candidate-building-attributes16/heap-profile.json",
+    "shots/democity/r6y-candidate-building-attributes16/lod-probe.json",
+    "shots/democity/rr6y-candidate-building-attributes16/summary.json",
+    "shots/democity/r6y-candidate-building-attributes16/apicheck.json",
+    "shots/democity/r6y-candidate-building-attributes16/restage-cycle.json"
+  ],
+  "verified": {
+    "matrixErrors": 0,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2997270,
+    "minMatrixFps": 44.1,
+    "buildingBufferBytesBefore": 176668412,
+    "buildingBufferBytesAfter": 145175588,
+    "cleanHeapMB": 480.0,
+    "postRestageForcedGcHeapMB": 509.9,
+    "lod0Triangles": 977816,
+    "lod1Triangles": 200332,
+    "apiPass": true,
+    "exactRestagePass": true
+  },
+  "remaining": [
+    "50 fps remains failed",
+    "city scale, lighting, seating, grain, activity and lifecycle-quality gates remain failed",
+    "raw uncollected multi-restage memory remains variable"
+  ]
+}

@@ -24,12 +24,14 @@ const VERT = /* glsl */`
 attribute vec4 aMask;
 attribute vec4 aLotMask;
 attribute vec2 aCell;
+attribute vec2 aUV;
 attribute float aDens;
 attribute float aRnd;
 attribute float aLot;
 varying vec4 vMask;
 varying vec4 vLotMask;
 varying vec2 vCell;
+varying vec2 vUV;
 varying float vDens;
 varying float vRnd;
 varying float vLot;
@@ -38,7 +40,7 @@ varying vec3 vWPos;
 #include <common>
 #include <fog_pars_vertex>
 void main() {
-  vMask = aMask; vLotMask = aLotMask; vCell = aCell; vDens = aDens; vRnd = aRnd; vLot = aLot;
+  vMask = aMask; vLotMask = aLotMask; vCell = aCell; vUV = aUV; vDens = aDens; vRnd = aRnd; vLot = aLot;
   vec4 wp = modelMatrix * vec4(position, 1.0);
   vWPos = wp.xyz;
   vec4 mvPosition = viewMatrix * wp;
@@ -49,13 +51,14 @@ void main() {
 
 const FRAG = /* glsl */`
 uniform vec3 uLow, uHigh, uLowFix, uHighFix, uLowLin, uHighLin;
-uniform float uTime, uFill, uOpacity, uNight, uNightA, uExposure;
+uniform float uTime, uFill, uOpacity, uNight, uNightA, uNightLift, uExposure;
 uniform float uLineW, uEdgeW, uEdgeGlow, uEdgeA, uLotW, uLineLift, uLotLift;
 uniform float uHatch, uHatchP, uHatchW, uHatchDark;
 uniform float uPulseAmp, uPulseHz, uAtmo, uFogRelief;
 varying vec4 vMask;
 varying vec4 vLotMask;
 varying vec2 vCell;
+varying vec2 vUV;
 varying float vDens;
 varying float vRnd;
 varying float vLot;
@@ -90,15 +93,18 @@ void main() {
 
   // ---- screen-space metrics ------------------------------------------------------------------
   vec2 gc = vWPos.xz / 8.0;
-  vec2 gw = fwidth(gc) + 1e-7;
+  // Euclidean derivatives measure perpendicular pixels. fwidth's L1 norm inflated diagonal
+  // strokes by up to sqrt(2), even with a nominal pixel-width clamp.
+  vec2 gw = sqrt(dFdx(gc) * dFdx(gc) + dFdy(gc) * dFdy(gc)) + 1e-7;
   float mpp = 8.0 * max(gw.x, gw.y);          // metres per pixel on the ground here
   float ppc = 1.0 / max(gw.x, gw.y);          // pixels per 8 m cell
 
   // ---- 8 m cell lattice: a light line, width clamped to 1.0-2.5 px ----------------------------
-  vec2 gd = abs(fract(gc) - 0.5);
-  float gpx = min(gd.x / gw.x, gd.y / gw.y);
-  float gHalf = clamp(0.5 * uLineW / mpp, 0.5, 1.25);
-  float lat = band(gpx, gHalf) * smoothstep(3.0, 7.0, ppc);
+  // Cell corners are multiples of 8 m; nearest integer, not cell centre.
+  vec2 gd = abs(fract(gc + 0.5) - 0.5);
+  vec2 gHalf = clamp(0.5 * uLineW / (8.0 * gw), vec2(0.5), vec2(1.0));
+  float lat = max(band(gd.x / gw.x, gHalf.x), band(gd.y / gw.y, gHalf.y))
+    * smoothstep(3.0, 7.0, ppc);
 
   // ---- 45 deg hatch: high density only, 3 m world period --------------------------------------
   float hc = (vWPos.x - vWPos.z) * 0.70710678 / uHatchP;
@@ -108,7 +114,9 @@ void main() {
   float hatch = vDens * uHatch * band(hpx, hHalf) * smoothstep(2.5, 5.0, 1.0 / hw);
 
   // ---- lot lines and the region outline, both clamped in screen space -------------------------
-  vec2 luv = clamp((vWPos.xz - vCell) / 8.0, 0.0, 1.0);
+  // Region ink follows the actual clipped cell edge. World coordinates alone leave the
+  // animated ridge inside the cell after RoadField moves its perimeter away from a kerb.
+  vec2 luv = clamp(vUV, 0.0, 1.0);
   float rd = 8.0;
   if (vMask.x > 0.5) rd = min(rd, 1.0 - luv.x);
   if (vMask.y > 0.5) rd = min(rd, luv.x);
@@ -119,10 +127,12 @@ void main() {
   if (vLotMask.y > 0.5) ld = min(ld, luv.x);
   if (vLotMask.z > 0.5) ld = min(ld, 1.0 - luv.y);
   if (vLotMask.w > 0.5) ld = min(ld, luv.y);
-  float eHalf = clamp(0.5 * uEdgeW / mpp, 0.75, 2.0);
-  float edge = band(rd * 8.0 / mpp, eHalf);
+  float rw = length(vec2(dFdx(rd), dFdy(rd))) + 1e-7;
+  float lw = length(vec2(dFdx(ld), dFdy(ld))) + 1e-7;
+  float eHalf = clamp(0.5 * uEdgeW / (8.0 * rw), 0.75, 1.6);
+  float edge = band(rd / rw, eHalf);
   float glow = 1.0 - smoothstep(0.0, uEdgeGlow, rd * 8.0);
-  float lotL = band(ld * 8.0 / mpp, clamp(0.5 * uLotW / mpp, 0.5, 1.4)) * smoothstep(3.0, 7.0, ppc);
+  float lotL = band(ld / lw, clamp(0.5 * uLotW / (8.0 * lw), 0.5, 1.1)) * smoothstep(3.0, 7.0, ppc);
 
   // ---- compose in display space ---------------------------------------------------------------
   float pulse = 1.0 + uPulseAmp * (0.5 + 0.5 * sin(uTime * uPulseHz * 6.2831853));
@@ -132,10 +142,12 @@ void main() {
   // Lattice and lot lines are a fixed step lighter, not a mix toward white: a proportional mix makes
   // the line contrast depend on how dark the class is, and on the dark classes it lands above the
   // 30/255 step that reads as per-pixel stipple rather than as a drawn grid (item 9).
-  col = clamp(col + lat * uLineLift, 0.0, 1.0);
-  col = clamp(col + lotL * uLotLift, 0.0, 1.0);
-  col += glow * 0.075 * (1.0 - lat);
-  vec3 oc = clamp(mix(col, vec3(1.0), 0.86) * pulse, 0.0, 1.0);
+  float lineDetail = mix(0.30, 1.0, smoothstep(12.0, 28.0, ppc));
+  col = clamp(col + lat * uLineLift * lineDetail, 0.0, 1.0);
+  col = clamp(col + lotL * uLotLift * lineDetail, 0.0, 1.0);
+  col += glow * 0.055 * (1.0 - lat) * lineDetail;
+  // Bound the complete pulse envelope below the sunset luminance ceiling.
+  vec3 oc = mix(col, vec3(0.66) * pulse, mix(0.32, 0.92, lineDetail));
   col = mix(col, oc, edge);
 
   float a = uFill + lat * 0.05 + lotL * 0.04 + hatch * 0.03 - (1.0 - vLot) * 0.03;
@@ -145,8 +157,14 @@ void main() {
   float atmo = clamp((vDepth - 260.0) / 700.0, 0.0, 1.0) * uAtmo;
   col = mix(col, vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), atmo * 0.9);
   a *= 1.0 - atmo * 0.30;
+  // At district scale, soften the composite as well as its ink: 100 px includes roads
+  // and several frontage strips, so their structural contrast must also recede.
+  a *= 1.0 - 0.34 * smoothstep(450.0, 650.0, vDepth);
 
   col *= uNight;
+  // A small neutral pedestal accounts for the exposed night ground beneath a translucent UI
+  // tint. Pure multiplication scales the ink around black, although the ground is still visible.
+  col += vec3(uNightLift);
   a *= uOpacity * uNightA;
   if (a < 0.004) discard;
   gl_FragColor = vec4(col, a);
@@ -166,6 +184,7 @@ function cellMaterial(shared, colors, opts = {}) {
         uLow: { value: null }, uHigh: { value: null }, uLowFix: { value: null }, uHighFix: { value: null },
         uLowLin: { value: null }, uHighLin: { value: null }, uExposure: { value: 1 },
         uTime: { value: 0 }, uOpacity: { value: 1 }, uNight: { value: 1 }, uNightA: { value: 1 },
+        uNightLift: { value: 0 },
         uFill: { value: opts.fill ?? OVERLAY.fill },
         uLineW: { value: opts.lineW ?? OVERLAY.lineWorld },
         uEdgeW: { value: OVERLAY.edgeWorld },
@@ -200,6 +219,7 @@ function cellMaterial(shared, colors, opts = {}) {
   m.uniforms.uOpacity = shared.uOpacity;
   m.uniforms.uNight = shared.uNight;
   m.uniforms.uNightA = shared.uNightA;
+  m.uniforms.uNightLift = shared.uNightLift;
   m.uniforms.uLow.value = colors.low;
   m.uniforms.uHigh.value = colors.high;
   m.uniforms.uLowFix.value = colors.lowFix;
@@ -221,6 +241,7 @@ export class ZoneOverlay {
     ctx.group.add(this.group);
     this.shared = {
       uTime: { value: 0 }, uOpacity: { value: 1 }, uNight: { value: 1 }, uNightA: { value: 1 },
+      uNightLift: { value: 0 },
       uExposure: { value: 1 }, uFogRelief: { value: 0 },
     };
     this.colors = zoneColors();
@@ -277,6 +298,7 @@ export class ZoneOverlay {
     }
     this.shared.uNight.value = 1 + (OVERLAY.nightMul - 1) * night;
     this.shared.uNightA.value = 1 + (OVERLAY.nightAlpha - 1) * night;
+    this.shared.uNightLift.value = OVERLAY.nightLift * night;
     this.shared.uFogRelief.value = OVERLAY.nightFogRelief * night;
   }
 
@@ -351,6 +373,7 @@ export class ZoneOverlay {
     const mask = new Float32Array(n * vpc * 4);
     const lmask = new Float32Array(n * vpc * 4);
     const cellA = new Float32Array(n * vpc * 2);
+    const uvA = new Float32Array(n * vpc * 2);
     const dens = new Float32Array(n * vpc);
     const rnd = new Float32Array(n * vpc);
     const lotf = new Float32Array(n * vpc);
@@ -400,6 +423,7 @@ export class ZoneOverlay {
         mask[vp * 4] = mpx; mask[vp * 4 + 1] = mnx; mask[vp * 4 + 2] = mpz; mask[vp * 4 + 3] = mnz;
         lmask[vp * 4] = lpx; lmask[vp * 4 + 1] = lnx; lmask[vp * 4 + 2] = lpz; lmask[vp * 4 + 3] = lnz;
         cellA[vp * 2] = x0; cellA[vp * 2 + 1] = z0;
+        uvA[vp * 2] = i / SUB; uvA[vp * 2 + 1] = j / SUB;
         dens[vp] = d; rnd[vp] = r; lotf[vp] = inLot;
         vp++;
       }
@@ -414,6 +438,7 @@ export class ZoneOverlay {
     geo.setAttribute('aMask', new THREE.BufferAttribute(mask.subarray(0, vp * 4), 4));
     geo.setAttribute('aLotMask', new THREE.BufferAttribute(lmask.subarray(0, vp * 4), 4));
     geo.setAttribute('aCell', new THREE.BufferAttribute(cellA.subarray(0, vp * 2), 2));
+    geo.setAttribute('aUV', new THREE.BufferAttribute(uvA.subarray(0, vp * 2), 2));
     geo.setAttribute('aDens', new THREE.BufferAttribute(dens.subarray(0, vp), 1));
     geo.setAttribute('aRnd', new THREE.BufferAttribute(rnd.subarray(0, vp), 1));
     geo.setAttribute('aLot', new THREE.BufferAttribute(lotf.subarray(0, vp), 1));

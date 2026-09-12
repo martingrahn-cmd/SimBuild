@@ -1,0 +1,2224 @@
+{
+  "round": "r9t",
+  "module": "democity",
+  "decision": "ACCEPT",
+  "decisionScope": "Bounded straight-edge road construction history repair, including tested one-shot Zoning refusal compensation",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "pass": false,
+  "threshold": 8.5,
+  "productAcceptedWithinScope": true,
+  "infillRouteDecision": "REJECT",
+  "sourceHashes": {
+    "src/modules/roads/index.js": "3f7f0746398490801ce32a0309fd918e8e8384b939040673b79809f807b98895",
+    "src/modules/tools/tools.js": "e8a5cd984ca18d32edd5576c3623d0a487c87058f2c81e5291a7a6e9734a7f84",
+    "src/modules/tools/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+    "src/modules/zoning/index.js": "1da228b88e43bd797c4652964ede47b7b132320b6ac5c55b1b8bfc26d310f3be",
+    "src/modules/zoning/grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+    "src/modules/buildings/index.js": "7ea45bea2181fafb20d1bc39653a9e7839750b0bf685e6aa8d03a4728fe3b79b",
+    "src/modules/simulation/index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79"
+  },
+  "evidenceHashes": {
+    "summary.json": "5cfb9a79e546d48954dc4eee35d78d1bd5d079248f3af786b7160069c051071e",
+    "baseline_seed1337_directed.png": "1b463f938ea4716a724d0a27af419bf799e79cc7cba84997cc0016079cf9a066",
+    "seed7_directed_difference_x4.png": "310af7c29284cdf196b2dbb4d4b4df6b94c13e3111a035c39f9b469d5232e3cd",
+    "seed7_aerial_difference_x4.png": "5aaecd8be2d1f9d45a9e7649c42d3668703eea10a097d25c3aea9249d78d9c57",
+    "save-atomicity.json": "d5dc73767d3f0400be6f739572374074b4cc416bb961a73b79171f36418e1cde",
+    "baseline_seed7_directed.png": "78177001a546fc3f5e97cddb1999fa0b060818681aa2e5500a4c79ce3ac30756",
+    "zoning-legacy-save.json": "91cf38754fc0e60d7189ea85ae7f73a6136143b0ca13b4af4944fd9e8597bf30",
+    "history-boundaries.json": "f2ce3a825026efacf89a6f7c3b8928893e18b4d7240b825b6697458e793c061c",
+    "candidate_seed1337_aerial.png": "3f72471fcb6733ad80895f891b1ea149d779815bc889ddc38336c769f2e5e76a",
+    "candidate_seed7_aerial.png": "7cfae956a23fe7a0cfdbd5411809cc9888611323cbd01deda6eb711675ae0100",
+    "candidate_seed7_directed.png": "eb79a458890abdc09ec794455979804842455edcf484c77ef65c1276efee918e",
+    "baseline_seed1337_aerial.png": "7088335e51857b96b08272bce091e07807b4c8b341eeaa7ee89c297a2962126e",
+    "seed1337_directed_difference_x4.png": "af81ed5844ac968739f0ba930a7519edc7e9e8d50f8a7b1c67259c2a769d66c8",
+    "baseline_seed7_aerial.png": "b24b6bd6de6d1cf93bfa556c5f8e8cf95d367a8b58371238e7152e09f501e889",
+    "seed1337_aerial_difference_x4.png": "cac46ee43798d98f3f74a22f9f811b4875e7c61383736a8af6ff3f55121acf7f",
+    "cross-seed.json": "bd51775ed7201e54b398b09d93536e12e336737e50b1f02dde98ae7c4b0fe8b2",
+    "contact-sheet.png": "1f756eaeb5c114e515a8df36f28fe553f71ec4e3e10a822bb11350315f07111d",
+    "construction-timing.json": "7b31121b8cbbd0ebc82e651a390e2d19d1de69b9e6b490332536125172650ec6",
+    "build.log": "241bfe1ae8c50ddfd0476205cbbf9c37598c23bda010d4fa2ec0da4ecb08d114",
+    "candidate_seed1337_directed.png": "2ef6c5a961faa37da4f75758ffc56a9121e45cc35839d5f8baa65702eb982ae8",
+    "apicheck-seed7/apicheck.json": "e4261e19bf7c42d394efebcf48f46bb6d69f602b5e829b17ae8828eab0e38c11",
+    "apicheck-seed1337/apicheck.json": "953579ba8b47fbbfd65417946852a94bfc74dbc16bf7b1e637df4b441dc248f8",
+    "source/src/modules/buildings/index.js": "7ea45bea2181fafb20d1bc39653a9e7839750b0bf685e6aa8d03a4728fe3b79b",
+    "source/src/modules/tools/tools.js": "e8a5cd984ca18d32edd5576c3623d0a487c87058f2c81e5291a7a6e9734a7f84",
+    "source/src/modules/tools/undo.js": "80804e542abc61f6e82a513a1aeb16dc7eee3ac34e9a4e151b793e7a1b2ac771",
+    "source/src/modules/simulation/index.js": "7da7a565dc589706c86c46db0887546057f6564a33efb8d1f6be09dbf0498e79",
+    "source/src/modules/zoning/grid.js": "e24fb02649fcdf8f867e1befe44b2191859dede08d3b9221b180061b9165ba83",
+    "source/src/modules/zoning/index.js": "1da228b88e43bd797c4652964ede47b7b132320b6ac5c55b1b8bfc26d310f3be",
+    "source/src/modules/roads/index.js": "3f7f0746398490801ce32a0309fd918e8e8384b939040673b79809f807b98895",
+    "source/source-hashes.json": "218fe838dd370ca4d6934b73f466d0cb0975da5f4d1fed89c4db6dcf970ff827"
+  },
+  "sourceVerification": {
+    "allSevenSnapshotHashesMatch": true,
+    "allSevenLiveHashesMatchedAtReview": true,
+    "diffFromR9s2": "Only Tools changes: settlement before inverse rollback snapshot and current buildingId preservation on unchanged stable key/id rows. Other six owner files are byte-identical.",
+    "oldR9sNotCredited": true
+  },
+  "matrix": {
+    "runs": [
+      {
+        "seed": 1337,
+        "variant": "baseline",
+        "repeat": false,
+        "phases": {
+          "before": {
+            "counts": {
+              "roadNodes": 468,
+              "roadEdges": 604,
+              "zonedCells": 9964,
+              "claimedCells": 4882,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 604,
+              "zones": 1,
+              "buildings": 1343,
+              "terrain": 1
+            }
+          },
+          "after": {
+            "counts": {
+              "roadNodes": 468,
+              "roadEdges": 604,
+              "zonedCells": 9964,
+              "claimedCells": 4882,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 604,
+              "zones": 1,
+              "buildings": 1343,
+              "terrain": 1
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "seed": 1337,
+        "variant": "candidate",
+        "repeat": false,
+        "phases": {
+          "before": {
+            "counts": {
+              "roadNodes": 468,
+              "roadEdges": 604,
+              "zonedCells": 9964,
+              "claimedCells": 4882,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 604,
+              "zones": 1,
+              "buildings": 1343,
+              "terrain": 1
+            }
+          },
+          "after": {
+            "counts": {
+              "roadNodes": 470,
+              "roadEdges": 607,
+              "zonedCells": 9964,
+              "claimedCells": 4878,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 611,
+              "zones": 2,
+              "buildings": 1957,
+              "terrain": 2
+            }
+          },
+          "undo": {
+            "counts": {
+              "roadNodes": 468,
+              "roadEdges": 604,
+              "zonedCells": 9964,
+              "claimedCells": 4882,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 612,
+              "zones": 3,
+              "buildings": 2573,
+              "terrain": 3
+            }
+          },
+          "redo": {
+            "counts": {
+              "roadNodes": 470,
+              "roadEdges": 607,
+              "zonedCells": 9964,
+              "claimedCells": 4878,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 613,
+              "zones": 4,
+              "buildings": 3187,
+              "terrain": 4
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "seed": 1337,
+        "variant": "candidate",
+        "repeat": true,
+        "phases": {
+          "before": {
+            "counts": {
+              "roadNodes": 468,
+              "roadEdges": 604,
+              "zonedCells": 9964,
+              "claimedCells": 4882,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 604,
+              "zones": 1,
+              "buildings": 1343,
+              "terrain": 1
+            }
+          },
+          "after": {
+            "counts": {
+              "roadNodes": 470,
+              "roadEdges": 607,
+              "zonedCells": 9964,
+              "claimedCells": 4878,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 611,
+              "zones": 2,
+              "buildings": 1957,
+              "terrain": 2
+            }
+          },
+          "undo": {
+            "counts": {
+              "roadNodes": 468,
+              "roadEdges": 604,
+              "zonedCells": 9964,
+              "claimedCells": 4882,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 612,
+              "zones": 3,
+              "buildings": 2573,
+              "terrain": 3
+            }
+          },
+          "redo": {
+            "counts": {
+              "roadNodes": 470,
+              "roadEdges": 607,
+              "zonedCells": 9964,
+              "claimedCells": 4878,
+              "lots": 612,
+              "buildings": 612,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 613,
+              "zones": 4,
+              "buildings": 3187,
+              "terrain": 4
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "seed": 7,
+        "variant": "baseline",
+        "repeat": false,
+        "phases": {
+          "before": {
+            "counts": {
+              "roadNodes": 493,
+              "roadEdges": 646,
+              "zonedCells": 10113,
+              "claimedCells": 5176,
+              "lots": 648,
+              "buildings": 648,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 646,
+              "zones": 1,
+              "buildings": 1447,
+              "terrain": 1
+            }
+          },
+          "after": {
+            "counts": {
+              "roadNodes": 493,
+              "roadEdges": 646,
+              "zonedCells": 10113,
+              "claimedCells": 5176,
+              "lots": 648,
+              "buildings": 648,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 646,
+              "zones": 1,
+              "buildings": 1447,
+              "terrain": 1
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "seed": 7,
+        "variant": "candidate",
+        "repeat": false,
+        "phases": {
+          "before": {
+            "counts": {
+              "roadNodes": 493,
+              "roadEdges": 646,
+              "zonedCells": 10113,
+              "claimedCells": 5176,
+              "lots": 648,
+              "buildings": 648,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 646,
+              "zones": 1,
+              "buildings": 1447,
+              "terrain": 1
+            }
+          },
+          "after": {
+            "counts": {
+              "roadNodes": 495,
+              "roadEdges": 649,
+              "zonedCells": 10113,
+              "claimedCells": 5188,
+              "lots": 649,
+              "buildings": 649,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 653,
+              "zones": 2,
+              "buildings": 2098,
+              "terrain": 2
+            }
+          },
+          "undo": {
+            "counts": {
+              "roadNodes": 493,
+              "roadEdges": 646,
+              "zonedCells": 10113,
+              "claimedCells": 5176,
+              "lots": 648,
+              "buildings": 648,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 654,
+              "zones": 3,
+              "buildings": 2752,
+              "terrain": 3
+            }
+          },
+          "redo": {
+            "counts": {
+              "roadNodes": 495,
+              "roadEdges": 649,
+              "zonedCells": 10113,
+              "claimedCells": 5188,
+              "lots": 649,
+              "buildings": 649,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 655,
+              "zones": 4,
+              "buildings": 3403,
+              "terrain": 4
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "seed": 7,
+        "variant": "candidate",
+        "repeat": true,
+        "phases": {
+          "before": {
+            "counts": {
+              "roadNodes": 493,
+              "roadEdges": 646,
+              "zonedCells": 10113,
+              "claimedCells": 5176,
+              "lots": 648,
+              "buildings": 648,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 646,
+              "zones": 1,
+              "buildings": 1447,
+              "terrain": 1
+            }
+          },
+          "after": {
+            "counts": {
+              "roadNodes": 495,
+              "roadEdges": 649,
+              "zonedCells": 10113,
+              "claimedCells": 5188,
+              "lots": 649,
+              "buildings": 649,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 653,
+              "zones": 2,
+              "buildings": 2098,
+              "terrain": 2
+            }
+          },
+          "undo": {
+            "counts": {
+              "roadNodes": 493,
+              "roadEdges": 646,
+              "zonedCells": 10113,
+              "claimedCells": 5176,
+              "lots": 648,
+              "buildings": 648,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 654,
+              "zones": 3,
+              "buildings": 2752,
+              "terrain": 3
+            }
+          },
+          "redo": {
+            "counts": {
+              "roadNodes": 495,
+              "roadEdges": 649,
+              "zonedCells": 10113,
+              "claimedCells": 5188,
+              "lots": 649,
+              "buildings": 649,
+              "services": 31
+            },
+            "integrity": {
+              "orphanBuildings": [],
+              "unbuiltLots": [],
+              "mismatchedLinks": [],
+              "inverseLiveMismatch": [],
+              "bijective": true
+            },
+            "versions": {
+              "roads": 655,
+              "zones": 4,
+              "buildings": 3403,
+              "terrain": 4
+            }
+          }
+        },
+        "pass": true
+      }
+    ],
+    "comparisons": [
+      {
+        "seed": 1337,
+        "flags": {
+          "undoExact": true,
+          "undoSemantic": true,
+          "redoExact": true,
+          "redoSemantic": true
+        },
+        "diffs": [
+          {
+            "direction": "undo",
+            "differentFields": [],
+            "differentSubfields": {},
+            "surfaceMismatches": 0,
+            "buildingsExact": true,
+            "zonesExact": true,
+            "roadsExact": true,
+            "simulationExact": true,
+            "transitExact": true
+          },
+          {
+            "direction": "redo",
+            "differentFields": [],
+            "differentSubfields": {},
+            "surfaceMismatches": 0,
+            "buildingsExact": true,
+            "zonesExact": true,
+            "roadsExact": true,
+            "simulationExact": true,
+            "transitExact": true
+          }
+        ],
+        "countDelta": {
+          "roadNodes": 2,
+          "roadEdges": 3,
+          "zonedCells": 0,
+          "claimedCells": -4,
+          "lots": 0,
+          "buildings": 0,
+          "services": 0
+        },
+        "retainedLotIds": 611,
+        "retainedBuildingIds": 611
+      },
+      {
+        "seed": 7,
+        "flags": {
+          "undoExact": true,
+          "undoSemantic": true,
+          "redoExact": true,
+          "redoSemantic": true
+        },
+        "diffs": [
+          {
+            "direction": "undo",
+            "differentFields": [],
+            "differentSubfields": {},
+            "surfaceMismatches": 0,
+            "buildingsExact": true,
+            "zonesExact": true,
+            "roadsExact": true,
+            "simulationExact": true,
+            "transitExact": true
+          },
+          {
+            "direction": "redo",
+            "differentFields": [],
+            "differentSubfields": {},
+            "surfaceMismatches": 0,
+            "buildingsExact": true,
+            "zonesExact": true,
+            "roadsExact": true,
+            "simulationExact": true,
+            "transitExact": true
+          }
+        ],
+        "countDelta": {
+          "roadNodes": 2,
+          "roadEdges": 3,
+          "zonedCells": 0,
+          "claimedCells": 12,
+          "lots": 1,
+          "buildings": 1,
+          "services": 0
+        },
+        "retainedLotIds": 647,
+        "retainedBuildingIds": 647
+      }
+    ],
+    "imageMetrics": [
+      {
+        "seed": 1337,
+        "view": "aerial",
+        "normalizedRgbMae": 0.005507637249858791,
+        "changedPixels": 221670,
+        "strongPixelsGE8": 67923,
+        "differenceX4": "shots/democity/r9t-road-history-owner-scope/seed1337_aerial_difference_x4.png"
+      },
+      {
+        "seed": 1337,
+        "view": "directed",
+        "normalizedRgbMae": 0.011307999601589607,
+        "changedPixels": 441499,
+        "strongPixelsGE8": 152664,
+        "differenceX4": "shots/democity/r9t-road-history-owner-scope/seed1337_directed_difference_x4.png"
+      },
+      {
+        "seed": 7,
+        "view": "aerial",
+        "normalizedRgbMae": 0.006203637512103607,
+        "changedPixels": 220018,
+        "strongPixelsGE8": 77523,
+        "differenceX4": "shots/democity/r9t-road-history-owner-scope/seed7_aerial_difference_x4.png"
+      },
+      {
+        "seed": 7,
+        "view": "directed",
+        "normalizedRgbMae": 0.0062093287289195515,
+        "changedPixels": 342734,
+        "strongPixelsGE8": 74740,
+        "differenceX4": "shots/democity/r9t-road-history-owner-scope/seed7_directed_difference_x4.png"
+      }
+    ]
+  },
+  "matrixPhaseCount": 20,
+  "matrixAllReadyAndErrorFree": true,
+  "boundaryTests": {
+    "fastDouble": {
+      "pair": {
+        "A": {
+          "a": {
+            "x": 80,
+            "z": 40
+          },
+          "b": {
+            "x": 80,
+            "z": 120
+          },
+          "click": {
+            "ok": true,
+            "cost": 0
+          },
+          "draft": {
+            "valid": true,
+            "reason": null,
+            "cost": 96,
+            "snap": {
+              "kind": "edge",
+              "id": 707,
+              "x": 80,
+              "z": 120
+            }
+          },
+          "commit": {
+            "ok": true,
+            "ids": [
+              1146
+            ],
+            "cost": 96
+          },
+          "history": {
+            "undo": 1,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "road:alley",
+                "cost": 96
+              }
+            ]
+          }
+        },
+        "B": {
+          "a": {
+            "x": 80,
+            "z": 120
+          },
+          "b": {
+            "x": 80,
+            "z": 200
+          },
+          "click": {
+            "ok": true,
+            "cost": 0
+          },
+          "draft": {
+            "valid": true,
+            "reason": null,
+            "cost": 96,
+            "snap": {
+              "kind": "edge",
+              "id": 752,
+              "x": 80,
+              "z": 200
+            }
+          },
+          "commit": {
+            "ok": true,
+            "ids": [
+              1150
+            ],
+            "cost": 96
+          },
+          "history": {
+            "undo": 2,
+            "redo": 0,
+            "capacity": 64,
+            "entries": [
+              {
+                "label": "road:alley",
+                "cost": 96
+              },
+              {
+                "label": "road:alley",
+                "cost": 96
+              }
+            ]
+          }
+        }
+      },
+      "singleCommit": {
+        "a": {
+          "x": 80,
+          "z": 40
+        },
+        "b": {
+          "x": 80,
+          "z": 120
+        },
+        "click": {
+          "ok": true,
+          "cost": 0
+        },
+        "draft": {
+          "valid": true,
+          "reason": null,
+          "cost": 96,
+          "snap": {
+            "kind": "edge",
+            "id": 707,
+            "x": 80,
+            "z": 120
+          }
+        },
+        "commit": {
+          "ok": true,
+          "ids": [
+            1146
+          ],
+          "cost": 96
+        },
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "undoB": true,
+      "undoA": true,
+      "redoA": true,
+      "redoB": true,
+      "afterUndoBMatchesIndependentA": true,
+      "afterUndoAMatchesBaseline": true,
+      "redoBothMatchesInitialBoth": true,
+      "histories": {
+        "both": {
+          "undo": 2,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            },
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        },
+        "afterUndoB": {
+          "undo": 1,
+          "redo": 1,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        },
+        "afterUndoA": {
+          "undo": 0,
+          "redo": 2,
+          "capacity": 64,
+          "entries": []
+        },
+        "afterRedoBoth": {
+          "undo": 2,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            },
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "digests": {
+        "baseline": {
+          "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+          "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+          "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+          "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+          "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+        },
+        "singleA": {
+          "roads": "b7d798c61606b29d6524b9e4ae472d46ca417a9a6122b9c8441cf849076edb4b",
+          "zoning": "03e473e2d13a68030814b951c7e2fbc84e003b154d8acdeac7c5b7c9662b5d6c",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "6ad41f12f35daf5cb48fd32fc7c8181736e13938bcb4628da17f18d7d7fac1e5",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "6c3bcaffc3f43bbdd072b7efcd80263f4ef23001dd7862a937382c4aa55fd6b9",
+          "terrain": "996008d1bdc381aeb043be7e5e9120a051611530ee17fd8c202c6819b1245fef"
+        },
+        "afterUndoB": {
+          "roads": "b7d798c61606b29d6524b9e4ae472d46ca417a9a6122b9c8441cf849076edb4b",
+          "zoning": "03e473e2d13a68030814b951c7e2fbc84e003b154d8acdeac7c5b7c9662b5d6c",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "6ad41f12f35daf5cb48fd32fc7c8181736e13938bcb4628da17f18d7d7fac1e5",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "6c3bcaffc3f43bbdd072b7efcd80263f4ef23001dd7862a937382c4aa55fd6b9",
+          "terrain": "996008d1bdc381aeb043be7e5e9120a051611530ee17fd8c202c6819b1245fef"
+        },
+        "both": {
+          "roads": "e1f59b832d04c7ae4a7a4a9ecdb0b5d1264af8e78d73809c8cc4afd9864fe38a",
+          "zoning": "6101994be5cd60bc7312d1b3feb369f3bb5906a5994227142298c6db81d1013a",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "8cd016df9d3e8d4ac1198edb03261f91eb936f8e0c27ac024b8f05a40105b147",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "f2be1a1f600f05f95bfe55b8ce0d4fe1f5894b52689fd67ae5eb7e670c9392c3",
+          "terrain": "533fcae09a3fe6d0df9e8ac72875ae881272db2e7d40f23ab67d3fa6c72ac8ef"
+        },
+        "afterRedoBoth": {
+          "roads": "e1f59b832d04c7ae4a7a4a9ecdb0b5d1264af8e78d73809c8cc4afd9864fe38a",
+          "zoning": "6101994be5cd60bc7312d1b3feb369f3bb5906a5994227142298c6db81d1013a",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "8cd016df9d3e8d4ac1198edb03261f91eb936f8e0c27ac024b8f05a40105b147",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "f2be1a1f600f05f95bfe55b8ce0d4fe1f5894b52689fd67ae5eb7e670c9392c3",
+          "terrain": "533fcae09a3fe6d0df9e8ac72875ae881272db2e7d40f23ab67d3fa6c72ac8ef"
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    "immediateFailedLeaf": {
+      "commit": {
+        "a": {
+          "x": 80,
+          "z": 40
+        },
+        "b": {
+          "x": 80,
+          "z": 120
+        },
+        "click": {
+          "ok": true,
+          "cost": 0
+        },
+        "draft": {
+          "valid": true,
+          "reason": null,
+          "cost": 96,
+          "snap": {
+            "kind": "edge",
+            "id": 707,
+            "x": 80,
+            "z": 120
+          }
+        },
+        "commit": {
+          "ok": true,
+          "ids": [
+            1146
+          ],
+          "cost": 96
+        },
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "failed": {
+        "value": false,
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ],
+          "failure": {
+            "reason": "action-returned-false",
+            "label": "road:alley",
+            "direction": "undo"
+          }
+        }
+      },
+      "realUndo": true,
+      "compensatedToSettledCandidate": true,
+      "historyRetained": true,
+      "realUndoMatchesBaseline": true,
+      "digests": {
+        "settledCandidate": {
+          "roads": "b7d798c61606b29d6524b9e4ae472d46ca417a9a6122b9c8441cf849076edb4b",
+          "zoning": "03e473e2d13a68030814b951c7e2fbc84e003b154d8acdeac7c5b7c9662b5d6c",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "6ad41f12f35daf5cb48fd32fc7c8181736e13938bcb4628da17f18d7d7fac1e5",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "6c3bcaffc3f43bbdd072b7efcd80263f4ef23001dd7862a937382c4aa55fd6b9",
+          "terrain": "996008d1bdc381aeb043be7e5e9120a051611530ee17fd8c202c6819b1245fef"
+        },
+        "afterFailure": {
+          "roads": "b7d798c61606b29d6524b9e4ae472d46ca417a9a6122b9c8441cf849076edb4b",
+          "zoning": "03e473e2d13a68030814b951c7e2fbc84e003b154d8acdeac7c5b7c9662b5d6c",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "6ad41f12f35daf5cb48fd32fc7c8181736e13938bcb4628da17f18d7d7fac1e5",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "6c3bcaffc3f43bbdd072b7efcd80263f4ef23001dd7862a937382c4aa55fd6b9",
+          "terrain": "996008d1bdc381aeb043be7e5e9120a051611530ee17fd8c202c6819b1245fef"
+        },
+        "baseline": {
+          "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+          "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+          "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+          "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+          "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+        },
+        "afterUndo": {
+          "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+          "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+          "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+          "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+          "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    "failedLeaf": {
+      "commit": {
+        "a": {
+          "x": 80,
+          "z": 40
+        },
+        "b": {
+          "x": 80,
+          "z": 120
+        },
+        "click": {
+          "ok": true,
+          "cost": 0
+        },
+        "draft": {
+          "valid": true,
+          "reason": null,
+          "cost": 96,
+          "snap": {
+            "kind": "edge",
+            "id": 707,
+            "x": 80,
+            "z": 120
+          }
+        },
+        "commit": {
+          "ok": true,
+          "ids": [
+            1146
+          ],
+          "cost": 96
+        },
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "failed": {
+        "value": false,
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ],
+          "failure": {
+            "reason": "action-returned-false",
+            "label": "road:alley",
+            "direction": "undo"
+          }
+        }
+      },
+      "realUndo": true,
+      "stateUnchanged": true,
+      "money": {
+        "beforeFail": 25674.71318153628,
+        "afterFail": 25674.71318153628,
+        "afterRealUndo": 25770.71318153628,
+        "baseline": 25770.71318153628
+      },
+      "historyUnchanged": true,
+      "realUndoMatchesBaseline": true,
+      "digests": {
+        "beforeFail": {
+          "roads": "b7d798c61606b29d6524b9e4ae472d46ca417a9a6122b9c8441cf849076edb4b",
+          "zoning": "03e473e2d13a68030814b951c7e2fbc84e003b154d8acdeac7c5b7c9662b5d6c",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "6ad41f12f35daf5cb48fd32fc7c8181736e13938bcb4628da17f18d7d7fac1e5",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "6c3bcaffc3f43bbdd072b7efcd80263f4ef23001dd7862a937382c4aa55fd6b9",
+          "terrain": "996008d1bdc381aeb043be7e5e9120a051611530ee17fd8c202c6819b1245fef"
+        },
+        "afterFail": {
+          "roads": "b7d798c61606b29d6524b9e4ae472d46ca417a9a6122b9c8441cf849076edb4b",
+          "zoning": "03e473e2d13a68030814b951c7e2fbc84e003b154d8acdeac7c5b7c9662b5d6c",
+          "buildings": "36583574b3bd1512808ba5d3d84e70bb7b5755e045c99d6d0df403728163cd2d",
+          "simulation": "6ad41f12f35daf5cb48fd32fc7c8181736e13938bcb4628da17f18d7d7fac1e5",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "6c3bcaffc3f43bbdd072b7efcd80263f4ef23001dd7862a937382c4aa55fd6b9",
+          "terrain": "996008d1bdc381aeb043be7e5e9120a051611530ee17fd8c202c6819b1245fef"
+        },
+        "baseline": {
+          "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+          "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+          "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+          "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+          "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+        },
+        "afterRealUndo": {
+          "roads": "0db49b642bcf74f38305f58228589e0179c9bb1195368f2e8c8ff7394160d2c0",
+          "zoning": "57d28dee530d806d9a1aea603197516708252af9fe15ae3f1d3759829fb49a6b",
+          "buildings": "0ff24089609a170fe2b296ebdaac6ed4bf3e5750e89571d166d50598fc0841ca",
+          "simulation": "899db231268ef2922bc4b178c7a58a6c0826b5ab477538866cd7e99fc2cad0d2",
+          "services": "3578a2db662d9a0abe9a2bce279712f7e8108a42a892011fd452f630d0a4948e",
+          "transit": "71e20053251767ff541655b0f7f9cdd9cd22dc96c33ad3d750e3962536201569",
+          "terrain": "60de8785b54a408553032667aae87d471845b78343ee7c798979d7a1b9813727"
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    "laterState": {
+      "commit": {
+        "a": {
+          "x": 80,
+          "z": 40
+        },
+        "b": {
+          "x": 80,
+          "z": 120
+        },
+        "click": {
+          "ok": true,
+          "cost": 0
+        },
+        "draft": {
+          "valid": true,
+          "reason": null,
+          "cost": 96,
+          "snap": {
+            "kind": "edge",
+            "id": 707,
+            "x": 80,
+            "z": 120
+          }
+        },
+        "commit": {
+          "ok": true,
+          "ids": [
+            1146
+          ],
+          "cost": 96
+        },
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "affectedLotIds": [
+        109,
+        809,
+        1095
+      ],
+      "later": {
+        "id": 2,
+        "lotId": 2,
+        "from": 3,
+        "target": 2,
+        "tick": 121301,
+        "item": {
+          "id": 2,
+          "lotId": 2,
+          "type": "residential",
+          "density": "low",
+          "level": 2,
+          "x": 222.32000000000002,
+          "z": 540,
+          "heading": -1.5707963267948966,
+          "lot": {
+            "x": 225.55,
+            "z": 540,
+            "w": 16,
+            "d": 24,
+            "heading": -1.5707963267948966,
+            "corner": false
+          },
+          "mixedUse": false,
+          "w": 10.879999999999999,
+          "variant": null,
+          "facadeIdx": null,
+          "minFloors": null,
+          "catalog": false
+        }
+      },
+      "undo": true,
+      "redo": true,
+      "retiredIdentityExact": true,
+      "unrelatedPreservedUndo": true,
+      "unrelatedPreservedRedo": true,
+      "tickPreservedUndo": true,
+      "tickPreservedRedo": true,
+      "money": {
+        "baseline": 25770.71318153628,
+        "candidate": 25674.71318153628,
+        "beforeUndo": 25679.251538487555,
+        "afterUndo": 25775.251538487555,
+        "afterRedo": 25679.251538487555
+      },
+      "counts": {
+        "baseline": {
+          "roads": 646,
+          "lots": 648,
+          "buildings": 648
+        },
+        "candidate": {
+          "roads": 649,
+          "lots": 649,
+          "buildings": 647
+        },
+        "afterUndo": {
+          "roads": 646,
+          "lots": 648,
+          "buildings": 648
+        },
+        "afterRedo": {
+          "roads": 649,
+          "lots": 649,
+          "buildings": 647
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    "laterConstruction": {
+      "freed": {
+        "id": 3,
+        "lotId": 3,
+        "x": 222.32000000000002,
+        "z": 564
+      },
+      "commit": {
+        "a": {
+          "x": 80,
+          "z": 40
+        },
+        "b": {
+          "x": 80,
+          "z": 120
+        },
+        "click": {
+          "ok": true,
+          "cost": 0
+        },
+        "draft": {
+          "valid": true,
+          "reason": null,
+          "cost": 96,
+          "snap": {
+            "kind": "edge",
+            "id": 707,
+            "x": 80,
+            "z": 120
+          }
+        },
+        "commit": {
+          "ok": true,
+          "ids": [
+            1146
+          ],
+          "cost": 96
+        },
+        "history": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "constructed": {
+        "id": 692,
+        "lotId": 3,
+        "tick": 121301,
+        "item": {
+          "id": 692,
+          "lotId": 3,
+          "type": "residential",
+          "density": "low",
+          "level": 1,
+          "x": 222.32000000000002,
+          "z": 564,
+          "heading": -1.5707963267948966,
+          "lot": {
+            "x": 225.55,
+            "z": 564,
+            "w": 16,
+            "d": 24,
+            "heading": -1.5707963267948966,
+            "corner": false
+          },
+          "mixedUse": false,
+          "w": 9.5,
+          "variant": null,
+          "facadeIdx": null,
+          "minFloors": null,
+          "catalog": false
+        }
+      },
+      "undo": true,
+      "redo": true,
+      "linkedAfterUndo": true,
+      "linkedAfterRedo": true,
+      "tickPreservedUndo": true,
+      "tickPreservedRedo": true,
+      "history": {
+        "afterUndo": {
+          "undo": 0,
+          "redo": 1,
+          "capacity": 64,
+          "entries": []
+        },
+        "afterRedo": {
+          "undo": 1,
+          "redo": 0,
+          "capacity": 64,
+          "entries": [
+            {
+              "label": "road:alley",
+              "cost": 96
+            }
+          ]
+        }
+      },
+      "errors": [],
+      "pass": true
+    }
+  },
+  "boundaryAggregatePass": true,
+  "construction": [
+    {
+      "seed": 1337,
+      "phases": [
+        {
+          "phase": "before",
+          "counts": {
+            "lots": 612,
+            "buildings": 612,
+            "freeLots": 0
+          },
+          "money": 25434.727223410573
+        },
+        {
+          "phase": "after",
+          "counts": {
+            "lots": 612,
+            "buildings": 611,
+            "freeLots": 1
+          },
+          "money": 25338.727223410573
+        },
+        {
+          "phase": "undo",
+          "counts": {
+            "lots": 612,
+            "buildings": 612,
+            "freeLots": 0
+          },
+          "money": 25434.727223410573
+        },
+        {
+          "phase": "redo",
+          "counts": {
+            "lots": 612,
+            "buildings": 611,
+            "freeLots": 1
+          },
+          "money": 25338.727223410573
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "phases": [
+        {
+          "phase": "before",
+          "counts": {
+            "lots": 648,
+            "buildings": 648,
+            "freeLots": 0
+          },
+          "money": 25770.71318153628
+        },
+        {
+          "phase": "after",
+          "counts": {
+            "lots": 649,
+            "buildings": 647,
+            "freeLots": 2
+          },
+          "money": 25674.71318153628
+        },
+        {
+          "phase": "undo",
+          "counts": {
+            "lots": 648,
+            "buildings": 648,
+            "freeLots": 0
+          },
+          "money": 25770.71318153628
+        },
+        {
+          "phase": "redo",
+          "counts": {
+            "lots": 649,
+            "buildings": 647,
+            "freeLots": 2
+          },
+          "money": 25674.71318153628
+        }
+      ]
+    }
+  ],
+  "imageMetrics": [
+    {
+      "seed": 1337,
+      "view": "aerial",
+      "normalizedRgbMae": 0.005507637249858791,
+      "changedPixels": 221670,
+      "strongPixelsGE8": 67923
+    },
+    {
+      "seed": 1337,
+      "view": "directed",
+      "normalizedRgbMae": 0.011307999601589607,
+      "changedPixels": 441499,
+      "strongPixelsGE8": 152664
+    },
+    {
+      "seed": 7,
+      "view": "aerial",
+      "normalizedRgbMae": 0.006203637512103607,
+      "changedPixels": 220018,
+      "strongPixelsGE8": 77523
+    },
+    {
+      "seed": 7,
+      "view": "directed",
+      "normalizedRgbMae": 0.0062093287289195515,
+      "changedPixels": 342734,
+      "strongPixelsGE8": 74740
+    }
+  ],
+  "inspectionRegister": [
+    {
+      "file": "baseline_seed1337_directed.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "seed7_directed_difference_x4.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "derived"
+    },
+    {
+      "file": "seed7_aerial_difference_x4.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "derived"
+    },
+    {
+      "file": "baseline_seed7_directed.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "candidate_seed1337_aerial.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "candidate_seed7_aerial.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "candidate_seed7_directed.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "baseline_seed1337_aerial.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "seed1337_directed_difference_x4.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "derived"
+    },
+    {
+      "file": "baseline_seed7_aerial.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    },
+    {
+      "file": "seed1337_aerial_difference_x4.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "derived"
+    },
+    {
+      "file": "contact-sheet.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "derived"
+    },
+    {
+      "file": "candidate_seed1337_directed.png",
+      "individuallyViewed": true,
+      "resolution": "original",
+      "kind": "original"
+    }
+  ],
+  "regressions": {
+    "cross-seed.json": {
+      "fresh7": {
+        "terrainHash": "cfb44c1f",
+        "roadNodeHash": "2b7114f2",
+        "roadDesignHash": "a0d7a3e6",
+        "terrainFeatures": {
+          "river": [
+            -371.3757019042969,
+            -200.22482299804688,
+            -176.34066772460938
+          ],
+          "coast": [
+            -644.0078735351562,
+            -582.705810546875,
+            -681.9179077148438
+          ]
+        },
+        "counts": {
+          "roads": {
+            "nodes": 493,
+            "edges": 646,
+            "lengthM": 38866.30839336706,
+            "byType": {
+              "street": 460,
+              "avenue": 93,
+              "highway": 32,
+              "alley": 45,
+              "gravel": 13,
+              "ramp": 3
+            },
+            "bridges": 16,
+            "ramps": 3
+          },
+          "zoneCells": 10113,
+          "lots": 648,
+          "buildings": 648,
+          "services": 31,
+          "transitLines": 1,
+          "transitStops": 8
+        },
+        "districts": [
+          [
+            "centre",
+            0,
+            20
+          ],
+          [
+            "midtown",
+            0,
+            50
+          ],
+          [
+            "west",
+            -328,
+            472
+          ],
+          [
+            "east",
+            440,
+            488
+          ],
+          [
+            "industry",
+            256,
+            -632
+          ],
+          [
+            "port",
+            -200,
+            -496
+          ],
+          [
+            "park",
+            400,
+            300
+          ],
+          [
+            "waterfront",
+            80,
+            -192
+          ],
+          [
+            "civic",
+            120,
+            472
+          ]
+        ],
+        "errors": []
+      },
+      "initial1337": {
+        "terrainHash": "09da81f9",
+        "roadNodeHash": "59442dfe",
+        "roadDesignHash": "dd3bf268",
+        "terrainFeatures": {
+          "river": [
+            -398.612548828125,
+            -190.0653839111328,
+            -196.45875549316406
+          ],
+          "coast": [
+            -658.3945922851562,
+            -549.353515625,
+            -668.8872680664062
+          ]
+        },
+        "counts": {
+          "roads": {
+            "nodes": 468,
+            "edges": 604,
+            "lengthM": 36485.98482706707,
+            "byType": {
+              "street": 433,
+              "avenue": 85,
+              "highway": 32,
+              "alley": 41,
+              "gravel": 10,
+              "ramp": 3
+            },
+            "bridges": 16,
+            "ramps": 3
+          },
+          "zoneCells": 9964,
+          "lots": 612,
+          "buildings": 612,
+          "services": 31,
+          "transitLines": 1,
+          "transitStops": 8
+        },
+        "districts": [
+          [
+            "centre",
+            0,
+            20
+          ],
+          [
+            "midtown",
+            0,
+            50
+          ],
+          [
+            "west",
+            -328,
+            432
+          ],
+          [
+            "east",
+            416,
+            456
+          ],
+          [
+            "industry",
+            248,
+            -632
+          ],
+          [
+            "port",
+            -200,
+            -488
+          ],
+          [
+            "park",
+            400,
+            300
+          ],
+          [
+            "waterfront",
+            80,
+            -192
+          ],
+          [
+            "civic",
+            120,
+            440
+          ]
+        ],
+        "errors": []
+      },
+      "restaged7": {
+        "terrainHash": "cfb44c1f",
+        "roadNodeHash": "2b7114f2",
+        "roadDesignHash": "a0d7a3e6",
+        "terrainFeatures": {
+          "river": [
+            -371.3757019042969,
+            -200.22482299804688,
+            -176.34066772460938
+          ],
+          "coast": [
+            -644.0078735351562,
+            -582.705810546875,
+            -681.9179077148438
+          ]
+        },
+        "counts": {
+          "roads": {
+            "nodes": 493,
+            "edges": 646,
+            "lengthM": 38866.30839336706,
+            "byType": {
+              "street": 460,
+              "avenue": 93,
+              "highway": 32,
+              "alley": 45,
+              "gravel": 13,
+              "ramp": 3
+            },
+            "bridges": 16,
+            "ramps": 3
+          },
+          "zoneCells": 10113,
+          "lots": 648,
+          "buildings": 648,
+          "services": 31,
+          "transitLines": 1,
+          "transitStops": 8
+        },
+        "districts": [
+          [
+            "centre",
+            0,
+            20
+          ],
+          [
+            "midtown",
+            0,
+            50
+          ],
+          [
+            "west",
+            -328,
+            472
+          ],
+          [
+            "east",
+            440,
+            488
+          ],
+          [
+            "industry",
+            256,
+            -632
+          ],
+          [
+            "port",
+            -200,
+            -496
+          ],
+          [
+            "park",
+            400,
+            300
+          ],
+          [
+            "waterfront",
+            80,
+            -192
+          ],
+          [
+            "civic",
+            120,
+            472
+          ]
+        ],
+        "errors": []
+      },
+      "exact": {
+        "terrainHash": true,
+        "terrainFeatures": true,
+        "counts": true,
+        "districts": true
+      },
+      "terrainDifference": {
+        "changed": 0,
+        "total": 263169,
+        "maxAbs": 0,
+        "meanAbsChanged": 0,
+        "samples": []
+      },
+      "pristine": {
+        "freshHash": "fbb8ea51",
+        "restagedHash": "fbb8ea51",
+        "exact": true
+      },
+      "browserErrors": [],
+      "pass": true
+    },
+    "save-atomicity.json": {
+      "rejection": "City restore rejected by transit. Previous city restored.",
+      "terrainBefore": -35.06043243408203,
+      "terrainAfter": -35.06043243408203,
+      "moduleExact": true,
+      "perModule": {
+        "terrain": true,
+        "roads": true,
+        "zoning": true,
+        "buildings": true,
+        "props": true,
+        "traffic": true,
+        "simulation": true,
+        "tools": true,
+        "services": true,
+        "ui": true,
+        "audio": true,
+        "infoviews": true,
+        "transit": true,
+        "democity": true
+      },
+      "differentModules": [],
+      "timeExact": true,
+      "cameraExact": true,
+      "validRestore": true,
+      "events": {
+        "restoring": 2,
+        "rolledBack": [
+          {
+            "module": "transit",
+            "error": "transit rejected saved data"
+          }
+        ],
+        "loaded": 1,
+        "finished": 2
+      },
+      "errors": [
+        "[transit] deserialize failed: transit rejected saved data transit rejected saved data\nError: transit rejected saved data\n    at apply (http://127.0.0.1:5173/src/core/save.js:35:45)\n    at async Object.restore (http://127.0.0.1:5173/src/core/save.js:65:27)\n    at async eval (eval at evaluate (:311:30), <anonymous>:19:11)\n    at async <anonymous>:337:30"
+      ],
+      "browserErrors": [
+        "[transit] deserialize failed: transit rejected saved data Error: transit rejected saved data\n    at apply (http://127.0.0.1:5173/src/core/save.js:35:45)\n    at async Object.restore (http://127.0.0.1:5173/src/core/save.js:65:27)\n    at async eval (eval at evaluate (:311:30), <anonymous>:19:11)\n    at async <anonymous>:337:30"
+      ],
+      "pass": true
+    },
+    "zoning-legacy-save.json": {
+      "restored": [
+        true,
+        true
+      ],
+      "legacyKeys": [
+        "cells"
+      ],
+      "canonicalEnvelope": {
+        "lots": 648,
+        "nextLot": 1945,
+        "nextLotSafe": true
+      },
+      "perModule": {
+        "terrain": true,
+        "roads": true,
+        "zoning": false,
+        "buildings": true,
+        "props": false,
+        "traffic": true,
+        "simulation": true,
+        "tools": true,
+        "services": true,
+        "ui": true,
+        "audio": true,
+        "infoviews": true,
+        "transit": true,
+        "democity": true
+      },
+      "moduleExact": false,
+      "zoningSemanticExact": true,
+      "propsSemanticExact": true,
+      "exactRequired": true,
+      "diffs": [
+        {
+          "path": "zoning.nextLot",
+          "before": 649,
+          "after": 1945
+        },
+        {
+          "path": "props.version",
+          "before": 66,
+          "after": 68
+        }
+      ],
+      "timeExact": true,
+      "cameraExact": true,
+      "orphanBuildings": [],
+      "brokenLots": [],
+      "errors": [],
+      "browserErrors": [],
+      "pass": true
+    },
+    "apicheck-seed1337": {
+      "api": {
+        "plan": "function",
+        "districtAt": "function",
+        "stats": "function",
+        "fallbacks": "function",
+        "tour": "function",
+        "startTour": "function",
+        "stopTour": "function",
+        "gotoStop": "function",
+        "tourState": "function",
+        "restage": "function",
+        "cropRects": "function",
+        "serialize": "function",
+        "deserialize": "function"
+      },
+      "baseline": {
+        "roads": {
+          "nodes": 468,
+          "edges": 604
+        },
+        "zones": {
+          "cells": 9964,
+          "lots": 612
+        },
+        "buildings": 612,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 507,
+        "coverage": {
+          "utilities": 503,
+          "healthEducation": 306
+        }
+      },
+      "deserialize": [
+        true,
+        true
+      ],
+      "afterDeserialize": {
+        "roads": {
+          "nodes": 468,
+          "edges": 604
+        },
+        "zones": {
+          "cells": 9964,
+          "lots": 612
+        },
+        "buildings": 612,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 507,
+        "coverage": {
+          "utilities": 503,
+          "healthEducation": 306
+        }
+      },
+      "tour": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "invalidTour": false,
+      "errors": [],
+      "browserErrors": [],
+      "pass": true
+    },
+    "apicheck-seed7": {
+      "api": {
+        "plan": "function",
+        "districtAt": "function",
+        "stats": "function",
+        "fallbacks": "function",
+        "tour": "function",
+        "startTour": "function",
+        "stopTour": "function",
+        "gotoStop": "function",
+        "tourState": "function",
+        "restage": "function",
+        "cropRects": "function",
+        "serialize": "function",
+        "deserialize": "function"
+      },
+      "baseline": {
+        "roads": {
+          "nodes": 493,
+          "edges": 646
+        },
+        "zones": {
+          "cells": 10113,
+          "lots": 648
+        },
+        "buildings": 648,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 548,
+        "coverage": {
+          "utilities": 519,
+          "healthEducation": 345
+        }
+      },
+      "deserialize": [
+        true,
+        true
+      ],
+      "afterDeserialize": {
+        "roads": {
+          "nodes": 493,
+          "edges": 646
+        },
+        "zones": {
+          "cells": 10113,
+          "lots": 648
+        },
+        "buildings": 648,
+        "services": 31,
+        "transit": {
+          "lines": 1,
+          "stops": 8
+        },
+        "residential": 548,
+        "coverage": {
+          "utilities": 519,
+          "healthEducation": 345
+        }
+      },
+      "tour": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "invalidTour": false,
+      "errors": [],
+      "browserErrors": [],
+      "pass": true
+    }
+  },
+  "build": {
+    "pass": true,
+    "modules": 163,
+    "elapsed": "1.05s",
+    "performanceClaim": false
+  },
+  "findings": [
+    {
+      "rank": 1,
+      "status": "CLOSED_WITHIN_TESTED_SCOPE",
+      "owner": [
+        "tools",
+        "zoning",
+        "buildings"
+      ],
+      "issue": "Unchanged lot links now preserve later unrelated construction",
+      "evidence": "R9s2→R9t diff clones target envelope and substitutes current buildingId only for matching stable key/id outside affected set; lot3→building692 and existing building2 level3→2 preserved by retained harness predicates."
+    },
+    {
+      "rank": 2,
+      "status": "CLOSED_WITHIN_TESTED_SCOPE",
+      "owner": [
+        "tools",
+        "zoning"
+      ],
+      "issue": "Rollback snapshot now follows owner settlement",
+      "evidence": "settleForHistory executes before rollback serialization; both one-shot refusal tests return false, retain history, compensate to seven-owner equality and subsequently undo successfully. Immediate renderframe qualification remains."
+    },
+    {
+      "rank": 3,
+      "status": "OPEN",
+      "owner": [
+        "tools",
+        "roads",
+        "zoning",
+        "buildings",
+        "simulation"
+      ],
+      "issue": "Road demolition remains on older endpoint reconstruction inverse",
+      "next": "Migrate and test demolition using owner-safe identities, dependent parcels/buildings, terrain and money; retain later unrelated state and failed-leaf checks."
+    },
+    {
+      "rank": 4,
+      "status": "OPEN",
+      "owner": [
+        "tools",
+        "roads",
+        "core"
+      ],
+      "issue": "Persistent compensation and rebuild failure propagation remain outside accepted coverage",
+      "next": "Require explicit recoverable failure state and owner/error tests before any claim that all road history failures are atomic."
+    },
+    {
+      "rank": 5,
+      "status": "OPEN",
+      "owner": [
+        "democity",
+        "zoning",
+        "roads",
+        "props",
+        "environment"
+      ],
+      "issue": "Whole-game quality remains below 8.5 gate",
+      "evidence": "No authored infill improvement; sparse blocks, coarse tree rendering and repeated building treatments remain; round does not rerun whole-game gates."
+    }
+  ],
+  "limitations": [
+    "Acceptance covers tested straight-edge road construction history and successful compensation of one-shot Zoning refusals; it does not close road history generally.",
+    "ImmediateFailedLeaf uses separate Playwright evaluate calls for commit and undo, with no explicit settlement between them. The evidence does not establish the same renderframe or a still-pending 60 ms journal; source does settle before rollback capture.",
+    "FastDouble runs both commits synchronously in one evaluate. Its afterUndoA digest is omitted; baseline equality is a retained harness boolean. Other compared digest rows are retained and were independently compared.",
+    "Later-state and later-construction post-undo/redo records are not retained. Equality flags were audited against harness logic, not independently recomputed from absent records. The construction predicate checks both exact building record and inverse lot buildingId.",
+    "Later construction uses real Buildings demolish/requestSpawn/flush owner APIs plus one Simulation step; this is not native UI construction or a long autonomous growth session. Unrelated later demolition is source-supported but not separately exercised.",
+    "Main matrix exactness uses its saved stable projection, selected owners, terrain digest and 21 samples, not an entire raw world/render byte image. History-boundary hashes instead cover complete seven-owner serialization including all serialized Terrain values and Simulation.",
+    "Cross-seed terrain changed/maxAbs only accumulate differences above 1e-6. Zero of 263169 is therefore tolerance-qualified, not independently proven bitwise equality of retained raw arrays; hashes are sampled/quantized and arrays are absent.",
+    "Legacy evidence strips Zoning to cells in a current normalized seed-7 save, then restores twice. It is not coverage of all historical save versions or raw full-module exactness.",
+    "Initial commit rebuild failures, secondary terrain-triggered road rebuild failures, later owner exceptions, persistent compensation refusal, road demolition and curved splits are outside positive coverage. Persistent failed compensation has no demonstrated recoverable road-leaf journal.",
+    "API double deserialize tests Democity only. Save rollback compares normalized canonical state through retained equality booleans, includes one expected injected Transit error, and is distinct from road-leaf compensation.",
+    "All eight originals and four x4 differences plus contact sheet were inspected individually at original resolution. There are no undo/redo screenshots; baseline/candidate means transaction absent/present on R9t, not pre/post source.",
+    "Traffic/foliage differ between captures. Image MAE is not a visual-quality or foliage-only metric. No timing, GPU, raw-heap, forced-GC, night/weather, blind judging or whole-game gate pass follows from this round."
+  ],
+  "nextPriority": "Owner-safe road demolition inverse; do not advance the rejected disposable alley into authored Democity."
+}

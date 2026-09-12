@@ -1,5 +1,5 @@
 {
-  "url": "http://127.0.0.1:5173/?showcase=buildings&time=12&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
+  "url": "http://127.0.0.1:5174/?showcase=buildings&time=12&camera=closeup&seed=1337&quality=high&headless=1&speed=0",
   "showcase": "buildings",
   "time": 12,
   "camera": "closeup",
@@ -7,23 +7,23 @@
   "width": 1920,
   "height": 1080,
   "quality": "high",
-  "gpu": "swiftshader",
+  "gpu": "metal",
   "ok": true,
-  "gpuRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-  "elapsedMs": 267210,
-  "fps": 11.6,
-  "measuredFrames": 2,
-  "frameMs": 22211.7,
-  "drawCalls": 184,
-  "triangles": 2010618,
+  "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+  "elapsedMs": 5893,
+  "fps": 60,
+  "measuredFrames": 92,
+  "frameMs": 9.5,
+  "drawCalls": 148,
+  "triangles": 1769236,
   "programs": 25,
-  "textures": 45,
+  "textures": 37,
   "geometries": 91,
-  "heapMB": 187.6,
+  "heapMB": 227.9,
   "moduleMs": {
-    "environment": 0.4000000059604645,
+    "environment": 0,
     "buildings": 0,
-    "terrain": 0,
+    "terrain": 0.09999999986030161,
     "roads": 0,
     "zoning": 0
   },
@@ -45,32 +45,32 @@
     "environment": {
       "status": "ready",
       "errors": 0,
-      "ms": 0.4,
-      "initMs": 335
+      "ms": 0,
+      "initMs": 35
     },
     "buildings": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 82
+      "initMs": 17
     },
     "terrain": {
       "status": "ready",
       "errors": 0,
-      "ms": 0,
-      "initMs": 5118
+      "ms": 0.1,
+      "initMs": 1885
     },
     "roads": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 86
+      "initMs": 18
     },
     "zoning": {
       "status": "ready",
       "errors": 0,
       "ms": 0,
-      "initMs": 4
+      "initMs": 1
     }
   },
   "errors": [],

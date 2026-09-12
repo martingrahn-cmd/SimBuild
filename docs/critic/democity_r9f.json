@@ -1,0 +1,579 @@
+{
+  "module": "democity",
+  "round": "r9f",
+  "reviewer": "independent",
+  "decision": "ACCEPT",
+  "scope": "final-v2 verification-only closure; retain installed R9e product unchanged",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "wholeGameScore": 6.0,
+  "wholeGamePass": false,
+  "productChangeJustified": false,
+  "evidenceSummary": "shots/democity/r9f-top-containment/final-v2/summary.json",
+  "summarySha256": "feaadd1bd35e99e091819e12f2fe688b4cdf06cde65283dd15c810eb5c430345",
+  "sourceVerification": {
+    "texturePath": "src/modules/props/textures.js",
+    "textureSha256": "6090fe11d3104bcda0d9729f250e856153ebad69c1c55f083e122ed89dedf039",
+    "chunksPath": "src/modules/props/chunks.js",
+    "chunksSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "acceptedAtlasPath": "shots/democity/r9e-side-atlas/atlas-contract/accepted-atlas.png",
+    "acceptedAtlasSha256": "3c2ff34dc47dcacd3ad76ae181d1bd67e53863eac6661f17eb5d50ea4b86ac71",
+    "productAtlasPath": "shots/democity/r9e-side-atlas/atlas-contract/product-atlas.png",
+    "productAtlasSha256": "4d846cdaaf8380af089f89b6349f08435a7b8f46397b0639b5710a482326517f",
+    "treesPath": "src/modules/props/trees.js",
+    "treesSha256": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+    "verifierPath": "tools/lod1-top-cell-containment.mjs",
+    "verifierSha256": "c208559d6ce13279e6ebc9fe56be52058cdbb2a18655617136561bed32cbe772",
+    "currentProductHashesMatchR9e": true,
+    "liveProductPngMatchesRetained": true,
+    "liveProductAtlasSha256": "4d846cdaaf8380af089f89b6349f08435a7b8f46397b0639b5710a482326517f",
+    "productFilesEditedByCritic": []
+  },
+  "expectedCell7DeltaIndependentlyReconstructed": {
+    "changedPixels": 142,
+    "alphaChangedPixels": 135,
+    "alpha042Crossings": 63,
+    "bboxGlobalInclusive": [
+      861,
+      500,
+      917,
+      511
+    ],
+    "bboxCell7LocalInclusive": [
+      93,
+      244,
+      149,
+      255
+    ]
+  },
+  "classInstancesReported": {
+    "conifer": 746,
+    "broad": 1232,
+    "narrow": 822,
+    "wide": 34,
+    "ornamental": 188
+  },
+  "classTotalRecomputed": 3022,
+  "cases": [
+    {
+      "id": "actual_near",
+      "distance": 150,
+      "allNarrow": false,
+      "productVsContained": {
+        "normalizedRgbMae": 7.485387416283386e-05,
+        "changedPixels": 3565,
+        "strongPixelsGE8": 1271,
+        "maxChannelDelta": 153
+      },
+      "productVsReplay": {
+        "normalizedRgbMae": 5.110811042524006e-05,
+        "changedPixels": 1048,
+        "strongPixelsGE8": 967,
+        "maxChannelDelta": 153
+      },
+      "containedVsReplay": {
+        "normalizedRgbMae": 2.3745763737593805e-05,
+        "changedPixels": 2517,
+        "strongPixelsGE8": 304,
+        "maxChannelDelta": 140
+      },
+      "histogram": {
+        "lod0": 0,
+        "lod1": 0,
+        "impostor": 1203
+      },
+      "cameraMatchesAcrossTriplet": true,
+      "atlasDeltas": {
+        "product": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        },
+        "contained": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 142,
+          "alphaChangedPixels": 135,
+          "alpha042Crossings": 63,
+          "bboxGlobalInclusive": [
+            861,
+            500,
+            917,
+            511
+          ],
+          "bboxCell7LocalInclusive": [
+            93,
+            244,
+            149,
+            255
+          ]
+        },
+        "replay": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        }
+      },
+      "frameStats": {
+        "product": {
+          "frames": 42,
+          "drawCalls": 166,
+          "triangles": 1030787,
+          "fps": 48.5,
+          "heapMB": 484.9
+        },
+        "contained": {
+          "frames": 64,
+          "drawCalls": 216,
+          "triangles": 1381008,
+          "fps": 51.8,
+          "heapMB": 497.6
+        },
+        "replay": {
+          "frames": 90,
+          "drawCalls": 171,
+          "triangles": 1037289,
+          "fps": 59.9,
+          "heapMB": 511
+        }
+      }
+    },
+    {
+      "id": "actual_mid",
+      "distance": 300,
+      "allNarrow": false,
+      "productVsContained": {
+        "normalizedRgbMae": 0.00010178629064794642,
+        "changedPixels": 115602,
+        "strongPixelsGE8": 559,
+        "maxChannelDelta": 146
+      },
+      "productVsReplay": {
+        "normalizedRgbMae": 7.440440167836683e-05,
+        "changedPixels": 109701,
+        "strongPixelsGE8": 130,
+        "maxChannelDelta": 50
+      },
+      "containedVsReplay": {
+        "normalizedRgbMae": 2.8231663035584604e-05,
+        "changedPixels": 7208,
+        "strongPixelsGE8": 432,
+        "maxChannelDelta": 146
+      },
+      "histogram": {
+        "lod0": 0,
+        "lod1": 0,
+        "impostor": 1932
+      },
+      "cameraMatchesAcrossTriplet": true,
+      "atlasDeltas": {
+        "product": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        },
+        "contained": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 142,
+          "alphaChangedPixels": 135,
+          "alpha042Crossings": 63,
+          "bboxGlobalInclusive": [
+            861,
+            500,
+            917,
+            511
+          ],
+          "bboxCell7LocalInclusive": [
+            93,
+            244,
+            149,
+            255
+          ]
+        },
+        "replay": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        }
+      },
+      "frameStats": {
+        "product": {
+          "frames": 120,
+          "drawCalls": 238,
+          "triangles": 1253148,
+          "fps": 56.6,
+          "heapMB": 501.3
+        },
+        "contained": {
+          "frames": 147,
+          "drawCalls": 165,
+          "triangles": 846241,
+          "fps": 61.5,
+          "heapMB": 515.1
+        },
+        "replay": {
+          "frames": 170,
+          "drawCalls": 165,
+          "triangles": 846241,
+          "fps": 61.5,
+          "heapMB": 501.8
+        }
+      }
+    },
+    {
+      "id": "actual_far",
+      "distance": 600,
+      "allNarrow": false,
+      "productVsContained": {
+        "normalizedRgbMae": 5.394930605987251e-05,
+        "changedPixels": 18704,
+        "strongPixelsGE8": 1085,
+        "maxChannelDelta": 147
+      },
+      "productVsReplay": {
+        "normalizedRgbMae": 0,
+        "changedPixels": 0,
+        "strongPixelsGE8": 0,
+        "maxChannelDelta": 0
+      },
+      "containedVsReplay": {
+        "normalizedRgbMae": 5.394930605987251e-05,
+        "changedPixels": 18704,
+        "strongPixelsGE8": 1085,
+        "maxChannelDelta": 147
+      },
+      "histogram": {
+        "lod0": 0,
+        "lod1": 0,
+        "impostor": 2555
+      },
+      "cameraMatchesAcrossTriplet": true,
+      "atlasDeltas": {
+        "product": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        },
+        "contained": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 142,
+          "alphaChangedPixels": 135,
+          "alpha042Crossings": 63,
+          "bboxGlobalInclusive": [
+            861,
+            500,
+            917,
+            511
+          ],
+          "bboxCell7LocalInclusive": [
+            93,
+            244,
+            149,
+            255
+          ]
+        },
+        "replay": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        }
+      },
+      "frameStats": {
+        "product": {
+          "frames": 199,
+          "drawCalls": 240,
+          "triangles": 933665,
+          "fps": 57.5,
+          "heapMB": 518.8
+        },
+        "contained": {
+          "frames": 226,
+          "drawCalls": 216,
+          "triangles": 898553,
+          "fps": 58.4,
+          "heapMB": 534.8
+        },
+        "replay": {
+          "frames": 253,
+          "drawCalls": 216,
+          "triangles": 898553,
+          "fps": 56.2,
+          "heapMB": 516.3
+        }
+      }
+    },
+    {
+      "id": "amplified_all_narrow",
+      "distance": 300,
+      "allNarrow": true,
+      "productVsContained": {
+        "normalizedRgbMae": 8.27653463648834e-05,
+        "changedPixels": 20284,
+        "strongPixelsGE8": 1375,
+        "maxChannelDelta": 162
+      },
+      "productVsReplay": {
+        "normalizedRgbMae": 0,
+        "changedPixels": 0,
+        "strongPixelsGE8": 0,
+        "maxChannelDelta": 0
+      },
+      "containedVsReplay": {
+        "normalizedRgbMae": 8.27653463648834e-05,
+        "changedPixels": 20284,
+        "strongPixelsGE8": 1375,
+        "maxChannelDelta": 162
+      },
+      "histogram": {
+        "lod0": 0,
+        "lod1": 0,
+        "impostor": 1932
+      },
+      "cameraMatchesAcrossTriplet": true,
+      "atlasDeltas": {
+        "product": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        },
+        "contained": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 142,
+          "alphaChangedPixels": 135,
+          "alpha042Crossings": 63,
+          "bboxGlobalInclusive": [
+            861,
+            500,
+            917,
+            511
+          ],
+          "bboxCell7LocalInclusive": [
+            93,
+            244,
+            149,
+            255
+          ]
+        },
+        "replay": {
+          "relativeToLiveProduct": true,
+          "changedPixels": 0,
+          "alphaChangedPixels": 0,
+          "alpha042Crossings": 0,
+          "bboxGlobalInclusive": null,
+          "bboxCell7LocalInclusive": null
+        }
+      },
+      "frameStats": {
+        "product": {
+          "frames": 285,
+          "drawCalls": 165,
+          "triangles": 846241,
+          "fps": 56.8,
+          "heapMB": 531.1
+        },
+        "contained": {
+          "frames": 308,
+          "drawCalls": 165,
+          "triangles": 846241,
+          "fps": 57.1,
+          "heapMB": 542.3
+        },
+        "replay": {
+          "frames": 335,
+          "drawCalls": 165,
+          "triangles": 846241,
+          "fps": 56.5,
+          "heapMB": 532.2
+        }
+      }
+    }
+  ],
+  "verification": {
+    "all12RgbPairMetricsRecomputed": true,
+    "all4DifferenceImagesExact": true,
+    "allCamerasAndHistogramsMatchWithinTriplets": true,
+    "all12FrameRecords16ModulesReady": true,
+    "engineBrowserHttpErrors": 0,
+    "exactReplayCases": [
+      "actual_far",
+      "amplified_all_narrow"
+    ],
+    "cell7RenderEffectSupported": true,
+    "eachChangedAtlasPixelIndividuallyAttributed": false,
+    "visibleDefectJustifyingContainmentFound": false,
+    "build": {
+      "retainedLog": "shots/democity/r9f-top-containment/build.log",
+      "success": true,
+      "transformedModules": 163,
+      "durationMs": 308,
+      "freshCriticBuildRun": false
+    },
+    "freshApiRestage": false
+  },
+  "performanceSamples": {
+    "count": 12,
+    "minFps": 48.5,
+    "maxFps": 61.5,
+    "below50": 1,
+    "minRawHeapMB": 484.9,
+    "maxRawHeapMB": 542.3,
+    "above512Raw": 7,
+    "maxDrawCalls": 240,
+    "maxTriangles": 1381008,
+    "forcedGcMeasured": false,
+    "performanceGateEstablished": false
+  },
+  "inspection": {
+    "allFinalOriginalsInspectedIndividuallyAtOriginalResolution": true,
+    "originalCount": 12,
+    "differenceCount": 4,
+    "additionalAtlasCount": 1,
+    "originals": [
+      "shots/democity/r9f-top-containment/final-v2/actual_near_product.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_near_contained.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_near_product_replay.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_mid_product.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_mid_contained.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_mid_product_replay.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_far_product.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_far_contained.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_far_product_replay.png",
+      "shots/democity/r9f-top-containment/final-v2/amplified_all_narrow_product.png",
+      "shots/democity/r9f-top-containment/final-v2/amplified_all_narrow_contained.png",
+      "shots/democity/r9f-top-containment/final-v2/amplified_all_narrow_product_replay.png"
+    ],
+    "differences": [
+      "shots/democity/r9f-top-containment/final-v2/actual_near_difference_x8.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_mid_difference_x8.png",
+      "shots/democity/r9f-top-containment/final-v2/actual_far_difference_x8.png",
+      "shots/democity/r9f-top-containment/final-v2/amplified_all_narrow_difference_x8.png"
+    ],
+    "atlas": "shots/democity/r9f-top-containment/final-v2/live-product-atlas.png",
+    "supersededWholeAtlasImagesAlsoInspected": [
+      "shots/democity/r9f-top-containment/actual_near_product.png",
+      "shots/democity/r9f-top-containment/actual_near_accepted.png",
+      "shots/democity/r9f-top-containment/actual_near_product_replay.png",
+      "shots/democity/r9f-top-containment/actual_mid_product.png",
+      "shots/democity/r9f-top-containment/actual_mid_accepted.png",
+      "shots/democity/r9f-top-containment/actual_mid_product_replay.png",
+      "shots/democity/r9f-top-containment/actual_far_product.png",
+      "shots/democity/r9f-top-containment/actual_far_accepted.png",
+      "shots/democity/r9f-top-containment/actual_far_product_replay.png",
+      "shots/democity/r9f-top-containment/amplified_all_narrow_product.png",
+      "shots/democity/r9f-top-containment/amplified_all_narrow_accepted.png",
+      "shots/democity/r9f-top-containment/amplified_all_narrow_product_replay.png",
+      "shots/democity/r9f-top-containment/actual_near_difference_x8.png",
+      "shots/democity/r9f-top-containment/actual_mid_difference_x8.png",
+      "shots/democity/r9f-top-containment/actual_far_difference_x8.png",
+      "shots/democity/r9f-top-containment/amplified_all_narrow_difference_x8.png"
+    ],
+    "invalidSourceOverRunImagesUsedForJudgment": false,
+    "jsonRead": [
+      "shots/democity/r9f-top-containment/summary.json",
+      "shots/democity/r9f-top-containment/final/summary.json",
+      "shots/democity/r9f-top-containment/final-v2/summary.json"
+    ],
+    "documentsRead": [
+      "docs/STATUS.json",
+      "docs/HANDOFF.md",
+      "docs/builds/democity_r9f_top_containment.md",
+      "docs/critic/democity_r9e.md",
+      "docs/critic/democity_r9e.json",
+      "docs/critic/democity_r8y.md",
+      "docs/critic/wholegame_r2_independent.json"
+    ],
+    "sourceRead": [
+      "tools/lod1-top-cell-containment.mjs",
+      "src/modules/props/textures.js",
+      "src/modules/props/chunks.js",
+      "src/modules/props/trees.js",
+      "src/modules/props/index.js"
+    ],
+    "newBrowserCapturesByCritic": false
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "props/verification",
+      "title": "Corrected cell-only experiment is accepted; no production containment patch justified",
+      "evidence": "final-v2 exact142/135/63 oracle; far and amplified exact replay; all inspected final originals"
+    },
+    {
+      "priority": 2,
+      "owner": "verification",
+      "title": "Earlier full-atlas and alpha-union claims rejected and superseded",
+      "evidence": "root summary and final summary plus reviewed source revisions"
+    },
+    {
+      "priority": 3,
+      "owner": "props",
+      "title": "Broader conifer, side-transition and forced-top appearance limitations remain",
+      "evidence": "prior R9e/R9d and current debug-forced top originals",
+      "wholeGameRank": 2
+    },
+    {
+      "priority": 4,
+      "owner": "core and module owners",
+      "title": "No new FPS or retained-memory gate conclusion",
+      "evidence": "12 debug capture stats; near/mid drift and frame timing limits",
+      "wholeGameRank": 8
+    }
+  ],
+  "nextBoundedPriority": {
+    "wholeGameRank": 1,
+    "owner": "democity",
+    "supportingOwners": [
+      "roads",
+      "zoning",
+      "buildings",
+      "simulation"
+    ],
+    "task": "Diagnose one localized real road-owner frontage opportunity across seeds1337 and7, preserving existing road IDs/order where possible. Measure actual emitted slots, lot ownership/IDs, building/economy changes and restoration before considering a product candidate. R8y proxy screen did not perform this experiment. Reject insufficient gain or identity/terrain/visual damage; no claim that one link solves scale."
+  },
+  "existingWholeGameRanksClosed": [],
+  "boundedQuestionClosed": "R9e cell7 spill has a measurable but not visibly objectionable effect in supplied forced-top controls; no further product containment work warranted by this evidence.",
+  "limits": [
+    "All four cases force public Props debug LOD2 at pitch0.86. Actual means retained species distribution, not ordinary automatic selection; automatic steep-view selection uses LOD1.",
+    "One seed1337, one noon state and one fixed yaw/pitch; three camera distances are not exhaustive mips, species sizes, weather, night or GPU coverage.",
+    "Far and amplified exact replay support the aggregate cell7 effect in these captures; they do not prove every one of142 base pixels contributes, identify sampled mip levels or map every screen pixel to a tree class.",
+    "Near and mid replay drift remains. Do not subtract MAE or changed-pixel counts to manufacture a foliage-only result.",
+    "Speed zero does not freeze rendering. Traffic/Transit groups are hidden but owner updates continue; stats are read before screenshot and do not guarantee exact screenshot-frame statistics.",
+    "All-narrow is a disposable class-attribute remap retaining original placement, size, cap height and tint. It is not a naturally authored all-narrow forest.",
+    "Full-field class records are summarized rather than retained per instance;3022 total is independently summed from reported bins, not an independent enumeration of all source trees.",
+    "The live product PNG is retained and hash-exact. Patched canvas is represented by source logic and per-swap aggregate RGBA oracle, not a retained full patched-image hash.",
+    "Impostor colour/depth maps share the texture, but current impostors do not cast shadows. No identical shadow-pixel or reflection proof is claimed.",
+    "FPS values are isolated debug-view samples, not sustained performance or causal A/B. Raw heap is not forced-GC retained heap, a memory gate pass or proof of a leak.",
+    "No fresh R9f API, restore, RNG, gameplay, world-state digest, full matrix, reference or blind judging run; R9e contracts remain prior evidence on unchanged product source.",
+    "Initial whole-atlas and source-over runs are superseded harness failures; their rendered metrics cannot establish corrected containment behavior."
+  ],
+  "warnings": [
+    "[props] no roads yet: road furniture deferred until roads:changed",
+    "[democity] No valid reserved university site"
+  ],
+  "criticFilesWritten": [
+    "docs/critic/democity_r9f.md",
+    "docs/critic/democity_r9f.json"
+  ]
+}

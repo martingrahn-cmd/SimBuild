@@ -1,0 +1,219 @@
+{
+  "module": "democity",
+  "round": "r9i",
+  "reviewType": "independent rejected candidate audit",
+  "decision": "ACCEPT",
+  "decisionScope": "Qualified rejection record",
+  "candidateDecision": "REJECT",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "productChange": false,
+  "source": {
+    "path": "src/modules/democity/plan.js",
+    "sha256": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+    "baselineRoutedSha256": "80c547e22c4a7a2dcb2157b1aa13e3254d635d6e8de87ed4e03d398207512731",
+    "candidateRoutedSha256": "79adff6f8f40fcce998bf6fa800883593e7fe8b6d5a29a52482a94d9b2c56ce4"
+  },
+  "evidenceHashes": {
+    "summary.json": "32f361af26c6d33d5b0a575c1e37aed9c16a415f2866c1bd9eef158bfe81ea9f",
+    "tool-validity.json": "5b879ba7944306b71d013936f6b57d089de154cb480d8cd05718ac12655d83e0"
+  },
+  "inspection": {
+    "jsonFullyParsed": [
+      "summary.json",
+      "tool-validity.json"
+    ],
+    "summaryBytes": 13093918,
+    "originalImages": [
+      "baseline_seed1337_aerial.png",
+      "baseline_seed1337_directed.png",
+      "candidate_seed1337_aerial.png",
+      "candidate_seed1337_directed.png",
+      "baseline_seed7_aerial.png",
+      "baseline_seed7_directed.png",
+      "candidate_seed7_aerial.png",
+      "candidate_seed7_directed.png",
+      "tool_draft_seed1337.png",
+      "tool_draft_seed7.png"
+    ],
+    "differenceImages": [
+      "seed1337_aerial_difference_x4.png",
+      "seed1337_directed_difference_x4.png",
+      "seed7_aerial_difference_x4.png",
+      "seed7_directed_difference_x4.png"
+    ],
+    "allImagesIndividuallyInspected": true,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "newBrowserRun": false
+  },
+  "verification": {
+    "worlds": 6,
+    "modulesReadyPerWorld": 16,
+    "errors": 0,
+    "publicMembershipDuplicates": 0,
+    "publicMembershipOverlaps": 0,
+    "buildingLotBijectionsVerified": 6,
+    "sourceHashesReconstructed": 3,
+    "candidateRepeatsExactUnderDeclaredProjection": true,
+    "existingEdgePayloadPrefixExact": true,
+    "imageMetricsRecomputed": 4,
+    "differenceImagesExact": 4
+  },
+  "seeds": [
+    {
+      "seed": 1337,
+      "netLots": 1,
+      "netPaintedCells": 8,
+      "netClaimedCells": 12,
+      "gained": 2,
+      "lost": 1,
+      "retained": 611,
+      "retainedSameLotId": 424,
+      "retainedSameBuildingId": 378,
+      "changedRetainedPlanarGeometry": [],
+      "baselineEndpointDegrees": [
+        1,
+        1
+      ],
+      "publicDraftGradePercent": 20.802406469980873,
+      "publicDraftValid": false
+    },
+    {
+      "seed": 7,
+      "netLots": 2,
+      "netPaintedCells": 0,
+      "netClaimedCells": 24,
+      "gained": 2,
+      "lost": 0,
+      "retained": 648,
+      "retainedSameLotId": 634,
+      "retainedSameBuildingId": 365,
+      "changedRetainedPlanarGeometry": [
+        {
+          "key": "346:left:45,20",
+          "z": [
+            -852,
+            -856
+          ],
+          "width": [
+            32,
+            24
+          ],
+          "cells": [
+            16,
+            12
+          ],
+          "corner": [
+            true,
+            false
+          ]
+        },
+        {
+          "key": "348:right:51,25",
+          "z": [
+            -816,
+            -812
+          ],
+          "width": [
+            24,
+            32
+          ],
+          "cells": [
+            12,
+            16
+          ],
+          "corner": [
+            false,
+            true
+          ]
+        }
+      ],
+      "baselineEndpointDegrees": [
+        2,
+        1
+      ],
+      "publicDraftGradePercent": 12.319606211450365,
+      "publicDraftValid": false
+    }
+  ],
+  "imageMetrics": [
+    {
+      "seed": 1337,
+      "view": "aerial",
+      "metric": {
+        "normalizedRgbMae": 0.026399512325506334,
+        "changedPixels": 667876,
+        "strongPixelsGE8": 446152,
+        "maxChannelDelta": 237
+      },
+      "differenceX4": "shots/democity/r9i-actual-frontage/final-v1/seed1337_aerial_difference_x4.png"
+    },
+    {
+      "seed": 1337,
+      "view": "directed",
+      "metric": {
+        "normalizedRgbMae": 0.01013596763293795,
+        "changedPixels": 320060,
+        "strongPixelsGE8": 145347,
+        "maxChannelDelta": 224
+      },
+      "differenceX4": "shots/democity/r9i-actual-frontage/final-v1/seed1337_directed_difference_x4.png"
+    },
+    {
+      "seed": 7,
+      "view": "aerial",
+      "metric": {
+        "normalizedRgbMae": 0.03077748590434116,
+        "changedPixels": 749998,
+        "strongPixelsGE8": 485699,
+        "maxChannelDelta": 233
+      },
+      "differenceX4": "shots/democity/r9i-actual-frontage/final-v1/seed7_aerial_difference_x4.png"
+    },
+    {
+      "seed": 7,
+      "view": "directed",
+      "metric": {
+        "normalizedRgbMae": 0.007107633845719358,
+        "changedPixels": 224285,
+        "strongPixelsGE8": 107958,
+        "maxChannelDelta": 223
+      },
+      "differenceX4": "shots/democity/r9i-actual-frontage/final-v1/seed7_directed_difference_x4.png"
+    }
+  ],
+  "limitations": [
+    "Preview grade is terrain endpoint rise/horizontal run on pre-link world, not candidate design or maximum driven grade.",
+    "Public Tools API invocation, not native input/commit/undo test.",
+    "Before/after counts are not a full-world nonmutation oracle.",
+    "Fresh-start identity differences do not establish incremental restore failure.",
+    "Seed 7 changes two retained parcel geometries despite stable keys.",
+    "Repeatability applies only to captured projection; phase/stage timings excluded and full terrain digest payload absent.",
+    "Directed camera height is matched by verifier source, but actual camera transforms are not retained as capture sidecars.",
+    "Pixel metrics include fresh building variation, terrain, traffic and environment; no isolated road attribution.",
+    "No performance matrix, full save/load regression suite, or visual score increase.",
+    "Rejection covers this straight same-pair alley, not all local designs."
+  ],
+  "rankedOpenIssues": [
+    {
+      "rank": 1,
+      "issue": "Sparse urban fabric",
+      "owners": [
+        "democity",
+        "roads",
+        "zoning",
+        "tools",
+        "buildings"
+      ],
+      "status": "OPEN",
+      "next": "Screen alternative bounded alignments through public draft validity before actual yield/repeat/retained-geometry staging."
+    }
+  ],
+  "nextPriority": "Public road-tool validity screening on both seeds, followed by actual owner yield and retained-geometry tests for surviving local links."
+}

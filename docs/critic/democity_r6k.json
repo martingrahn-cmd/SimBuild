@@ -1,0 +1,9 @@
+{
+  "module": "democity", "round": "6k", "review": "local-critical", "score": 6.0, "pass": false,
+  "basis": {"shadowProfile": "shots/democity/r6j-shadow-profile/mainpass-profile.json", "candidateProfile": "shots/democity/r6k-candidate-props-lod1-shadow120/mainpass-profile.json", "matrix": "shots/democity/rr6k-candidate-props-lod1-shadow120/summary.json", "api": "shots/democity/r6k-candidate-props-lod1-shadow120/apicheck.json", "restage": "shots/democity/r6k-candidate-props-lod1-shadow120/restage-cycle.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 778, "maxTriangles": 3155766, "minFps": 43.0},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true},
+  "change": {"owner": "props", "scope": "LOD1 tree shadow submission", "declaredDistanceM": 120, "previousHardcodedDistanceM": 240, "visibleGeometryChanged": false},
+  "failedGates": ["3M triangles", "50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept declared LOD1 shadow distance and hold score; profile remaining props shadow classes next"
+}

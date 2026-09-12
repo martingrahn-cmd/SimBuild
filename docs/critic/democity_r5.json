@@ -1,0 +1,21 @@
+{
+  "module": "democity",
+  "round": 5,
+  "score": 6.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 751,
+  "maxTriangles": 4473160,
+  "minFps": 35.6,
+  "apiContractOk": true,
+  "auditScope": "Local W5 evidence review after a narrow lighting/performance change; not a claim of independent or human review.",
+  "issues": [
+    {"rank": 1, "severity": "blocker", "title": "Composed geometry and heap remain over budget", "detail": "Peak matrix cost is 4,473,160 triangles and the probe heap is 934.8 MB before, 1,108.3 MB after seed-7 restage.", "evidence": "shots/democity/r5/apicheck.json"},
+    {"rank": 2, "severity": "major", "title": "Golden-hour skyline remains washed out", "detail": "The sun-facing skyline still loses building and water form at 17:30.", "evidence": "shots/democity/r5/skyline_17p5.png"},
+    {"rank": 3, "severity": "major", "title": "Density and variation remain below the reference bar", "detail": "Sparse blocks, broad lawns, repeated towers and simplified foliage remain visible.", "evidence": "shots/democity/r5/overview_12.png"},
+    {"rank": 4, "severity": "major", "title": "District transitions remain schematic", "detail": "Bridge, waterfront and industry retain abrupt joins and weak material detail.", "evidence": "shots/democity/r5/industry_12.png"}
+  ],
+  "strengths": ["All W5 standard and seed-7 matrix captures are ready with zero errors.", "Night pool footprint and peak triangle cost are reduced.", "Public API, save/load, restage and tour probes pass."],
+  "summary": "6.0 FAIL. W5 reduces the night-light artifact and standard peak cost, but the city remains over geometry/heap budgets and visually below the target tier.",
+  "shots": ["shots/democity/r5/summary.json", "shots/democity/r5s7/summary.json", "shots/democity/r5/aerial_22.png", "shots/democity/r5/skyline_17p5.png", "shots/democity/r5/apicheck.json"]
+}

@@ -29,6 +29,10 @@ function refreshBand(reason, emit = false) {
   if (emit && (lots.added.length || lots.removed.length)) {
     S.grid.Z.version++;
     S.ctx.events.emit('zones:changed', { cells: [], lots });
+    // The zones journal can synchronously retire or create Buildings. Complete dependent
+    // simulation/Transit derivation at the same owner boundary so normal settlement and history
+    // restoration converge on one reproducible state.
+    S.ctx.modules.simulation?.reconcileWorld?.();
   }
   return lots;
 }
@@ -66,7 +70,9 @@ function pickProbePoints() {
   const best = new Map();
   for (const c of g.cells.values()) {
     const k = c.type + '|' + c.density;
-    const d = Math.hypot(c.x, c.z);
+    const highTargets = { residential: [-280, -40], commercial: [-200, -40], industrial: [-140, -36], office: [-52, -28] };
+    const target = c.density === 'high' ? highTargets[c.type] : [0, 0];
+    const d = Math.hypot(c.x - target[0], c.z - target[1]);
     const cur = best.get(k);
     if (cur && cur.d <= d) continue;
     // The 40x40 px patch item 2 samples spans about 9 m at the `zones` camera, so it stays inside
@@ -126,7 +132,11 @@ export default {
     ctx.events.on('buildings:changed', () => { S.overlayDirty = true; S.settle = 0; }, 'zoning');
     ctx.events.on('tool:changed', (p) => {
       if (S.always) return;
-      const on = !!(p && (TOOL_RE.test(String(p.tool || '')) || p.options?.zone || p.options?.zoning));
+      // Roads expose the exact *current* buildable frontage after each committed segment. This is
+      // the same owner-built zonable map that painting and lot generation consume, so the pale
+      // roadside cells cannot promise land that the zoning rules would later reject. A draft road
+      // is deliberately not guessed here; the marker updates as soon as the Roads owner commits it.
+      const on = !!(p && (p.tool === 'road' || TOOL_RE.test(String(p.tool || '')) || p.options?.zone || p.options?.zoning));
       S.target = on ? 1 : 0;
       // Show the group even with nothing painted yet: the meshes are empty, so it still costs zero
       // draw calls, and the opacity ramp the tool drives is observable from the first frame.
@@ -141,7 +151,10 @@ export default {
       S.settle += dt;
       if (S.settle >= 0.06) {
         S.settle = 0; S.rebuildMs = 0;
-        if (S.zonableDirty) refreshBand('event');
+        // A road or terrain mutation can replace real lots even when no zone brush was used.
+        // Publish that owner journal once the deferred rebuild settles so Buildings and every
+        // other dependent owner can retire references to removed lot IDs.
+        if (S.zonableDirty) refreshBand('event', true);
         if (S.overlayDirty) rebuildOverlay();
       }
     }
@@ -190,6 +203,14 @@ export default {
     staging() { return S.staging; },
     debugEdge(id) { return S.grid ? S.grid.debugEdge?.(id) ?? null : null; },
     diagnose() { return S.grid ? S.grid.diagnose() : null; },
+    /** Settle deferred road/terrain-derived lots before another owner transaction snapshots them. */
+    settleForHistory() {
+      if (!S.grid) return false;
+      S.settle = 0;
+      if (S.zonableDirty) refreshBand('history', true);
+      if (S.overlayDirty) rebuildOverlay();
+      return true;
+    },
     refresh() { refreshBand('api', true); rebuildOverlay(); },
     setOverlayVisible(v) {
       if (!S.overlay) return;
@@ -251,13 +272,27 @@ export default {
       if (!S.grid) return null;
       const cells = [];
       for (const [k, c] of S.grid.cells) cells.push(k + '|' + c.type[0] + (c.density === 'high' ? 'h' : 'l'));
-      return { cells };
+      const lots = [...S.grid.lots.values()].map((lot) => ({
+        key: S.grid._lotKey(lot), id: lot.id,
+        buildingId: Number.isInteger(lot.buildingId) ? lot.buildingId : null,
+      }));
+      return { cells, nextLot: S.grid.nextLot, lots };
     },
     deserialize(data) {
       if (!S.grid || !data) return;
       const T = { r: 'residential', c: 'commercial', i: 'industrial', o: 'office' };
+      // Validate the optional identity envelope before mutating cells. A generated-key mismatch can
+      // still arise later and is handled by the caller's owner rollback.
+      if (Array.isArray(data.lots) && !S.grid.restoreIdentity(data)) return false;
+      const t0 = performance.now();
       S.grid.cells.clear();
-      refreshBand('deserialize');
+      // Keep the previous lot table until the replacement cells are committed. regenLots can then
+      // match its stable road-side/front-cell keys and retain lot IDs/building ownership across a
+      // load. Clearing the cells and regenerating empty lots first orphaned every saved building.
+      const zonable = S.grid.buildZonable();
+      S.grid.pruneCells();
+      S.zonableDirty = false;
+      S.overlayDirty = true;
       S.grid.bulk(({ rect }) => {
         for (const s of data.cells || []) {
           const [key, code] = s.split('|');
@@ -266,7 +301,10 @@ export default {
           rect(cx, cz, cx, cz, T[code[0]], code[1] === 'h' ? 'high' : 'low');
         }
       });
+      S.rebuildMs = performance.now() - t0;
+      S.ctx.log.info(`zonable band restored: ${zonable} cells, ${S.grid.lots.size} stable lots in ${S.rebuildMs.toFixed(0)} ms`);
       rebuildOverlay();
+      return true;
     },
     /** Camera distance each cropRects landmark actually landed at, from the last cropRects() call. */
     cropDistances() { return { ...(S.cropDist || {}) }; },
@@ -280,6 +318,10 @@ export default {
     async setup(ctx) {
       S.staging = stageRoads(ctx);
       ctx.modules.roads?.rebuild?.();
+      // Splitting road intersections can retire the ids returned during initial staging.
+      S.staging.junctions = [...ctx.world.roads.nodes.values()]
+        .filter(n => n.edges.size >= 3 && Math.abs(n.x) <= 320 && n.z >= -170 && n.z <= 160)
+        .map(({id, x, z}) => ({id, x, z})).sort((a, b) => a.id - b.id);
       refreshBand('showcase');
       const painted = paintZones(ctx, S.grid);
       S.blocks = painted.blocks; S.empties = painted.empties; S.bare = painted.bare;

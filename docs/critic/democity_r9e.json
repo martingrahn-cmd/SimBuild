@@ -1,0 +1,428 @@
+{
+  "module": "democity",
+  "round": "r9e",
+  "reviewer": "independent",
+  "decision": "ACCEPT",
+  "scope": "bounded installed broad/narrow side-atlas product candidate",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "wholeGameScore": 6.0,
+  "wholeGamePass": false,
+  "sourceVerification": {
+    "texturePreSha256": "35fad7717730b7a4f59c12dd8554cdf5bf178653e88313026900b74abf0f6596",
+    "textureInstalledSha256": "6090fe11d3104bcda0d9729f250e856153ebad69c1c55f083e122ed89dedf039",
+    "chunksSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "treesSha256": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+    "exactPreReconstruction": true,
+    "changedBlocks": 2,
+    "productFilesModifiedByCritic": []
+  },
+  "pixelComparisons": [
+    {
+      "id": "day_a0",
+      "lod1CrossRun": {
+        "mae": 4.910155934801904e-06,
+        "changedPixels": 397,
+        "changedFraction": 0.00019145447530864197,
+        "strongPixelsGE8": 99,
+        "strongFractionGE8": 4.774305555555556e-05
+      },
+      "acceptedImpostorToLod1": {
+        "mae": 0.004462768170539821,
+        "changedPixels": 83169,
+        "changedFraction": 0.04010850694444444,
+        "strongPixelsGE8": 46513,
+        "strongFractionGE8": 0.022431037808641974
+      },
+      "candidateImpostorToLod1": {
+        "mae": 0.0038380638263535868,
+        "changedPixels": 79429,
+        "changedFraction": 0.038304880401234566,
+        "strongPixelsGE8": 41275,
+        "strongFractionGE8": 0.019904996141975308
+      },
+      "candidateVsAcceptedImpostor": {
+        "mae": 0.0023643702594206405,
+        "changedPixels": 54844,
+        "changedFraction": 0.026448688271604938,
+        "strongPixelsGE8": 27778,
+        "strongFractionGE8": 0.013396026234567902
+      },
+      "maeReductionFraction": 0.13998135693225333,
+      "strongReductionFraction": 0.112613677896502
+    },
+    {
+      "id": "day_a90",
+      "lod1CrossRun": {
+        "mae": 0.0,
+        "changedPixels": 0,
+        "changedFraction": 0.0,
+        "strongPixelsGE8": 0,
+        "strongFractionGE8": 0.0
+      },
+      "acceptedImpostorToLod1": {
+        "mae": 0.002409760045993706,
+        "changedPixels": 52249,
+        "changedFraction": 0.02519724151234568,
+        "strongPixelsGE8": 22468,
+        "strongFractionGE8": 0.010835262345679013
+      },
+      "candidateImpostorToLod1": {
+        "mae": 0.0020366562777374324,
+        "changedPixels": 52023,
+        "changedFraction": 0.025088252314814815,
+        "strongPixelsGE8": 19471,
+        "strongFractionGE8": 0.009389949845679013
+      },
+      "candidateVsAcceptedImpostor": {
+        "mae": 0.0014118806987815703,
+        "changedPixels": 38833,
+        "changedFraction": 0.01872733410493827,
+        "strongPixelsGE8": 15103,
+        "strongFractionGE8": 0.007283468364197531
+      },
+      "maeReductionFraction": 0.15483025742607415,
+      "strongReductionFraction": 0.13338970980950682
+    },
+    {
+      "id": "day_a180",
+      "lod1CrossRun": {
+        "mae": 0.0,
+        "changedPixels": 0,
+        "changedFraction": 0.0,
+        "strongPixelsGE8": 0,
+        "strongFractionGE8": 0.0
+      },
+      "acceptedImpostorToLod1": {
+        "mae": 0.004981892499798273,
+        "changedPixels": 83234,
+        "changedFraction": 0.04013985339506173,
+        "strongPixelsGE8": 44512,
+        "strongFractionGE8": 0.02146604938271605
+      },
+      "candidateImpostorToLod1": {
+        "mae": 0.004241656076010651,
+        "changedPixels": 80349,
+        "changedFraction": 0.03874855324074074,
+        "strongPixelsGE8": 39603,
+        "strongFractionGE8": 0.019098668981481482
+      },
+      "candidateVsAcceptedImpostor": {
+        "mae": 0.002309993544743,
+        "changedPixels": 49099,
+        "changedFraction": 0.023678144290123458,
+        "strongPixelsGE8": 23432,
+        "strongFractionGE8": 0.011300154320987655
+      },
+      "maeReductionFraction": 0.14858538674160393,
+      "strongReductionFraction": 0.11028486700215667
+    },
+    {
+      "id": "day_a270",
+      "lod1CrossRun": {
+        "mae": 0.0,
+        "changedPixels": 0,
+        "changedFraction": 0.0,
+        "strongPixelsGE8": 0,
+        "strongFractionGE8": 0.0
+      },
+      "acceptedImpostorToLod1": {
+        "mae": 0.00140780077463084,
+        "changedPixels": 37858,
+        "changedFraction": 0.018257137345679013,
+        "strongPixelsGE8": 15744,
+        "strongFractionGE8": 0.007592592592592593
+      },
+      "candidateImpostorToLod1": {
+        "mae": 0.0011776298868312759,
+        "changedPixels": 36555,
+        "changedFraction": 0.017628761574074073,
+        "strongPixelsGE8": 13785,
+        "strongFractionGE8": 0.006647858796296297
+      },
+      "candidateVsAcceptedImpostor": {
+        "mae": 0.0007291862089486,
+        "changedPixels": 24695,
+        "changedFraction": 0.011909239969135803,
+        "strongPixelsGE8": 8962,
+        "strongFractionGE8": 0.004321952160493827
+      },
+      "maeReductionFraction": 0.1634967759269209,
+      "strongReductionFraction": 0.12442835365853655
+    },
+    {
+      "id": "night_a0",
+      "lod1CrossRun": {
+        "mae": 2.410319837811668e-05,
+        "changedPixels": 1743,
+        "changedFraction": 0.0008405671296296296,
+        "strongPixelsGE8": 715,
+        "strongFractionGE8": 0.00034481095679012345
+      },
+      "acceptedImpostorToLod1": {
+        "mae": 0.0014906821138949407,
+        "changedPixels": 87244,
+        "changedFraction": 0.04207368827160494,
+        "strongPixelsGE8": 42124,
+        "strongFractionGE8": 0.02031442901234568
+      },
+      "candidateImpostorToLod1": {
+        "mae": 0.0015044884208827564,
+        "changedPixels": 84410,
+        "changedFraction": 0.040706983024691355,
+        "strongPixelsGE8": 39715,
+        "strongFractionGE8": 0.019152681327160494
+      },
+      "candidateVsAcceptedImpostor": {
+        "mae": 0.0006611910453481804,
+        "changedPixels": 50409,
+        "changedFraction": 0.024309895833333334,
+        "strongPixelsGE8": 18775,
+        "strongFractionGE8": 0.009054301697530864
+      },
+      "maeReductionFraction": -0.009261737870954745,
+      "strongReductionFraction": 0.0571883012059633
+    }
+  ],
+  "atlas": {
+    "changedCells": {
+      "1": 25676,
+      "2": 8891,
+      "7": 142,
+      "11": 26417,
+      "12": 8924
+    },
+    "topCell7": {
+      "changedPixels": 142,
+      "alphaChangedPixels": 135,
+      "nominalAlpha042CrossingsBaseMip": 63,
+      "bboxLocalInclusive": [
+        93,
+        244,
+        149,
+        255
+      ],
+      "premultipliedRgbaMae": 0.00043903067771034577,
+      "rawRgbaMae": 0.0006167093912760416
+    },
+    "topExact": false,
+    "unaffectedSideExact": true,
+    "forcedTopRenderingVerified": false
+  },
+  "matrix": {
+    "count": 16,
+    "ready": 16,
+    "errors": 0,
+    "minFps": 46.1,
+    "maxFps": 60,
+    "below50": 2,
+    "maxDrawCalls": 468,
+    "maxTriangles": 2275778,
+    "maxRawEndpointHeapMB": 756.4,
+    "above512RawHeap": 9,
+    "forcedGcVerified": false,
+    "causalPerformanceImprovementEstablished": false
+  },
+  "ledger": {
+    "movingRows": 169,
+    "updateEvents": 171,
+    "copyCalls": 17510,
+    "cameraResets": 15,
+    "maxQueue": 44,
+    "endQueue": 0,
+    "ordinaryEnd": [
+      0,
+      117,
+      2475
+    ],
+    "exactEnd": [
+      0,
+      114,
+      2477
+    ],
+    "cameraToLastEvaluated": 4.220309076599437,
+    "endpointRgbMae": 0.0003930135711692084,
+    "endpointChangedPixels": 15998,
+    "forcedCap": [
+      0,
+      520,
+      1775
+    ],
+    "synchronizedMembershipRecomputed": true,
+    "allEventHistogramsRecomputed": true,
+    "omittedInputCensusVerified": false,
+    "below72mVerified": false
+  },
+  "contracts": {
+    "apiResultVerified": true,
+    "doubleDeserializeRecordedCensusEqual": true,
+    "tourStops": 8,
+    "invalidTourRejected": true,
+    "restageDigestsExact": true,
+    "restageDigestScope": [
+      "buildings",
+      "services",
+      "transit"
+    ],
+    "restageRawHeapMB": [
+      733.2,
+      825.6,
+      914.9,
+      995.6
+    ],
+    "freshMixedUseContract": false,
+    "retainedBuildLog": false
+  },
+  "inspection": {
+    "allRequiredOriginalsInspected": true,
+    "originalCount": 53,
+    "derivedCount": 7,
+    "images": [
+      "shots/democity/r9e-side-atlas/accepted/day_a0_impostor.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a0_lod1.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a180_impostor.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a180_lod1.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a270_impostor.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a270_lod1.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a90_impostor.png",
+      "shots/democity/r9e-side-atlas/accepted/day_a90_lod1.png",
+      "shots/democity/r9e-side-atlas/accepted/night_a0_impostor.png",
+      "shots/democity/r9e-side-atlas/accepted/night_a0_lod1.png",
+      "shots/democity/r9e-side-atlas/atlas-contract/accepted-atlas.png",
+      "shots/democity/r9e-side-atlas/atlas-contract/difference-x5.png",
+      "shots/democity/r9e-side-atlas/atlas-contract/product-atlas.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a0_impostor.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a0_lod1.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a180_impostor.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a180_lod1.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a270_impostor.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a270_lod1.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a90_impostor.png",
+      "shots/democity/r9e-side-atlas/candidate/day_a90_lod1.png",
+      "shots/democity/r9e-side-atlas/candidate/night_a0_impostor.png",
+      "shots/democity/r9e-side-atlas/candidate/night_a0_lod1.png",
+      "shots/democity/r9e-side-atlas/comparison-contact.png",
+      "shots/democity/r9e-side-atlas/day_a0_candidate_diff_x5.png",
+      "shots/democity/r9e-side-atlas/day_a180_candidate_diff_x5.png",
+      "shots/democity/r9e-side-atlas/day_a270_candidate_diff_x5.png",
+      "shots/democity/r9e-side-atlas/day_a90_candidate_diff_x5.png",
+      "shots/democity/r9e-side-atlas/night_a0_candidate_diff_x5.png",
+      "shots/democity/r9e-side-atlas/product-aerial/aerial_12.png",
+      "shots/democity/r9e-side-atlas/product-aerial/aerial_22.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a0_impostor.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a0_lod1.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a180_impostor.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a180_lod1.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a270_impostor.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a270_lod1.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a90_impostor.png",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a90_lod1.png",
+      "shots/democity/r9e-side-atlas/product-isolation/night_a0_impostor.png",
+      "shots/democity/r9e-side-atlas/product-isolation/night_a0_lod1.png",
+      "shots/democity/r9e-side-atlas/product-ledger/cap_stress_synced.png",
+      "shots/democity/r9e-side-atlas/product-ledger/moving_end_auto.png",
+      "shots/democity/r9e-side-atlas/product-ledger/moving_end_exact.png",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_12.png",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_17p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_22.png",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_6p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_12.png",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_17p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_22.png",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_6p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/park_12.png",
+      "shots/democity/r9e-side-atlas/product-matrix/park_17p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/park_22.png",
+      "shots/democity/r9e-side-atlas/product-matrix/park_6p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_12.png",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_17p5.png",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_22.png",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_6p5.png"
+    ],
+    "jsonFiles": [
+      "shots/democity/r9e-side-atlas/accepted/day_a0.json",
+      "shots/democity/r9e-side-atlas/accepted/day_a180.json",
+      "shots/democity/r9e-side-atlas/accepted/day_a270.json",
+      "shots/democity/r9e-side-atlas/accepted/day_a90.json",
+      "shots/democity/r9e-side-atlas/accepted/night_a0.json",
+      "shots/democity/r9e-side-atlas/accepted/summary.json",
+      "shots/democity/r9e-side-atlas/atlas-contract/capture.json",
+      "shots/democity/r9e-side-atlas/atlas-contract/comparison.json",
+      "shots/democity/r9e-side-atlas/candidate/day_a0.json",
+      "shots/democity/r9e-side-atlas/candidate/day_a180.json",
+      "shots/democity/r9e-side-atlas/candidate/day_a270.json",
+      "shots/democity/r9e-side-atlas/candidate/day_a90.json",
+      "shots/democity/r9e-side-atlas/candidate/night_a0.json",
+      "shots/democity/r9e-side-atlas/candidate/summary.json",
+      "shots/democity/r9e-side-atlas/comparison.json",
+      "shots/democity/r9e-side-atlas/product-aerial/aerial_12.json",
+      "shots/democity/r9e-side-atlas/product-aerial/aerial_22.json",
+      "shots/democity/r9e-side-atlas/product-contracts/apicheck.json",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a0.json",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a180.json",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a270.json",
+      "shots/democity/r9e-side-atlas/product-isolation/day_a90.json",
+      "shots/democity/r9e-side-atlas/product-isolation/night_a0.json",
+      "shots/democity/r9e-side-atlas/product-isolation/summary.json",
+      "shots/democity/r9e-side-atlas/product-ledger/ledger.json",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_12.json",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_17p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_22.json",
+      "shots/democity/r9e-side-atlas/product-matrix/downtown_6p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_12.json",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_17p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_22.json",
+      "shots/democity/r9e-side-atlas/product-matrix/industry_6p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/park_12.json",
+      "shots/democity/r9e-side-atlas/product-matrix/park_17p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/park_22.json",
+      "shots/democity/r9e-side-atlas/product-matrix/park_6p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_12.json",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_17p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_22.json",
+      "shots/democity/r9e-side-atlas/product-matrix/suburb_6p5.json",
+      "shots/democity/r9e-side-atlas/product-matrix/summary.json",
+      "shots/democity/r9e-side-atlas/product-restage/restage-cycle.json"
+    ],
+    "videoPlayedInFull": false,
+    "newBrowserCaptures": false
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "props",
+      "issue": "Top-cell 7 containment is not exact; 135 alpha changes and 63 nominal threshold crossings",
+      "evidence": "atlas-contract originals",
+      "blockingLocalAcceptance": false
+    },
+    {
+      "priority": 2,
+      "owner": "props",
+      "issue": "Conifer and residual LOD1/impostor appearance mismatch; night quality unproven",
+      "evidence": "accepted/candidate/product-isolation original pairs"
+    },
+    {
+      "priority": 3,
+      "owner": "democity/core/module owners",
+      "issue": "Whole-city fabric and strict FPS/memory requirements remain open",
+      "evidence": "product-matrix and authored restage raw endpoints"
+    }
+  ],
+  "limits": [
+    "Single-seed visual evidence; no weather/multi-seed visual or small far-tree survival sweep.",
+    "MAE to coarse LOD1 is consistency rather than visual quality.",
+    "Fresh-page non-Props drift and multiple rendered frames limit exclusive pixel attribution, especially night.",
+    "Aerial sidecars omit LOD histogram; noon atlas capture records 1939 LOD1/0 impostors; forced top cell not tested.",
+    "Raw heap is not forced-GC retained memory or proof of leak; FPS is not causal A/B.",
+    "Restage digest excludes full world/economy/RNG/Props state; census restore is not full-state equality.",
+    "Ledger derives input census from actual outputs, excludes <72m and does not prove no temporal pop.",
+    "No fresh whole-game/reference/blind or human playtest; no score uplift.",
+    "Build163 is builder-reported without round log."
+  ],
+  "nextBoundedPriority": {
+    "owner": "props",
+    "task": "Verify the changed top impostor cell and mip/alpha boundary in a disposable forced-top matched comparison; if visible leakage is confirmed, evaluate cell-contained post-processing with exact unaffected-cell/RNG preservation. Do not retune range/band/cap/alpha or broadly rewrite foliage."
+  },
+  "existingWholeGameRanksClosed": []
+}

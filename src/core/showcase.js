@@ -2,7 +2,9 @@
 export function parseParams(search = window.location.search) {
   const p = new URLSearchParams(search);
   const num = (k, d) => (p.has(k) && p.get(k) !== '' && !Number.isNaN(+p.get(k)) ? +p.get(k) : d);
+  const startingMoney = num('money', null);
   return {
+    money: Number.isFinite(startingMoney) && startingMoney >= 0 ? startingMoney : null,
     showcase: p.get('showcase') || null,
     time: num('time', null),
     camera: p.get('camera') || null,

@@ -25,8 +25,8 @@ export const meta = {
   ],
 }
 
-const ROOT = '/home/user/SimBuild'
-const REF = '/tmp/claude-0/-home-user-SimBuild/c06ed41b-9bdf-5ab7-ace6-40b62a5e4281/scratchpad/ref'
+const ROOT = args?.root || (typeof process !== 'undefined' ? process.cwd() : '/home/user/SimBuild')
+const REF = args?.ref || (typeof process !== 'undefined' ? (process.env.SIMBUILD_REF || `${process.env.HOME}/.simbuild/ref`) : '/home/user/.simbuild/ref')
 const PASS = 8.5
 const MAX_ROUNDS = 4
 const ROUNDS_PER_RUN = (args && args.roundsPerRun) || 2
@@ -147,7 +147,7 @@ async function runModule(spec) {
     else if (didRounds >= ROUNDS_PER_RUN) status = 'paused-round-cap'
   }
   return {
-    module: mod, status, lastRound: Math.min(round, MAX_ROUNDS),
+    module: mod, status, lastRound: history.at(-1)?.round ?? null,
     finalScore: critique ? critique.score : null,
     openIssues: critique ? (critique.issues || []).slice(0, 6) : [],
     history,

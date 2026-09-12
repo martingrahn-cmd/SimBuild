@@ -1,0 +1,37 @@
+{
+  "module": "democity",
+  "round": "r8b",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "scoreChanged": false,
+  "change": "Fourteen real central avenue lots use the existing mixed-use building programme, producing saved and simulated retail frontage.",
+  "rejectedIterations": [
+    "late lot metadata produced zero mixed-use buildings",
+    "early recreation produced only three office towers and missed residential frontage"
+  ],
+  "verified": {
+    "buildModules": 163,
+    "matrixCapturesInspected": 16,
+    "errors": 0,
+    "maxDrawCalls": 473,
+    "maxTriangles": 2258952,
+    "minFps": 43.2,
+    "mixedUseBuildings": 14,
+    "mixedUseApartments": 11,
+    "mixedUseTowers": 3,
+    "totalBuildings": 612,
+    "frontageCropMaeNormalized": 0.0881104,
+    "api": true,
+    "doubleSaveRestoreExact": true,
+    "zoningLotOwnershipExact": true,
+    "occupantsJobsExact": true,
+    "exactCrossSeedRestage": true,
+    "atomicRollbackExact": true
+  },
+  "remaining": [
+    "The 1,200-building and 1,400-lot scale gates remain failed.",
+    "Most districts still lack compact continuous frontage and production-quality asset variety.",
+    "Whole-game 50fps, foliage, grounding, night-depth and subjective play gates remain failed."
+  ]
+}

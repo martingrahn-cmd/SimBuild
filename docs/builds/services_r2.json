@@ -1,0 +1,361 @@
+{
+  "module": "services",
+  "round": 2,
+  "summary": "Round 2 fixes live per-facility civic loads and terrain mutation versions, restores plume attachment, improves district grading and parking, and adds bounded plan details. The current build is stable and functional at the owner API level; visual fidelity, dirty CPU budgets and disclosed staging issues remain below acceptance.",
+  "drawCalls": 183,
+  "triangles": 1668657,
+  "errors": 0,
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/all_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/civic_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/civic_12_720.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/civic_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/civic_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/civic_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/dev/before_skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/dev/grade_civic_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/dev/plume_fix_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/dev/plume_no_depth.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/dev/plume_no_water.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/dev/plume_order.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/night_civic_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/park_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/park_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/park_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/park_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/plant_close_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/plant_close_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/plant_close_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/plant_close_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/coverage_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/coverage_clinic_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/coverage_move_0.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/coverage_move_1.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/coverage_move_2.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/info_api.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/info_clear.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/info_field.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/info_off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/infoview_power.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/probe_coverage_off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/probe_play_fixture.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/seed7_park.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/toggle_night_off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/toggle_night_on.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/toggle_noon_off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/toggle_noon_on.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/wind_minus.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/wind_plus.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/utilities_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/utilities_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/utilities_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/services/r2/utilities_6p5.png",
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_5.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_6.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_7.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "acceptanceMet": [
+    "Critical live loads: actual simulation.step(110) leaves actual occupants 0 and all 12 civic facility loads 0. A separate Floyd-Warshall oracle over public roads matches every civic load after assigning varied occupants; the three small parks report 30, 58 and 102. No rebuild is forced for that tick refresh.",
+    "Terrain mutation: clinic reseats from 15.04 to 15.2399998093, services.version advances 114 to 115, and one coalesced event reports updated ID 9. Real load refresh also advances owned version.",
+    "Catalog, validation and finance preserved: exactly 19 public functions, 17 UI catalog entries match labels/costs/unlocks/categories. Valid small park charges 3000 once; invalid and poor placements return null without charge or mutation. Real play API fixture starts empty at 150000 and coal plus clinic leave 106000.",
+    "Connectivity and consequences preserved: disconnected road power 1/0, joining 0 to 1, deleting the link back to 0; long-detour clinic reach stays zero. Sole coal supplies 600 against 320 demand and covers all buildings; deleting it drops coverage and actual building/economy power to zero within 110 ticks. Four turbines provide proportional brownout 240/320 = 0.75 with maximum sampled error zero.",
+    "Persistence and determinism preserved: repeated deserialize restores 22 IDs/kinds/positions/headings and equal coverage, draw count and geometry count, with no money charge. Seed 7 preserves placements and changes owned tree hash from 2129119487 to 238951765.",
+    "Visible owner fixes: plume order restores attachment while retaining depthTest; age alpha tapers the top. Clinic cars are rotated as complete assemblies and parked parallel with facade clearance. School has a fenced court. Solar has 20 rows per bank, 40 actual short rows total. Industrial ribs and rounded hedge crowns add plan detail; overlapping path segments reduce join notches.",
+    "Coverage query budget subset: 20,000 reads per grid key take at most 4.2 ms, without changing gridMs. Actual Coverage constructor fixture confirms exactly 1 MiB of fixed typed arrays. Scheduler fixture confirms automatic rebuild starts no earlier than 250 ms; explicit flush remains synchronous.",
+    "Render and runtime budget subset: owned baseline 17 draws / 119202 triangles / 3 textures / 128 plume quads. Standard gauntlet 16 shots maximum 183 draws / 1668657 scene triangles, minimum 56.4 fps. Own presets maximum 190 draws / 1118486 scene triangles. All 34 required matrix images, all showcase and 19 diagnostic PNGs are viewed with zero application errors; 6 development PNGs and all 8 references were also viewed.",
+    "Improved staging count: all 22 facilities and 17 kinds remain, with 160 buildings and 168 lots. 70 owned trees of three species, 26 benches, 13 bins and 26 path lamps remain. No core camera presets are overridden.",
+    "Info-view wiring subset: world.infoview.active electricity and setInfoview electricity produce identical images, and clearing restores the original image exactly. Owned foliage now follows the same category desaturation as other service geometry."
+  ],
+  "acceptanceMissed": [
+    "Visual fidelity remains below the CS2 reference bar: civic elevations repeat the same window rows and roof kit, industrial walls still need believable material scale and process detail, vehicles are simple and fountain water is static. The new industrial ribs and school fence are modest improvements, not a photographic material pass.",
+    "Plumes are attached with age fading and wind drift, but remain smooth columns with faint or nearly absent nighttime steam. No safe opaque-depth intersection fade is available. Utilities has no visible sky, so sky_ref is now honestly omitted; its plume/sky ratio cannot be measured. Wind whole-frame differences include environment changes, so no isolated >=40 pixel apex-motion pass is claimed.",
+    "The continuous showcase grade removes interior road-corridor cliffs and yields 160 buildings / 168 lots. Its remaining intake cut is abrupt, the pump is now in groundwater mode (140 supply against 256 demand), and only three pads retain sampled >1.5 m crossfall. The whole graded-pad staging clause remains missed despite all 22 sampled height/skirt checks passing.",
+    "Night response remains below the quantitative bar: full-frame emissive meanAbs 0.962316/255 versus >8/255; civic facade isolated-edge fraction 0.541712% versus <0.2%. Noon meanAbs is exactly zero. No sixfold window/wall contrast or paired 25% contact-darkening pass is claimed.",
+    "Owned opaque meshes and foliage now both desaturate, and field/API images and reset are pixel-identical. The full-frame effect is only 1.137812/255 versus >20/255; services cannot establish the complete scene desaturation criterion on its own.",
+    "Geometry rebuild remains synchronous: two same-frame removals take 82.6 ms of owned build work; the 100 ms next-frame interval includes neighbors. Initial grid work is 13.5 ms (seed 7: 12.3 ms), above 12 ms. Automatic grid starts are now throttled to 250 ms, but slicing does not prove every dirty update below 2 ms.",
+    "Fourteen grids plus four auxiliary typed arrays are now exactly 1,048,576 bytes. This excludes graph records, per-facility covered-building membership and temporary distances, so no total coverage-heap <=1 MiB claim is made. Packed edge indices support at most 65,535 edge slots; a larger-city representation remains future work.",
+    "Coverage overlay stays off by default and uses real component ratios, but retains intersections at courts and outer terrain edges. Three movement frames are recorded; whole-frame differences include parallax and are not an isolated overlay flicker test.",
+    "park_12 now supplies grass_ref, but its 48 pixel region includes vegetation/shadow contamination. No unqualified lawn color separation or seamless ground material pass is claimed.",
+    "Fresh populated integration still has 101 tree centers inside service footprints; accepted root masks and normal-play adapters are pending. Exact showcase all still stages zero facilities. API fixtures prove owner behavior in an artificial real play page, not ordinary UI new-city completion."
+  ],
+  "remainingWeaknesses": [
+    "Visual fidelity remains below the CS2 reference bar: civic elevations repeat the same window rows and roof kit, industrial walls still need believable material scale and process detail, vehicles are simple and fountain water is static. The new industrial ribs and school fence are modest improvements, not a photographic material pass.",
+    "Plumes are attached with age fading and wind drift, but remain smooth columns with faint or nearly absent nighttime steam. No safe opaque-depth intersection fade is available. Utilities has no visible sky, so sky_ref is now honestly omitted; its plume/sky ratio cannot be measured. Wind whole-frame differences include environment changes, so no isolated >=40 pixel apex-motion pass is claimed.",
+    "The continuous showcase grade removes interior road-corridor cliffs and yields 160 buildings / 168 lots. Its remaining intake cut is abrupt, the pump is now in groundwater mode (140 supply against 256 demand), and only three pads retain sampled >1.5 m crossfall. The whole graded-pad staging clause remains missed despite all 22 sampled height/skirt checks passing.",
+    "Night response remains below the quantitative bar: full-frame emissive meanAbs 0.962316/255 versus >8/255; civic facade isolated-edge fraction 0.541712% versus <0.2%. Noon meanAbs is exactly zero. No sixfold window/wall contrast or paired 25% contact-darkening pass is claimed.",
+    "Owned opaque meshes and foliage now both desaturate, and field/API images and reset are pixel-identical. The full-frame effect is only 1.137812/255 versus >20/255; services cannot establish the complete scene desaturation criterion on its own.",
+    "Geometry rebuild remains synchronous: two same-frame removals take 82.6 ms of owned build work; the 100 ms next-frame interval includes neighbors. Initial grid work is 13.5 ms (seed 7: 12.3 ms), above 12 ms. Automatic grid starts are now throttled to 250 ms, but slicing does not prove every dirty update below 2 ms.",
+    "Fourteen grids plus four auxiliary typed arrays are now exactly 1,048,576 bytes. This excludes graph records, per-facility covered-building membership and temporary distances, so no total coverage-heap <=1 MiB claim is made. Packed edge indices support at most 65,535 edge slots; a larger-city representation remains future work.",
+    "Coverage overlay stays off by default and uses real component ratios, but retains intersections at courts and outer terrain edges. Three movement frames are recorded; whole-frame differences include parallax and are not an isolated overlay flicker test.",
+    "park_12 now supplies grass_ref, but its 48 pixel region includes vegetation/shadow contamination. No unqualified lawn color separation or seamless ground material pass is claimed.",
+    "Fresh populated integration still has 101 tree centers inside service footprints; accepted root masks and normal-play adapters are pending. Exact showcase all still stages zero facilities. API fixtures prove owner behavior in an artificial real play page, not ordinary UI new-city completion."
+  ],
+  "coreRequestFile": "/Users/martingrahn/Documents/SimBuild/docs/core-requests/services.md",
+  "selfScore": 6.2,
+  "scoreRationale": "The most distracting detached plume seam and interior cliffs improve, and actual stale load/version defects are fixed. Repetitive architecture, weak night response, residual water staging and expensive dirty rebuilds still prevent an 8.5 pass. Functional correctness is not counted as photographic visual fidelity.",
+  "runtime": {
+    "url": "http://127.0.0.1:5174",
+    "browser": "System Chrome 152.0.7977.76",
+    "gpu": "ANGLE Metal Apple M4",
+    "minStandardFps": 56.4,
+    "minOwnPresetFps": 54.9
+  },
+  "sourceHashes": {
+    "src/modules/services/catalog.js": "31dbc94bf805503e526c07066405e3372a160f3840967a784da0942fc55c2ac3",
+    "src/modules/services/coverage.js": "b44f756e72f2e80548c1607d6d1113be7e861ad621e3717d1729b63e90da7aa2",
+    "src/modules/services/index.js": "2d3deb2fe37b9d6602f9bc0672177105a1712781a1b60fa2f77e20d847dd769b",
+    "src/modules/services/placement.js": "19571507c29cc08b3aed6ab071aafde061e0f7b5f3def7fd4eb6cbb6c602c2ae",
+    "src/modules/services/render.js": "b3b47440d63308285ace2cf6d86e4a03da42ef99f6106a74a5f3de03c85aebae",
+    "src/modules/services/showcase.js": "bd4cda4a54cc3da2c84be55b9b019b1da3dcc7d37439bd841ad95da6d32369af"
+  },
+  "sourceFrozenAt": "2026-09-06T20:02:32.453824+00:00",
+  "evidence": {
+    "root": "/Users/martingrahn/Documents/SimBuild/shots/services/r2",
+    "standardSummary": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/summary.json",
+    "ownSummary": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/own-summary.json",
+    "api": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/api-probe.json",
+    "seams": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/seams.json",
+    "liveLoadsAndVersion": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/supplement.json",
+    "metrics": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/image-metrics.json",
+    "cacheFixture": "/Users/martingrahn/Documents/SimBuild/shots/services/r2/probe/cache-fixture.json",
+    "requiredUniqueMatrixImages": 34,
+    "allShowcaseImages": 1,
+    "diagnosticImages": 19,
+    "developmentImages": 6,
+    "referencesViewed": 8
+  },
+  "probeSummary": {
+    "baseline": {
+      "items": 22,
+      "kinds": {
+        "power_coal": 1,
+        "power_wind": 4,
+        "power_solar": 1,
+        "water_pump": 1,
+        "sewage": 1,
+        "landfill": 1,
+        "incinerator": 1,
+        "clinic": 1,
+        "hospital": 1,
+        "school": 1,
+        "high_school": 1,
+        "university": 1,
+        "police": 1,
+        "fire": 1,
+        "park_small": 3,
+        "park_large": 1,
+        "plaza": 1
+      },
+      "draws": 17,
+      "tris": 119202,
+      "textures": 3,
+      "buildMs": 98.3000000002794,
+      "plumeQuads": 128,
+      "decor": {
+        "trees": 70,
+        "treeSpecies": [
+          "oak",
+          "spruce",
+          "birch"
+        ],
+        "benches": 26,
+        "bins": 13,
+        "pathLamps": 26,
+        "hedgePerimeterFrac": 0.78,
+        "treeHash": 2129119487
+      },
+      "overlay": null,
+      "gridMs": 13.5,
+      "coverageVersion": 1,
+      "supply": {
+        "power": 1015.0619515425243,
+        "water": 140,
+        "sewage": 400,
+        "garbage": 1200
+      },
+      "demand": {
+        "power": 320,
+        "water": 255.99999999999935,
+        "sewage": 255.99999999999935,
+        "garbage": 144.00000000000043
+      },
+      "served": {
+        "power": 1,
+        "water": 1,
+        "sewage": 1,
+        "garbage": 1
+      }
+    },
+    "individualLoads": {
+      "method": "Independent all-pairs Floyd-Warshall oracle over public road graph; source uses per-facility bounded Dijkstra. Occupants assigned a 1-7 pattern, then actual sim:tick listener called without forcing grid rebuild.",
+      "beforeVersion": 102,
+      "afterVersion": 114,
+      "rows": [
+        {
+          "id": 9,
+          "kind": "clinic",
+          "load": 330,
+          "expected": 330,
+          "pass": true
+        },
+        {
+          "id": 10,
+          "kind": "hospital",
+          "load": 637,
+          "expected": 637,
+          "pass": true
+        },
+        {
+          "id": 11,
+          "kind": "school",
+          "load": 339,
+          "expected": 339,
+          "pass": true
+        },
+        {
+          "id": 12,
+          "kind": "high_school",
+          "load": 557,
+          "expected": 557,
+          "pass": true
+        },
+        {
+          "id": 13,
+          "kind": "university",
+          "load": 637,
+          "expected": 637,
+          "pass": true
+        },
+        {
+          "id": 14,
+          "kind": "police",
+          "load": 574,
+          "expected": 574,
+          "pass": true
+        },
+        {
+          "id": 15,
+          "kind": "fire",
+          "load": 529,
+          "expected": 529,
+          "pass": true
+        },
+        {
+          "id": 16,
+          "kind": "park_large",
+          "load": 462,
+          "expected": 462,
+          "pass": true
+        },
+        {
+          "id": 17,
+          "kind": "park_small",
+          "load": 30,
+          "expected": 30,
+          "pass": true
+        },
+        {
+          "id": 18,
+          "kind": "plaza",
+          "load": 115,
+          "expected": 115,
+          "pass": true
+        },
+        {
+          "id": 19,
+          "kind": "park_small",
+          "load": 58,
+          "expected": 58,
+          "pass": true
+        },
+        {
+          "id": 20,
+          "kind": "park_small",
+          "load": 102,
+          "expected": 102,
+          "pass": true
+        }
+      ],
+      "allPass": true,
+      "distinctSmallParkLoads": [
+        30,
+        58,
+        102
+      ]
+    },
+    "terrainMutation": {
+      "beforeVersion": 114,
+      "afterVersion": 115,
+      "oldY": 15.04,
+      "newY": 15.239999809265136,
+      "events": [
+        {
+          "added": [],
+          "removed": [],
+          "updated": [
+            9
+          ]
+        }
+      ]
+    },
+    "brownout": {
+      "expected": 0.75,
+      "maxError": 0,
+      "supply": 240,
+      "demand": 320
+    },
+    "dirtyRebuild": {
+      "observed": [
+        {
+          "added": [],
+          "removed": [
+            17,
+            19
+          ],
+          "updated": []
+        }
+      ],
+      "elapsed": 100,
+      "versionDelta": 2,
+      "buildMs": 82.60000000009313
+    },
+    "maxPadHighError": 0.07594779968261633,
+    "slopedPads": 3,
+    "treeOverlapCount": 101,
+    "trees": 2981,
+    "buildings": 160,
+    "lots": 168,
+    "nightMeanAbs255": 0.962316234363243,
+    "infoMeanAbs255": 1.137812132947147,
+    "civicSpecklePercent": 0.5417118093174431
+  },
+  "measurementLimits": [
+    "No screenshot score is inferred from draw calls or API correctness.",
+    "Utilities camera has no sky: no fake sky reference is supplied.",
+    "Fixed array bytes exclude dynamic graph and membership data.",
+    "No complete ordinary UI playability claim; root consumer candidates remain external and unapplied.",
+    "Source edits are confined to services. No commits or pushes. All custom browsers closed; shared server remains running."
+  ],
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/builds/services_r2.json"
+}

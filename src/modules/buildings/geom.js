@@ -18,6 +18,11 @@ export class MeshBuilder {
     this._aoFn = null;               // optional (lx,ly,lz) -> brightness multiplier (contact AO)
     this.cells = null;               // when set, window quads record [rand, tier, cool] here
   }
+  measureDepth(kind, a, b) {
+    if (!this.relief) return;
+    const depth = Math.hypot(a[0] - b[0], a[2] - b[2]);
+    if (depth > 1e-6) this.relief[kind] = Math.min(this.relief[kind] ?? Infinity, depth);
+  }
   get triangles() { return this.idx.length / 3; }
   get empty() { return this.v === 0; }
 
@@ -172,11 +177,16 @@ export class MeshBuilder {
   toGeometry() {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(this.pos, 3));
-    g.setAttribute('normal', new THREE.Float32BufferAttribute(this.nor, 3));
-    g.setAttribute('uv', new THREE.Float32BufferAttribute(this.uv, 2));
+    // Static normals and atlas UVs do not need 32-bit storage. Normalized 16-bit
+    // attributes preserve their shader values while halving the retained CPU/GPU
+    // buffers; building slots are exact integers in the 0..511 range.
+    const normals = Int16Array.from(this.nor, v => Math.round(Math.max(-1, Math.min(1, v)) * 32767));
+    const uvs = Uint16Array.from(this.uv, v => Math.round(Math.max(0, Math.min(1, v)) * 65535));
+    g.setAttribute('normal', new THREE.Int16BufferAttribute(normals, 3, true));
+    g.setAttribute('uv', new THREE.Uint16BufferAttribute(uvs, 2, true));
     g.setAttribute('color', new THREE.Float32BufferAttribute(this.col, 3));
     g.setAttribute('win', new THREE.Float32BufferAttribute(this.win, 4));
-    g.setAttribute('bidx', new THREE.Float32BufferAttribute(this.bid, 1));
+    g.setAttribute('bidx', new THREE.Uint16BufferAttribute(this.bid, 1));
     g.setIndex(this.v > 65535 ? new THREE.Uint32BufferAttribute(this.idx, 1) : new THREE.Uint16BufferAttribute(this.idx, 1));
     g.computeBoundingSphere();
     g.computeBoundingBox();

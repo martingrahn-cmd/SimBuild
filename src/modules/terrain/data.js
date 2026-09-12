@@ -175,6 +175,23 @@ export class TerrainData {
     return { ix0, iz0, ix1, iz1 };
   }
 
+  /** Restore an inclusive rectangle exactly, then refresh all derived render data. */
+  setHeights(ix0, iz0, ix1, iz1, values) {
+    if (![ix0, iz0, ix1, iz1].every(Number.isInteger) || ix0 < 0 || iz0 < 0 || ix1 >= this.res || iz1 >= this.res || ix1 < ix0 || iz1 < iz0) return false;
+    const width = ix1 - ix0 + 1, count = width * (iz1 - iz0 + 1);
+    if (!values || values.length !== count) return false;
+    for (let i = 0; i < count; i++) if (!Number.isFinite(values[i]) || Math.abs(values[i]) > 3.4028234663852886e38) return false;
+    for (let iz = iz0; iz <= iz1; iz++) {
+      const source = (iz - iz0) * width;
+      for (let ix = 0; ix < width; ix++) this.heights[iz * this.res + ix0 + ix] = values[source + ix];
+    }
+    this.rebuildDerived(Math.max(0, ix0 - 10), Math.max(0, iz0 - 10), Math.min(this.res - 1, ix1 + 10), Math.min(this.res - 1, iz1 + 10));
+    this.heightTex.needsUpdate = true;
+    this.rebuildAllChunkBounds();
+    this.version++;
+    return true;
+  }
+
   // ---------------------------------------------------------------- derived data
   rebuildAllChunkBounds() {
     let mn = Infinity, mx = -Infinity;

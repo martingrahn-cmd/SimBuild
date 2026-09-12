@@ -1,4 +1,4 @@
-# Core requests — zoning (round 2)
+# Core requests — zoning (rounds 2–3)
 
 ## 1. ARCHITECTURE §3 line 99 still writes `isRoad(x,z) -> 0..1`
 
@@ -96,3 +96,37 @@ window; the measured ratios are in `docs/builds/zoning_r2.json`.
 
 All three hold today. The per-point ratio window can come back once `environment`'s night level is
 itself fixed — it is the term that makes the window unreachable.
+
+## Integrator decision (local continuation, 2026-09-06)
+
+Corrected ARCHITECTURE §3 to document the actual `isRoad` 0/1/2 mask values. The coarse-mask/frontage-setback conflict is documented and must not be disguised as a precise geometric test: geometric pavement extent remains authoritative for placement, raster coverage remains an approximate clutter mask. No score or numerical requirement is silently relaxed. The overlay night differential proposal remains for independent review alongside the known residual spec defects.
+
+## Round3 measured update
+
+The round2 discussion above is historical. Round3 restores the specified night multiplier to **0.42**, retaining0.60 night fog relief. The required signed 200px mean(on−off) ratios, in residential/commercial/industrial/office low/high order, are **0.2716,0.0895,0.2613,0.8069,0.2048,−0.0539,0.1530,0.8809**. The full zones22 frame has p99 **85.503/255** and its brightest pixel lies outside zoning. All ratio failures remain explicitly reported; this proposal has not been approved as an acceptance waiver.
+
+The signed difference includes displaced ground luminance. For a simple fixed-alpha composite, difference = a(C−G); a night/noon ratio therefore measures (kC−Gnight)/(C−Gday), not k. Dark classes can have a negative denominator; industrial-high has a near-zero night numerator in this capture. Prefer an isolated material contribution or recover C=(on−(1−a)off)/a under fixed fog/exposure and known final pixel alpha, then check its night multiplier separately from whole-frame darkness. The actual shader also applies fog and tone mapping, so the simplified equation explains the coupling rather than proving an exact per-pixel inverse.
+
+Fresh evidence: shots/zoning/r3/imgstats.json, sessionA/B images and extra-probe.json; the build record retains all literals. Geometric frontages measure1.54787–1.55000m setback across5347 vertices; the coarse-road-mask conflict persists and remains advisory per the existing integrator decision/residual.json.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Kept documented isRoad0|1|2 semantics and analytic asphalt/kerb clearance; no mask relaxation was made. Final critic4 confirms143stable lot IDs and no illegal road claims, but3night colour ratios and the temporal maximum still fail. Deferred global environment exposure/palette tuning until whole-game review, keeping the current measured failures in STATUS. No coordinate/camera/crop manipulation was applied to turn an occluded or faint sample into a pass.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+Applied integration dispatch change so paused painting changes zones/demand without immediately spawning buildings when simulation is present; subsequent simulation ticks own growth. Existing zoning masks, IDs and independent visual verdict remain unchanged. No fake occupancy or histogram adjustment.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Retained isRoad0|1|2 classification, real lot reservations and native growth ownership. No hidden setback or road-mask exceptions added. Civic facilities consume real zonable land; compact frontage/layout changes deferred with democity density failures kept. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.
+
+## Integrator decision — R9s2 lot identity envelope (2026-09-10)
+
+Zoning now saves stable lot-key identity rows and `nextLot` beside painted cells, validates the optional envelope before mutation, and consumes it during regeneration so road inverses can restore exact lot/building links. `settleForHistory()` closes the 60 ms coalescing window before a following road snapshot. Changed road-derived lot journals complete Simulation/Transit reconciliation at the same boundary. Cells-only legacy saves restore the same cells, lots and owner links with a safe monotonic allocator; the absent historical allocator cursor cannot be reconstructed and is not claimed exact.
+
+## Integrator refinement — R9t live links on unchanged lots (2026-09-10)
+
+For Tools road inverses, envelope identity and saved links are authoritative only for changed lot IDs. An unchanged stable key/ID keeps its current live `buildingId`; this preserves later construction or demolition on unrelated lots. `settleForHistory()` is also called before every inverse rollback snapshot, including undo in the road commit frame.

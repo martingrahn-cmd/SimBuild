@@ -45,10 +45,10 @@ function zoneFor(cx, cz, rng) {
 /** re-derive the base height and skirt drop after a footprint change, the same way spawn() does */
 function reseat(b, T) {
   const c = Math.cos(b.heading), s = Math.sin(b.heading);
-  const hw = b.plan.w / 2 + 0.6, hd = b.plan.d / 2 + 0.6;
+  const hw = b.plan.w / 2, hd = b.plan.d / 2;
   let mn = Infinity, mx = -Infinity;
-  for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
-    const lx = hw * i * 0.5, lz = hd * j * 0.5;
+  for (const [i,j] of [[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]]) {
+    const lx = hw * i, lz = hd * j;
     const h = T.getHeight(b.x + c * lx + s * lz, b.z + s * lx - c * lz);
     if (h < mn) mn = h;
     if (h > mx) mx = h;
@@ -371,6 +371,11 @@ export function stage(ctx) {
       }
     }
   }
+
+  // The southeast approach reveals the tallest central slab between neighbouring towers.
+  // Both named facade landmarks are raycast-validated in this view.
+  CAMERAS.night_downtown.position = [143.3, 65, 173.3];
+  CAMERAS.night_downtown.target = [16, 55, 46];
 
   let sx = 0, sz = 0, sn = 0;
   for (const b of items) if (b.type === 'residential' && b.density === 'low' && !b.plan?.catalog && b.z > -300) { sx += b.x; sz += b.z; sn++; }

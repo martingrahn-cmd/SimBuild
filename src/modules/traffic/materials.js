@@ -10,6 +10,8 @@ attribute vec4 aWheel;
 attribute vec3 aPaint;
 attribute vec2 aLights;
 attribute float aSpin;
+attribute float aJoint;
+attribute float aArticulation;
 varying float vMat;
 varying vec3 vPaint;
 varying vec2 vLights;
@@ -25,6 +27,7 @@ if ( aWheel.w > 0.5 ) {
   float cs = cos( aSpin ), sn = sin( aSpin );
   transformed = aWheel.xyz + vec3( rel.x, rel.y * cs - rel.z * sn, rel.y * sn + rel.z * cs );
 }
+if(aJoint>.5){float c=cos(aArticulation),s=sin(aArticulation);vec3 r=transformed-vec3(0.,0.,-4.);transformed=vec3(c*r.x+s*r.z,r.y,-s*r.x+c*r.z)+vec3(0.,0.,-4.);}
 `;
 
 const VEH_NORMAL = /* glsl */`
@@ -33,6 +36,7 @@ if ( aWheel.w > 0.5 ) {
   float cs = cos( aSpin ), sn = sin( aSpin );
   objectNormal = vec3( objectNormal.x, objectNormal.y * cs - objectNormal.z * sn, objectNormal.y * sn + objectNormal.z * cs );
 }
+if(aJoint>.5){float c=cos(aArticulation),s=sin(aArticulation);objectNormal=vec3(c*objectNormal.x+s*objectNormal.z,objectNormal.y,-s*objectNormal.x+c*objectNormal.z);}
 `;
 
 const VEH_FRAG_PARS = /* glsl */`
@@ -45,13 +49,13 @@ const VEH_COLOR = /* glsl */`
 float vm = vMat;
 vec3 tCol = vPaint;
 float tRgh = 0.30;
-float tMtl = 0.62;
+float tMtl = 0.10;
 vec3 tEmi = vec3( 0.0 );
 if ( vm < 0.5 ) {
   tCol = vPaint;
 } else if ( vm < 1.5 ) {           // glass
   tCol = vec3( 0.030, 0.036, 0.044 );
-  tRgh = 0.06; tMtl = 0.80;
+  tRgh = 0.08; tMtl = 0.0;
 } else if ( vm < 2.5 ) {           // tyre
   tCol = vec3( 0.031, 0.031, 0.033 );
   tRgh = 0.88; tMtl = 0.0;
@@ -61,30 +65,34 @@ if ( vm < 0.5 ) {
 } else if ( vm < 4.5 ) {           // headlight lens
   tCol = vec3( 0.78, 0.81, 0.86 );
   tRgh = 0.09; tMtl = 0.20;
-  tEmi = vec3( 1.0, 0.95, 0.84 ) * vLights.x * 2.3;
+  tEmi = vec3( 1.0, 0.95, 0.84 ) * vLights.x * 4.0;
 } else if ( vm < 5.5 ) {           // tail lens
   tCol = vec3( 0.26, 0.028, 0.022 );
   tRgh = 0.14; tMtl = 0.12;
-  tEmi = vec3( 1.0, 0.075, 0.030 ) * ( vLights.x * 0.70 + vLights.y * 2.0 );
+  tEmi = vec3( 1.0, 0.075, 0.030 ) * ( max(vLights.x * 1.6, vLights.y * 4.2) );
 } else if ( vm < 6.5 ) {           // bumper / trim
   tCol = vec3( 0.082, 0.085, 0.090 );
-  tRgh = 0.50; tMtl = 0.28;
+  tRgh = 0.32; tMtl = 0.86;
 } else if ( vm < 7.5 ) {           // cargo panel
   tCol = mix( vPaint, vec3( 0.86, 0.86, 0.85 ), 0.74 );
   tRgh = 0.44; tMtl = 0.06;
 } else if ( vm < 8.5 ) {           // underbody
   tCol = vec3( 0.020, 0.020, 0.022 );
   tRgh = 0.95; tMtl = 0.0;
+} else if(vm>12.5){tCol=vec3(.84);tRgh=.32;tMtl=.10;
+} else if(vm>11.5){tCol=vec3(.65,.015,.01);tEmi=vec3(1.,.015,.01)*vLights.x*2.;tRgh=.1;tMtl=0.;
+} else if(vm>10.5){tCol=vec3(.015,.05,.65);tEmi=vec3(.015,.08,1.)*vLights.x*2.;tRgh=.1;tMtl=0.;
+} else if (vm > 9.5) { tCol=vec3(0.8,0.82,0.78); tRgh=0.6; tMtl=0.0;
 } else {                           // lit sign
   tCol = vec3( 0.90, 0.76, 0.16 );
   tRgh = 0.36; tMtl = 0.0;
   tEmi = vec3( 1.0, 0.80, 0.26 ) * ( 0.15 + vLights.x * 0.85 );
 }
-diffuseColor.rgb *= tCol;
+diffuseColor.rgb = tCol;
 `;
 
 export function createVehicleMaterial() {
-  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.6 });
+  const m = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.1, clearcoat: 0.65, clearcoatRoughness: 0.24 });
   m.name = 'traffic:vehicle';
   // closed bodies: cast from the FRONT faces, otherwise the shadow depth is the car's underside and the
   // scene's large shadow normalBias makes every vehicle shadow disappear.
@@ -101,7 +109,8 @@ export function createVehicleMaterial() {
       .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor = tMtl;')
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += tEmi;');
   };
-  m.customProgramCacheKey = () => 'traffic-vehicle-1';
+  m.userData.surfaceClasses={paint:{roughness:.30,metalness:.1},glass:{albedo:[.030,.036,.044],roughness:.08,metalness:0},tyre:{roughness:.88},rim:{roughness:.26,metalness:.92},trim:{roughness:.32,metalness:.86}};
+  m.customProgramCacheKey = () => 'traffic-vehicle-3';
   return m;
 }
 
@@ -112,6 +121,8 @@ export function createVehicleDepthMaterial() {
     sh.vertexShader = `
 attribute vec4 aWheel;
 attribute float aSpin;
+attribute float aJoint;
+attribute float aArticulation;
 ` + sh.vertexShader.replace('#include <begin_vertex>', `
 vec3 transformed = vec3( position );
 if ( aWheel.w > 0.5 ) {
@@ -119,9 +130,10 @@ if ( aWheel.w > 0.5 ) {
   float cs = cos( aSpin ), sn = sin( aSpin );
   transformed = aWheel.xyz + vec3( rel.x, rel.y * cs - rel.z * sn, rel.y * sn + rel.z * cs );
 }
+if(aJoint>.5){float c=cos(aArticulation),s=sin(aArticulation);vec3 r=transformed-vec3(0.,0.,-4.);transformed=vec3(c*r.x+s*r.z,r.y,-s*r.x+c*r.z)+vec3(0.,0.,-4.);}
 `);
   };
-  m.customProgramCacheKey = () => 'traffic-vehicle-depth-1';
+  m.customProgramCacheKey = () => 'traffic-vehicle-depth-3';
   return m;
 }
 
@@ -158,7 +170,7 @@ if ( aLamp > 0.5 ) {
     wc = instanceMatrix * wc;
   #endif
   float dist = distance( cameraPosition, ( modelMatrix * wc ).xyz );
-  transformed = aCentre + ( transformed - aCentre ) * clamp( dist / 115.0, 1.0, 2.4 );
+  transformed = aCentre + ( transformed - aCentre ) * clamp( dist / 180.0, 1.0, 1.45 );
 }
 vLUv = aUv; vLamp = aLamp; vLInt = aLights;
 `);
@@ -195,7 +207,7 @@ diffuseColor = vec4( c * a, 1.0 );
 export function createContactMaterial(strength = 1) {
   const m = new THREE.MeshBasicMaterial({
     color: 0x000000, transparent: true, depthWrite: false, side: THREE.DoubleSide,
-    polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -12,
+    polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -8,
   });
   m.name = 'traffic:contact';
   // world-space offset (metres) the shadow is thrown, i.e. away from the sun; updated per frame

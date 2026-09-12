@@ -1,0 +1,549 @@
+{
+  "module": "democity",
+  "round": "r9d",
+  "reviewType": "independent diagnostic and rejected disposable candidate audit",
+  "decision": "ACCEPT_QUALIFIED_DIAGNOSIS",
+  "candidateDecision": "REJECT",
+  "productDecision": "NO_CHANGE",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "passThreshold": 8.5,
+  "source": {
+    "currentChunksSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "currentTreesSha256": "64cca242316e01142c9d092a6960e1f889c7298fa51681f22e40c95ab6561b17",
+    "matchesInstalledAcceptedSource": true,
+    "acceptedSummaryRetainsTreeHash": false,
+    "candidateSummaryRetainsTreeHash": true,
+    "reconstructedAlpha050RawSha256": "b06204cfaa528d77d1d6585fd62b578ab15854a89e33650909a44f9bc88c4a51",
+    "servedTransformedHashRetained": false,
+    "candidateScope": "two alphaTest literals on visual/depth impostor materials; runtime route only",
+    "sourceEditedByCritic": false
+  },
+  "census": {
+    "chunk": 45,
+    "sourceTrees": 130,
+    "subBuckets": 53,
+    "classes": {
+      "conifer": 16,
+      "broad": 59,
+      "narrow": 44,
+      "wide": 0,
+      "ornamental": 11
+    },
+    "allTenCaseSidecarsMatchSummaries": true,
+    "samePageEntriesMatch": true,
+    "allFiveCrossBranchEntriesAndCameraSetupsMatch": true,
+    "projectionBinsClassesFloat32AreaWeightsRecomputed": true,
+    "allForcedHistogramsExact": true,
+    "all20SnapshotsThreeOrMoreRenderedFrames": true,
+    "selectorReconstruction": [
+      {
+        "id": "day_a0",
+        "strongPixels": 202007,
+        "lod1StrongLuma": 83.68885040283203,
+        "impostorStrongLuma": 55.84804916381836,
+        "impostorDarkerFraction": 0.7076140925809502,
+        "viewportTrees": 88,
+        "distanceMedian": 197.09246608938082,
+        "baseDistanceProxyBins": {
+          "lt193": 42,
+          "band193_217": 13,
+          "gte217": 33
+        },
+        "selectorBucketCounts": {
+          "lt193": 28,
+          "band193_217": 7,
+          "gte217": 18
+        },
+        "selectorSourceTreeCounts": {
+          "lt193": 67,
+          "band193_217": 20,
+          "gte217": 43
+        },
+        "selectorInViewportTreeCounts": {
+          "lt193": 38,
+          "band193_217": 18,
+          "gte217": 32
+        }
+      },
+      {
+        "id": "day_a90",
+        "strongPixels": 212089,
+        "lod1StrongLuma": 84.17388916015625,
+        "impostorStrongLuma": 49.009037017822266,
+        "impostorDarkerFraction": 0.7589408220134001,
+        "viewportTrees": 129,
+        "distanceMedian": 269.66671675362363,
+        "baseDistanceProxyBins": {
+          "lt193": 21,
+          "band193_217": 14,
+          "gte217": 94
+        },
+        "selectorBucketCounts": {
+          "lt193": 6,
+          "band193_217": 3,
+          "gte217": 44
+        },
+        "selectorSourceTreeCounts": {
+          "lt193": 22,
+          "band193_217": 9,
+          "gte217": 99
+        },
+        "selectorInViewportTreeCounts": {
+          "lt193": 22,
+          "band193_217": 9,
+          "gte217": 98
+        }
+      },
+      {
+        "id": "day_a180",
+        "strongPixels": 177320,
+        "lod1StrongLuma": 83.82894134521484,
+        "impostorStrongLuma": 45.92792510986328,
+        "impostorDarkerFraction": 0.7786600496277916,
+        "viewportTrees": 122,
+        "distanceMedian": 268.726390665081,
+        "baseDistanceProxyBins": {
+          "lt193": 16,
+          "band193_217": 12,
+          "gte217": 94
+        },
+        "selectorBucketCounts": {
+          "lt193": 5,
+          "band193_217": 7,
+          "gte217": 41
+        },
+        "selectorSourceTreeCounts": {
+          "lt193": 13,
+          "band193_217": 19,
+          "gte217": 98
+        },
+        "selectorInViewportTreeCounts": {
+          "lt193": 13,
+          "band193_217": 18,
+          "gte217": 91
+        }
+      },
+      {
+        "id": "day_a270",
+        "strongPixels": 184652,
+        "lod1StrongLuma": 83.28031921386719,
+        "impostorStrongLuma": 53.77798080444336,
+        "impostorDarkerFraction": 0.7081158070316054,
+        "viewportTrees": 86,
+        "distanceMedian": 206.57947841916337,
+        "baseDistanceProxyBins": {
+          "lt193": 36,
+          "band193_217": 11,
+          "gte217": 39
+        },
+        "selectorBucketCounts": {
+          "lt193": 30,
+          "band193_217": 6,
+          "gte217": 17
+        },
+        "selectorSourceTreeCounts": {
+          "lt193": 68,
+          "band193_217": 14,
+          "gte217": 48
+        },
+        "selectorInViewportTreeCounts": {
+          "lt193": 36,
+          "band193_217": 12,
+          "gte217": 38
+        }
+      },
+      {
+        "id": "night_a0",
+        "strongPixels": 165653,
+        "lod1StrongLuma": 28.261878967285156,
+        "impostorStrongLuma": 29.73116111755371,
+        "impostorDarkerFraction": 0.46639662426880285,
+        "viewportTrees": 88,
+        "distanceMedian": 197.09246608938082,
+        "baseDistanceProxyBins": {
+          "lt193": 42,
+          "band193_217": 13,
+          "gte217": 33
+        },
+        "selectorBucketCounts": {
+          "lt193": 28,
+          "band193_217": 7,
+          "gte217": 18
+        },
+        "selectorSourceTreeCounts": {
+          "lt193": 67,
+          "band193_217": 20,
+          "gte217": 43
+        },
+        "selectorInViewportTreeCounts": {
+          "lt193": 38,
+          "band193_217": 18,
+          "gte217": 32
+        }
+      }
+    ],
+    "viewportQualification": "NDC1.05 centre/depth predicate, not occlusion or whole-tree visibility",
+    "projectedAreaQualification": "height squared times Float32 width factor; not visible alpha/occlusion area",
+    "relativeYawQualification": "bins regrouped from recorded angles; raw heading not independently retained"
+  },
+  "acceptedPairMetrics": [
+    {
+      "id": "day_a0",
+      "lod1Sha256": "1732291f9383ca7b6c9f6c400b7bd32e885adea8e3deadd90fc94dd4c49c2bd9",
+      "impostorSha256": "bc2ecb6cfaee09295a06fc529142c2a8871aec73a157f679e45b7bae7bea0d17",
+      "normalizedRGBMAE": 0.01916623484527556,
+      "changedPixels": 396575,
+      "changedFraction": 0.19124951774691357,
+      "strongChangedPixelsGE8": 202007,
+      "strongChangedFractionGE8": 0.09741849922839506
+    },
+    {
+      "id": "day_a90",
+      "lod1Sha256": "877310141b73a3617af7cb3f87c591634b74046da27386b7fa7fffae830600db",
+      "impostorSha256": "2b7b4456aca6b1a0fbe55a54e2ccffe2a472bcce44b46bd4bdc859874b919a16",
+      "normalizedRGBMAE": 0.022105667009602193,
+      "changedPixels": 392964,
+      "changedFraction": 0.18950810185185185,
+      "strongChangedPixelsGE8": 212089,
+      "strongChangedFractionGE8": 0.10228057484567901
+    },
+    {
+      "id": "day_a180",
+      "lod1Sha256": "05aa462d9d70954f2afb818ebde9e259a35d794dd0eb7856cecca8c6ffb3534b",
+      "impostorSha256": "5c495ca94f4463d122464f6685ead7d3d04ff10a893ad7b72d1fc7fec94880f3",
+      "normalizedRGBMAE": 0.01883034714657468,
+      "changedPixels": 316991,
+      "changedFraction": 0.15286988811728394,
+      "strongChangedPixelsGE8": 177320,
+      "strongChangedFractionGE8": 0.08551311728395061
+    },
+    {
+      "id": "day_a270",
+      "lod1Sha256": "35db342dbbe5150ccd3f245b55ddcf02e9ce893c1aa1d2009f83b5bac186f721",
+      "impostorSha256": "1a529925f37c3a7cee21a35a4d667d9ff85f771735233b1dd177352e855f7dbc",
+      "normalizedRGBMAE": 0.0180965861524651,
+      "changedPixels": 370183,
+      "changedFraction": 0.17852189429012347,
+      "strongChangedPixelsGE8": 184652,
+      "strongChangedFractionGE8": 0.08904899691358024
+    },
+    {
+      "id": "night_a0",
+      "lod1Sha256": "c19242c367deef1f6c8ca059b439e75ae5430f01728837858128a601f1111a42",
+      "impostorSha256": "b2cdeb3175259f27cb25e5f140db1a9ee231cb0f4343fd9590ae1bc8b47cab73",
+      "normalizedRGBMAE": 0.006114077125191641,
+      "changedPixels": 378704,
+      "changedFraction": 0.18263117283950617,
+      "strongChangedPixelsGE8": 165653,
+      "strongChangedFractionGE8": 0.07988667052469135
+    }
+  ],
+  "candidatePairMetrics": [
+    {
+      "id": "day_a0",
+      "lod1Reproducible": false,
+      "acceptedToLod1": {
+        "normalizedRGBMAE": 0.01916623484527556,
+        "changedPixels": 396575,
+        "changedFraction": 0.19124951774691357,
+        "strongChangedPixelsGE8": 202007,
+        "strongChangedFractionGE8": 0.09741849922839506
+      },
+      "candidateToLod1": {
+        "normalizedRGBMAE": 0.018402141077624466,
+        "changedPixels": 394739,
+        "changedFraction": 0.1903641010802469,
+        "strongChangedPixelsGE8": 196079,
+        "strongChangedFractionGE8": 0.09455970293209877
+      },
+      "candidateVsAcceptedImpostor": {
+        "normalizedRGBMAE": 0.0020983392842733803,
+        "changedPixels": 174962,
+        "changedFraction": 0.08437596450617284,
+        "strongChangedPixelsGE8": 26977,
+        "strongChangedFractionGE8": 0.01300974151234568
+      },
+      "maeReductionFraction": 0.03986665997883465,
+      "strongPixelReductionFraction": 0.029345517729583603
+    },
+    {
+      "id": "day_a90",
+      "lod1Reproducible": true,
+      "acceptedToLod1": {
+        "normalizedRGBMAE": 0.022105667009602193,
+        "changedPixels": 392964,
+        "changedFraction": 0.18950810185185185,
+        "strongChangedPixelsGE8": 212089,
+        "strongChangedFractionGE8": 0.10228057484567901
+      },
+      "candidateToLod1": {
+        "normalizedRGBMAE": 0.021079460809529573,
+        "changedPixels": 391912,
+        "changedFraction": 0.18900077160493828,
+        "strongChangedPixelsGE8": 205781,
+        "strongChangedFractionGE8": 0.09923852237654321
+      },
+      "candidateVsAcceptedImpostor": {
+        "normalizedRGBMAE": 0.0024452091150246108,
+        "changedPixels": 175687,
+        "changedFraction": 0.08472559799382716,
+        "strongChangedPixelsGE8": 30089,
+        "strongChangedFractionGE8": 0.01451051311728395
+      },
+      "maeReductionFraction": 0.04642276569292658,
+      "strongPixelReductionFraction": 0.02974223085591421
+    },
+    {
+      "id": "day_a180",
+      "lod1Reproducible": true,
+      "acceptedToLod1": {
+        "normalizedRGBMAE": 0.01883034714657468,
+        "changedPixels": 316991,
+        "changedFraction": 0.15286988811728394,
+        "strongChangedPixelsGE8": 177320,
+        "strongChangedFractionGE8": 0.08551311728395061
+      },
+      "candidateToLod1": {
+        "normalizedRGBMAE": 0.017970247821350763,
+        "changedPixels": 314478,
+        "changedFraction": 0.15165798611111111,
+        "strongChangedPixelsGE8": 172172,
+        "strongChangedFractionGE8": 0.08303047839506172
+      },
+      "candidateVsAcceptedImpostor": {
+        "normalizedRGBMAE": 0.001996364505164205,
+        "changedPixels": 146607,
+        "changedFraction": 0.07070167824074074,
+        "strongChangedPixelsGE8": 24411,
+        "strongChangedFractionGE8": 0.011772280092592593
+      },
+      "maeReductionFraction": 0.04567623307891977,
+      "strongPixelReductionFraction": 0.029032258064516148
+    },
+    {
+      "id": "day_a270",
+      "lod1Reproducible": true,
+      "acceptedToLod1": {
+        "normalizedRGBMAE": 0.0180965861524651,
+        "changedPixels": 370183,
+        "changedFraction": 0.17852189429012347,
+        "strongChangedPixelsGE8": 184652,
+        "strongChangedFractionGE8": 0.08904899691358024
+      },
+      "candidateToLod1": {
+        "normalizedRGBMAE": 0.017452213447107238,
+        "changedPixels": 370899,
+        "changedFraction": 0.1788671875,
+        "strongChangedPixelsGE8": 179587,
+        "strongChangedFractionGE8": 0.0866063850308642
+      },
+      "candidateVsAcceptedImpostor": {
+        "normalizedRGBMAE": 0.0018836673172355363,
+        "changedPixels": 162272,
+        "changedFraction": 0.07825617283950617,
+        "strongChangedPixelsGE8": 24507,
+        "strongChangedFractionGE8": 0.011818576388888889
+      },
+      "maeReductionFraction": 0.035607417881415526,
+      "strongPixelReductionFraction": 0.027429976388016364
+    },
+    {
+      "id": "night_a0",
+      "lod1Reproducible": false,
+      "acceptedToLod1": {
+        "normalizedRGBMAE": 0.006114077125191641,
+        "changedPixels": 378704,
+        "changedFraction": 0.18263117283950617,
+        "strongChangedPixelsGE8": 165653,
+        "strongChangedFractionGE8": 0.07988667052469135
+      },
+      "candidateToLod1": {
+        "normalizedRGBMAE": 0.005883223518316792,
+        "changedPixels": 371820,
+        "changedFraction": 0.1793113425925926,
+        "strongChangedPixelsGE8": 158897,
+        "strongChangedFractionGE8": 0.0766285686728395
+      },
+      "candidateVsAcceptedImpostor": {
+        "normalizedRGBMAE": 0.0007421603929637699,
+        "changedPixels": 144832,
+        "changedFraction": 0.06984567901234567,
+        "strongChangedPixelsGE8": 16575,
+        "strongChangedFractionGE8": 0.007993344907407407
+      },
+      "maeReductionFraction": 0.03775771913698467,
+      "strongPixelReductionFraction": 0.04078404858348472
+    }
+  ],
+  "allImageMetricsIndependentlyRecomputed": true,
+  "crossRunControls": {
+    "exactCases": [
+      "day_a90",
+      "day_a180",
+      "day_a270"
+    ],
+    "day_a0": {
+      "changedPixels": 302,
+      "normalizedMAE": 1.758174977810054e-06,
+      "strongPixels": 28
+    },
+    "night_a0": {
+      "changedPixels": 8443,
+      "normalizedMAE": 0.00023064935850883564,
+      "strongPixels": 4572
+    },
+    "nightAttribution": "control drift comparable to night paired-MAE reduction; no alpha-only claim"
+  },
+  "visualJudgment": "Accepted LOD1 is bright/coarse/separated; impostor is denser, darker and planar in day views. Alpha0.50 slightly erodes edges/holes without repairing core volume/tonal mismatch. Reject this candidate; lower MAE to coarse LOD1 is not automatically better quality.",
+  "performance": {
+    "acceptedEndpointFps": [
+      27.1,
+      61.1
+    ],
+    "candidateEndpointFps": [
+      30.9,
+      58.9
+    ],
+    "acceptedRawHeapMB": [
+      480.7,
+      669.4
+    ],
+    "candidateRawHeapMB": [
+      493.2,
+      734.8
+    ],
+    "causalPerformanceClaim": false,
+    "sustainedGatePass": false,
+    "forcedGCMemory": false
+  },
+  "errors": {
+    "completedCases": 10,
+    "completedAggregateErrors": 0,
+    "failedFreezeCases": 5,
+    "failedFreezeDistinctErrors": 2,
+    "failureIsVerifierNotProduct": true
+  },
+  "build": {
+    "builderClaimsPassModules": 163,
+    "roundBuildLogSupplied": false,
+    "criticReranBuild": false
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "owner": "Props",
+      "finding": "Representation silhouette/tone/volume mismatch persists; alpha0.50 insufficient visible net benefit."
+    },
+    {
+      "priority": 2,
+      "owner": "verification tools",
+      "finding": "Forced isolated chunk and full-frame metrics do not measure ordinary transition frequency. Exact bucket band in-frame18/9/18/12/18 differs from individual-base proxies13/14/12/11/13."
+    },
+    {
+      "priority": 3,
+      "owner": "verification tools",
+      "finding": "Night cross-run control drift prevents attributing its small error reduction solely to alpha; same-page pairs still contain live non-Props pixels."
+    },
+    {
+      "priority": 4,
+      "owner": "Props",
+      "finding": "No wide-class, small below8px, top-down or moving transition coverage. Depth alpha changes require separate shadow/top-down scrutiny before any promotion."
+    }
+  ],
+  "nextPriority": {
+    "owner": "Props",
+    "action": "Bounded feasibility review of existing side-atlas shading and per-instance inputs, including unselected cell15, for a single dominant broad/narrow structural hypothesis within four submitted impostor triangles. Hold alpha/range/band/cap/threshold fixed until matched actual-transition-scale day/night and small-tree evidence shows a visible net benefit.",
+    "broaderRanking": "City fabric remains higher-ranked. No visual score or issue-rank closure."
+  },
+  "limitations": [
+    "Independent saved-evidence/source audit; no browser rerun.",
+    "Internal map/group isolation on disposable pages is not product ownership/API behavior.",
+    "Accepted summary lacks original tree-source hash; current/candidate hash and source reconstruction support bounded provenance, not complete served-response authentication.",
+    "Source/camera entries deterministic across supplied branches, not full-world save/RNG/restage proof.",
+    "Mean-RGB strong-pixel brightness is silhouette/background-inclusive, not matched material luminance.",
+    "No real moving selector experiment, small-pixel/far survival, wide class, top-down/weather/multiseed or whole-city acceptance.",
+    "No fresh whole-game/reference/blind score.",
+    "No retained new build log or fresh gameplay/save contract; appropriate to rejection only.",
+    "No causal performance, forced-GC memory, sustained50FPS or2ms validation."
+  ],
+  "inspection": {
+    "originalsIndividuallyInspected": [
+      "shots/democity/r9d-lod1-impostor/day_a0_lod1.png",
+      "shots/democity/r9d-lod1-impostor/day_a0_impostor.png",
+      "shots/democity/r9d-lod1-impostor/day_a90_lod1.png",
+      "shots/democity/r9d-lod1-impostor/day_a90_impostor.png",
+      "shots/democity/r9d-lod1-impostor/day_a180_lod1.png",
+      "shots/democity/r9d-lod1-impostor/day_a180_impostor.png",
+      "shots/democity/r9d-lod1-impostor/day_a270_lod1.png",
+      "shots/democity/r9d-lod1-impostor/day_a270_impostor.png",
+      "shots/democity/r9d-lod1-impostor/night_a0_lod1.png",
+      "shots/democity/r9d-lod1-impostor/night_a0_impostor.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a0_lod1.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a0_impostor.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a90_lod1.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a90_impostor.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a180_lod1.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a180_impostor.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a270_lod1.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a270_impostor.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/night_a0_lod1.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/night_a0_impostor.png"
+    ],
+    "originalResolution": [
+      1920,
+      1080
+    ],
+    "contacts": [
+      "shots/democity/r9d-lod1-impostor/contact.png",
+      "shots/democity/r9d-lod1-impostor-alpha050/candidate-contact.png"
+    ],
+    "contactResolution": [
+      1920,
+      1800
+    ],
+    "separateEnhancedDiffsInspectedAtOriginalResolution": false,
+    "enhancedDiffsViewedInContact": true,
+    "jsonFiles": [
+      "shots/democity/r9d-lod1-impostor/summary.json",
+      "shots/democity/r9d-lod1-impostor/day_a0.json",
+      "shots/democity/r9d-lod1-impostor/day_a90.json",
+      "shots/democity/r9d-lod1-impostor/day_a180.json",
+      "shots/democity/r9d-lod1-impostor/day_a270.json",
+      "shots/democity/r9d-lod1-impostor/night_a0.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/summary.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a0.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a90.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a180.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/day_a270.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/night_a0.json",
+      "shots/democity/r9d-lod1-impostor/comparison-metrics.json",
+      "shots/democity/r9d-lod1-impostor/analysis-summary.json",
+      "shots/democity/r9d-lod1-impostor/summary.failed-freeze.json",
+      "shots/democity/r9d-lod1-impostor-alpha050/candidate-comparison.json"
+    ],
+    "sourceFiles": [
+      "tools/lod1-impostor-visual.mjs",
+      "docs/builds/democity_r9d_lod1_impostor.md",
+      "src/modules/props/chunks.js",
+      "src/modules/props/trees.js",
+      "src/modules/props/textures.js (atlas and cell selectors)"
+    ]
+  },
+  "builderCorrectionsVerified": [
+    "53 sub-buckets",
+    "individual-base proxy versus reconstructed selector counts",
+    "MAE consistency not automatic quality",
+    "cross-run day/night drift",
+    "accepted-summary tree-hash provenance",
+    "forced sample includes nearer and farther trees",
+    "shadow configuration rather than identical shadow pixels"
+  ],
+  "evidenceHashes": {
+    "shots/democity/r9d-lod1-impostor/summary.json": "b0953bd783381d04278ee7b6cc3bd1e2b4035232f943451617856582ebc97d3f",
+    "shots/democity/r9d-lod1-impostor/analysis-summary.json": "6cf53ec73c2b986590d31e241f5615d5acde8928e526f0f254b70fc8f3752660",
+    "shots/democity/r9d-lod1-impostor-alpha050/summary.json": "a934741b3186985c3e840f451d83de0bc9e8e872ad5c24aad9a7ea0f5f7d0f68",
+    "shots/democity/r9d-lod1-impostor-alpha050/candidate-comparison.json": "f06bba9800bd81b26b6a6e7d2a9e07db192cea9d0043bec7c2432896bf142b68"
+  }
+}

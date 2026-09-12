@@ -1,0 +1,2011 @@
+{
+  "module": "democity",
+  "round": "r8k",
+  "reviewType": "independent bounded Northbank silo review",
+  "decision": "ACCEPT",
+  "acceptedScope": "Small static rendering improvement to three existing saved silos; no operating silo or port claim.",
+  "score": 6,
+  "democityScore": 6,
+  "wholeGameScore": 6,
+  "wholeGameVerdict": "FAIL",
+  "pass": false,
+  "threshold": 8.5,
+  "wholeGameRank5": "OPEN",
+  "source": {
+    "path": "src/modules/democity/landmarks.js",
+    "sha256": "6cfda177bc2b0b03f5da51316196499a1660ea7b5a8b22c880b17ab2d7cb45d7",
+    "gitTracked": false,
+    "newRngCalls": false,
+    "cameraOrShowcaseBranchAdded": false,
+    "newWorldRecords": false
+  },
+  "ownershipDecision": "Permitted rendering of democity-owned saved landmark plan; fixed mesh additions, not duplicate scenery or simulated industrial activity.",
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 24,
+  "originalImages": [
+    "shots/democity/r8k-silo-diagnosis/baseline/silos-close_12.png",
+    "shots/democity/r8k-silo-diagnosis/baseline/silos-close_22.png",
+    "shots/democity/r8k-silo-diagnosis/baseline/silos-wide_12.png",
+    "shots/democity/r8k-silo-diagnosis/baseline/silos-wide_22.png",
+    "shots/democity/r8k-silo-diagnosis/candidate/silos-close_12.png",
+    "shots/democity/r8k-silo-diagnosis/candidate/silos-close_22.png",
+    "shots/democity/r8k-silo-diagnosis/candidate/silos-wide_12.png",
+    "shots/democity/r8k-silo-diagnosis/candidate/silos-wide_22.png",
+    "shots/democity/r8k-silo-final/bridge_12.png",
+    "shots/democity/r8k-silo-final/bridge_22.png",
+    "shots/democity/r8k-silo-final/downtown_12.png",
+    "shots/democity/r8k-silo-final/downtown_22.png",
+    "shots/democity/r8k-silo-final/industry_12.png",
+    "shots/democity/r8k-silo-final/industry_22.png",
+    "shots/democity/r8k-silo-final/interchange_12.png",
+    "shots/democity/r8k-silo-final/interchange_22.png",
+    "shots/democity/r8k-silo-final/night_downtown_12.png",
+    "shots/democity/r8k-silo-final/night_downtown_22.png",
+    "shots/democity/r8k-silo-final/park_12.png",
+    "shots/democity/r8k-silo-final/park_22.png",
+    "shots/democity/r8k-silo-final/riverfront_12.png",
+    "shots/democity/r8k-silo-final/riverfront_22.png",
+    "shots/democity/r8k-silo-final/suburb_12.png",
+    "shots/democity/r8k-silo-final/suburb_22.png"
+  ],
+  "sidecarCount": 24,
+  "derivedImagesInspected": [
+    "shots/democity/r8k-silo-final/contact-sheet.png"
+  ],
+  "finalSummaryMatchesSidecars": true,
+  "customSummariesMatchSidecars": true,
+  "customCaptureCameraPairsMatch": true,
+  "finalMatrix": {
+    "frames": 16,
+    "ready": 16,
+    "errors": 0,
+    "below50": 2,
+    "minFps": 46.5,
+    "maxDraws": 469,
+    "maxTriangles": 2814092,
+    "maxHeapMB": 732.4,
+    "rows": [
+      {
+        "shot": "bridge_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 59.4,
+        "draws": 301,
+        "triangles": 1583059,
+        "heapMB": 577.4,
+        "elapsedMs": 13032,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 1823
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 17
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 19
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.7,
+            "initMs": 356
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.6,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 65
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 277
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 86
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "bridge_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 60,
+        "draws": 294,
+        "triangles": 1983739,
+        "heapMB": 527.3,
+        "elapsedMs": 12537,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1836
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 33
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.6,
+            "initMs": 356
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.6,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 275
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 85
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "downtown_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 51.3,
+        "draws": 425,
+        "triangles": 1892580,
+        "heapMB": 696.3,
+        "elapsedMs": 12675,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1819
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.9,
+            "initMs": 353
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.7,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 65
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 276
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 86
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "downtown_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 51.1,
+        "draws": 410,
+        "triangles": 2271590,
+        "heapMB": 520.5,
+        "elapsedMs": 12944,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1910
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 37
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.6,
+            "initMs": 358
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.8,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 285
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 86
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "industry_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 59.3,
+        "draws": 204,
+        "triangles": 1155506,
+        "heapMB": 682.2,
+        "elapsedMs": 12506,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1831
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 37
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 2.1,
+            "initMs": 359
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.8,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 62
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 5
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 283
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 85
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "industry_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 59.1,
+        "draws": 202,
+        "triangles": 1550180,
+        "heapMB": 727.8,
+        "elapsedMs": 12405,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1823
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 33
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 16
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.9,
+            "initMs": 358
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.9,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 284
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 85
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "interchange_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 49.4,
+        "draws": 388,
+        "triangles": 1812476,
+        "heapMB": 481.4,
+        "elapsedMs": 12776,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1825
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 2,
+            "initMs": 355
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.6,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 70
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 278
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 85
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "interchange_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 46.5,
+        "draws": 400,
+        "triangles": 2194778,
+        "heapMB": 539.4,
+        "elapsedMs": 12801,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1826
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 16
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 2.1,
+            "initMs": 361
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.8,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 281
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 84
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "night_downtown_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 52.7,
+        "draws": 418,
+        "triangles": 2460494,
+        "heapMB": 472.5,
+        "elapsedMs": 12624,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 1821
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 2,
+            "initMs": 355
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.8,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 65
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 275
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 90
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "night_downtown_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 54,
+        "draws": 343,
+        "triangles": 2814092,
+        "heapMB": 478.4,
+        "elapsedMs": 12596,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1826
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.7,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.8,
+            "initMs": 358
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.8,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 282
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 86
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "park_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 51,
+        "draws": 469,
+        "triangles": 1822002,
+        "heapMB": 732.4,
+        "elapsedMs": 12685,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1836
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.8,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 18
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 20
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.9,
+            "initMs": 382
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.5,
+            "initMs": 15
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 72
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 283
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 92
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "park_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 51.1,
+        "draws": 443,
+        "triangles": 2189364,
+        "heapMB": 494.8,
+        "elapsedMs": 12915,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1846
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 33
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 2.1,
+            "initMs": 359
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.7,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 63
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 296
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 96
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 7
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "riverfront_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 59.6,
+        "draws": 246,
+        "triangles": 1312596,
+        "heapMB": 473.7,
+        "elapsedMs": 12491,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1820
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.6,
+            "initMs": 356
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.5,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 65
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 275
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 85
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "riverfront_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 56.8,
+        "draws": 212,
+        "triangles": 1681158,
+        "heapMB": 545,
+        "elapsedMs": 12573,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1825
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.6,
+            "initMs": 32
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.7,
+            "initMs": 358
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.9,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 276
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 89
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 7
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "suburb_12",
+        "ok": true,
+        "errors": 0,
+        "fps": 58.3,
+        "draws": 364,
+        "triangles": 1756810,
+        "heapMB": 484.9,
+        "elapsedMs": 12919,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1838
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.6,
+            "initMs": 33
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 18
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.6,
+            "initMs": 359
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.6,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.1,
+            "initMs": 63
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 283
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 90
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      },
+      {
+        "shot": "suburb_22",
+        "ok": true,
+        "errors": 0,
+        "fps": 59.9,
+        "draws": 329,
+        "triangles": 2137674,
+        "heapMB": 540.3,
+        "elapsedMs": 12600,
+        "modules": {
+          "terrain": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1829
+          },
+          "environment": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 33
+          },
+          "roads": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 15
+          },
+          "zoning": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "buildings": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 17
+          },
+          "props": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 1.7,
+            "initMs": 353
+          },
+          "traffic": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.7,
+            "initMs": 13
+          },
+          "simulation": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          },
+          "effects": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 1
+          },
+          "tools": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 2
+          },
+          "services": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 64
+          },
+          "ui": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0.2,
+            "initMs": 3
+          },
+          "audio": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 276
+          },
+          "infoviews": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 87
+          },
+          "transit": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 6
+          },
+          "democity": {
+            "status": "ready",
+            "errors": 0,
+            "ms": 0,
+            "initMs": 0
+          }
+        }
+      }
+    ]
+  },
+  "rawHeapAbove512Frames": 10,
+  "maxObservedDemocityUpdateMs": 0.1,
+  "landmarkAttribution": {
+    "planRecordsBefore": 13,
+    "planRecordsAfter": 13,
+    "planExactlyEqual": true,
+    "silos": 3,
+    "before": {
+      "triangles": 6760,
+      "drawCalls": 8
+    },
+    "after": {
+      "triangles": 7912,
+      "drawCalls": 8
+    },
+    "triangleDelta": 1152,
+    "perSiloDelta": 384,
+    "individualSiloIncludingPad": {
+      "before": 408,
+      "after": 792
+    },
+    "verification": "Actual buildLandmarks function executed in read-only Node with reconstructed prior branch and current source, full plan and individual silos.",
+    "footprint": "All added horizontal extents inside the existing 14 x 18 m silo footprint; existing materials and merged chunks retained."
+  },
+  "contracts": {
+    "apiSurface": true,
+    "deserializeReturns": [
+      true,
+      true
+    ],
+    "censusUnchanged": true,
+    "buildings": 612,
+    "services": 31,
+    "roads": {
+      "nodes": 468,
+      "edges": 604
+    },
+    "zones": {
+      "cells": 9964,
+      "lots": 612
+    },
+    "transit": {
+      "lines": 1,
+      "stops": 8
+    },
+    "tourValidStops": 8,
+    "invalidTourRejected": true,
+    "mixedUseLots": 32,
+    "mixedUseIdentityAndRetailFlags": true,
+    "mixedUseExactAfterBothRestores": true,
+    "seed1337SelectedDigestExact": true,
+    "seed7SelectedDigestExact": true,
+    "digestFields": [
+      "buildings",
+      "services",
+      "transit"
+    ],
+    "reportedErrors": 0,
+    "verification": "Independently parsed supplied JSON and recomputed equality checks; not newly browser-executed."
+  },
+  "issues": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings",
+        "roads",
+        "services"
+      ],
+      "status": "OPEN",
+      "issue": "Sparse blocks and repeated building forms still dominate; silo detail does not alter frontage or density.",
+      "evidence": [
+        "downtown_12",
+        "interchange_12",
+        "park_12"
+      ]
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "supportingOwners": [
+        "terrain",
+        "democity"
+      ],
+      "status": "OPEN",
+      "issue": "Foliage remains planar with inconsistent crown density across distances despite accepted r8h improvement.",
+      "evidence": [
+        "park_12",
+        "riverfront_12",
+        "night_downtown_12"
+      ]
+    },
+    {
+      "rank": 3,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "buildings",
+        "props",
+        "services",
+        "effects",
+        "democity"
+      ],
+      "status": "OPEN",
+      "issue": "Accepted r8i window depth remains local; repetitive luminous windows and schematic street/service pools persist.",
+      "evidence": [
+        "night_downtown_22",
+        "suburb_22",
+        "park_22"
+      ]
+    },
+    {
+      "rank": 4,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "roads",
+        "democity",
+        "buildings",
+        "services"
+      ],
+      "status": "OPEN",
+      "issue": "Abrupt grades, flat pads and untreated shore/site boundaries remain visible.",
+      "evidence": [
+        "riverfront_12",
+        "interchange_12",
+        "bridge_12"
+      ]
+    },
+    {
+      "rank": 5,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "services",
+        "buildings",
+        "props"
+      ],
+      "status": "OPEN",
+      "issue": "R8j hardstand and r8k silo details improve existing landmarks locally; materials, site connections and construction credibility remain schematic. The silo rung spacing is 1.45 m, so the access fittings should not be described as realistic maintenance infrastructure.",
+      "evidence": [
+        "shots/democity/r8k-silo-diagnosis/candidate/silos-close_12.png",
+        "shots/democity/r8k-silo-diagnosis/candidate/silos-wide_22.png",
+        "bridge_12",
+        "park_12",
+        "suburb_12"
+      ]
+    },
+    {
+      "rank": 6,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "environment",
+        "effects"
+      ],
+      "status": "OPEN",
+      "issue": "Water/cloud reflection, night horizon band and mountain material remain graphic; rain/cloud modes not retested in this bounded matrix.",
+      "evidence": [
+        "riverfront_12",
+        "riverfront_22",
+        "industry_12"
+      ]
+    },
+    {
+      "rank": 7,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation",
+        "buildings"
+      ],
+      "status": "OPEN",
+      "issue": "Limited communicated human/site use. Static silo fittings add no storage, cargo, production, workers, loading or port-operation simulation.",
+      "evidence": [
+        "shots/democity/r8k-silo-diagnosis/candidate/silos-wide_12.png",
+        "bridge_12",
+        "park_12"
+      ]
+    },
+    {
+      "rank": 8,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic",
+        "environment",
+        "effects",
+        "buildings"
+      ],
+      "status": "OPEN",
+      "issue": "Current geometry remains within 1500 draws/3M triangles, but two of sixteen final FPS endpoints are below 50 and raw heap is not retained-memory validation.",
+      "evidence": [
+        "interchange_12",
+        "interchange_22",
+        "park_12",
+        "night_downtown_22"
+      ]
+    }
+  ],
+  "evidenceLimits": [
+    "Independent source/evidence review and read-only Node geometry execution; supplied browser captures and contract probes were parsed, not rerun by this critic.",
+    "24 original stills plus one derived contact sheet; eight final cameras at 12 and 22 only. No new full 32-frame whole-game matrix, weather series, 720p comparison or blind A/B round. Prior reference calibration and whole-game r2 judgment are retained, not freshly rerun.",
+    "Static speed=0 images do not establish temporal flicker, animation, ordinary UI gameplay, traffic flow, silo use or long-term save stability.",
+    "Custom capture waits 60 engine frames after camera application and takes a stats endpoint, then freezes/screenshots. This is not the final screenshot tool sample protocol. Timing differences do not isolate causal r8k performance.",
+    "Final sidecars sample 70–91 frames and report endpoint module timing. Raw heap is not forced-GC retained heap, a leak diagnosis, total process/GPU memory, or a fresh memory-gate pass.",
+    "Exact restage digest covers selected buildings/services/transit fields. It does not prove bitwise identity of the entire world, terrain, economy or all render buffers.",
+    "landmarks.js is historically untracked. Exact preceding silo branch attribution relies on the provided pre-state, reproduced by removing only the new fixed-detail block; actual renderer execution independently confirms the profile delta.",
+    "Geometry verification used the actual renderer with flat terrain for counts. It does not establish real-world ladder safety, terrain foundations or operational connectivity."
+  ]
+}

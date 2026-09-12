@@ -1,0 +1,702 @@
+{
+  "module": "democity",
+  "round": "r8l",
+  "reviewType": "Independent bounded environment/terrain night horizon critique",
+  "decision": "ACCEPT",
+  "acceptedScope": "Visual alignment of raw sky-LUT consumers with the existing visible-dome night gain; no gameplay or operational feature.",
+  "score": 6,
+  "democityScore": 6,
+  "wholeGameScore": 6,
+  "wholeGameVerdict": "FAIL",
+  "pass": false,
+  "threshold": 8.5,
+  "wholeGameRank6": "OPEN",
+  "source": [
+    {
+      "path": "src/modules/environment/index.js",
+      "sha256": "472d268dd461c2f913b440ef5e2f6bac93dd70883b53b0d28f0d0b23aef05c4f"
+    },
+    {
+      "path": "src/modules/environment/shaders.js",
+      "sha256": "f9b1c35528e0244b981a3e2e67e69ff1cbb99e8293cdeae66ce619e6ec25fb23"
+    },
+    {
+      "path": "src/modules/terrain/water.js",
+      "sha256": "b18535331f681993345ba5a1495ca67531f7bccc02d0dd8ecea8cebcd2f8bdbb"
+    }
+  ],
+  "sourceVerification": {
+    "sharedUniformBindingReplayed": true,
+    "sharedFogGlslVerified": true,
+    "nightGain": "mix(1.0, 0.25, night)",
+    "dayGain": 1,
+    "fullNightGain": 0.25,
+    "rawLutChanged": false,
+    "pmremChanged": false,
+    "visibleDomeChanged": false,
+    "newRngCalls": false,
+    "gameplayStateSaveCameraChanged": false,
+    "scope": "Environment publishes existing S.night to shared U.night; addEnvUniforms binds it to fog/materials; fog sky sample and water sky reflection/horizon sample apply existing display gain."
+  },
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 29,
+  "originalImages": [
+    "shots/democity/r8l-night-horizon-baseline/riverfront_17p5.png",
+    "shots/democity/r8l-night-horizon-baseline/riverfront_22.png",
+    "shots/democity/r8l-night-horizon-diagnosis/baseline.png",
+    "shots/democity/r8l-night-horizon-diagnosis/sky-hidden.png",
+    "shots/democity/r8l-night-horizon-diagnosis/water-and-sky-hidden.png",
+    "shots/democity/r8l-night-horizon-diagnosis/water-hidden.png",
+    "shots/democity/r8l-night-horizon-candidate/riverfront_12.png",
+    "shots/democity/r8l-night-horizon-candidate/riverfront_17p5.png",
+    "shots/democity/r8l-night-horizon-candidate/riverfront_22.png",
+    "shots/democity/r8l-night-horizon-final/bridge_12.png",
+    "shots/democity/r8l-night-horizon-final/bridge_22.png",
+    "shots/democity/r8l-night-horizon-final/downtown_12.png",
+    "shots/democity/r8l-night-horizon-final/downtown_22.png",
+    "shots/democity/r8l-night-horizon-final/industry_12.png",
+    "shots/democity/r8l-night-horizon-final/industry_22.png",
+    "shots/democity/r8l-night-horizon-final/interchange_12.png",
+    "shots/democity/r8l-night-horizon-final/interchange_22.png",
+    "shots/democity/r8l-night-horizon-final/night_downtown_12.png",
+    "shots/democity/r8l-night-horizon-final/night_downtown_22.png",
+    "shots/democity/r8l-night-horizon-final/park_12.png",
+    "shots/democity/r8l-night-horizon-final/park_22.png",
+    "shots/democity/r8l-night-horizon-final/riverfront_12.png",
+    "shots/democity/r8l-night-horizon-final/riverfront_22.png",
+    "shots/democity/r8l-night-horizon-final/suburb_12.png",
+    "shots/democity/r8l-night-horizon-final/suburb_22.png",
+    "shots/democity/r8l-night-horizon-weather/aerial_cloudy_22.png",
+    "shots/democity/r8l-night-horizon-weather/aerial_rain_22.png",
+    "shots/democity/r8l-night-horizon-weather/riverfront_cloudy_22.png",
+    "shots/democity/r8l-night-horizon-weather/riverfront_rain_22.png"
+  ],
+  "sidecarCount": 25,
+  "componentProbeImages": 4,
+  "finalSummaryMatchesSidecars": true,
+  "finalMatrix": {
+    "frames": 16,
+    "ready": 16,
+    "errors": 0,
+    "maxDrawCalls": 469,
+    "maxTriangles": 2814092,
+    "minFps": 46.1,
+    "below50": 2,
+    "maxRawHeapMB": 741.5,
+    "rawHeapAbove512": 7,
+    "rows": [
+      {
+        "shot": "bridge_12",
+        "path": "shots/democity/r8l-night-horizon-final/bridge_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 59.5,
+        "drawCalls": 301,
+        "triangles": 1583059,
+        "heapMB": 472.9,
+        "measuredFrames": 90
+      },
+      {
+        "shot": "bridge_22",
+        "path": "shots/democity/r8l-night-horizon-final/bridge_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 60,
+        "drawCalls": 294,
+        "triangles": 1983739,
+        "heapMB": 667.2,
+        "measuredFrames": 91
+      },
+      {
+        "shot": "downtown_12",
+        "path": "shots/democity/r8l-night-horizon-final/downtown_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 49.4,
+        "drawCalls": 425,
+        "triangles": 1892580,
+        "heapMB": 579.2,
+        "measuredFrames": 75
+      },
+      {
+        "shot": "downtown_22",
+        "path": "shots/democity/r8l-night-horizon-final/downtown_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 50.5,
+        "drawCalls": 410,
+        "triangles": 2271574,
+        "heapMB": 488.7,
+        "measuredFrames": 76
+      },
+      {
+        "shot": "industry_12",
+        "path": "shots/democity/r8l-night-horizon-final/industry_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 59.9,
+        "drawCalls": 204,
+        "triangles": 1155506,
+        "heapMB": 591.8,
+        "measuredFrames": 90
+      },
+      {
+        "shot": "industry_22",
+        "path": "shots/democity/r8l-night-horizon-final/industry_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 60.3,
+        "drawCalls": 202,
+        "triangles": 1550180,
+        "heapMB": 532.2,
+        "measuredFrames": 91
+      },
+      {
+        "shot": "interchange_12",
+        "path": "shots/democity/r8l-night-horizon-final/interchange_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 51.7,
+        "drawCalls": 388,
+        "triangles": 1812476,
+        "heapMB": 483.6,
+        "measuredFrames": 78
+      },
+      {
+        "shot": "interchange_22",
+        "path": "shots/democity/r8l-night-horizon-final/interchange_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 46.1,
+        "drawCalls": 400,
+        "triangles": 2194778,
+        "heapMB": 487.7,
+        "measuredFrames": 70
+      },
+      {
+        "shot": "night_downtown_12",
+        "path": "shots/democity/r8l-night-horizon-final/night_downtown_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 53.4,
+        "drawCalls": 418,
+        "triangles": 2460494,
+        "heapMB": 479.7,
+        "measuredFrames": 81
+      },
+      {
+        "shot": "night_downtown_22",
+        "path": "shots/democity/r8l-night-horizon-final/night_downtown_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 54.4,
+        "drawCalls": 343,
+        "triangles": 2814092,
+        "heapMB": 485.3,
+        "measuredFrames": 82
+      },
+      {
+        "shot": "park_12",
+        "path": "shots/democity/r8l-night-horizon-final/park_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 52.1,
+        "drawCalls": 469,
+        "triangles": 1822002,
+        "heapMB": 481.2,
+        "measuredFrames": 79
+      },
+      {
+        "shot": "park_22",
+        "path": "shots/democity/r8l-night-horizon-final/park_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 53.4,
+        "drawCalls": 443,
+        "triangles": 2189364,
+        "heapMB": 576.8,
+        "measuredFrames": 81
+      },
+      {
+        "shot": "riverfront_12",
+        "path": "shots/democity/r8l-night-horizon-final/riverfront_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 58.5,
+        "drawCalls": 246,
+        "triangles": 1312596,
+        "heapMB": 698.8,
+        "measuredFrames": 88
+      },
+      {
+        "shot": "riverfront_22",
+        "path": "shots/democity/r8l-night-horizon-final/riverfront_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 57.2,
+        "drawCalls": 212,
+        "triangles": 1681158,
+        "heapMB": 489.2,
+        "measuredFrames": 86
+      },
+      {
+        "shot": "suburb_12",
+        "path": "shots/democity/r8l-night-horizon-final/suburb_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 54.6,
+        "drawCalls": 364,
+        "triangles": 1756810,
+        "heapMB": 741.5,
+        "measuredFrames": 82
+      },
+      {
+        "shot": "suburb_22",
+        "path": "shots/democity/r8l-night-horizon-final/suburb_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 57.9,
+        "drawCalls": 329,
+        "triangles": 2137674,
+        "heapMB": 483.4,
+        "measuredFrames": 87
+      }
+    ]
+  },
+  "weatherControls": {
+    "frames": 4,
+    "ready": 4,
+    "errors": 0,
+    "maxDrawCalls": 418,
+    "maxTriangles": 2465796,
+    "minFps": 32.8,
+    "below50": 4,
+    "maxRawHeapMB": 720.4,
+    "rawHeapAbove512": 2,
+    "rows": [
+      {
+        "shot": "aerial_cloudy_22",
+        "path": "shots/democity/r8l-night-horizon-weather/aerial_cloudy_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 32.8,
+        "drawCalls": 416,
+        "triangles": 2429796,
+        "heapMB": 481.4,
+        "measuredFrames": 50
+      },
+      {
+        "shot": "aerial_rain_22",
+        "path": "shots/democity/r8l-night-horizon-weather/aerial_rain_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 42.8,
+        "drawCalls": 418,
+        "triangles": 2465796,
+        "heapMB": 720.4,
+        "measuredFrames": 65
+      },
+      {
+        "shot": "riverfront_cloudy_22",
+        "path": "shots/democity/r8l-night-horizon-weather/riverfront_cloudy_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 43.2,
+        "drawCalls": 212,
+        "triangles": 1681158,
+        "heapMB": 561.2,
+        "measuredFrames": 65
+      },
+      {
+        "shot": "riverfront_rain_22",
+        "path": "shots/democity/r8l-night-horizon-weather/riverfront_rain_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 44.5,
+        "drawCalls": 214,
+        "triangles": 1717158,
+        "heapMB": 481.4,
+        "measuredFrames": 67
+      }
+    ]
+  },
+  "directedBaseline": {
+    "frames": 2,
+    "ready": 2,
+    "errors": 0,
+    "maxDrawCalls": 244,
+    "maxTriangles": 1681158,
+    "minFps": 36.3,
+    "below50": 1,
+    "maxRawHeapMB": 692,
+    "rawHeapAbove512": 2,
+    "rows": [
+      {
+        "shot": "riverfront_17p5",
+        "path": "shots/democity/r8l-night-horizon-baseline/riverfront_17p5.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 50.4,
+        "drawCalls": 244,
+        "triangles": 1297654,
+        "heapMB": 598.8,
+        "measuredFrames": 76
+      },
+      {
+        "shot": "riverfront_22",
+        "path": "shots/democity/r8l-night-horizon-baseline/riverfront_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 36.3,
+        "drawCalls": 212,
+        "triangles": 1681158,
+        "heapMB": 692,
+        "measuredFrames": 55
+      }
+    ]
+  },
+  "directedCandidate": {
+    "frames": 3,
+    "ready": 3,
+    "errors": 0,
+    "maxDrawCalls": 246,
+    "maxTriangles": 1681158,
+    "minFps": 32.1,
+    "below50": 3,
+    "maxRawHeapMB": 667.3,
+    "rawHeapAbove512": 2,
+    "rows": [
+      {
+        "shot": "riverfront_12",
+        "path": "shots/democity/r8l-night-horizon-candidate/riverfront_12.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 42.7,
+        "drawCalls": 246,
+        "triangles": 1311858,
+        "heapMB": 667.3,
+        "measuredFrames": 86
+      },
+      {
+        "shot": "riverfront_17p5",
+        "path": "shots/democity/r8l-night-horizon-candidate/riverfront_17p5.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 32.1,
+        "drawCalls": 244,
+        "triangles": 1297654,
+        "heapMB": 650,
+        "measuredFrames": 65
+      },
+      {
+        "shot": "riverfront_22",
+        "path": "shots/democity/r8l-night-horizon-candidate/riverfront_22.json",
+        "ok": true,
+        "ready": true,
+        "errors": 0,
+        "fps": 38,
+        "drawCalls": 212,
+        "triangles": 1681158,
+        "heapMB": 477.2,
+        "measuredFrames": 77
+      }
+    ]
+  },
+  "pixelMetrics": {
+    "region": {
+      "x": [
+        220,
+        380
+      ],
+      "skyRows": [
+        150,
+        160
+      ],
+      "horizonRows": [
+        168,
+        178
+      ],
+      "waterRows": [
+        181,
+        191
+      ],
+      "bounds": "half-open pixel rectangles"
+    },
+    "baseline": {
+      "skyLuma": 49.4099575,
+      "horizonLuma": 97.118734,
+      "waterLuma": 81.702710375,
+      "horizonMinusSky": 47.7087765
+    },
+    "candidate": {
+      "skyLuma": 49.4099575,
+      "horizonLuma": 47.25482225,
+      "waterLuma": 48.625142,
+      "horizonMinusSky": -2.15513525
+    },
+    "horizonExcessReduction": 49.86391175,
+    "verifiedFromOriginalPng": true,
+    "method": "Pillow RGB means, 0.2126 R + 0.7152 G + 0.0722 B, no linearization; supplied rounded 49.86 reduction supported."
+  },
+  "contracts": {
+    "night": {
+      "rows": [
+        {
+          "hour": 12,
+          "apiNight": 0,
+          "worldNight": 0,
+          "sharedNight": 0,
+          "waterNight": 0,
+          "sharedObjectInWater": true,
+          "skyNight": 0
+        },
+        {
+          "hour": 17.5,
+          "apiNight": 0,
+          "worldNight": 0,
+          "sharedNight": 0,
+          "waterNight": 0,
+          "sharedObjectInWater": true,
+          "skyNight": 0
+        },
+        {
+          "hour": 22,
+          "apiNight": 1,
+          "worldNight": 1,
+          "sharedNight": 1,
+          "waterNight": 1,
+          "sharedObjectInWater": true,
+          "skyNight": 1
+        },
+        {
+          "hour": 12,
+          "apiNight": 0,
+          "worldNight": 0,
+          "sharedNight": 0,
+          "waterNight": 0,
+          "sharedObjectInWater": true,
+          "skyNight": 0
+        },
+        {
+          "hour": 22,
+          "apiNight": 1,
+          "worldNight": 1,
+          "sharedNight": 1,
+          "waterNight": 1,
+          "sharedObjectInWater": true,
+          "skyNight": 1
+        }
+      ],
+      "errors": [],
+      "browserErrors": [],
+      "pass": true
+    },
+    "waterCadence": {
+      "pass": true,
+      "framesEach": 120,
+      "counts": [
+        15,
+        30,
+        120
+      ],
+      "verifiedIntervals": [
+        8,
+        4,
+        1
+      ]
+    },
+    "api": {
+      "pass": true,
+      "allRequiredFunctions": true,
+      "deserialize": [
+        true,
+        true
+      ],
+      "sameCensus": true,
+      "buildings": 612,
+      "services": 31,
+      "roads": {
+        "nodes": 468,
+        "edges": 604
+      },
+      "zones": {
+        "cells": 9964,
+        "lots": 612
+      },
+      "transit": {
+        "lines": 1,
+        "stops": 8
+      },
+      "tourSuccessCount": 8,
+      "invalidTourRejected": true
+    },
+    "mixedUse": {
+      "pass": true,
+      "lots": 32,
+      "linkedIdsAndRetailFlags": true,
+      "exactAfterFirst": true,
+      "exactAfterSecond": true
+    },
+    "restage": {
+      "pass": true,
+      "exact1337": true,
+      "exact7": true,
+      "digestFields": [
+        "buildings",
+        "services",
+        "transit"
+      ]
+    },
+    "recordedErrors": 0,
+    "verification": "Independently parsed supplied browser probes and recomputed equality/cadence checks; actual Node import verifies shared uniform object binding."
+  },
+  "issues": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings",
+        "roads",
+        "services"
+      ],
+      "status": "OPEN",
+      "issue": "Sparse blocks and repeated building forms still dominate; silo detail does not alter frontage or density."
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "supportingOwners": [
+        "terrain",
+        "democity"
+      ],
+      "status": "OPEN",
+      "issue": "Foliage remains planar with inconsistent crown density across distances despite accepted r8h improvement."
+    },
+    {
+      "rank": 3,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "buildings",
+        "props",
+        "services",
+        "effects",
+        "democity"
+      ],
+      "status": "OPEN",
+      "issue": "Accepted r8i window depth remains local; repetitive luminous windows and schematic street/service pools persist."
+    },
+    {
+      "rank": 4,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "roads",
+        "democity",
+        "buildings",
+        "services"
+      ],
+      "status": "OPEN",
+      "issue": "Abrupt grades, flat pads and untreated shore/site boundaries remain visible."
+    },
+    {
+      "rank": 5,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "services",
+        "buildings",
+        "props"
+      ],
+      "status": "OPEN",
+      "issue": "R8j hardstand and r8k silo details improve existing landmarks locally; materials, site connections and construction credibility remain schematic. The silo rung spacing is 1.45 m, so the access fittings should not be described as realistic maintenance infrastructure."
+    },
+    {
+      "rank": 6,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "terrain",
+        "environment",
+        "effects"
+      ],
+      "status": "OPEN",
+      "issue": "R8l substantially suppresses the specific night LUT/display-brightness seam. The straight geometric horizon, 17:30 low-sun colour seam, broad daytime cloud reflection, mountain material and graphic rain still need work.",
+      "evidence": [
+        "shots/democity/r8l-night-horizon-candidate/riverfront_22.png",
+        "shots/democity/r8l-night-horizon-candidate/riverfront_17p5.png",
+        "shots/democity/r8l-night-horizon-final/riverfront_12.png",
+        "shots/democity/r8l-night-horizon-final/industry_12.png",
+        "shots/democity/r8l-night-horizon-weather/riverfront_rain_22.png"
+      ]
+    },
+    {
+      "rank": 7,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "democity",
+        "traffic",
+        "transit",
+        "simulation",
+        "buildings"
+      ],
+      "status": "OPEN",
+      "issue": "Limited communicated human/site use. Static silo fittings add no storage, cargo, production, workers, loading or port-operation simulation."
+    },
+    {
+      "rank": 8,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic",
+        "environment",
+        "effects",
+        "buildings"
+      ],
+      "status": "OPEN",
+      "issue": "16-frame geometry passes 1500/3M, but two matrix frames and all four weather frames miss 50 FPS. Raw heap is not retained-memory validation.",
+      "evidence": [
+        "shots/democity/r8l-night-horizon-final/interchange_22.json",
+        "shots/democity/r8l-night-horizon-final/downtown_12.json",
+        "shots/democity/r8l-night-horizon-weather/aerial_cloudy_22.json",
+        "shots/democity/r8l-night-horizon-final/suburb_12.json"
+      ]
+    }
+  ],
+  "evidenceLimits": [
+    "Independent review of supplied images and browser-probe results. No new browser captures, build or gameplay run was performed by this critic. Builder reports a successful 163-module build; final sidecars independently evidence successful rendering.",
+    "29 original images individually viewed: 2 baseline, 4 destructive component-diagnosis views, 3 directed candidate, 16 standard final and 4 additional weather controls. The component diagnosis has one end-of-probe JSON, not four per-image error/performance sidecars.",
+    "25 ordinary capture sidecars parsed; all report ready modules and zero errors. Component probe reports zero engine/browser errors at completion. Destructive debug visibility changes are diagnosis-only and are absent from production.",
+    "The 16-frame final matrix covers eight cameras at noon/night; this is not a fresh complete whole-game four-time matrix, CS2 reference calibration, 720p visual comparison or blind A/B round. Previous 6.0 calibration remains unchanged.",
+    "Pixel region was supplied/pinned rather than independently selected. I independently recomputed Rec.709-weighted encoded RGB means from original pixels; these are display luma, not scene-linear radiance or whole-image realism metrics. Last-decimal differences in supplied metrics are rounding/precision only.",
+    "Final FPS measures 70–91 frames per capture, weather 50–67; directed candidates use different short windows. Host conditions and sample durations do not support a causal performance gain/regression attribution to the shader change.",
+    "Raw endpoint heap is not forced-GC retained heap, GPU memory or proof of a memory leak. Existing earlier memory results were not rerun.",
+    "Night uniform contract tests day and full-night endpoints, including 17:30 with night=0. It does not sample the full continuous dusk/dawn transition or quantify every fogged surface under all weather states.",
+    "API restores verify the recorded census, mixed-use restores compare their complete recorded subset, and exact seed digests cover selected buildings/services/transit fields. These are not bitwise whole-world/save or GPU-buffer proofs.",
+    "Current git diff includes earlier accepted exposure and water cadence work. R8l attribution is limited to the shared night uniform and three LUT-consumer gain expressions; PMREM/visible dome, geometry, world generation and save logic are unchanged by this bounded delta."
+  ]
+}

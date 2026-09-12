@@ -35,6 +35,7 @@ const S = {
   weatherDirty: true, windOff: new THREE.Vector2(), cirrusOff: new THREE.Vector2(), time: 0,
   sunT: [0, 0, 0], moonT: [0, 0, 0], cloudSunT: [0, 0, 0], cloudMoonT: [0, 0, 0],
   zenith: [0, 0, 0], horizon: [0, 0, 0], mid: [0, 0, 0], fogCol: new THREE.Color(), skyLight: new THREE.Color(),
+  viewDir: new THREE.Vector3(),
   sunColor: new THREE.Color(1, 1, 1), lightColor: new THREE.Color(1, 1, 1), lightIntensity: 0, exposure: 1, night: 0,
   sunIntensity: 0, moonIntensity: 0, preset: 'partly', moonPhase: 0, drift: 0,
 };
@@ -144,12 +145,15 @@ export default {
     const sunUp = smooth(-0.015, 0.03, S.sunDir.y);
     const moonUp = smooth(-0.02, 0.05, S.moonDir.y);
     S.night = 1 - smooth(-0.13, 0.02, S.sunDir.y);
+    U.night.value = S.night;
     const day = smooth(-0.10, 0.12, S.sunDir.y);
     // illuminated fraction of the moon disc (for its light contribution)
     const moonLit = 0.5 - 0.5 * S.moonDir.dot(S.sunDir);
 
     // ---- per-frame transmittance -> sun / moon colours & intensities
-    _v.copy(S.sunDir); _v.y = Math.max(_v.y, 0.004); _v.normalize();
+    // Keep the horizon sample above the coarse atmosphere integrator's zero-transmittance
+    // band. The scene-light floor below depends on a finite chromaticity here.
+    _v.copy(S.sunDir); _v.y = Math.max(_v.y, 0.008); _v.normalize();
     transmittance(_v, 150, S.sunT);
     transmittance(_v, CLOUD_HEIGHT, S.cloudSunT);
     _v.copy(S.moonDir); _v.y = Math.max(_v.y, 0.004); _v.normalize();
@@ -158,10 +162,11 @@ export default {
     const coverFactor = smooth(0.45, 0.97, w.cloudiness);
     const cloudAtten = (1 - 0.9 * coverFactor) * Math.exp(-Math.max(w.fogDensity - 0.001, 0) * 350);
     // (floor near the horizon: the physically dim 1-2 deg sun still has to model a scene, CS2-style)
-    const sunMax = Math.max(maxc(S.sunT) * SUN_TOA, 2.2 * smooth(-0.02, 0.02, S.sunDir.y));
+    const sunTransMax = maxc(S.sunT);
+    const sunMax = Math.max(sunTransMax * SUN_TOA, 2.2 * smooth(-0.02, 0.02, S.sunDir.y));
     S.sunIntensity = sunMax * sunUp * cloudAtten;
     S.sunColor.setRGB(S.sunT[0] * SUN_TINT[0], S.sunT[1] * SUN_TINT[1], S.sunT[2] * SUN_TINT[2]);
-    if (sunMax > 1e-4) S.sunColor.multiplyScalar(1 / maxc(S.sunT));
+    if (sunTransMax > 1e-6) S.sunColor.multiplyScalar(1 / sunTransMax);
     const moonMax = maxc(S.moonT) * SUN_TOA * MOON_SCALE * (0.15 + 0.85 * moonLit);
     S.moonIntensity = moonMax * moonUp * cloudAtten;
     const useSun = S.sunIntensity >= S.moonIntensity;
@@ -178,17 +183,25 @@ export default {
     S.lighting.setLight(S.lightDir, S.lightColor, S.lightIntensity);
 
     // ---- exposure per time of day (AgX). High sun 1.15 (crisp, saturated), sun below ~12 deg 2.0-4.0 so
-    // golden hour and sunset stay bright with cool readable shadows, deep night 2.8 (moonlight reads).
+    // Golden hour keeps readable shadows without exposing the solar disc and half the skyline to white.
     const highSun = smooth(0.18, 0.45, S.sunDir.y);
     const lowSun = 1 - smooth(0.02, 0.30, S.sunDir.y);
     // sunset scenes are ~50x dimmer than noon in absolute terms; CS2 (like a camera) exposes for them
-    const dayExp = THREE.MathUtils.lerp(2.0, 1.15, highSun) + lowSun * 1.7;
-    S.exposure = THREE.MathUtils.lerp(2.8, dayExp, day) + day * coverFactor * 0.22 + day * smooth(0.001, 0.004, w.fogDensity) * 0.15;
+    const dayExp = THREE.MathUtils.lerp(1.45, 1.15, highSun) + lowSun * 0.25;
+    // Keep unlit terrain and road edges usable for construction through winter dusk and moonless
+    // nights. This is still well below daylight exposure and preserves emissive/night contrast.
+    const baseExposure = THREE.MathUtils.lerp(3.35, dayExp, day) + day * coverFactor * 0.22 + day * smooth(0.001, 0.004, w.fogDensity) * 0.15;
+    // A camera that faces a low sun needs a small exposure compensation to retain city and water form.
+    // Side-lit and sun-behind views keep the same grade; this is an existing environment-camera decision,
+    // not a second global light or post-processing path.
+    cam.getWorldDirection(S.viewDir);
+    const sunFacing = smooth(0.20, 0.72, Math.max(0, S.viewDir.dot(S.sunDir))) * lowSun * day;
+    S.exposure = baseExposure * (1 - sunFacing * 0.22);
     ctx.renderer.toneMappingExposure = S.exposure;
     // sky ambient (PMREM of the sun-masked LUT): ~0.5 at noon (lit:shadow ~3:1 on the ground), rising toward
     // dusk when the sky is the main light, and at night (moonlit sky + airglow floor).
     // (CS2 keeps golden-hour shadows readable: the sky term is boosted as the sun drops)
-    ctx.scene.environmentIntensity = THREE.MathUtils.lerp(1.6, 0.5 + 0.25 * (1 - highSun) + 0.5 * lowSun, day) + coverFactor * 0.3 * day;
+    ctx.scene.environmentIntensity = THREE.MathUtils.lerp(2.05, 0.5 + 0.25 * (1 - highSun) + 0.5 * lowSun, day) + coverFactor * 0.3 * day;
     // golden-hour punch: a grazing sun on flat ground is physically weak; CS2 keeps it contrasty
     const goldenBoost = 1 + 0.45 * (1 - smooth(0.02, 0.30, S.sunDir.y)) * smooth(-0.02, 0.05, S.sunDir.y);
     S.sunIntensity *= goldenBoost;

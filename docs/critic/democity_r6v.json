@@ -1,0 +1,33 @@
+{
+  "module": "democity",
+  "round": "r6v",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "change": "High-quality planar reflection target 768x384 to 640x320; Ultra remains 1280x640",
+  "evidence": [
+    "shots/democity/r6u-moving-reflection-profile/moving-controls.json",
+    "shots/democity/r6u-moving-reflection-profile/terrain-shader-controls.json",
+    "shots/democity/r6v-candidate-water-rt640/moving-controls.json",
+    "shots/democity/r6v-candidate-water-rt640/ab-contact.png",
+    "shots/democity/rr6v-candidate-water-rt640/summary.json",
+    "shots/democity/r6v-candidate-water-rt640/apicheck.json",
+    "shots/democity/r6v-candidate-water-rt640/restage-cycle.json"
+  ],
+  "verified": {
+    "matrixErrors": 0,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2997270,
+    "minMatrixFps": 44.4,
+    "movingBaselineFpsRange": [41.21, 41.83],
+    "movingCandidateFpsRange": [41.82, 42.39],
+    "abWholeImageDifferencePercentRange": [0.021, 0.039],
+    "apiPass": true,
+    "exactRestagePass": true
+  },
+  "remaining": [
+    "50 fps remains failed and no matrix-fps improvement is claimed",
+    "post-restage memory remains above 512 MB",
+    "broader city scale, lighting, seating, grain, activity and lifecycle gates remain failed"
+  ]
+}

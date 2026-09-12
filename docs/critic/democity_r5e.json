@@ -1,0 +1,16 @@
+{
+  "module": "democity",
+  "round": "5e",
+  "score": 6.0,
+  "pass": false,
+  "decision": "hold",
+  "standardMatrix": {
+    "path": "shots/democity/r5e/summary.json",
+    "shots": 16,
+    "errors": 0,
+    "maxDrawCalls": 960,
+    "maxTriangles": 4627862,
+    "minFps": 32.0,
+    "measurement": "peak over each rendered-frame measurement window, including recurring planar reflection"
+  }
+}

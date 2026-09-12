@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 
 export const MAT = {
-  PAINT: 0, GLASS: 1, TYRE: 2, RIM: 3, HEAD: 4, TAIL: 5, TRIM: 6, PANEL: 7, DARK: 8, SIGN: 9,
+  PAINT: 0, GLASS: 1, TYRE: 2, RIM: 3, HEAD: 4, TAIL: 5, TRIM: 6, PANEL: 7, DARK: 8, SIGN: 9, PLATE: 10, BLUE:11, RED:12, WHITE:13,
 };
 export const LAMP = { CONE: 0, HEAD: 1, TAIL: 2 };
 
@@ -50,10 +50,10 @@ function linSample(xs, ys) {
 
 // ---------------------------------------------------------------- accumulator
 class Acc {
-  constructor() { this.pos = []; this.nor = []; this.mat = []; this.whl = []; }
+  constructor() { this.pos = []; this.nor = []; this.mat = []; this.whl = []; this.joints=[];this.joint=0; }
   get tris() { return this.pos.length / 9; }
   vert(px, py, pz, nx, ny, nz, m, w) {
-    this.pos.push(px, py, pz); this.nor.push(nx, ny, nz); this.mat.push(m);
+    this.pos.push(px, py, pz); this.nor.push(nx, ny, nz); this.mat.push(m);this.joints.push(this.joint);
     if (w) this.whl.push(w[0], w[1], w[2], 1); else this.whl.push(0, 0, 0, 0);
   }
   /** triangle with explicit vertex normals; winding fixed so the face normal agrees with n0 */
@@ -79,6 +79,7 @@ class Acc {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(this.pos, 3));
     g.setAttribute('normal', new THREE.Float32BufferAttribute(this.nor, 3));
+    g.setAttribute('aJoint',new THREE.Float32BufferAttribute(this.joints,1));
     g.setAttribute('aMat', new THREE.Float32BufferAttribute(this.mat, 1));
     g.setAttribute('aWheel', new THREE.Float32BufferAttribute(this.whl, 4));
     g.computeBoundingSphere();
@@ -252,6 +253,22 @@ const SPECS = {
   },
 };
 
+// Modern, broad bumper faces and a straighter roof shoulder, with exposed wheel arches.
+for (const spec of Object.values(SPECS)) {
+ spec.round=.26; spec.H=Math.max(...spec.rows.map(r=>r[2]));
+ spec.wheelXf=.91;
+ for(const row of spec.rows){if(row[0]<.06||row[0]>.96)row[3]=Math.max(.9,row[3]);}
+}
+for(const row of SPECS.sedan.rows){if(row[0]>=.8)row[2]=row[0]<.855?1.00:row[2];}
+for(const row of SPECS.hatchback.rows){if(row[0]>=.80&&row[0]<=.94){row[2]=1.48;row[4]=.56;row[5]=.91;row[6]=1;}if(row[0]===.98)row[2]=1.34;}
+for(const row of SPECS.suv.rows){if(row[0]>=.42&&row[0]<=.93){row[2]=1.72;row[5]=.96;row[4]=.57;row[6]=1;}if(row[0]===.98)row[2]=1.60;}
+SPECS.suv.rows.at(-1)[2]=1.53;SPECS.hatchback.rows.at(-1)[2]=1.31;
+SPECS.suv.round=.17;SPECS.hatchback.round=.22;
+SPECS.box_truck=SPECS.truck;delete SPECS.truck;
+SPECS.police={...SPECS.sedan,roofSign:false};
+SPECS.semi={...SPECS.box_truck,L:18.6,HW:1.275,H:4,wheelZ:7.1,tractorLength:6.2,trailerLength:13.6,hitchZ:-4.0};
+SPECS.motorbike={...SPECS.hatchback,L:2.1,HW:.4,H:1.3,wheelR:.32,wheelW:.08,wheelZ:.72,wheelXf:0,rows:SPECS.hatchback.rows.map(r=>[r[0],.35,Math.max(.4,r[2]*.52),.45,r[4],r[5],r[6]])};
+
 export const VEHICLE_KINDS = Object.keys(SPECS);
 export function vehicleSpec(kind) { return SPECS[kind]; }
 
@@ -288,7 +305,7 @@ function buildSections(spec) {
   // section u list: every control row, every pillar boundary, subdivided so no gap exceeds 0.035
   const key = new Set([0, 1]);
   for (const u of us) key.add(+u.toFixed(4));
-  for (const p of spec.pillars || []) {
+  for (const p of spec.lod ? [] : (spec.pillars || [])) {
     key.add(+Math.max(0, p - spec.pw).toFixed(4));
     key.add(+Math.min(1, p + spec.pw).toFixed(4));
   }
@@ -297,7 +314,7 @@ function buildSections(spec) {
   for (let i = 0; i < base.length - 1; i++) {
     const a = base[i], b = base[i + 1];
     list.push(a);
-    const n = Math.ceil((b - a) / 0.042);
+    const n = spec.lod ? 1 : Math.ceil((b - a) / 0.042);
     for (let k = 1; k < n; k++) list.push(a + (b - a) * (k / n));
   }
   list.push(1);
@@ -372,12 +389,12 @@ function addBody(acc, spec) {
       let m = MAT.PAINT;
       if (tmid < 0.10) m = MAT.DARK;
       else if (arch && tmid < 0.30) m = MAT.DARK;
-      else if (tmid < 0.20) m = MAT.TRIM;
-      else if (glassSec && Math.abs(tmid - beltM) < 0.05 && nyAvg < 0.72) m = MAT.TRIM;
-      else if (glassSec && tmid > beltM + 0.035 && nyAvg < 0.60) m = MAT.GLASS;
+      else if (tmid < 0.20) m = MAT.PAINT;
+      else if (glassSec && Math.abs(tmid - beltM) < 0.018 && nyAvg < 0.72) m = MAT.PAINT;
+      else if (glassSec && tmid > beltM + 0.035 && (nyAvg < 0.60 || Math.abs(n0[2]+n1[2]+n2[2]+n3[2])>1.8)) m = MAT.GLASS;
       else if (spec.panelFrom !== undefined && um > spec.panelFrom && tmid > 0.24) m = MAT.PANEL;
       else if (spec.bedFrom !== undefined && um > spec.bedFrom && nyAvg > 0.72) m = MAT.DARK;
-      acc.quad(p0, n0, p1, n1, p2, n2, p3, n3, m, null);
+      if (!(arch && tmid < .39 && Math.abs(n0[0])>.45)) acc.quad(p0, n0, p1, n1, p2, n2, p3, n3, m, null);
     }
   }
   // caps
@@ -392,7 +409,7 @@ function addBody(acc, spec) {
       const ia = (end * M + k) * 3, ib = (end * M + k1i) * 3;
       rd(P, ia, p0); rd(P, ib, p1);
       const tm = (T[end * M + k] + T[end * M + k1i]) * 0.5;
-      const m = tm < 0.34 ? MAT.TRIM : MAT.PAINT;
+      const m = spec.panelFrom!==undefined&&s.u>spec.panelFrom?MAT.PANEL:MAT.PAINT;
       acc.tri(cp, cn, p0, cn, p1, cn, m, null);
     }
   }
@@ -400,12 +417,23 @@ function addBody(acc, spec) {
 }
 
 function addLensQuad(acc, cx, cy, cz, w, h, zn, m) {
-  const n = [0, 0, zn];
-  acc.quad([cx - w, cy - h, cz], n, [cx + w, cy - h, cz], n, [cx + w, cy + h, cz], n, [cx - w, cy + h, cz], n, m, null);
+  const n=[0,0,zn],outline=[[-.78,-1],[.78,-1],[1,-.6],[1,.6],[.78,1],[-.78,1],[-1,.6],[-1,-.6]];
+  for(let i=0;i<8;i++){const a=outline[i],b=outline[(i+1)%8];acc.tri([cx,cy,cz+zn*.018],n,[cx+a[0]*w,cy+a[1]*h,cz],n,[cx+b[0]*w,cy+b[1]*h,cz],n,m,null);}
+
 }
 
 function addWheel(acc, cx, cy, cz, r, hw, segs, mirror) {
   const w = [cx, cy, cz];
+  if(segs<10){
+    const side=mirror?-1:1,n=[side,0,0],x=cx+side*hw;
+    for(let i=0;i<12;i++){
+      const a=i*Math.PI/6,b=(i+1)*Math.PI/6;
+      for(const [radius,material,offset] of [[r,MAT.TYRE,0],[r*.63,MAT.RIM,.002]]){
+        acc.tri([x+side*offset,cy,cz],n,[x+side*offset,cy+Math.cos(a)*radius,cz+Math.sin(a)*radius],n,[x+side*offset,cy+Math.cos(b)*radius,cz+Math.sin(b)*radius],n,material,w);
+      }
+    }
+    return;
+  }
   const px = (a, xo) => [cx + xo, cy + Math.cos(a) * r, cz + Math.sin(a) * r];
   const nrm = (a) => [0, Math.cos(a), Math.sin(a)];
   const outX = mirror ? -hw : hw, inX = mirror ? hw : -hw;
@@ -419,7 +447,7 @@ function addWheel(acc, cx, cy, cz, r, hw, segs, mirror) {
     const nx = [sx, 0, 0];
     acc.quad(q(a0, r, outX), nx, q(a1, r, outX), nx, q(a1, rr, outX), nx, q(a0, rr, outX), nx, MAT.TYRE, w);
     // rim
-    acc.tri([cx + outX * 1.02, cy, cz], nx, q(a0, rr, outX * 1.02), nx, q(a1, rr, outX * 1.02), nx, MAT.RIM, w);
+    acc.tri([cx + outX * 1.02, cy, cz], nx, q(a0, rr, outX * 1.02), nx, q(a1, rr, outX * 1.02), nx, (i%2===0?MAT.RIM:MAT.DARK), w);
     // inner face (mostly hidden)
     acc.tri([cx + inX, cy, cz], [-sx, 0, 0], q(a0, r, inX), [-sx, 0, 0], q(a1, r, inX), [-sx, 0, 0], MAT.DARK, w);
   }
@@ -436,19 +464,35 @@ function addBox(acc, cx, cy, cz, hx, hy, hz, m) {
 }
 
 /** Full vehicle body geometry (body + wheels + lamps + extras) for a kind. */
-export function buildVehicleGeometry(kind) {
-  const spec = SPECS[kind];
+export function buildVehicleGeometry(kind, lod=0) {
+  if(kind==='semi')return buildSemi(lod);
+  const original=SPECS[kind];
+  const spec=lod===1?{...original,lod:1,ring:6,rows:original.rows.filter((r,i,a)=>i===0||i===a.length-1||i%2===0)}:original;
   const acc = new Acc();
+  if(lod===2){
+    addBox(acc,0,.48,0,spec.HW,.35,spec.L/2,MAT.PAINT);
+    addBox(acc,0,spec.H*.65,0,spec.HW*.84,spec.H*.30,spec.L*.26,MAT.GLASS);
+    addBox(acc,0,.5,-spec.L/2-.01,spec.HW*.76,.10,.005,MAT.HEAD);
+
+    return {geometry:acc.toGeometry(),spec,lamps:{},tris:acc.tris};
+  }
   const secs = addBody(acc, spec);
+  if(['sedan','taxi','police'].includes(kind)){
+    // The rear windscreen follows the descending roof, leaving painted C-pillars.
+    const section=u=>secs.reduce((a,b)=>Math.abs(b.u-u)<Math.abs(a.u-u)?b:a);
+    const a=section(.735),b=section(.825),ax=a.hw*a.topW*.86,bx=b.hw*b.topW*.86;
+    const dy=b.y1-a.y1,dz=b.z-a.z,l=Math.hypot(dy,dz),n=[0,dz/l,-dy/l];
+    acc.quad([-ax,a.y1+.009,a.z],n,[ax,a.y1+.009,a.z],n,[bx,b.y1+.009,b.z],n,[-bx,b.y1+.009,b.z],n,MAT.GLASS,null);
+  }
   // lamps derived from the end sections
   const f = secs[0], b = secs[secs.length - 1];
   const hf = f.y1 - f.y0, hb = b.y1 - b.y0;
-  const lensY = f.y0 + hf * (kind === 'truck' || kind === 'bus' ? 0.30 : 0.55);
+  const lensY = f.y0 + hf * (kind === 'box_truck' || kind === 'bus' ? 0.30 : 0.55);
   const lensX = f.hw * 0.62, lensW = f.hw * 0.26, lensH = Math.min(0.13, hf * 0.20);
   addLensQuad(acc, lensX, lensY, f.z - 0.018, lensW, lensH, -1, MAT.HEAD);
   addLensQuad(acc, -lensX, lensY, f.z - 0.018, lensW, lensH, -1, MAT.HEAD);
-  const tailY = b.y0 + hb * (kind === 'truck' || kind === 'bus' || kind === 'van' ? 0.22 : 0.55);
-  const tailX = b.hw * 0.66, tailW = b.hw * 0.24, tailH = Math.min(0.15, hb * 0.20);
+  const tailY = b.y0 + hb * (kind === 'box_truck' || kind === 'bus' || kind === 'van' ? 0.22 : 0.55);
+  const tailX = b.hw * 0.66, tailW = b.hw * 0.22, tailH = Math.min(0.10, hb * 0.15);
   addLensQuad(acc, tailX, tailY, b.z + 0.018, tailW, tailH, 1, MAT.TAIL);
   addLensQuad(acc, -tailX, tailY, b.z + 0.018, tailW, tailH, 1, MAT.TAIL);
   const lamps = {
@@ -458,17 +502,40 @@ export function buildVehicleGeometry(kind) {
   // wheels
   const s = spec;
   const wx = s.HW * s.wheelXf;
-  addWheel(acc, wx, s.wheelR, -s.wheelZ, s.wheelR, s.wheelW, 9, false);
-  addWheel(acc, -wx, s.wheelR, -s.wheelZ, s.wheelR, s.wheelW, 9, true);
+  const ws=lod?5:kind==='motorbike'?36:12;
+  addWheel(acc, wx, s.wheelR, -s.wheelZ, s.wheelR, s.wheelW, ws, false);
+  if(kind!=='motorbike') addWheel(acc, -wx, s.wheelR, -s.wheelZ, s.wheelR, s.wheelW, ws, true);
   if (s.twinRear) {
-    addWheel(acc, wx, s.wheelR, s.wheelZ - s.wheelW * 1.2, s.wheelR, s.wheelW, 9, false);
-    addWheel(acc, -wx, s.wheelR, s.wheelZ - s.wheelW * 1.2, s.wheelR, s.wheelW, 9, true);
-    addWheel(acc, wx, s.wheelR, s.wheelZ + s.wheelW * 1.2, s.wheelR, s.wheelW, 9, false);
-    addWheel(acc, -wx, s.wheelR, s.wheelZ + s.wheelW * 1.2, s.wheelR, s.wheelW, 9, true);
+    addWheel(acc, wx, s.wheelR, s.wheelZ - s.wheelW * 1.2, s.wheelR, s.wheelW, ws, false);
+    addWheel(acc, -wx, s.wheelR, s.wheelZ - s.wheelW * 1.2, s.wheelR, s.wheelW, ws, true);
+    addWheel(acc, wx, s.wheelR, s.wheelZ + s.wheelW * 1.2, s.wheelR, s.wheelW, ws, false);
+    addWheel(acc, -wx, s.wheelR, s.wheelZ + s.wheelW * 1.2, s.wheelR, s.wheelW, ws, true);
   } else {
-    addWheel(acc, wx, s.wheelR, s.wheelZ, s.wheelR, s.wheelW, 9, false);
-    addWheel(acc, -wx, s.wheelR, s.wheelZ, s.wheelR, s.wheelW, 9, true);
+    addWheel(acc, wx, s.wheelR, s.wheelZ, s.wheelR, s.wheelW, ws, false);
+    if(kind!=='motorbike') addWheel(acc, -wx, s.wheelR, s.wheelZ, s.wheelR, s.wheelW, ws, true);
   }
+  // Bumpers, grille, plate and door detail are separate surfaces.
+  if(!lod){
+    addBox(acc,0,lensY-.16,f.z-.028,spec.HW*.45,.085,.025,MAT.DARK);
+    addBox(acc,0,tailY-.23,b.z+.025,.23,.065,.018,MAT.PLATE);
+    addBox(acc,0,lensY-.29,f.z,.7*spec.HW,.035,.055,kind==='motorbike'?MAT.DARK:MAT.TRIM);
+    for(const sign of [-1,1]){
+      addBox(acc,sign*(spec.HW+.04),spec.H*.65,-spec.L*.14,.105,.065,.11,kind==='motorbike'?MAT.DARK:MAT.TRIM);
+      addBox(acc,sign*(spec.HW+.003),spec.H*.49,spec.L*.045,.012,.045,.11,MAT.RIM);
+      addBox(acc,sign*(spec.HW*.99),spec.H*.38,spec.L*.13,.009,spec.H*.18,.009,MAT.DARK);
+    }
+  }
+  if(kind==='motorbike'){
+    addBox(acc,0,.87,.05,.18,.19,.15,MAT.PAINT);
+    addBox(acc,0,1.17,-.07,.12,.13,.12,MAT.DARK);
+  }
+  if(['hatchback','suv','bus'].includes(kind)){const cy=kind==='bus'?1.93:kind==='suv'?1.26:1.08,hh=kind==='bus'?.30:.19;addLensQuad(acc,0,cy,spec.L/2+.014,spec.HW*.74,hh,1,MAT.GLASS);}
+  if(kind==='van')for(const side of [-1,1])addBox(acc,side*spec.HW*.80,.95,spec.L/2+.02,.065,.30,.02,MAT.TAIL);
+  if(kind==='police'){
+    for(const side of [-1,1]){addBox(acc,side*spec.HW*.997,.78,.1,.009,.20,.65,MAT.WHITE);addBox(acc,side*.27,1.54,0,.25,.07,.12,side<0?MAT.BLUE:MAT.RED);}
+    addBox(acc,0,1.48,0,.56,.02,.14,MAT.DARK);
+  }
+  if(kind==='suv'&&!lod)for(const side of [-1,1])addBox(acc,side*.74,1.76,.20,.025,.025,1.05,MAT.DARK);
   // extras
   if (spec.roofSign) {
     const mid = secs[Math.round(secs.length * 0.55)];
@@ -476,16 +543,37 @@ export function buildVehicleGeometry(kind) {
   }
   if (kind === 'bus') {
     const mid = secs[Math.round(secs.length * 0.5)];
-    addBox(acc, 0, mid.y1 + 0.10, mid.z - 1.4, 0.62, 0.10, 1.3, MAT.TRIM); // roof HVAC
+    addBox(acc, 0, mid.y1 + 0.10, mid.z - 1.4, 0.62, 0.10, 1.3, MAT.PANEL); // roof HVAC
     addBox(acc, 0, f.y1 + 0.44, f.z + 0.30, 0.55, 0.11, 0.06, MAT.SIGN);   // destination blind
   }
-  if (kind === 'truck') {
+  if (kind === 'box_truck') {
     const cab = secs[Math.round(secs.length * 0.22)];
-    addBox(acc, 0, cab.y1 + 0.10, cab.z, 0.72, 0.10, 0.30, MAT.TRIM);      // cab deflector
+    addBox(acc, 0, cab.y1 + 0.10, cab.z, 0.72, 0.10, 0.30, MAT.PAINT);      // cab deflector
     addBox(acc, spec.HW * 0.86, 1.05, -spec.L * 0.5 + 1.25, 0.06, 0.36, 0.06, MAT.TRIM);
     addBox(acc, -spec.HW * 0.86, 1.05, -spec.L * 0.5 + 1.25, 0.06, 0.36, 0.06, MAT.TRIM);
   }
   return { geometry: acc.toGeometry(), spec, lamps, tris: acc.tris };
+}
+
+// Tractor and trailer share an instance draw, with aJoint selecting a fifth-wheel transform.
+function buildSemi(lod){
+  const spec=SPECS.semi,a=new Acc();
+  if(lod===2){addBox(a,0,1.65,-7.65,1.25,1.55,1.65,MAT.PAINT);a.joint=1;addBox(a,0,2.6,2.2,1.275,1.4,6.8,MAT.PANEL);return{geometry:a.toGeometry(),spec,lamps:{},tris:a.tris};}
+  const cab={...SPECS.box_truck,L:3.2,HW:1.25,H:3.15,ring:lod?6:12,lod,round:.20,wheelZ:1.05,pillars:[.3,.74],pw:.02,panelFrom:undefined,rows:[[0,.52,1.6,.94,1,1,0],[.07,.45,1.9,1,1,1,0],[.17,.45,2.7,1,.65,.96,1],[.31,.45,3.1,1,.55,.94,1],[.70,.45,3.15,1,.55,.94,1],[.8,.45,3.15,1,1,1,0],[1,.45,3.1,.98,1,1,0]]};
+  addBody(a,cab);for(let i=2;i<a.pos.length;i+=3)a.pos[i]-=7.7;
+  addBox(a,0,.72,-6.2,1,.22,3.1,MAT.DARK);addBox(a,0,1.14,-4,1.02,.08,.55,MAT.TRIM);
+  for(const z of [-8.3,-4.65,-3.45])for(const side of [-1,1])addWheel(a,side*1.12,.505,z,.505,.16,lod?4:10,side<0);
+  for(const side of [-1,1]){addLensQuad(a,side*.84,.93,-9.32,.28,.15,-1,MAT.HEAD);if(!lod)addBox(a,side*1.32,2.24,-8.66,.12,.24,.08,MAT.DARK);}
+  addBox(a,0,1.16,-9.32,.65,.20,.022,MAT.DARK);addBox(a,0,.60,-9.33,.24,.07,.02,MAT.PLATE);
+  a.joint=1;
+  const trailer={...cab,L:13.6,HW:1.275,H:4,ring:lod?4:8,pillars:[],panelFrom:0,wheelZ:5.1,rows:[[0,1.2,3.92,.98,1,1,0],[.015,1.2,4,1,1,1,0],[.985,1.2,4,1,1,1,0],[1,1.2,3.92,.98,1,1,0]]};
+  const begin=a.pos.length;addBody(a,trailer);for(let i=begin+2;i<a.pos.length;i+=3)a.pos[i]+=2.2;
+  for(const z of [5.75,6.9,8.05])for(const side of [-1,1])addWheel(a,side*1.12,.505,z,.505,.16,lod?3:12,side<0);
+  addBox(a,0,.86,2.2,1,.14,6.8,MAT.DARK);
+  if(!lod){for(const side of [-1,1])addBox(a,side*1.28,1.32,2.2,.012,.045,6.7,MAT.WHITE);addBox(a,0,2.6,9.015,.012,1.35,.016,MAT.TRIM);for(const side of [-1,1])addBox(a,side*.63,2.6,9.035,.025,1.2,.025,MAT.TRIM);}
+  for(const side of [-1,1])addLensQuad(a,side*.94,.91,9.03,.23,.12,1,MAT.TAIL);
+  addBox(a,0,.65,9.05,.24,.07,.02,MAT.PLATE);
+  return{geometry:a.toGeometry(),spec,lamps:{},tris:a.tris};
 }
 
 // ---------------------------------------------------------------- headlight / tail glow rig
@@ -498,7 +586,7 @@ export function buildLightRig(kind, lamps, spec) {
     push(a, [0, 0], l); push(c, [1, 1], l); push(d, [0, 1], l);
   };
   // ground cones in front of each headlight
-  const coneLen = kind === 'truck' || kind === 'bus' ? 20 : 16;
+  const coneLen = kind === 'box_truck' || kind === 'bus' ? 20 : 16;
   const y = 0.045;
   for (const sx of [1, -1]) {
     const x0 = sx * lamps.hx, z0 = lamps.hz - 0.4;
@@ -528,7 +616,7 @@ export function buildLightRig(kind, lamps, spec) {
 
 /** Flat contact-shadow / ambient-occlusion decal that sits just under a vehicle. */
 export function buildContactShadow(spec) {
-  const hx = spec.HW + 0.80, hz = spec.L * 0.5 + 0.95, y = 0.10;
+  const hx = spec.HW + 0.80, hz = spec.L * 0.5 + 0.95, y = 0.012;
   return quadDecal(hx, hz, y, spec.HW / hx, (spec.L * 0.5) / hz);
 }
 
@@ -588,30 +676,30 @@ class PAcc {
   }
 }
 
-export function buildPedestrianGeometry() {
+export function buildPedestrianGeometry(lod=0) {
   const a = new PAcc();
   const O = [0, 0, 0];
   const hip = [0, 0.86, 0], sho = [0, 1.42, 0];
   // legs (pivot at hip)
   for (const [sx, limb] of [[1, LIMB.LEG_R], [-1, LIMB.LEG_L]]) {
-    tube(a, sx * 0.11, 0.86, 0, sx * 0.10, 0.44, 0, 0.085, 0.062, 6, PMAT.PANTS, limb, hip);
-    tube(a, sx * 0.10, 0.44, 0, sx * 0.10, 0.075, 0, 0.062, 0.052, 6, PMAT.PANTS, limb, hip);
+    tube(a, sx * 0.11, 0.86, 0, sx * 0.10, 0.44, 0, 0.085, 0.062, (lod?2:5), PMAT.PANTS, limb, hip);
+    tube(a, sx * 0.10, 0.44, 0, sx * 0.10, 0.075, 0, 0.062, 0.052, (lod?2:5), PMAT.PANTS, limb, hip);
     // shoe
     a.quad([sx * 0.10 - 0.055, 0.0, -0.13], [0, 1, 0], [sx * 0.10 + 0.055, 0.0, -0.13], [0, 1, 0],
       [sx * 0.10 + 0.055, 0.075, 0.06], [0, 1, 0], [sx * 0.10 - 0.055, 0.075, 0.06], [0, 1, 0], PMAT.SHOE, limb, hip);
   }
   // torso
-  tube(a, 0, 0.84, 0, 0, 1.10, 0, 0.165, 0.185, 8, PMAT.SHIRT, LIMB.BODY, O);
-  tube(a, 0, 1.10, 0, 0, 1.44, 0, 0.185, 0.175, 8, PMAT.SHIRT, LIMB.BODY, O);
+  tube(a, 0, 0.84, 0, 0, 1.10, 0, 0.165, 0.185, (lod?2:6), PMAT.SHIRT, LIMB.BODY, O);
+  tube(a, 0, 1.10, 0, 0, 1.44, 0, 0.185, 0.175, (lod?2:6), PMAT.SHIRT, LIMB.BODY, O);
   // arms (pivot at shoulder)
   for (const [sx, limb] of [[1, LIMB.ARM_R], [-1, LIMB.ARM_L]]) {
-    tube(a, sx * 0.195, 1.40, 0, sx * 0.215, 1.02, 0, 0.058, 0.048, 6, PMAT.SHIRT, limb, sho);
-    tube(a, sx * 0.215, 1.02, 0, sx * 0.225, 0.80, 0, 0.048, 0.045, 6, PMAT.SKIN, limb, sho);
+    tube(a, sx * 0.195, 1.40, 0, sx * 0.215, 1.02, 0, 0.058, 0.048, (lod?2:5), PMAT.SHIRT, limb, sho);
+    tube(a, sx * 0.215, 1.02, 0, sx * 0.225, 0.80, 0, 0.048, 0.045, (lod?2:5), PMAT.SKIN, limb, sho);
   }
   // neck + head
-  tube(a, 0, 1.42, 0, 0, 1.52, 0, 0.055, 0.062, 6, PMAT.SKIN, LIMB.BODY, O);
+  if(!lod)tube(a, 0, 1.42, 0, 0, 1.52, 0, 0.055, 0.062, (lod?2:5), PMAT.SKIN, LIMB.BODY, O);
   const hr = 0.108, hy = 1.62;
-  const rings = 5, segs = 8;
+  const rings = lod?1:4, segs = lod?3:6;
   for (let i = 0; i < rings; i++) {
     const t0 = i / rings, t1 = (i + 1) / rings;
     const th0 = t0 * Math.PI, th1 = t1 * Math.PI;

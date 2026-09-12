@@ -88,3 +88,17 @@ Not applied:
 - `world.terrain.writeHeights` / `flattenStrip`: this is a **terrain-module** API, not core. Terrain should expose it
   (documented as a request in ARCHITECTURE §3 note); roads may keep writing `heights` + a zero-strength `modify()`
   until then, since that contract now holds by documentation.
+
+
+## Integrator decision (wave 2 final, 2026-09-06)
+
+Retained screenshot timeout/headless sync/selective imports, physical-pixel composer size contract and isolated capture HMR. No global HMR shutdown. Verified the existing composer remains installed and resizes with the renderer in the final integration probe. Deferred world-only infoview desaturation: a correct consumer must exclude sky and DOM and preserve overlays; a grey fullscreen veil is not a valid workaround. Its absence is a cross-cutting diagnostic, not a fabricated infoview pass.
+
+
+## Integrator decision (wave 2b final, 2026-09-08)
+
+No new full-screen veil or private-depth feedback. Deferred world-only desaturation until effects can exclude sky/UI and preserve data overlays, and deferred safe opaque depth until pass ordering and camera/viewport semantics are implemented. Existing composer and physical-pixel resize contracts remain.
+
+## Integrator decision (wave 3 final, 2026-09-08)
+
+Retained existing composer/resize/HMR-isolated capture behavior and shared environment grading input. No second composer, duplicate grading or global exposure write added. Deferred broad visual calibration and depth contract until dedicated composed evidence; all final screenshots use actual production source. See `docs/critic/integration_w3.md` for final checks and open issues. The user requested a checkpoint and pause; no new round is authorized.

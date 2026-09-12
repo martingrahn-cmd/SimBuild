@@ -1,0 +1,2050 @@
+{
+  "round": "r9o",
+  "module": "democity",
+  "decision": "ACCEPT",
+  "decisionScope": "Accept qualified rejection record and diagnosis; reject1,0:v product adoption",
+  "candidateDecision": "REJECT",
+  "score": 6.0,
+  "wholeGameScore": 6.0,
+  "pass": false,
+  "threshold": 8.5,
+  "productChange": false,
+  "verification": {
+    "runs": [
+      {
+        "seed": 1337,
+        "variant": "baseline",
+        "repeat": false,
+        "counts": {
+          "roadNodes": 468,
+          "roadEdges": 604,
+          "zonedCells": 9964,
+          "claimedCells": 4882,
+          "lots": 612,
+          "buildings": 612,
+          "services": 31
+        },
+        "components": 11,
+        "ownerPhases": {
+          "before": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          },
+          "after": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          }
+        },
+        "recordedPass": true
+      },
+      {
+        "seed": 1337,
+        "variant": "candidate",
+        "repeat": false,
+        "counts": {
+          "roadNodes": 470,
+          "roadEdges": 607,
+          "zonedCells": 9964,
+          "claimedCells": 4878,
+          "lots": 612,
+          "buildings": 612,
+          "services": 31
+        },
+        "components": 11,
+        "ownerPhases": {
+          "before": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          },
+          "after": {
+            "orphanBuildings": [
+              {
+                "id": 616,
+                "lotId": 102,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 758,
+                "buildingId": null,
+                "stableKey": "1074:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "undo": {
+            "orphanBuildings": [
+              {
+                "id": 616,
+                "lotId": 102,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 1324,
+                "buildingId": null,
+                "stableKey": "1080:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "redo": {
+            "orphanBuildings": [
+              {
+                "id": 616,
+                "lotId": 102,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 1937,
+                "buildingId": null,
+                "stableKey": "1083:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          }
+        },
+        "recordedPass": false
+      },
+      {
+        "seed": 1337,
+        "variant": "candidate",
+        "repeat": true,
+        "counts": {
+          "roadNodes": 470,
+          "roadEdges": 607,
+          "zonedCells": 9964,
+          "claimedCells": 4878,
+          "lots": 612,
+          "buildings": 612,
+          "services": 31
+        },
+        "components": 11,
+        "ownerPhases": {
+          "before": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          },
+          "after": {
+            "orphanBuildings": [
+              {
+                "id": 616,
+                "lotId": 102,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 758,
+                "buildingId": null,
+                "stableKey": "1074:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "undo": {
+            "orphanBuildings": [
+              {
+                "id": 616,
+                "lotId": 102,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 1324,
+                "buildingId": null,
+                "stableKey": "1080:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "redo": {
+            "orphanBuildings": [
+              {
+                "id": 616,
+                "lotId": 102,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 1937,
+                "buildingId": null,
+                "stableKey": "1083:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          }
+        },
+        "recordedPass": false
+      },
+      {
+        "seed": 7,
+        "variant": "baseline",
+        "repeat": false,
+        "counts": {
+          "roadNodes": 493,
+          "roadEdges": 646,
+          "zonedCells": 10113,
+          "claimedCells": 5176,
+          "lots": 648,
+          "buildings": 648,
+          "services": 31
+        },
+        "components": 12,
+        "ownerPhases": {
+          "before": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          },
+          "after": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          }
+        },
+        "recordedPass": true
+      },
+      {
+        "seed": 7,
+        "variant": "candidate",
+        "repeat": false,
+        "counts": {
+          "roadNodes": 495,
+          "roadEdges": 649,
+          "zonedCells": 10113,
+          "claimedCells": 5188,
+          "lots": 649,
+          "buildings": 648,
+          "services": 31
+        },
+        "components": 12,
+        "ownerPhases": {
+          "before": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          },
+          "after": {
+            "orphanBuildings": [
+              {
+                "id": 652,
+                "lotId": 109,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 809,
+                "buildingId": null,
+                "stableKey": "1141:left:134,130",
+                "type": "office",
+                "density": "high"
+              },
+              {
+                "id": 1095,
+                "buildingId": null,
+                "stableKey": "624:right:141,125",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "undo": {
+            "orphanBuildings": [
+              {
+                "id": 652,
+                "lotId": 109,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 1348,
+                "buildingId": null,
+                "stableKey": "1147:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "redo": {
+            "orphanBuildings": [
+              {
+                "id": 652,
+                "lotId": 109,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 2117,
+                "buildingId": null,
+                "stableKey": "1150:left:134,130",
+                "type": "office",
+                "density": "high"
+              },
+              {
+                "id": 2392,
+                "buildingId": null,
+                "stableKey": "624:right:141,125",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          }
+        },
+        "recordedPass": false
+      },
+      {
+        "seed": 7,
+        "variant": "candidate",
+        "repeat": true,
+        "counts": {
+          "roadNodes": 495,
+          "roadEdges": 649,
+          "zonedCells": 10113,
+          "claimedCells": 5188,
+          "lots": 649,
+          "buildings": 648,
+          "services": 31
+        },
+        "components": 12,
+        "ownerPhases": {
+          "before": {
+            "orphanBuildings": [],
+            "unbuiltLots": [],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": true
+          },
+          "after": {
+            "orphanBuildings": [
+              {
+                "id": 652,
+                "lotId": 109,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 809,
+                "buildingId": null,
+                "stableKey": "1141:left:134,130",
+                "type": "office",
+                "density": "high"
+              },
+              {
+                "id": 1095,
+                "buildingId": null,
+                "stableKey": "624:right:141,125",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "undo": {
+            "orphanBuildings": [
+              {
+                "id": 652,
+                "lotId": 109,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 1348,
+                "buildingId": null,
+                "stableKey": "1147:left:134,130",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          },
+          "redo": {
+            "orphanBuildings": [
+              {
+                "id": 652,
+                "lotId": 109,
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "unbuiltLots": [
+              {
+                "id": 2117,
+                "buildingId": null,
+                "stableKey": "1150:left:134,130",
+                "type": "office",
+                "density": "high"
+              },
+              {
+                "id": 2392,
+                "buildingId": null,
+                "stableKey": "624:right:141,125",
+                "type": "office",
+                "density": "high"
+              }
+            ],
+            "mismatchedLinks": [],
+            "inverseLiveMismatch": [],
+            "bijective": false
+          }
+        },
+        "recordedPass": false
+      }
+    ],
+    "comparisons": [
+      {
+        "seed": 1337,
+        "countDelta": {
+          "roadNodes": 2,
+          "roadEdges": 3,
+          "zonedCells": 0,
+          "claimedCells": -4,
+          "lots": 0,
+          "buildings": 0,
+          "services": 0
+        },
+        "moneyDelta": -96,
+        "retainedLots": 611,
+        "retainedSameLotId": 611,
+        "retainedSameBuildingId": 611,
+        "removedEdgeIds": [
+          613,
+          656
+        ],
+        "addedEdgeIds": [
+          1074,
+          1075,
+          1077,
+          1078,
+          1079
+        ],
+        "unchangedExistingEdgeIdentity": true,
+        "candidateRepeatExact": true,
+        "undoExact": false,
+        "undoSemantic": false,
+        "redoExact": false,
+        "redoSemantic": false,
+        "gainedKeys": [
+          "1074:left:134,130"
+        ],
+        "lostKeys": [
+          "613:left:134,130"
+        ],
+        "retainedPlanarGeometryChanges": 0,
+        "buildingsSerializeSameBeforeAfter": true,
+        "beforeVersions": {
+          "roads": 604,
+          "zones": 1,
+          "buildings": 1343,
+          "terrain": 1
+        },
+        "afterVersions": {
+          "roads": 611,
+          "zones": 1,
+          "buildings": 1955,
+          "terrain": 2
+        }
+      },
+      {
+        "seed": 7,
+        "countDelta": {
+          "roadNodes": 2,
+          "roadEdges": 3,
+          "zonedCells": 0,
+          "claimedCells": 12,
+          "lots": 1,
+          "buildings": 0,
+          "services": 0
+        },
+        "moneyDelta": -96,
+        "retainedLots": 647,
+        "retainedSameLotId": 647,
+        "retainedSameBuildingId": 647,
+        "removedEdgeIds": [
+          661,
+          707
+        ],
+        "addedEdgeIds": [
+          1141,
+          1142,
+          1144,
+          1145,
+          1146
+        ],
+        "unchangedExistingEdgeIdentity": true,
+        "candidateRepeatExact": true,
+        "undoExact": false,
+        "undoSemantic": false,
+        "redoExact": false,
+        "redoSemantic": false,
+        "gainedKeys": [
+          "1141:left:134,130",
+          "624:right:141,125"
+        ],
+        "lostKeys": [
+          "661:left:134,130"
+        ],
+        "retainedPlanarGeometryChanges": 0,
+        "buildingsSerializeSameBeforeAfter": true,
+        "beforeVersions": {
+          "roads": 646,
+          "zones": 1,
+          "buildings": 1447,
+          "terrain": 1
+        },
+        "afterVersions": {
+          "roads": 653,
+          "zones": 1,
+          "buildings": 2095,
+          "terrain": 2
+        }
+      }
+    ],
+    "restore": [
+      {
+        "seed": 1337,
+        "phases": [
+          "before",
+          "undo"
+        ],
+        "terrainHashEqual": true,
+        "groundAllEqual": true,
+        "slopeAllEqual": true,
+        "roadMaskAllEqual": true,
+        "surfaceMismatchSamples": [
+          {
+            "z": 44,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.790805816531858,
+            "afterSurface": 17.483352660996513
+          },
+          {
+            "z": 48,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.580804824789734,
+            "afterSurface": 17.273353576603018
+          },
+          {
+            "z": 52,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.411720275878906,
+            "afterSurface": 17.02794647216797
+          },
+          {
+            "z": 112,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.68988609313965,
+            "afterSurface": 19.116413117327
+          },
+          {
+            "z": 116,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.733143890255985,
+            "afterSurface": 19.187822665444987
+          },
+          {
+            "z": 120,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.073536493741713,
+            "afterSurface": 18.60569048060112
+          }
+        ],
+        "lotPlanarGeometryEqual": true,
+        "servicesEqual": true,
+        "economyEqual": true,
+        "transitLines": [
+          {
+            "id": 1,
+            "changes": {
+              "route": [
+                [
+                  605,
+                  607,
+                  609,
+                  611,
+                  614,
+                  656,
+                  658,
+                  660,
+                  620,
+                  619,
+                  622,
+                  623,
+                  628,
+                  671,
+                  1023,
+                  1022,
+                  1024,
+                  845,
+                  906,
+                  954,
+                  953,
+                  951,
+                  950,
+                  948,
+                  947,
+                  945,
+                  944,
+                  942,
+                  941,
+                  886,
+                  886,
+                  939,
+                  938,
+                  935,
+                  934,
+                  932,
+                  931,
+                  874,
+                  869,
+                  869,
+                  869,
+                  868,
+                  865,
+                  864,
+                  805,
+                  756,
+                  725,
+                  725,
+                  754,
+                  755,
+                  729,
+                  692,
+                  649,
+                  606
+                ],
+                [
+                  605,
+                  607,
+                  609,
+                  611,
+                  614,
+                  1081,
+                  658,
+                  660,
+                  620,
+                  619,
+                  622,
+                  623,
+                  628,
+                  671,
+                  1023,
+                  1022,
+                  1024,
+                  845,
+                  906,
+                  954,
+                  953,
+                  951,
+                  950,
+                  948,
+                  947,
+                  945,
+                  944,
+                  942,
+                  941,
+                  886,
+                  886,
+                  939,
+                  938,
+                  935,
+                  934,
+                  932,
+                  931,
+                  874,
+                  869,
+                  869,
+                  869,
+                  868,
+                  865,
+                  864,
+                  805,
+                  756,
+                  725,
+                  725,
+                  754,
+                  755,
+                  729,
+                  692,
+                  649,
+                  606
+                ]
+              ],
+              "headway": [
+                97.93564219854346,
+                97.9651673022697
+              ]
+            }
+          }
+        ],
+        "transitStops": [
+          {
+            "id": 1,
+            "changes": {
+              "y": [
+                15.903076711588144,
+                15.490357911386486
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "changes": {
+              "y": [
+                16.145432814161303,
+                15.734036959053663
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "changes": {
+              "y": [
+                19.067597848103045,
+                18.824417588614693
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "changes": {
+              "y": [
+                12.980387853099185,
+                12.738237571716311
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "changes": {
+              "y": [
+                15.461942156469412,
+                15.354084065296563
+              ]
+            }
+          },
+          {
+            "id": 6,
+            "changes": {
+              "y": [
+                15.640451143452617,
+                15.249896942114857
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "changes": {
+              "y": [
+                15.872939442641773,
+                15.619513073895247
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "changes": {
+              "y": [
+                14.260067660797313,
+                13.958793453625347
+              ]
+            }
+          }
+        ],
+        "roadDescriptorMismatchCount": 4,
+        "surfaceMaxAbsDelta": 0.5734729758126491,
+        "transitDetails": [
+          {
+            "fields": [
+              "route",
+              "headway"
+            ],
+            "headway": [
+              97.93564219854346,
+              97.9651673022697
+            ]
+          }
+        ],
+        "transitStopChangedFields": [
+          "y"
+        ]
+      },
+      {
+        "seed": 1337,
+        "phases": [
+          "after",
+          "redo"
+        ],
+        "terrainHashEqual": true,
+        "groundAllEqual": true,
+        "slopeAllEqual": true,
+        "roadMaskAllEqual": true,
+        "surfaceMismatchSamples": [
+          {
+            "z": 52,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.16403369654331,
+            "afterSurface": 16.926035950600152
+          },
+          {
+            "z": 56,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.21198558807373,
+            "afterSurface": 16.945347785949707
+          },
+          {
+            "z": 60,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.332141876220703,
+            "afterSurface": 17.004602432250977
+          },
+          {
+            "z": 64,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.526315689086914,
+            "afterSurface": 17.122943878173828
+          },
+          {
+            "z": 68,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.79035758972168,
+            "afterSurface": 17.31538677215576
+          },
+          {
+            "z": 72,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 18.106860160827637,
+            "afterSurface": 17.58377170562744
+          },
+          {
+            "z": 76,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 18.458843231201172,
+            "afterSurface": 17.928028106689453
+          },
+          {
+            "z": 80,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 18.795052528381348,
+            "afterSurface": 18.299893379211426
+          },
+          {
+            "z": 84,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.037083625793457,
+            "afterSurface": 18.6014461517334
+          },
+          {
+            "z": 88,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.16877269744873,
+            "afterSurface": 18.788400650024414
+          },
+          {
+            "z": 92,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.235204696655273,
+            "afterSurface": 18.891018867492676
+          },
+          {
+            "z": 96,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.268129348754883,
+            "afterSurface": 18.945240020751953
+          },
+          {
+            "z": 100,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.27613353729248,
+            "afterSurface": 18.96766471862793
+          },
+          {
+            "z": 104,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.27161979675293,
+            "afterSurface": 18.97361660003662
+          },
+          {
+            "z": 108,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.26671218875068,
+            "afterSurface": 18.97401905060182
+          },
+          {
+            "z": 112,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.26558494567871,
+            "afterSurface": 18.973880767822266
+          },
+          {
+            "z": 116,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.321002427516127,
+            "afterSurface": 19.048682888333047
+          },
+          {
+            "z": 120,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.161521055423314,
+            "afterSurface": 18.904899122034344
+          }
+        ],
+        "lotPlanarGeometryEqual": true,
+        "servicesEqual": true,
+        "economyEqual": true,
+        "transitLines": [
+          {
+            "id": 1,
+            "changes": {
+              "route": [
+                [
+                  605,
+                  607,
+                  609,
+                  611,
+                  614,
+                  1077,
+                  1078,
+                  658,
+                  660,
+                  620,
+                  619,
+                  622,
+                  623,
+                  628,
+                  671,
+                  1023,
+                  1022,
+                  1024,
+                  845,
+                  906,
+                  954,
+                  953,
+                  951,
+                  950,
+                  948,
+                  947,
+                  945,
+                  944,
+                  942,
+                  941,
+                  886,
+                  886,
+                  939,
+                  938,
+                  935,
+                  934,
+                  932,
+                  931,
+                  874,
+                  869,
+                  869,
+                  869,
+                  868,
+                  865,
+                  864,
+                  805,
+                  756,
+                  725,
+                  725,
+                  754,
+                  755,
+                  729,
+                  692,
+                  649,
+                  606
+                ],
+                [
+                  605,
+                  607,
+                  609,
+                  611,
+                  614,
+                  1086,
+                  1087,
+                  658,
+                  660,
+                  620,
+                  619,
+                  622,
+                  623,
+                  628,
+                  671,
+                  1023,
+                  1022,
+                  1024,
+                  845,
+                  906,
+                  954,
+                  953,
+                  951,
+                  950,
+                  948,
+                  947,
+                  945,
+                  944,
+                  942,
+                  941,
+                  886,
+                  886,
+                  939,
+                  938,
+                  935,
+                  934,
+                  932,
+                  931,
+                  874,
+                  869,
+                  869,
+                  869,
+                  868,
+                  865,
+                  864,
+                  805,
+                  756,
+                  725,
+                  725,
+                  754,
+                  755,
+                  729,
+                  692,
+                  649,
+                  606
+                ]
+              ],
+              "headway": [
+                98.01061695200494,
+                98.04024742053936
+              ]
+            }
+          }
+        ],
+        "transitStops": [
+          {
+            "id": 1,
+            "changes": {
+              "y": [
+                15.903076711588144,
+                15.490357911386486
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "changes": {
+              "y": [
+                16.032945931874256,
+                15.627576401008184
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "changes": {
+              "y": [
+                19.067597848103045,
+                18.824417588614693
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "changes": {
+              "y": [
+                12.980387853099185,
+                12.738237571716311
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "changes": {
+              "y": [
+                15.461942156469412,
+                15.354084065296563
+              ]
+            }
+          },
+          {
+            "id": 6,
+            "changes": {
+              "y": [
+                15.640451143452617,
+                15.249896942114857
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "changes": {
+              "y": [
+                15.872939442641773,
+                15.619513073895247
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "changes": {
+              "y": [
+                14.260067660797313,
+                13.958793453625347
+              ]
+            }
+          }
+        ],
+        "roadDescriptorMismatchCount": 4,
+        "surfaceMaxAbsDelta": 0.5308151245117188,
+        "transitDetails": [
+          {
+            "fields": [
+              "route",
+              "headway"
+            ],
+            "headway": [
+              98.01061695200494,
+              98.04024742053936
+            ]
+          }
+        ],
+        "transitStopChangedFields": [
+          "y"
+        ]
+      },
+      {
+        "seed": 7,
+        "phases": [
+          "before",
+          "undo"
+        ],
+        "terrainHashEqual": true,
+        "groundAllEqual": true,
+        "slopeAllEqual": true,
+        "roadMaskAllEqual": true,
+        "surfaceMismatchSamples": [
+          {
+            "z": 44,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.41654205296684,
+            "afterSurface": 17.207464217856092
+          },
+          {
+            "z": 48,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.206541061224712,
+            "afterSurface": 16.997463226113965
+          },
+          {
+            "z": 52,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 16.44780921936035,
+            "afterSurface": 16.119600296020508
+          },
+          {
+            "z": 112,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.714407923442806,
+            "afterSurface": 19.53339052532261
+          },
+          {
+            "z": 116,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 20.21775685353347,
+            "afterSurface": 20.071414463378325
+          },
+          {
+            "z": 120,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 18.930398847231963,
+            "afterSurface": 18.597670651771345
+          }
+        ],
+        "lotPlanarGeometryEqual": true,
+        "servicesEqual": true,
+        "economyEqual": true,
+        "transitLines": [
+          {
+            "id": 1,
+            "changes": {
+              "route": [
+                [
+                  653,
+                  655,
+                  657,
+                  659,
+                  662,
+                  662,
+                  661,
+                  663,
+                  665,
+                  667,
+                  670,
+                  670,
+                  672,
+                  720,
+                  1089,
+                  1088,
+                  1090,
+                  900,
+                  959,
+                  959,
+                  956,
+                  955,
+                  952,
+                  951,
+                  948,
+                  947,
+                  944,
+                  943,
+                  940,
+                  940,
+                  940,
+                  939,
+                  936,
+                  935,
+                  932,
+                  931,
+                  928,
+                  928,
+                  928,
+                  927,
+                  924,
+                  923,
+                  864,
+                  818,
+                  783,
+                  781,
+                  782,
+                  745,
+                  700,
+                  654
+                ],
+                [
+                  653,
+                  655,
+                  657,
+                  659,
+                  662,
+                  662,
+                  1147,
+                  663,
+                  665,
+                  667,
+                  670,
+                  670,
+                  672,
+                  720,
+                  1089,
+                  1088,
+                  1090,
+                  900,
+                  959,
+                  959,
+                  956,
+                  955,
+                  952,
+                  951,
+                  948,
+                  947,
+                  944,
+                  943,
+                  940,
+                  940,
+                  940,
+                  939,
+                  936,
+                  935,
+                  932,
+                  931,
+                  928,
+                  928,
+                  928,
+                  927,
+                  924,
+                  923,
+                  864,
+                  818,
+                  783,
+                  781,
+                  782,
+                  745,
+                  700,
+                  654
+                ]
+              ],
+              "headway": [
+                93.14390276369218,
+                93.14406561616515
+              ]
+            }
+          }
+        ],
+        "transitStops": [
+          {
+            "id": 1,
+            "changes": {
+              "y": [
+                14.066884008651273,
+                13.583010576110008
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "changes": {
+              "y": [
+                13.528348284512127,
+                13.077652383819775
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "changes": {
+              "y": [
+                18.374523477806466,
+                17.958974629432046
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "changes": {
+              "y": [
+                13.625321714013024,
+                13.378839852324633
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "changes": {
+              "y": [
+                16.95112212519862,
+                16.664657751117204
+              ]
+            }
+          },
+          {
+            "id": 6,
+            "changes": {
+              "y": [
+                14.052393263252648,
+                13.860196991311506
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "changes": {
+              "y": [
+                14.731229721449596,
+                14.51700235746588
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "changes": {
+              "y": [
+                19.695047526828372,
+                19.412787329843216
+              ]
+            }
+          }
+        ],
+        "roadDescriptorMismatchCount": 7,
+        "surfaceMaxAbsDelta": 0.3327281954606178,
+        "transitDetails": [
+          {
+            "fields": [
+              "route",
+              "headway"
+            ],
+            "headway": [
+              93.14390276369218,
+              93.14406561616515
+            ]
+          }
+        ],
+        "transitStopChangedFields": [
+          "y"
+        ]
+      },
+      {
+        "seed": 7,
+        "phases": [
+          "after",
+          "redo"
+        ],
+        "terrainHashEqual": true,
+        "groundAllEqual": true,
+        "slopeAllEqual": true,
+        "roadMaskAllEqual": true,
+        "surfaceMismatchSamples": [
+          {
+            "z": 52,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 16.31136350898839,
+            "afterSurface": 16.12095956808391
+          },
+          {
+            "z": 56,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 16.403419494628906,
+            "afterSurface": 16.155832290649414
+          },
+          {
+            "z": 60,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 16.639854431152344,
+            "afterSurface": 16.262709617614746
+          },
+          {
+            "z": 64,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.026740074157715,
+            "afterSurface": 16.473916053771973
+          },
+          {
+            "z": 68,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 17.549349784851074,
+            "afterSurface": 16.811007499694824
+          },
+          {
+            "z": 72,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 18.15887451171875,
+            "afterSurface": 17.26803493499756
+          },
+          {
+            "z": 76,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 18.782865524291992,
+            "afterSurface": 17.823984146118164
+          },
+          {
+            "z": 80,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.295645713806152,
+            "afterSurface": 18.384541511535645
+          },
+          {
+            "z": 84,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.56739330291748,
+            "afterSurface": 18.79936408996582
+          },
+          {
+            "z": 88,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.609902381896973,
+            "afterSurface": 19.0197811126709
+          },
+          {
+            "z": 92,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.554871559143066,
+            "afterSurface": 19.11639976501465
+          },
+          {
+            "z": 96,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.490267753601074,
+            "afterSurface": 19.15739631652832
+          },
+          {
+            "z": 100,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.434090614318848,
+            "afterSurface": 19.169093132019043
+          },
+          {
+            "z": 104,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.39632797241211,
+            "afterSurface": 19.170042991638184
+          },
+          {
+            "z": 108,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.3806457520146,
+            "afterSurface": 19.169455528261942
+          },
+          {
+            "z": 112,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.378334045410156,
+            "afterSurface": 19.169355392456055
+          },
+          {
+            "z": 116,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.741061836170466,
+            "afterSurface": 19.512619031317023
+          },
+          {
+            "z": 120,
+            "groundEqual": true,
+            "slopeEqual": true,
+            "roadEqual": true,
+            "surfaceEqual": false,
+            "beforeSurface": 19.24091005567687,
+            "afterSurface": 19.077369405927875
+          }
+        ],
+        "lotPlanarGeometryEqual": true,
+        "servicesEqual": true,
+        "economyEqual": true,
+        "transitLines": [
+          {
+            "id": 1,
+            "changes": {
+              "route": [
+                [
+                  653,
+                  655,
+                  657,
+                  659,
+                  662,
+                  1144,
+                  1145,
+                  664,
+                  663,
+                  665,
+                  667,
+                  670,
+                  670,
+                  672,
+                  720,
+                  1089,
+                  1088,
+                  1090,
+                  900,
+                  959,
+                  959,
+                  956,
+                  955,
+                  952,
+                  951,
+                  948,
+                  947,
+                  944,
+                  943,
+                  940,
+                  940,
+                  940,
+                  939,
+                  936,
+                  935,
+                  932,
+                  931,
+                  928,
+                  928,
+                  928,
+                  927,
+                  924,
+                  923,
+                  864,
+                  818,
+                  783,
+                  781,
+                  782,
+                  745,
+                  700,
+                  654
+                ],
+                [
+                  653,
+                  655,
+                  657,
+                  659,
+                  662,
+                  1153,
+                  1154,
+                  664,
+                  663,
+                  665,
+                  667,
+                  670,
+                  670,
+                  672,
+                  720,
+                  1089,
+                  1088,
+                  1090,
+                  900,
+                  959,
+                  959,
+                  956,
+                  955,
+                  952,
+                  951,
+                  948,
+                  947,
+                  944,
+                  943,
+                  940,
+                  940,
+                  940,
+                  939,
+                  936,
+                  935,
+                  932,
+                  931,
+                  928,
+                  928,
+                  928,
+                  927,
+                  924,
+                  923,
+                  864,
+                  818,
+                  783,
+                  781,
+                  782,
+                  745,
+                  700,
+                  654
+                ]
+              ],
+              "headway": [
+                93.74194216923249,
+                93.73890266417813
+              ]
+            }
+          }
+        ],
+        "transitStops": [
+          {
+            "id": 1,
+            "changes": {
+              "y": [
+                14.066884008651273,
+                13.583010576110008
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "changes": {
+              "y": [
+                13.433922829182533,
+                13.022217500709038
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "changes": {
+              "y": [
+                18.374523477806466,
+                17.958974629432046
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "changes": {
+              "y": [
+                13.625321714013024,
+                13.378839852324633
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "changes": {
+              "y": [
+                16.95112212519862,
+                16.664657751117204
+              ]
+            }
+          },
+          {
+            "id": 6,
+            "changes": {
+              "y": [
+                14.052393263252648,
+                13.860196991311506
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "changes": {
+              "y": [
+                14.731229721449596,
+                14.51700235746588
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "changes": {
+              "y": [
+                19.695047526828372,
+                19.412787329843216
+              ]
+            }
+          }
+        ],
+        "roadDescriptorMismatchCount": 7,
+        "surfaceMaxAbsDelta": 0.9588813781738281,
+        "transitDetails": [
+          {
+            "fields": [
+              "route",
+              "headway"
+            ],
+            "headway": [
+              93.74194216923249,
+              93.73890266417813
+            ]
+          }
+        ],
+        "transitStopChangedFields": [
+          "y"
+        ]
+      }
+    ],
+    "hashes": {
+      "shots/democity/r9o-infill-owner/summary.json": "61b173312b798fae89fc462df61dce158bf62445e9af491176b582916250494d",
+      "shots/democity/r9o-infill-owner/retained-analysis.json": "2b1b84c78ca0fc86b4ebc496fcbd1c4682d630423667816ea0eef9747bbdb8ac",
+      "tools/r9o-infill-owner-stage.mjs": "b952ec2b609faa4d46435df872ce20ac85d6a62a34459897bdd0da478036c485",
+      "tools/r9o-retained-analysis.mjs": "94fb83cf812578989d3d1db98530f5ea329c40dbeab28f5f61f6638f3128334b",
+      "src/modules/democity/plan.js": "c439a6e88f87f40aac5182698d4406540e21f04ce659975b2b0e8cb4e4d26bd6",
+      "src/modules/zoning/index.js": "4d0d515eb4d89de5454563bb725fd9935d6ec27093084b58b99570645abfbdc5",
+      "src/modules/zoning/grid.js": "030ee74038052ff28f7b3c68378d5954ed01f373a8318879a583e6da04c83ecb",
+      "src/modules/buildings/index.js": "1dd3d9eeb192ad628b8678da4bce2b89207af2d2d699113a498cba3325820dd7",
+      "src/modules/tools/tools.js": "c4af6548f03fd9167955e44fd2cfd9554bde3b7abc3a5bf38e8f3f7b57a8ac47",
+      "src/modules/roads/index.js": "8a67e5fd4d597eb3d802afd31ccb0691f2f89c08edc64ca497eda8e932209061",
+      "src/modules/transit/index.js": "736bc760d9863bbdf13ceb5566b22d19f4ec7e38b7450ee04cfb10c5091ea4b0"
+    }
+  },
+  "imageMetrics": [
+    {
+      "seed": 1337,
+      "view": "aerial",
+      "normalizedRgbMae": 0.026739849990922295,
+      "changedPixels": 489713,
+      "strongPixelsGE8": 255528
+    },
+    {
+      "seed": 1337,
+      "view": "directed",
+      "normalizedRgbMae": 0.032579168305696765,
+      "changedPixels": 527514,
+      "strongPixelsGE8": 303695
+    },
+    {
+      "seed": 7,
+      "view": "aerial",
+      "normalizedRgbMae": 0.028427822788065844,
+      "changedPixels": 502940,
+      "strongPixelsGE8": 262293
+    },
+    {
+      "seed": 7,
+      "view": "directed",
+      "normalizedRgbMae": 0.033828193713184865,
+      "changedPixels": 545659,
+      "strongPixelsGE8": 298105
+    }
+  ],
+  "allOriginalsAndDifferencesIndividuallyInspected": true,
+  "imageRegister": [
+    "shots/democity/r9o-infill-owner/baseline_seed1337_aerial.png",
+    "shots/democity/r9o-infill-owner/baseline_seed1337_directed.png",
+    "shots/democity/r9o-infill-owner/candidate_seed1337_aerial.png",
+    "shots/democity/r9o-infill-owner/candidate_seed1337_directed.png",
+    "shots/democity/r9o-infill-owner/seed1337_aerial_difference_x4.png",
+    "shots/democity/r9o-infill-owner/seed1337_directed_difference_x4.png",
+    "shots/democity/r9o-infill-owner/baseline_seed7_aerial.png",
+    "shots/democity/r9o-infill-owner/baseline_seed7_directed.png",
+    "shots/democity/r9o-infill-owner/candidate_seed7_aerial.png",
+    "shots/democity/r9o-infill-owner/candidate_seed7_directed.png",
+    "shots/democity/r9o-infill-owner/seed7_aerial_difference_x4.png",
+    "shots/democity/r9o-infill-owner/seed7_directed_difference_x4.png"
+  ],
+  "allImageMetricsAndDifferencePixelsRecomputed": true,
+  "allRetainedTransitEdgeReferencesLive": true,
+  "corrections": [
+    "Builder revised full-terrain/byte-exact claim to digest and sampled ground restoration; latest offline analysis separates ground from road surfaces.",
+    "Builder revised Transit restoration claim: retained line length unchanged; route IDs/headway and all8 stop heights differ.",
+    "Observed Buildings listener only invokes staging fallback and ignores removed-lot journal. Emission alone cannot repair orphan removal; both owner responsibilities need bounded fixes.",
+    "No assertion that absent new buildings in a paused normal game would itself be a bug. Here the independently proved defect is an existing building referencing a removed lot."
+  ],
+  "findings": [
+    {
+      "rank": 1,
+      "severity": "high",
+      "owners": [
+        "zoning",
+        "buildings"
+      ],
+      "finding": "Each seed retains one orphan building after commit, undo and redo; road-driven zoning rebuild does not publish its lot journal, and Buildings does not consume removals. Fix lifecycle before further infill."
+    },
+    {
+      "rank": 2,
+      "severity": "high",
+      "owners": [
+        "tools",
+        "roads",
+        "terrain",
+        "transit"
+      ],
+      "finding": "Undo/redo restores road counts and sampled ground digest, but6/21 and18/21 directed surface heights differ; unrelated edge elevation flags and stop heights/headway differ. Diagnose derived-state restoration separately."
+    },
+    {
+      "rank": 3,
+      "owners": [
+        "democity",
+        "roads",
+        "zoning"
+      ],
+      "finding": "No new building stock; lots net0/+1 with1/1 and2/1 gained/lost. Keep candidate rejected and rank1 open; no quality-band gain."
+    }
+  ],
+  "limitations": [
+    "Fresh unchanged authored worlds with disposable public-API edits; no installed infill source or saved-user-city mutation. Normal-game construction timing is not tested by paused Democity snapshots.",
+    "Terrain serialization is cloned but not returned: only a32-bit FNV digest and21 ground/road samples are saved. Matching digest and samples are not exact full-terrain byte proof.",
+    "CandidateRepeatExact compares the declared serialized projection, excluding versions/images; it is not visual, full-runtime, save-load or undo/redo determinism. Repeated post-commit corruption is still corruption.",
+    "Lot geometry restore compares planar descriptors/cells, excluding ID/edge ownership/y/t/building links; it does not establish full parcel or building identity restoration.",
+    "Original oneBuildingPerLot check only checks live-lot forward links. Revised offline audit catches missing-live-lot buildings but is not a universal inverse-injectivity test; critic additionally checked live inverse links and found no further mismatch in retained snapshots.",
+    "Road descriptor comparison ignores IDs and sorts endpoints, which is not a complete directional one-way/profile equivalence oracle. Actual retained failures are independently confirmed by elevation flags and road-surface heights.",
+    "Transit route IDs change after road regeneration; this alone is not broken transit. Every retained stop/route edge reference is live, line length unchanged across restoration. Height/headway differences and surface drift establish failure of exact derived restoration, not proven route outage.",
+    "Only selected economy fields are compared (money,population,jobs,net,demand,loans,taxRate); Services full serialized projection matches. No all-economy or Simulation full-state restore claim follows.",
+    "Capture settling is fixed90/120/30 rendered frames, not explicit camera-flight/owner-idle assertions. Screenshots have no retained actual camera matrices or per-image performance sidecars.",
+    "Candidate road panel obscures much of the scene, seed7 tower occludes part of the connector, and traffic/foliage/environment/UI vary. Whole-frame RGB differences are not road-only metrics or a visual-quality score.",
+    "No complete matrix, night/weather, forced-GC memory, performance, native pointer/keyboard, save-load or general-world correctness gate passes from this rejected round."
+  ],
+  "nextPriority": "Publish real road/terrain-driven zoning added/removed journal once per settled rebuild and consume removals only for buildings whose zoning-owned lot disappeared. Preserve Simulation-paced construction in ordinary games and existing Democity/no-Simulation fallback scope. Reproduce current transaction with bidirectional ownership integrity; then separately resolve physical road/Transit restore. Do not re-author layout or inflate score.",
+  "inspectionRegister": [
+    "docs/builds/democity_r9o_infill_owner_rejected.md (latest revised)",
+    "tools/r9o-infill-owner-stage.mjs",
+    "tools/r9o-retained-analysis.mjs (initial and corrected ground/surface split)",
+    "shots/democity/r9o-infill-owner/summary.json (complete45479505bytes)",
+    "shots/democity/r9o-infill-owner/retained-analysis.json (complete corrected version)",
+    "Relevant current zoning index/grid, buildings index, Tools road commit/undo, Roads network/rebuild and Transit refresh contracts"
+  ]
+}

@@ -26,7 +26,7 @@ export function createBuildingMaterial(tex, uniforms) {
     roughness: 1,
     metalness: 1,
     vertexColors: true,
-    envMapIntensity: 1.0,
+    envMapIntensity: 0.65,
     dithering: true,
   });
   // item 15: facade normals stay shallow (≤ 0.6) and fade with distance so mid-range facades
@@ -64,7 +64,7 @@ uniform sampler2D uTintTex;`);
 
     // distance fade on the tangent-space normal (item 15: ≤ 0.25 of full strength beyond 150 m)
     shader.fragmentShader = shader.fragmentShader
-      .replace('mapN.xy *= normalScale;', 'mapN.xy *= normalScale * mix( 1.0, uNormalFar, smoothstep( 60.0, 150.0, vDist ) );');
+      .replace('#include <normal_fragment_maps>', THREE.ShaderChunk.normal_fragment_maps.replace('mapN.xy *= normalScale;', 'mapN.xy *= normalScale * mix( 1.0, uNormalFar, smoothstep( 60.0, 150.0, vDist ) );'));
 
     // night: the facade mass itself goes dark so the windows are the only bright thing (cs2_8).
     shader.fragmentShader = shader.fragmentShader
@@ -78,19 +78,21 @@ uniform sampler2D uTintTex;`);
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <emissivemap_fragment>', `
 #ifdef USE_EMISSIVEMAP
-	float winMask = texture2D( emissiveMap, vEmissiveMapUv ).r;
+	// Fade subpixel interior contrast as panes recede; the baked on/off state stays constant.
+	float winMask = texture2D( emissiveMap, vEmissiveMapUv, 2.0 * smoothstep( 200.0, 320.0, vDist ) ).r;
 	float on = step( 1.0 - clamp( uLit * vWin.w, 0.0, 0.96 ), vWin.x );
 	vec3 warm = vec3( 1.0, 0.58, 0.22 );
 	vec3 cool = vec3( 0.74, 0.86, 1.0 );
 	vec3 tint = mix( warm, cool, vWin.z );
-	totalEmissiveRadiance = winMask * on * uNight * uEmis * tint * vWin.y;
+	totalEmissiveRadiance = vec3( 0.0 );
+	if ( uNight > 0.0 ) totalEmissiveRadiance = winMask * on * uNight * uEmis * tint * vWin.y * mix( 1.0, 0.07, smoothstep( 200.0, 300.0, vDist ) );
 	// a whisper of interior behind unlit glass — 2 % of the lit tier, inside window cells only
 	totalEmissiveRadiance += winMask * vWin.w * uNight * uEmis * 0.02 * vec3( 0.30, 0.34, 0.46 );
 	totalEmissiveRadiance *= ( 1.0 - uInfo * ivTint.a );
 #endif
 `);
   };
-  m.customProgramCacheKey = () => 'buildings-night-v2';
+  m.customProgramCacheKey = () => 'buildings-night-v4';
   return m;
 }
 
@@ -104,8 +106,8 @@ export function createUniforms() {
   return {
     uNight: { value: 0 },
     uLit: { value: 0.5 },
-    uEmis: { value: 1.35 },
-    uNightDark: { value: 0.18 },
+    uEmis: { value: 1.0 },
+    uNightDark: { value: 0.10 },
     uInfo: { value: 0 },
     uNormalFar: { value: 0.40 },
     uTintTex: { value: tintTex },

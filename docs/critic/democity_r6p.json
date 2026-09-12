@@ -1,0 +1,10 @@
+{
+  "module": "democity", "round": "6p", "review": "local-critical", "score": 6.0, "pass": false,
+  "basis": {"candidateProfile": "shots/democity/r6p-candidate-building-shadow360/mainpass-profile.json", "matrix": "shots/democity/rr6p-candidate-building-shadow360/summary.json", "api": "shots/democity/r6p-candidate-building-shadow360/apicheck.json", "restage": "shots/democity/r6p-candidate-building-shadow360/restage-cycle.json"},
+  "matrix": {"shots": 16, "errors": 0, "maxDrawCalls": 532, "maxTriangles": 2997270, "minFps": 45.4},
+  "contract": {"apiMethods": 13, "deserializeTwice": true, "tourStops": 8, "sameSeed1337": true, "sameSeed7": true},
+  "change": {"owner": "buildings", "scope": "chunk shadow submission", "horizontalShadowDistanceM": 360, "nearShadowChunksAtPeak": 20, "visibleGeometryChanged": false},
+  "passedGates": ["3M composed triangles"],
+  "failedGates": ["50 fps", "512 MB heap", "city scale", "lighting", "visual variety", "building seating", "fresh-seed lifecycle"],
+  "decision": "accept 360 m horizontal building shadow boundary and hold score; profile frame and retained-heap costs next"
+}

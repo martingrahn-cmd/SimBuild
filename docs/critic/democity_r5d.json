@@ -1,0 +1,38 @@
+{
+  "module": "democity",
+  "round": "5d",
+  "score": 6.0,
+  "pass": false,
+  "decision": "hold",
+  "standardMatrix": {
+    "path": "shots/democity/r5d/summary.json",
+    "shots": 16,
+    "errors": 0,
+    "maxDrawCalls": 947,
+    "maxTriangles": 4593198,
+    "minFps": 37.0,
+    "verdict": "fail"
+  },
+  "repeatControls": {
+    "aerial22": { "runs": 3, "drawCalls": 534, "triangles": 3127163 },
+    "street12": { "drawCalls": 421, "triangles": 3053545 },
+    "skyline17p5": { "drawCalls": 726, "triangles": 3014411 },
+    "meaning": "controls confirm first-pass settling variance; retain the conservative first-pass matrix maximum"
+  },
+  "api": {
+    "path": "shots/democity/r5c/apicheck.json",
+    "contractOk": true,
+    "deserialize": [true, true],
+    "tourStops": 8,
+    "invalidTour": false,
+    "errors": 0,
+    "browserErrors": 0,
+    "heapMB": { "primary": 1009.4, "seed7Restage": 1264.6 }
+  },
+  "goldenHour": {
+    "sunwardCityWaterMean": { "before": 0.650606, "after": 0.618229 },
+    "skyMean": { "before": 0.948289, "after": 0.936778 },
+    "verdict": "improved but still fails visual quality"
+  },
+  "next": "stabilize evidence capture before further source-level heap and geometry changes"
+}

@@ -1,0 +1,510 @@
+{
+  "module": "buildings",
+  "round": 4,
+  "summary": "Reduced reflection and wide-shadow geometry using pass-specific draw ranges while preserving the main facade mesh; added readable seeded shop signs and ribbed mechanical cladding. All 28 prescribed captures were rendered and personally inspected on Apple M4 Metal, with zero application console errors. Reflection-frame budgets now pass. The final farTower isolated-contrast result remains 0.223214% against <0.2%; this round does not meet the full visual acceptance bar.",
+  "drawCalls": 240,
+  "triangles": 1354482,
+  "errors": 0,
+  "screenshotsViewed": [
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/aerial_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/aerial_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/aerial_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/aerial_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/street_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/street_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/street_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/street_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/skyline_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/skyline_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/skyline_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/skyline_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/closeup_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/closeup_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/closeup_17p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/closeup_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/downtown_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/suburb_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/industry_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/block_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/catalog_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/night_downtown_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/block_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/suburb_6p5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/crops_nightdt_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/all_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/all_22.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4_720/block_12.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/day_exact0.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/day_exact1.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/lod0.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/lod1.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/info_off.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/info_on.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/info_restored.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/growth_1.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/growth_2.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/growth_3.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/growth_4.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/growth_5.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/nightFacade.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/builder-probe/farTower.png",
+    "/Users/martingrahn/Documents/SimBuild/shots/buildings/r4/dev.png",
+    "/Users/martingrahn/.simbuild/ref/cs2_1.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_2.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_3.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_4.jpg",
+    "/Users/martingrahn/.simbuild/ref/cs2_8.jpg"
+  ],
+  "acceptanceMet": [
+    "1: Local block/closeup facade probes retain 0.14 m reveals, 0.07 m bands and 0.18/0.20 m cornices; main-view images retain relief.",
+    "2: Downtown has 32 distinct tall style IDs with multiple crowns and zero adjacent twins in the scoped probe.",
+    "4: All 13 scoped night commercial/mixed buildings have distinct ground floors, shop signs and lit interiors.",
+    "5: Catalog contains all 40 zone/density/level classes with valid fields and visually different scales.",
+    "6: Roof clutter counts retain at least two pieces on flat roofs and zero clutter twins; visual realism remains limited.",
+    "7: All 347 lot surfaces are available; gardens, parking, fences and paths appear in suburb/block/catalog views.",
+    "8: All 347 sampled perimeter base errors are zero; terrain +1 m event reseats building 105 by exactly +1 m.",
+    "9: Contact darkening is visible in block and closeup; no invented automated contact-mask pass is claimed.",
+    "10: Existing seeded bay variations remain, although narrow window patterns still visibly repeat.",
+    "11: Non-box geometry remains present across high-level classes in the full feature probe.",
+    "12: 85 corner buildings.",
+    "13: 22 of 29 level-3+ high-density residential buildings have balconies.",
+    "14: Exact daytime setLit(0)/setLit(1) RGB mean difference 0; maximum frame clipping 0.239053%; all night p1 >0 and p99 <250.",
+    "15: Existing roughness and normal constraints retained; no sparkle seen in skyline/aerial. Building-only bright-pixel segmentation remains advisory per residual review.",
+    "16: Forced LOD RGB mean difference 1.058013/255 <4, logical triangle ratio 0.298014 <0.35; silhouettes visually retained. No separate subpixel edge-registration claim.",
+    "17: Gauntlet peak 240 scene calls and 1,354,482 triangles; repeated aerial reflection-frame maximum 1,338,234; own 11 calls independently counted; ordinary rebuild 2.1 ms/one chunk; all measured budget fields pass.",
+    "18: All 28 image JSONs ready with zero errors, including all-module 12/22 and 1280x720 block.",
+    "19: Actual world spawn/levelUp/demolish, footprint query, version increments, event IDs and serialization roundtrip pass.",
+    "20: Repeat seed 1337 preserves styles and triangles; seed 7 differs in 72.5% of class counts. No Math.random; performance clocks are profiling only.",
+    "21: Active info tint RGB mean difference 27.300043/255; restored view difference exactly zero.",
+    "22: 347/347 items lit at night and zero by day.",
+    "23: Levels 1-5 visibly grow at identical x/z origin, heights 8.7,12.01,20.955,30.005,45.055 m. Restored triangle count differs by only 0.010616%."
+  ],
+  "acceptanceMissed": [
+    "3: Final validated farTower 128x128 crop has 0.2232142857% pixels differing from both horizontal neighbours by >40, above the strict <0.2% limit. This is a static pixel measurement, not an observed flicker claim. Near facade passes 6.9208135x. Other night requirements pass: lit fraction 37.3629%, 92 tiers, warm/cool 48.9292%/51.0708%.",
+    "Overall visual target 8.5/10 is not reached: facade pattern repetition and oversized simple roof masses remain."
+  ],
+  "remainingWeaknesses": [
+    "Far-window static isolation remains slightly above its limit; a development capture measured 0.167411%, but the final prescribed crop did not reproduce that pass and is the authoritative result.",
+    "Narrow repeated window/shadow patterns and flat baked glass gradients remain conspicuous in closeup and block.",
+    "Large stepped roof/crown masses remain blank or simply ribbed; added cladding alone does not make them convincing occupied/mechanical structures.",
+    "Shop lettering is readable and correctly oriented, but long fascias stretch the text and interior cards remain flat.",
+    "House roof/lawn material tiling and opaque boundary panels remain visibly procedural.",
+    "Secondary pass buffers increase allocated geometry: 1,612,174 triangle-equivalents in 104 meshes versus 1,100,412 logical main LOD triangles. Stats report main ranges, not total allocated buffers.",
+    "The prescribed all-module captures are an empty new game, so they verify ready integration but not the cost or appearance of a populated combined city.",
+    "Forced LOD1 loses facade relief strongly when applied to the entire skyline; mean image difference passes but the visual simplification is noticeable."
+  ],
+  "coreRequestFile": "docs/core-requests/buildings.md",
+  "selfScore": 7.6,
+  "changesThisRound": [
+    {
+      "file": "src/modules/buildings/chunks.js",
+      "change": "Store full, LOD1 and shadow-only ranges within existing chunk meshes. Main pass uses original geometry; reflection uses LOD1, wide shadows use wall-shell geometry. Near shadows keep facade relief. Restore main draw ranges after each pass and keep logical LOD stats distinct from allocated buffers."
+    },
+    {
+      "file": "src/modules/buildings/generate.js",
+      "change": "Emit wall shells for shadow-only LOD2. Apply ribbed metal to selected setback mechanical faces. Flip all retail sign quads to correct text orientation."
+    },
+    {
+      "file": "src/modules/buildings/material.js",
+      "change": "Increase far emissive mip bias and reduce emission beyond 200 m; near windows remain unchanged. Final crop still misses the static contrast limit."
+    },
+    {
+      "file": "src/modules/buildings/tiles.js",
+      "change": "Replace barcode-like sign rectangles with deterministic MARKET/CAFE/BOOKS/ATELIER canvas lettering while preserving RNG consumption."
+    }
+  ],
+  "environment": {
+    "url": "http://127.0.0.1:5174",
+    "gpuRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "browser": "152.0.7977.76",
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "seed": 1337,
+    "quality": "high",
+    "gauntletMinFps": 55.9,
+    "all28MinFps": 25.4,
+    "buildingsShowcaseMinFps": 46.2,
+    "timingCaveat": "Measured on Apple M4 Metal with other shared-agent activity possible; these are not SwiftShader measurements."
+  },
+  "metrics": {
+    "requiredImages": 28,
+    "gauntlet": {
+      "module": "buildings",
+      "round": "4",
+      "at": "2026-09-06T13:59:29.110Z",
+      "failedShots": [],
+      "maxDrawCalls": 240,
+      "maxTriangles": 1354482,
+      "minFps": 55.9,
+      "totalErrors": 0,
+      "uniqueErrors": []
+    },
+    "stats": {
+      "buildings": 347,
+      "buildingsL3NonIndustrial": 174,
+      "chunks": 52,
+      "visible": 11,
+      "draws": 11,
+      "tris0": 847766,
+      "tris1": 252646,
+      "tiles": 125,
+      "buildMs": 0,
+      "chunksBuiltThisFrame": 0,
+      "lodSwitch": 84,
+      "setupMs": 766.5
+    },
+    "logicalLodRatio": 0.298013838724365,
+    "maxInitMs": 34,
+    "maxModuleUpdateMs": 0.10000000149011612,
+    "maxSceneTextures": 42,
+    "atlases": [
+      [
+        "map",
+        2048,
+        2048,
+        "srgb"
+      ],
+      [
+        "normalMap",
+        2048,
+        2048,
+        ""
+      ],
+      [
+        "ormMap",
+        2048,
+        2048,
+        ""
+      ],
+      [
+        "emissiveMap",
+        1024,
+        1024,
+        ""
+      ]
+    ],
+    "atlasEstimatedRgbaMipMiB": 69.33333333333333,
+    "nightCells": {
+      "total": 65739,
+      "lit": 24562,
+      "tiers": 92,
+      "warm": 12018,
+      "cool": 12544
+    },
+    "nightLitFraction": 0.37362904820578346,
+    "nearCrop": {
+      "rect": [
+        886,
+        374,
+        200,
+        200
+      ],
+      "bright10": 150.36989999999997,
+      "dark50": 21.7272,
+      "ratio": 6.920813542472107,
+      "isolatedPct": 0.34595959595959597
+    },
+    "farCrop": {
+      "rect": [
+        1333,
+        59,
+        128,
+        128
+      ],
+      "bright10": 119.804,
+      "dark50": 27.3782,
+      "ratio": 4.375890306886501,
+      "isolatedPct": 0.2232142857142857
+    },
+    "validatedCropHits": {
+      "buildings.nightFacade": {
+        "rect": [
+          886,
+          374,
+          200,
+          200
+        ],
+        "hitId": 122,
+        "dist": 179.57685918415567,
+        "height": 182.7930863857083,
+        "point": [
+          30.457151895587856,
+          64.62683049785063,
+          55.87714004516603
+        ]
+      },
+      "buildings.farTower": {
+        "rect": [
+          1333,
+          59,
+          128,
+          128
+        ],
+        "hitId": 117,
+        "dist": 287.2459244508558,
+        "height": 180.4767367098015,
+        "point": [
+          16.410098066594387,
+          131.70038427227922,
+          -77.181282043457
+        ]
+      }
+    },
+    "actualOwnDraws": {
+      "actual": [
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11
+      ],
+      "reported": 11
+    },
+    "passBudget": [
+      {
+        "camera": "closeup",
+        "time": 6.5,
+        "frames": 28,
+        "maxTriangles": 1315328,
+        "maxCalls": 196
+      },
+      {
+        "camera": "closeup",
+        "time": 12,
+        "frames": 27,
+        "maxTriangles": 1272600,
+        "maxCalls": 184
+      },
+      {
+        "camera": "closeup",
+        "time": 17.5,
+        "frames": 27,
+        "maxTriangles": 1305172,
+        "maxCalls": 192
+      },
+      {
+        "camera": "closeup",
+        "time": 22,
+        "frames": 28,
+        "maxTriangles": 1298788,
+        "maxCalls": 188
+      },
+      {
+        "camera": "aerial",
+        "time": 6.5,
+        "frames": 27,
+        "maxTriangles": 1334266,
+        "maxCalls": 266
+      },
+      {
+        "camera": "aerial",
+        "time": 12,
+        "frames": 27,
+        "maxTriangles": 1320420,
+        "maxCalls": 257
+      },
+      {
+        "camera": "aerial",
+        "time": 17.5,
+        "frames": 27,
+        "maxTriangles": 1338234,
+        "maxCalls": 266
+      },
+      {
+        "camera": "aerial",
+        "time": 22,
+        "frames": 27,
+        "maxTriangles": 1320686,
+        "maxCalls": 260
+      }
+    ],
+    "rangeRestoration": {
+      "meshes": 104,
+      "allRestored": true,
+      "allocatedTriangles": 1612174,
+      "logicalTriangles": 1100412
+    },
+    "apiMutations": {
+      "spawned": {
+        "id": 348,
+        "deltaVersion": 1,
+        "deltaTris": 2158,
+        "inside": 348,
+        "outside": null
+      },
+      "leveled": {
+        "before": {
+          "level": 1,
+          "floors": 8,
+          "height": 33.76629670495167
+        },
+        "after": {
+          "level": 2,
+          "floors": 12,
+          "height": 51.73629670495168
+        },
+        "deltaVersion": 1
+      },
+      "removed": {
+        "exists": false,
+        "lotBuildingId": null,
+        "triDelta": 0,
+        "deltaVersion": 1
+      },
+      "events": [
+        {
+          "added": [
+            348
+          ],
+          "removed": [],
+          "updated": []
+        },
+        {
+          "added": [],
+          "removed": [],
+          "updated": [
+            348
+          ]
+        },
+        {
+          "added": [],
+          "removed": [
+            348
+          ],
+          "updated": []
+        }
+      ],
+      "roundtrip": {
+        "stylesEqual": true,
+        "beforeTris": 847766,
+        "afterTris": 847766,
+        "nextId": 349,
+        "oldNextId": 349
+      }
+    },
+    "terrainReseat": {
+      "id": 105,
+      "beforeY": 16.330116180712768,
+      "afterY": 17.330116180712768,
+      "expected": 17.330116180712768
+    },
+    "growth": [
+      {
+        "id": 105,
+        "level": 1,
+        "height": 8.7,
+        "floors": 2,
+        "x": -93.42500000000001,
+        "y": 16.293805892134653,
+        "z": 278.5946109246463,
+        "tris": 845008,
+        "style": "town:town_brick|pitched|Ic-gable"
+      },
+      {
+        "id": 105,
+        "level": 2,
+        "height": 12.009999999999998,
+        "floors": 3,
+        "x": -93.42500000000001,
+        "y": 16.293805892134653,
+        "z": 278.5946109246463,
+        "tris": 845556,
+        "style": "town:town_brick|pitched|Ic-gable"
+      },
+      {
+        "id": 105,
+        "level": 3,
+        "height": 20.955046280869283,
+        "floors": 6,
+        "x": -93.42500000000001,
+        "y": 16.330116180712768,
+        "z": 278.5946109246463,
+        "tris": 846730,
+        "style": "apt:apt_concrete|terrace|Lc"
+      },
+      {
+        "id": 105,
+        "level": 4,
+        "height": 30.005046280869283,
+        "floors": 9,
+        "x": -93.42500000000001,
+        "y": 16.330116180712768,
+        "z": 278.5946109246463,
+        "tris": 847676,
+        "style": "apt:apt_concrete|spire|Lc"
+      },
+      {
+        "id": 105,
+        "level": 5,
+        "height": 45.05504628086928,
+        "floors": 14,
+        "x": -93.42500000000001,
+        "y": 16.330116180712768,
+        "z": 278.5946109246463,
+        "tris": 848688,
+        "style": "apt:apt_concrete|spire|Lc"
+      }
+    ],
+    "growthRestore": {
+      "before": 847766,
+      "after": 847676
+    },
+    "ordinaryRebuild": {
+      "buildings": 347,
+      "buildingsL3NonIndustrial": 174,
+      "chunks": 52,
+      "visible": 11,
+      "draws": 11,
+      "tris0": 847696,
+      "tris1": 252606,
+      "tiles": 125,
+      "buildMs": 2.1,
+      "chunksBuiltThisFrame": 1,
+      "lodSwitch": 84,
+      "setupMs": 604
+    },
+    "imageDifferences": {
+      "day_exact0_day_exact1": 0.0,
+      "lod0_lod1": 1.0580129565329217,
+      "info_off_info_on": 27.300042599022635,
+      "info_off_info_restored": 0.0
+    },
+    "maxClippedPct": 0.23905285493827164,
+    "block720ClippedPct": 0
+  },
+  "evidenceFiles": [
+    "shots/buildings/r4/summary.json",
+    "shots/buildings/r4/final-summary.json",
+    "shots/buildings/r4/builder-probe/apicheck.json",
+    "shots/buildings/r4/builder-probe/extra.json",
+    "shots/buildings/r4/builder-probe/measurements.json"
+  ],
+  "verificationNotes": [
+    "Read BUILDER, architecture/core APIs, full buildings specification, previous independent critic and residual guidance. Viewed cs2_1,2,3,4,8 references using the image reader.",
+    "All 28 required images were actually captured and personally viewed. API LOD, tint, day-light setter and growth images plus both validated crops were also personally viewed.",
+    "The full matrix followed shadow/window changes. A final sign-UV-only correction followed visual inspection of block; block12, block22, 720block12 and all API screenshot checks were recaptured after it. Geometry and lighting shader were unchanged by that correction; the full matrix was not redundantly rerun.",
+    "Development closeup baseline was 2,328,812 scene triangles. An initial reflection-only optimization still produced an aerial reflection frame of 1,686,856; final shadow shells solved this. Final repeated frame probes include reflection cycles and are saved in extra.json.",
+    "One own Chrome stalled before page navigation in browser.newContext. After terminating that owned browser, only missing captures were retried. It produced no image and no application console result; infrastructure failure is not hidden in the zero-error app metric.",
+    "Internal disk ENOSPC interrupted capture setup. At parent authorization, owned r4 and r4_720 evidence moved to external storage and project paths became symlinks. Browser TMPDIR is external. No other evidence was deleted.",
+    "shots/buildings/r4 -> /Volumes/ExtDrive/SimBuild-verification-2026-09-06/buildings/r4; shots/buildings/r4_720 -> /Volumes/ExtDrive/SimBuild-verification-2026-09-06/buildings/r4_720. External drive must remain mounted to inspect these files.",
+    "Python measurements used externally installed PIL11.3/numpy2.0.2 through PYTHONPATH; system Chrome required no download.",
+    "node --check passed for all eight owned source files; git diff --check passed for buildings; Math.random search returned no matches.",
+    "No new core changes or requests. Existing core request file retained; terrain surface integration was implemented outside this round by the parent/integrator."
+  ],
+  "sourceSha256": {
+    "src/modules/buildings/geom.js": "0a5e39d9b9b157aa10b50aa06de36fa30e5139647791cdbb0d35763783663653",
+    "src/modules/buildings/tiles.js": "221c48b7b5cf1694c5c651c31b7ddc94b210740b8ed27ae1bd0025f3f9670026",
+    "src/modules/buildings/material.js": "b394015067f88fca13e918e672b03195997c01b4438dc116bad1f37a60fb03c8",
+    "src/modules/buildings/generate.js": "d5e22c2e9ef91e523007ed93b8ae13c2e17a23c91f4f57e3895f32357c2bbc05",
+    "src/modules/buildings/index.js": "2e6ebce26271a9901741d770b84bb653f1ab8881de4fcd85033dfb87a3751227",
+    "src/modules/buildings/atlas.js": "8c7abc0e6a1dc5532a89c4bb4b7a28e4edc225c10f599f06d07e8eae8de31a7f",
+    "src/modules/buildings/chunks.js": "b184db8b30b4a8597b4bbf7c0a852b73fc0e4af4ef12c3c853ea48ed8078839d",
+    "src/modules/buildings/showcase.js": "071ef9f4fb9f039bd0dd84ec44f32c042045b5d0898c7bd89b288bbd3a6e1473"
+  }
+}

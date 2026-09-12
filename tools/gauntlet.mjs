@@ -29,6 +29,7 @@ for (const cam of cameras) for (const t of times) {
 const summary = {
   module: mod, round, at: new Date().toISOString(),
   shots: rows.map((r) => ({ png: r.png, camera: r.camera, time: r.time, ok: r.ok, fps: r.fps, drawCalls: r.drawCalls, triangles: r.triangles, errors: r.errors?.length || 0, moduleStatus: r.modules?.[mod]?.status })),
+  failedShots: rows.filter(r => !r.ok).map(r => r.png || r.error),
   maxDrawCalls: Math.max(...rows.map((r) => r.drawCalls || 0)),
   maxTriangles: Math.max(...rows.map((r) => r.triangles || 0)),
   minFps: Math.min(...rows.map((r) => r.fps ?? 999)),
@@ -39,3 +40,5 @@ fs.writeFileSync(path.join(dir, 'summary.json'), JSON.stringify(summary, null, 2
 console.log(`\n== ${mod} r${round}: shots=${rows.length} maxDraws=${summary.maxDrawCalls} maxTris=${summary.maxTriangles} minFps=${summary.minFps} errors=${summary.totalErrors}`);
 for (const e of summary.uniqueErrors.slice(0, 10)) console.log('  ERR ' + e.split('\n')[0]);
 console.log(`summary: ${path.join(dir, 'summary.json')}`);
+
+process.exit(summary.failedShots.length || summary.totalErrors ? 1 : 0);

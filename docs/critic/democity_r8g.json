@@ -1,0 +1,185 @@
+{
+  "module": "democity",
+  "round": "r8g",
+  "reviewer": "independent",
+  "decision": "ACCEPT",
+  "candidateAccepted": true,
+  "score": 6.0,
+  "pass": false,
+  "wholeGamePass": false,
+  "passThreshold": 8.5,
+  "rank1Closed": false,
+  "verdictScope": "Weak/local acceptance of v1; not a whole-game pass or requirement to ship this variant rather than a narrower form-preserving alternative.",
+  "allOriginalImagesInspected": true,
+  "originalImageCount": 25,
+  "imagesInspected": [
+    "shots/democity/r8g-parcel-baseline/downtown_12.png",
+    "shots/democity/r8g-parcel-baseline/frontage_west_12.png",
+    "shots/democity/r8g-parcel-baseline/industry_12.png",
+    "shots/democity/r8g-parcel-baseline/suburb_12.png",
+    "shots/democity/r8g-frontage-candidate/downtown_12.png",
+    "shots/democity/r8g-frontage-candidate/frontage_west_12.png",
+    "shots/democity/r8g-frontage-candidate/industry_12.png",
+    "shots/democity/r8g-frontage-candidate/night_downtown_22.png",
+    "shots/democity/r8g-frontage-candidate/suburb_12.png",
+    "shots/democity/r8g-frontage-matrix/bridge_12.png",
+    "shots/democity/r8g-frontage-matrix/bridge_22.png",
+    "shots/democity/r8g-frontage-matrix/downtown_12.png",
+    "shots/democity/r8g-frontage-matrix/downtown_22.png",
+    "shots/democity/r8g-frontage-matrix/industry_12.png",
+    "shots/democity/r8g-frontage-matrix/industry_22.png",
+    "shots/democity/r8g-frontage-matrix/interchange_12.png",
+    "shots/democity/r8g-frontage-matrix/interchange_22.png",
+    "shots/democity/r8g-frontage-matrix/night_downtown_12.png",
+    "shots/democity/r8g-frontage-matrix/night_downtown_22.png",
+    "shots/democity/r8g-frontage-matrix/park_12.png",
+    "shots/democity/r8g-frontage-matrix/park_22.png",
+    "shots/democity/r8g-frontage-matrix/riverfront_12.png",
+    "shots/democity/r8g-frontage-matrix/riverfront_22.png",
+    "shots/democity/r8g-frontage-matrix/suburb_12.png",
+    "shots/democity/r8g-frontage-matrix/suburb_22.png"
+  ],
+  "derivedImagesInspected": [
+    "shots/democity/r8g-frontage-matrix/contact-sheet.png",
+    "shots/democity/r8g-frontage-candidate/frontage_west_compare.png"
+  ],
+  "referenceCalibration": "All eight CS2 references individually inspected in immediately preceding whole-game r2 review, not freshly repeated for this bounded delta.",
+  "consoleErrors": 0,
+  "allModulesReady": true,
+  "performanceSidecars": 23,
+  "customSidecarsWithoutPerformance": 2,
+  "matrixMetrics": {
+    "captures": 16,
+    "maxDrawCalls": 469,
+    "maxDrawCallsShot": "park_12",
+    "maxTriangles": 2808896,
+    "maxTrianglesShot": "night_downtown_22",
+    "minFps": 35.3,
+    "minFpsShots": [
+      "interchange_22",
+      "park_12"
+    ],
+    "framesBelow50": 15,
+    "maxRawHeapMB": 757.2,
+    "maxRawHeapShot": "interchange_22",
+    "forcedGcMemoryMeasured": false,
+    "summaryVerifiedAgainstEverySidecar": true
+  },
+  "apiContractOk": null,
+  "apiContractScope": "Static source and supplied-probe inspection/recalculation; no new live critic execution.",
+  "stateEvidence": {
+    "selectedBefore": 14,
+    "selectedAfter": 32,
+    "additionalSelected": 18,
+    "selectedKinds": {
+      "apt": 23,
+      "tower": 9
+    },
+    "stockSeed1337": 612,
+    "stockSeed7": 648,
+    "exactSelectedDigestAfterTwoRestores": true,
+    "saveAtomicityFixturePass": true,
+    "baselineHud": {
+      "population": 8046,
+      "cash": 26429,
+      "netPerDay": 10862
+    },
+    "candidateHud": {
+      "population": 8046,
+      "cash": 26397,
+      "netPerDay": 10099
+    }
+  },
+  "sourceHashes": {
+    "src/modules/democity/index.js": "7869d17a4fb3401fbcdec5e3f310a46b0574bdc7bf5531a3c8e0d1578a64d11b",
+    "tools/democity-mixed-use-probe.mjs": "3f08feedb5880db00c04e3b70324e9cba38edd19093117a819cbbcf86529acfe"
+  },
+  "issues": [
+    {
+      "rank": 1,
+      "owner": "democity",
+      "supportingOwners": [
+        "zoning",
+        "buildings",
+        "roads"
+      ],
+      "title": "Sparse block fabric remains the primary whole-game weakness",
+      "detail": "More retail bases do not fill the empty lawns or replace repeated crowns. There are still 612 occupied lots/buildings; diagnosis gives 4882 of 9964 painted cells claimed and mean footprint coverage 0.39012. Whole-game r2 rank 1 remains open.",
+      "evidence": [
+        "shots/democity/r8g-frontage-matrix/downtown_12.png",
+        "shots/democity/r8g-frontage-matrix/interchange_12.png",
+        "shots/democity/r8g-frontage-diagnosis/parcel-profile.json"
+      ]
+    },
+    {
+      "rank": 2,
+      "owner": "democity",
+      "supportingOwners": [
+        "buildings"
+      ],
+      "title": "The extension changes building identity, massing and economics as well as retail frontage",
+      "detail": "Existing demolition/respawn allocates new IDs for eighteen additional lots and changes deterministic plans. The west foreground gains a conspicuous stepped crown. This critic judges the overall local change weakly positive, not a clear regression, but preserving IDs/forms would provide a narrower intervention. Do not claim unchanged city state.",
+      "evidence": [
+        "src/modules/democity/index.js",
+        "shots/democity/r8g-parcel-baseline/frontage_west_12.png",
+        "shots/democity/r8g-frontage-candidate/frontage_west_12.png"
+      ]
+    },
+    {
+      "rank": 3,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "props",
+        "buildings",
+        "services",
+        "effects"
+      ],
+      "title": "Existing foliage, night and site-detail weaknesses remain",
+      "detail": "Flat leaf clusters, repeated luminous window grids, schematic lamp pools and underused arena/port grounds remain. No definite new visual regression attributable to cap removal was found in the supplied views.",
+      "evidence": [
+        "shots/democity/r8g-frontage-matrix/park_12.png",
+        "shots/democity/r8g-frontage-matrix/night_downtown_22.png",
+        "shots/democity/r8g-frontage-matrix/bridge_22.png"
+      ]
+    },
+    {
+      "rank": 4,
+      "owner": "cross-cutting",
+      "supportingOwners": [
+        "core",
+        "props",
+        "traffic",
+        "buildings"
+      ],
+      "title": "Geometry fits but local performance targets remain unmet",
+      "detail": "Matrix maximum 469 draws and 2808896 triangles fit limits. Fifteen of sixteen frames are below 50 FPS; minimum 35.3. Raw heap reaches 757.2 MB. Neither a retained leak nor candidate-caused slowdown is established.",
+      "evidence": [
+        "shots/democity/r8g-frontage-matrix/interchange_22.json",
+        "shots/democity/r8g-frontage-matrix/park_12.json"
+      ]
+    },
+    {
+      "rank": 5,
+      "owner": "democity",
+      "supportingOwners": [
+        "core"
+      ],
+      "title": "Save and determinism claims exceed the narrow harness if described as universal",
+      "detail": "Mixed-use digests match twice, but the harness ignores restore return values and does not perturb state. Separate atomicity evidence covers one rejected transit restore rollback and one successful load. No full-world or multi-seed determinism certification was performed.",
+      "evidence": [
+        "tools/democity-mixed-use-probe.mjs",
+        "shots/democity/r8g-frontage-candidate/save-atomicity.json"
+      ]
+    }
+  ],
+  "evidenceLimits": [
+    "Supplied captures independently viewed, no critic live capture/probe run.",
+    "Git HEAD predates implementation: exact prior cap provided by root, corroborated by 14/32 sidecars.",
+    "Four baseline pairs; candidate matrix only noon/night, not full four-time/weather/720p/all-alias/gameplay recertification.",
+    "Paused stills cannot prove traffic flow, boarding, fun or long-term balance.",
+    "32/612 are default-seed fixture expectations, not universal guarantees.",
+    "Cityscale pass means probe success; parcel diagnosis pass:false remains false.",
+    "Raw heap is not forced-GC retained memory; host load uncontrolled for causal FPS comparison.",
+    "All screenshot errors zero; atomicity fixture intentionally logs transit rejection."
+  ]
+}

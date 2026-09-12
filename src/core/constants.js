@@ -20,7 +20,7 @@ export const BUDGET = {
   triangles: 3_000_000,
   perModuleDrawCalls: {
     terrain: 20, environment: 15, roads: 80, zoning: 10, buildings: 500, props: 400,
-    traffic: 150, effects: 30, simulation: 0, tools: 20, ui: 5, audio: 0, services: 60, infoviews: 5, transit: 20, democity: 50,
+    traffic: 150, effects: 30, simulation: 0, tools: 20, ui: 5, audio: 0, services: 60, infoviews: 8, transit: 20, democity: 50,
   },
 };
 

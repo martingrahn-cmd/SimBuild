@@ -12,6 +12,7 @@ export const U = {
   fogA:      { value: new THREE.Vector4(1 / 260, 0, 0.9, 1) },   // height falloff, base height, sun glow strength, unused
   fogSun:    { value: new THREE.Vector3(0, 1, 0) },
   fogSunCol: { value: new THREE.Color(0, 0, 0) },              // in-scatter colour (linear radiance)
+  night:     { value: 0 },                                     // visible-sky display gain: 0 day .. 1 night
   sky:       { value: null },                                  // equirect sky radiance LUT
   cloudMap:  { value: null },                                  // 256² cloud thickness map (world xz at cloud altitude)
   cloudC:    { value: new THREE.Vector4(0, 0, 1 / 6000, 0) },   // map centre x, z, 1/size
@@ -74,6 +75,7 @@ varying vec3 vEnvWorldPos;
 uniform vec4 uEnvFogA;
 uniform vec3 uEnvFogSun;
 uniform vec3 uEnvFogSunCol;
+uniform float uEnvNight;
 uniform sampler2D uEnvSky;
 #ifdef USE_FOG
   uniform vec3 fogColor;
@@ -102,7 +104,12 @@ uniform sampler2D uEnvSky;
     envFd.y = max(envFd.y, 0.004);
     envFd = normalize(envFd);
     vec2 envSkyUv = vec2(atan(envFd.z, envFd.x) * 0.15915494309 + 0.5, asin(clamp(envFd.y, -1.0, 1.0)) * 0.31830988618 + 0.5);
-    vec3 envSkyCol = texture2D(uEnvSky, envSkyUv).rgb;
+    // The LUT stays physically bright for PMREM. Match the visible dome's display transform only on
+    // camera-facing fog so distant geometry converges to the same low-sun and night exposure.
+    float envLowSunDisplay = (1.0 - smoothstep(0.12, 0.32, uEnvFogSun.y)) * smoothstep(-0.02, 0.05, uEnvFogSun.y);
+    float envSunwardDisplay = smoothstep(0.0, 0.80, max(dot(envFogDir, uEnvFogSun), 0.0));
+    float envSkyDisplay = (1.0 - 0.96 * envLowSunDisplay * envSunwardDisplay) * mix(1.0, 0.25, uEnvNight);
+    vec3 envSkyCol = texture2D(uEnvSky, envSkyUv).rgb * envSkyDisplay;
     vec3 envFogLin = mix(fogColor, envSkyCol, uEnvFogA.w) + uEnvFogSunCol * (pow(envSunMu, 8.0) * uEnvFogA.z + envSunMu * envSunMu * 0.08);
     #ifdef TONE_MAPPING
       envFogLin = toneMapping(envFogLin);
@@ -149,6 +156,7 @@ export function addEnvUniforms(shader) {
   shader.uniforms.uEnvFogA = U.fogA;
   shader.uniforms.uEnvFogSun = U.fogSun;
   shader.uniforms.uEnvFogSunCol = U.fogSunCol;
+  shader.uniforms.uEnvNight = U.night;
   shader.uniforms.uEnvSky = U.sky;
   shader.uniforms.uEnvCloudMap = U.cloudMap;
   shader.uniforms.uEnvCloudC = U.cloudC;

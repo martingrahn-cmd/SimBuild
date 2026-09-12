@@ -38,7 +38,7 @@ export function sampleCurve(a, b, ctrl, step = RULES.ghostSample) {
   const approx = ctrl
     ? Math.hypot(ctrl.x - a.x, ctrl.z - a.z) + Math.hypot(b.x - ctrl.x, b.z - ctrl.z)
     : Math.hypot(b.x - a.x, b.z - a.z);
-  const n = Math.max(1, Math.min(400, Math.ceil(approx / step)));
+  const n = Math.max(1, Math.ceil(approx / step));
   for (let i = 0; i <= n; i++) {
     const t = i / n;
     if (ctrl) {
@@ -75,12 +75,29 @@ function pathPoint(pts, frac) {
 
 export function roadTool(S) {
   const draft = { points: [], ctrl: null, cursorSnap: null, free: [] };
+  const ROUNDABOUT_RADIUS = 28;
+  const ROUNDABOUT_SEGMENTS = 8;
 
   const R = () => S.ctx.world.roads;
   const T = () => S.ctx.world.terrain;
   const type = (o = S.options) => o.type || 'street';
   const mode = (o = S.options) => o.mode || 'straight';
   const widthOf = (t) => (R().types[t] || R().types.street).width;
+  const isRoundabout = (o = S.options) => o.junction === 'roundabout';
+
+  function roundaboutAt(cx, cz) {
+    const r = ROUNDABOUT_RADIUS, rc = r / Math.cos(Math.PI / ROUNDABOUT_SEGMENTS);
+    const points = Array.from({ length: ROUNDABOUT_SEGMENTS }, (_, i) => {
+      const a = i / ROUNDABOUT_SEGMENTS * Math.PI * 2;
+      return { x: cx + Math.cos(a) * r, z: cz + Math.sin(a) * r };
+    });
+    const segments = points.map((a, i) => {
+      const b = points[(i + 1) % points.length];
+      const m = (i + 0.5) / ROUNDABOUT_SEGMENTS * Math.PI * 2;
+      return { a, b, ctrl: { x: cx + Math.cos(m) * rc, z: cz + Math.sin(m) * rc } };
+    });
+    return { cx, cz, r, points, segments };
+  }
 
   /** Snap a raw world point. `from` is the previous point (for angle snapping). */
   function snap(x, z, from, o = S.options) {
@@ -165,7 +182,9 @@ export function roadTool(S) {
   function evalDraft(d) {
     const t = d.type || 'street';
     const el = d.elevation || 0;
-    const pts = d.cursor ? [...d.points, d.cursor] : [...d.points];
+    const last = d.points[d.points.length - 1];
+    const includeCursor = d.cursor && (!last || Math.hypot(last.x - d.cursor.x, last.z - d.cursor.z) > 0.01);
+    const pts = includeCursor ? [...d.points, d.cursor] : [...d.points];
     const out = {
       type: t, width: widthOf(t), path: [], segs: [], ok: true, reason: null, cost: 0,
       length: 0, grade: 0, angle: 0, points: pts,
@@ -248,6 +267,30 @@ export function roadTool(S) {
     return out;
   }
 
+  function evalRoundabout(cx, cz) {
+    const ring = roundaboutAt(cx, cz);
+    const out = { ...ring, ok: true, reason: null, cost: 0, length: 0, grade: 0, path: [] };
+    // A prefab is placed on open ground. Existing streets can then snap to any of its eight real
+    // nodes; silently laying a ring across an existing graph would create crossings without graph
+    // ownership, so reject that pose instead.
+    const near = R().nearestEdge?.(cx, cz, ring.r + widthOf('street'));
+    if (near && near.dist < ring.r + widthOf('street') * 0.7) {
+      out.ok = false; out.reason = 'Move away from existing roads';
+    }
+    for (let i = 0; i < ring.segments.length; i++) {
+      const seg = ring.segments[i];
+      const ev = evalDraft({ type: 'street', mode: 'curve', elevation: 0, oneWay: true,
+        points: [seg.a, seg.b], cursor: null, ctrl: seg.ctrl });
+      if (!out.path.length) out.path.push(...ev.path); else out.path.push(...ev.path.slice(1));
+      out.cost += ev.cost; out.length += ev.length;
+      if (Math.abs(ev.grade) > Math.abs(out.grade)) out.grade = ev.grade;
+      if (out.ok && !ev.ok) { out.ok = false; out.reason = ev.reason; }
+    }
+    if (out.path.length) out.path.push({ ...out.path[0] });
+    if (out.ok && !S.afford(out.cost)) { out.ok = false; out.reason = REASON.funds; }
+    return out;
+  }
+
   function currentDraft() {
     return {
       tool: 'road', type: type(), mode: mode(), elevation: S.options.elevation || 0, oneWay: !!S.options.oneWay,
@@ -283,16 +326,18 @@ export function roadTool(S) {
     const e = rd.edges.get(id); if (!e) return null;
     const a = rd.nodes.get(e.a), b = rd.nodes.get(e.b);
     if (!a || !b) return null;
-    return { ax: a.x, az: a.z, bx: b.x, bz: b.z, type: e.type, lanes: e.lanes, oneWay: e.oneWay, ctrl: e.ctrl ? { x: e.ctrl.x, z: e.ctrl.z } : null };
+    return { ax: a.x, az: a.z, bx: b.x, bz: b.z, type: e.type, lanes: e.lanes, oneWay: e.oneWay, elevation: e.elevation, ctrl: e.ctrl ? { x: e.ctrl.x, z: e.ctrl.z } : null };
   }
   function reAdd(rd, d) {
     const a = rd.addNode(d.ax, d.az), b = rd.addNode(d.bx, d.bz);
-    return rd.addEdge(a, b, d.type, { lanes: d.lanes, oneWay: d.oneWay, ctrl: d.ctrl });
+    return rd.addEdge(a, b, d.type, { lanes: d.lanes, oneWay: d.oneWay, elevation: d.elevation, ctrl: d.ctrl });
   }
 
-  function commit() {
+  function commitRoad() {
     const d = currentDraft();
-    // commit() finishes what has been clicked; the live cursor is not part of it
+    const last = d.points[d.points.length - 1];
+    if (d.cursor && last && Math.hypot(last.x - d.cursor.x, last.z - d.cursor.z) > 0.01) d.points = [...d.points, d.cursor];
+    // Finish the displayed path, including an unclicked live endpoint.
     if (d.points.length < 2) {
       const ev = evalDraft(d);
       return { ok: false, ids: [], cost: 0, reason: ev.reason || REASON.empty };
@@ -300,6 +345,21 @@ export function roadTool(S) {
     const ev = evalDraft({ ...d, cursor: null });
     if (!ev.ok) return { ok: false, ids: [], cost: ev.cost, reason: ev.reason };
     const rd = R();
+    const clone = (value) => typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+    const roadsApi = S.ctx.modules.roads, zoningApi = S.ctx.modules.zoning, buildingsApi = S.ctx.modules.buildings;
+    // A previous road edit may still be inside Zoning's 60 ms coalescing window. Settle its owner
+    // journal before this transaction captures a pre-image, otherwise two fast commits can pair the
+    // current road graph with the previous lot table.
+    if (zoningApi?.settleForHistory?.() === false) {
+      return { ok: false, ids: [], cost: 0, reason: 'Road history unavailable' };
+    }
+    const roadsBefore = clone(roadsApi?.serialize?.());
+    const zoningBefore = clone(zoningApi?.serialize?.());
+    const buildingsBefore = clone(buildingsApi?.serialize?.());
+    if (!roadsBefore || !zoningBefore || !buildingsBefore ||
+        typeof roadsApi?.restoreTransaction !== 'function' || typeof buildingsApi?.restoreTransaction !== 'function') {
+      return { ok: false, ids: [], cost: 0, reason: 'Road history unavailable' };
+    }
     const journal = { added: [], removed: [] };
     const ids = [];
     const heights = S.snapshotHeights(d.points);
@@ -318,33 +378,163 @@ export function roadTool(S) {
       prevId = id;
     }
     if (!ids.length) return { ok: false, ids: [], cost: 0, reason: REASON.empty };
+    S.ctx.modules.roads?.rebuild?.();
+    const roadsAfter = clone(roadsApi.serialize());
+    const heightsAfter = S.snapshotHeights(d.points);
     S.spend(ev.cost, `road ${d.type}`);
     const rec = {
       added: journal.added.map((id) => descOf(rd, id)).filter(Boolean),
       removed: journal.removed.slice(),
       ids: journal.added.slice(),
     };
+    const changedLotIds = (target, current) => {
+      const a = new Map((target?.lots || []).map(row => [row.key, row.id]));
+      const b = new Map((current?.lots || []).map(row => [row.key, row.id]));
+      const ids = new Set();
+      for (const key of new Set([...a.keys(), ...b.keys()])) {
+        if (a.get(key) === b.get(key)) continue;
+        if (Number.isInteger(a.get(key))) ids.add(a.get(key));
+        if (Number.isInteger(b.get(key))) ids.add(b.get(key));
+      }
+      return [...ids];
+    };
+    const rollbackOwners = (snap) => {
+      if (!roadsApi.restoreTransaction(snap.roads)) return false;
+      if (!S.restoreHeights(snap.heights)) return false;
+      if (zoningApi.deserialize(snap.zoning) === false) return false;
+      if (buildingsApi.deserialize(snap.buildings) === false) return false;
+      return S.ctx.modules.simulation?.reconcileWorld?.() !== false;
+    };
+    const restoreOwners = ({ roads, terrain, zoning = null, buildings = null }) => {
+      // Undo/redo can be requested in the same frame as a road commit. Close the current graph's
+      // deferred lot journal before capturing the compensation image so rollback never pairs that
+      // graph with the previous lot table.
+      try {
+        if (zoningApi.settleForHistory?.() === false) return false;
+      } catch (error) {
+        S.ctx.log.warn(`road history settlement rejected: ${error?.message || error}`);
+        return false;
+      }
+      const rollback = {
+        roads: clone(roadsApi.serialize()), heights: S.snapshotHeights(d.points),
+        zoning: clone(zoningApi.serialize()), buildings: clone(buildingsApi.serialize()),
+      };
+      try {
+        if (!roadsApi.restoreTransaction(roads)) throw new Error('roads rejected transaction restore');
+        if (!S.restoreHeights(terrain)) throw new Error('terrain rejected transaction restore');
+        if (zoning) {
+          const affected = new Set(changedLotIds(zoning, rollback.zoning));
+          // The saved envelope predates any later construction/demolition. Preserve the current
+          // building link on unchanged stable lot identities; Buildings restores only affected IDs.
+          const currentByKey = new Map((rollback.zoning.lots || []).map(row => [row.key, row]));
+          const targetZoning = clone(zoning);
+          for (const row of targetZoning.lots || []) {
+            const current = currentByKey.get(row.key);
+            if (current?.id === row.id && !affected.has(row.id)) row.buildingId = current.buildingId;
+          }
+          if (zoningApi.deserialize(targetZoning) === false) throw new Error('zoning rejected transaction restore');
+          if (buildingsApi.restoreTransaction(buildings, [...affected]) === false) throw new Error('buildings rejected transaction restore');
+          if (S.ctx.modules.simulation?.reconcileWorld?.() === false) throw new Error('simulation rejected transaction reconcile');
+        }
+        return true;
+      } catch (error) {
+        if (!rollbackOwners(rollback)) S.ctx.log.error('road history compensation failed', error);
+        else S.ctx.log.warn(`road history change rejected and compensated: ${error?.message || error}`);
+        return false;
+      }
+    };
     S.pushUndo({
       label: `road:${d.type}`, cost: ev.cost, key: 'road', fromDrag: false,
       undo() {
-        for (const id of rec.ids) rd.removeEdge(id);
-        rec.ids = [];
-        for (const dd of rec.removed) reAdd(rd, dd);
-        S.restoreHeights(heights);
+        if (!restoreOwners({ roads: roadsBefore, terrain: heights, zoning: zoningBefore, buildings: buildingsBefore })) return false;
         S.refund(ev.cost);
+        return true;
       },
       redo() {
-        for (const dd of rec.removed) {
-          const ne = rd.nearestEdge((dd.ax + dd.bx) / 2, (dd.az + dd.bz) / 2, 3);
-          if (ne) rd.removeEdge(ne.edge.id);
-        }
-        rec.ids = rec.added.map((dd) => reAdd(rd, dd)).filter((v) => v > 0);
+        if (!restoreOwners({ roads: roadsAfter, terrain: heightsAfter })) return false;
         S.spend(ev.cost, 'redo');
+        return true;
       },
     });
     draft.points.length = 0; draft.ctrl = null;
     refresh();
     S.dirty();
+    return { ok: true, ids, cost: ev.cost };
+  }
+
+  function placeRoundabout() {
+    if (!S.cursor) return { ok: false, ids: [], cost: 0, reason: 'No cursor' };
+    const ev = evalRoundabout(S.cursor.x, S.cursor.z);
+    if (!ev.ok) return { ok: false, ids: [], cost: ev.cost, reason: ev.reason };
+    const rd = R(), roadsApi = S.ctx.modules.roads, zoningApi = S.ctx.modules.zoning, buildingsApi = S.ctx.modules.buildings;
+    const clone = (value) => typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+    try { if (zoningApi?.settleForHistory?.() === false) throw new Error('Road history unavailable'); }
+    catch (error) { return { ok: false, ids: [], cost: 0, reason: error?.message || 'Road history unavailable' }; }
+    const roadsBefore = clone(roadsApi?.serialize?.()), zoningBefore = clone(zoningApi?.serialize?.()), buildingsBefore = clone(buildingsApi?.serialize?.());
+    const heightsBefore = S.snapshotHeights(ev.points);
+    if (!roadsBefore || !zoningBefore || !buildingsBefore || !heightsBefore ||
+        typeof roadsApi?.restoreTransaction !== 'function' || typeof buildingsApi?.restoreTransaction !== 'function') {
+      return { ok: false, ids: [], cost: 0, reason: 'Road history unavailable' };
+    }
+    const ids = [], nodeIds = ev.points.map(p => rd.addNode(p.x, p.z));
+    for (let i = 0; i < ev.segments.length; i++) {
+      const eid = rd.addEdge(nodeIds[i], nodeIds[(i + 1) % nodeIds.length], 'street',
+        { oneWay: true, elevation: 0, ctrl: ev.segments[i].ctrl });
+      if (eid > 0) ids.push(eid);
+    }
+    if (ids.length !== ROUNDABOUT_SEGMENTS || roadsApi.rebuild?.() === false) {
+      roadsApi.restoreTransaction(roadsBefore); S.restoreHeights(heightsBefore);
+      zoningApi.deserialize(zoningBefore); buildingsApi.deserialize(buildingsBefore); S.ctx.modules.simulation?.reconcileWorld?.();
+      return { ok: false, ids: [], cost: 0, reason: 'Roundabout placement failed' };
+    }
+    const roadsAfter = clone(roadsApi.serialize()), heightsAfter = S.snapshotHeights(ev.points);
+    S.spend(ev.cost, 'road roundabout');
+    const changedLotIds = (target, current) => {
+      const a = new Map((target?.lots || []).map(row => [row.key, row.id]));
+      const b = new Map((current?.lots || []).map(row => [row.key, row.id]));
+      const ids = new Set();
+      for (const key of new Set([...a.keys(), ...b.keys()])) {
+        if (a.get(key) === b.get(key)) continue;
+        if (Number.isInteger(a.get(key))) ids.add(a.get(key));
+        if (Number.isInteger(b.get(key))) ids.add(b.get(key));
+      }
+      return [...ids];
+    };
+    const rollbackOwners = (snap) => roadsApi.restoreTransaction(snap.roads) !== false &&
+      S.restoreHeights(snap.heights) !== false && zoningApi.deserialize(snap.zoning) !== false &&
+      buildingsApi.deserialize(snap.buildings) !== false && S.ctx.modules.simulation?.reconcileWorld?.() !== false;
+    const restoreOwners = ({ roads, terrain, zoning = null, buildings = null }) => {
+      try { if (zoningApi.settleForHistory?.() === false) return false; }
+      catch (error) { S.ctx.log.warn(`roundabout history settlement rejected: ${error?.message || error}`); return false; }
+      const rollback = { roads: clone(roadsApi.serialize()), heights: S.snapshotHeights(ev.points),
+        zoning: clone(zoningApi.serialize()), buildings: clone(buildingsApi.serialize()) };
+      try {
+        if (!roadsApi.restoreTransaction(roads)) throw new Error('roads rejected roundabout restore');
+        if (!S.restoreHeights(terrain)) throw new Error('terrain rejected roundabout restore');
+        if (zoning) {
+          const affected = new Set(changedLotIds(zoning, rollback.zoning));
+          const currentByKey = new Map((rollback.zoning.lots || []).map(row => [row.key, row]));
+          const targetZoning = clone(zoning);
+          for (const row of targetZoning.lots || []) {
+            const current = currentByKey.get(row.key);
+            if (current?.id === row.id && !affected.has(row.id)) row.buildingId = current.buildingId;
+          }
+          if (zoningApi.deserialize(targetZoning) === false) throw new Error('zoning rejected roundabout restore');
+          if (buildingsApi.restoreTransaction(buildings, [...affected]) === false) throw new Error('buildings rejected roundabout restore');
+          if (S.ctx.modules.simulation?.reconcileWorld?.() === false) throw new Error('simulation rejected roundabout reconcile');
+        }
+        return true;
+      } catch (error) {
+        if (!rollbackOwners(rollback)) S.ctx.log.error('roundabout history compensation failed', error);
+        else S.ctx.log.warn(`roundabout history change rejected and compensated: ${error?.message || error}`);
+        return false;
+      }
+    };
+    S.pushUndo({ label: 'road:roundabout', cost: ev.cost, key: 'road:roundabout', fromDrag: false,
+      undo() { if (!restoreOwners({ roads: roadsBefore, terrain: heightsBefore, zoning: zoningBefore, buildings: buildingsBefore })) return false; S.refund(ev.cost); return true; },
+      redo() { if (!restoreOwners({ roads: roadsAfter, terrain: heightsAfter })) return false; S.spend(ev.cost, 'redo roundabout'); return true; },
+    });
+    draft.points = []; draft.ctrl = null; draft.cursorSnap = null; S.cursor = null; refresh(); S.dirty();
     return { ok: true, ids, cost: ev.cost };
   }
 
@@ -360,6 +550,7 @@ export function roadTool(S) {
     click(button = 0) {
       if (button === 2) return this.rightClick();
       if (!S.cursor) return { ok: false, cost: 0, reason: 'No cursor' };
+      if (isRoundabout()) return placeRoundabout();
       refresh();
       const sn = draft.cursorSnap;
       if (!sn) return { ok: false, cost: 0, reason: 'No cursor' };
@@ -369,7 +560,9 @@ export function roadTool(S) {
         return { ok: true, cost: 0 };
       }
       draft.points.push({ x: sn.x, z: sn.z, node: sn.node, edge: sn.edge });
-      refresh();
+      // Retain the snapped click until another pointer event. Re-snapping the same raw cursor
+      // against this new anchor invents a short tail when an angle snap moved the endpoint.
+      draft.cursorSnap = sn;
       S.dirty();
       const ev = evalDraft({ ...currentDraft(), cursor: null });
       return { ok: true, cost: ev.cost };
@@ -379,9 +572,15 @@ export function roadTool(S) {
       if (draft.points.length) { draft.points.pop(); refresh(); S.dirty(); return { ok: true }; }
       return { ok: false, reason: 'Nothing to cancel' };
     },
-    commit,
+    commit() { return isRoundabout() ? placeRoundabout() : commitRoad(); },
 
     state() {
+      if (isRoundabout()) {
+        const ev = S.cursor ? evalRoundabout(S.cursor.x, S.cursor.z) : null;
+        return { phase: 'placing', points: S.cursor ? [{ x: S.cursor.x, y: T().getHeight(S.cursor.x, S.cursor.z), z: S.cursor.z }] : [],
+          valid: !!ev?.ok, reason: ev?.reason || (S.cursor ? null : 'No cursor'), cost: ev?.cost || 0, refund: 0, snap: null,
+          metrics: { length: +(ev?.length || 0).toFixed(2), angle: 0, grade: +((ev?.grade || 0) * 100).toFixed(2), cells: 0, volume: 0, items: ROUNDABOUT_SEGMENTS } };
+      }
       const ev = evalDraft(currentDraft());
       const Tr = T();
       const pts = ev.points.map((p) => ({ x: p.x, y: Tr.getHeight(p.x, p.z), z: p.z }));
@@ -402,6 +601,18 @@ export function roadTool(S) {
     // ------------------------------------------------------------------ drawing
     draw(d = currentDraft()) {
       const g = S.giz;
+      if (isRoundabout(d) || isRoundabout()) {
+        const c = d.cursor || S.cursor;
+        if (!c) return;
+        const ring = evalRoundabout(c.x, c.z);
+        g.setGhost(ring.path, widthOf('street'), ring.ok ? 'valid' : 'invalid',
+          ring.ok ? { fill: GC.wash, fillA: 0.46, opacity: 0.88 } : {});
+        const col = ring.ok ? GC.validEdge : GC.invalidEdge;
+        for (const p of ring.points) g.marker(p.x, p.z, 2.2, col, 0.30);
+        S.chips.add(c.x, T().getHeight(c.x, c.z) + 3, c.z, ring.ok ? ICON.cost : ICON.bad,
+          ring.ok ? `Roundabout · ${money(ring.cost)}` : ring.reason, ring.ok ? 'cost' : 'bad', 0, -26, '8 connection points', 6);
+        return;
+      }
       const ev = evalDraft(d);
       if (!ev.path.length) {
         if (S.cursor && d.points.length === 0) {
@@ -414,22 +625,10 @@ export function roadTool(S) {
       if (d.slot === 'alt') g.setGhostAlt(ev.path, w, ev.ok ? 'valid' : 'invalid');
       else {
         g.setGhost(ev.path, w, ev.ok ? 'valid' : 'invalid');
-        // Landmark for api.cropRects: the point on the ghost farthest from any existing road, so
-        // the ribbon/ground sample boxes land on the ribbon and on plain ground beside it.
-        const rd = R();
-        let best = null, bestD = -1;
-        for (let i = Math.max(1, Math.floor(ev.path.length * 0.2)); i < ev.path.length - 1; i++) {
-          const p = ev.path[i];
-          const ne = rd.nearestEdge?.(p.x, p.z, 80);
-          const dist = ne ? ne.dist : 80;
-          if (dist > bestD) { bestD = dist; best = i; }
-        }
-        if (best != null) {
-          const p = ev.path[best], q = ev.path[best + 1] || ev.path[best - 1];
-          let dx = q.x - p.x, dz = q.z - p.z;
-          const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l;
-          S.landmark.ribbon = { x: p.x, z: p.z, width: w, nx: -dz, nz: dx };
-        }
+        // Keep the rendered path for the on-demand measurement API. Searching the road network
+        // for a crop anchor is not rendering work and must not run on every pointer frame.
+        S.landmark.path = ev.path;
+        S.landmark.width = w;
       }
 
       // alignment guide: a dashed white centre stripe continuing past the cursor (cs2_1.jpg)
@@ -442,7 +641,8 @@ export function roadTool(S) {
       const anchor = ev.points[0];
       if (d.wash !== false && anchor && (anchor.node != null || anchor.edge != null)) {
         g.wash(anchor.x, anchor.z, Math.max(14, w * 0.85));
-        S.landmark.wash = { x: anchor.x, z: anchor.z };
+        // Sample the wash interior away from the snap disc and its chip anchor.
+        S.landmark.wash = { x: anchor.x, z: anchor.z, radius: Math.max(14, w * 0.85) };
       }
       // node discs: flat white filled circles; the live cursor node is larger with a cyan halo
       const col = ev.ok ? GC.validEdge : GC.invalidEdge;
@@ -467,7 +667,7 @@ export function roadTool(S) {
       const end = ev.points[ev.points.length - 1];
       if (ev.ok) chip(end, ICON.cost, money(ev.cost), 'cost', -38, '', 5);
       else chip(end, ICON.bad, ev.reason, 'bad', -38, '', 6);
-      const sn = d.cursor;
+      const sn = d.cursor?.kind ? d.cursor : anchor?.node != null ? { ...anchor, kind:'node', id:anchor.node } : d.cursor;
       if (sn && sn.kind) chip({ x: sn.x, z: sn.z }, ICON.snap, sn.kind === 'angle' ? `angle ${sn.id} °` : `snap ${sn.kind}`, 'snap', 22, '', 4);
     },
 
@@ -596,6 +796,8 @@ export function zoneTool(S) {
       ? [Math.min(d.marquee.x0, d.marquee.x1) - 10, Math.min(d.marquee.z0, d.marquee.z1) - 10,
         Math.max(d.marquee.x0, d.marquee.x1) + 10, Math.max(d.marquee.z0, d.marquee.z1) + 10]
       : [d.cursor.x - radiusOf(d) - 10, d.cursor.z - radiusOf(d) - 10, d.cursor.x + radiusOf(d) + 10, d.cursor.z + radiusOf(d) + 10];
+    const quoted = d.erasing ? 0 : cells.length / 2 * (ZONE_COST[d.density] ?? ZONE_COST.low);
+    if (!S.afford(quoted)) return { ok: false, ids: [], cost: quoted, reason: REASON.funds };
     const before = snapshotArea(box[0], box[1], box[2], box[3]);
     const n = applyStroke(d, cells);
     const after = snapshotArea(box[0], box[1], box[2], box[3]);
@@ -681,6 +883,7 @@ export function zoneTool(S) {
     },
     /** For criterion 10's probe: the exact linear colour the preview fills with. */
     previewColour(type, density) { return (ZONE_RGB_LINEAR[type] || ZONE_RGB_LINEAR.residential)[density]; },
+    drag() { return doStroke(draftOf(), true); },
     _setMarquee(m) { st.marquee = m; },
   };
 }
@@ -717,10 +920,17 @@ export function terrainTool(S) {
   function stroke(d, dabs, fromDrag) {
     if (!d.cursor) return { ok: false, ids: [], cost: 0, reason: 'No cursor' };
     const r = radiusOf(d);
-    const before = S.snapshotHeightRect(d.cursor.x, d.cursor.z, r * 1.6);
+    const estimate = Math.round(0.3 * Math.PI * r * r * strengthOf(d) * (d.mode === 'raise' || d.mode === 'lower' ? 1.1 : 0.35) * dabs * TERRAIN_COST_PER_M3);
+    if (!S.afford(estimate)) return { ok: false, ids: [], cost: estimate, reason: REASON.funds };
+    // A sculpt can resample road designs and cut/fill the whole network. Include that derived
+    // terrain in the same transaction, before recording the post-action image for redo.
+    const hasRoads = S.ctx.world.roads.edges.size > 0;
+    const snapshot = () => hasRoads ? S.snapshotHeights([d.cursor]) : S.snapshotHeightRect(d.cursor.x, d.cursor.z, r * 1.6);
+    const before = snapshot();
     let vol = 0;
     for (let i = 0; i < dabs; i++) vol += dab(d);
-    const after = S.snapshotHeightRect(d.cursor.x, d.cursor.z, r * 1.6);
+    if (hasRoads) S.ctx.modules.roads?.rebuild?.();
+    const after = snapshot();
     const cost = Math.max(0, Math.round(vol * TERRAIN_COST_PER_M3));
     S.spend(cost, 'terraform');
     st.moved += vol;
@@ -783,6 +993,7 @@ export function terrainTool(S) {
       S.chips.add(d.cursor.x, y + 2, d.cursor.z, ICON.height, `${delta >= 0 ? '+' : ''}${delta.toFixed(1)} m`, '', 0, -42, TERRAIN_LABEL[d.mode] || d.mode, 3);
       S.chips.add(d.cursor.x, y + 2, d.cursor.z, ICON.radius, `${Math.round(r * 2)} m`, '', 0, -20, `${d.strength} %`, 2);
     },
+    drag() { return stroke(draftOf(), 1, true); },
     _stroke: stroke,
   };
 }
@@ -795,15 +1006,29 @@ export function serviceTool(S) {
 
   function headingFor(x, z) {
     const ne = S.ctx.world.roads.nearestEdge?.(x, z, 160);
-    return ne ? Math.atan2(ne.point.z - z, ne.point.x - x) + Math.PI / 2 : 0;
+    // Services use a +Y rotation with the entrance facing local -Z.
+    return ne ? Math.atan2(x - ne.point.x, z - ne.point.z) : 0;
   }
 
   function evalDraft(d) {
     const T = S.ctx.world.terrain;
     const dd = d.def;
     const out = { ok: true, reason: null, cost: dd.cost, frontage: null, slope: 0, def: dd };
+    if (!S.poses.length && S.failure) { out.ok = false; out.reason = S.failure; }
     if (!d.cursor) { out.ok = false; out.reason = 'No cursor'; return out; }
     const { x, z } = d.cursor;
+    const owner = S.ctx.modules.services;
+    if (typeof owner?.validate === 'function') {
+      const v = owner.validate(d.kind, x, z, d.heading);
+      const reasons = {water: REASON.onWater, slope: REASON.uneven, overlap: 'Footprint occupied', no_frontage: REASON.noRoad};
+      out.ok = out.ok && v.ok;
+      if (!v.ok) out.reason = reasons[v.reason] || v.reason || REASON.service;
+      out.slope = v.slope || 0;
+      const point = v.frontage?.point || (v.frontage && S.ctx.world.roads.sample?.(v.frontage.edgeId, v.frontage.t));
+      out.frontage = point ? {...v.frontage, point} : null;
+      if (out.ok && !S.afford(dd.cost)) { out.ok = false; out.reason = REASON.funds; }
+      return out;
+    }
     // Road access is checked FIRST: a cursor dropped anywhere away from the network must report
     // exactly 'No road access' (criterion 18), not whatever else happens to be wrong out there.
     const ne = S.ctx.world.roads.nearestEdge?.(x, z, RULES.serviceRoadReach);
@@ -852,15 +1077,27 @@ export function serviceTool(S) {
       try { id = sv.place?.(d.kind, d.cursor.x, d.cursor.z, d.heading); } catch (e) { S.ctx.log.warn(`services.place failed: ${e?.message}`); }
       if (id === null || id === undefined || id === -1) {
         // `services` is a stub whose world.services.place() is a no-op returning null (spec §7/19)
+        S.failure = REASON.service;
         return { ok: false, ids: [], cost: 0, reason: REASON.service };
       }
-      S.spend(d.def.cost, `service ${d.kind}`);
-      const pos = { x: d.cursor.x, z: d.cursor.z, heading: d.heading, kind: d.kind };
+      // Services owns the placement debit. Its pad is geometry; place/remove do not edit terrain.
+      const item = sv.items.get(id);
+      const pos = { x: item.x, z: item.z, heading: item.heading, kind: item.kind };
       let cur = id;
       S.pushUndo({
         label: `service:${d.kind}`, cost: d.def.cost, key: `service:${d.kind}`, fromDrag: false,
-        undo() { try { sv.remove?.(cur); } catch (e) { /* stub */ } S.refund(d.def.cost); },
-        redo() { try { cur = sv.place?.(pos.kind, pos.x, pos.z, pos.heading); } catch (e) { /* stub */ } S.spend(d.def.cost, 'redo'); },
+        undo() {
+          if (!sv.items.has(cur) || sv.remove(cur) === false) return false;
+          S.refund(d.def.cost);
+          return true;
+        },
+        redo() {
+          if (!S.afford(d.def.cost)) return false;
+          const next = sv.restore({ ...pos, id: cur });
+          if (!Number.isInteger(next) || next < 1 || !sv.items.has(next)) return false;
+          cur = next;
+          return true;
+        },
       });
       S.setSelection('service', id);
       return { ok: true, ids: [id], cost: d.def.cost };
@@ -882,7 +1119,7 @@ export function serviceTool(S) {
       const dd = d.def;
       const col = ev.ok ? GC.cyan : GC.invalid;
       // filled footprint rectangle at the kind's true size (criterion 18)
-      g.rectFill(d.cursor.x, d.cursor.z, dd.w, dd.d, d.heading, col, ev.ok ? 0.42 : 0.55);
+      g.rectFill(d.cursor.x, d.cursor.z, dd.w, dd.d, -d.heading, col, ev.ok ? 0.42 : 0.55);
       if (dd.coverage > 0) {
         g.disc(d.cursor.x, d.cursor.z, dd.coverage, {
           colour: ev.ok ? GC.cyan : GC.invalid, rim: ev.ok ? GC.validEdge : GC.invalidEdge,
@@ -941,16 +1178,19 @@ export function propTool(S) {
       // the test is on the function, never on a version flag or a module name (spec §7/19)
       if (typeof P?.place !== 'function') {
         if (!st.warned) { st.warned = true; S.ctx.log.info('props exposes no place() — the prop tool is preview only'); }
+        S.failure = REASON.props;
         return { ok: false, ids: [], cost: 0, reason: REASON.props };
       }
       const pts = points(d);
-      const cost = (PROP_COST[d.kind] ?? 50) * pts.length;
+      const quoted = (PROP_COST[d.kind] ?? 50) * pts.length;
+      if (!S.afford(quoted)) return { ok: false, ids: [], cost: quoted, reason: REASON.funds };
       // props.place is (kind, x, z, opts) with the heading inside opts (src/modules/props/index.js:580);
       // the extra positional heading keeps the spec's (kind,x,z,heading,opts) form working too.
-      const put = (p) => P.place(d.kind, p.x, p.z, { heading: d.heading }, { heading: d.heading });
+      const put = (p) => P.place(d.kind, p.x, p.z, { heading: d.heading });
       const ids = [];
       for (const p of pts) { const id = put(p); if (id != null && id >= 0) ids.push(id); }
       if (!ids.length) return { ok: false, ids: [], cost: 0, reason: REASON.props };
+      const cost = (PROP_COST[d.kind] ?? 50) * ids.length;
       S.spend(cost, `prop ${d.kind}`);
       S.pushUndo({
         label: `prop:${d.kind}`, cost, key: `prop:${d.kind}`, fromDrag: false,
@@ -983,7 +1223,7 @@ export function propTool(S) {
       }
       const y = T.getHeight(d.cursor.x, d.cursor.z);
       S.chips.add(d.cursor.x, y + 2, d.cursor.z, ICON.info, d.kind.replace(/_/g, ' '), '', 0, -42, '', 3);
-      S.chips.add(d.cursor.x, y + 2, d.cursor.z, ICON.cost, money((PROP_COST[d.kind] ?? 50) * pts.length), 'cost', 0, -20, '', 4);
+      S.chips.add(d.cursor.x, y + 2, d.cursor.z, S.failure ? ICON.bad : ICON.cost, S.failure || money((PROP_COST[d.kind] ?? 50) * pts.length), S.failure ? 'bad' : 'cost', 0, -20, '', 4);
     },
   };
 }
@@ -1035,11 +1275,12 @@ export function bulldozeTool(S) {
       const ids = [];
       let refund = 0, cost = 0;
       S.beginGroup(`bulldoze:${list.length}`);
-      for (const t of list) {
-        const r = S.demolish(t);
-        if (r) { ids.push(t.id); refund += r.refund || 0; cost += r.cost || 0; }
-      }
-      S.endGroup();
+      try {
+        for (const t of list) {
+          const r = S.demolish(t);
+          if (r) { ids.push(t.id); refund += r.refund || 0; cost += r.cost || 0; }
+        }
+      } finally { S.endGroup(); }
       st.marquee = null;
       S.dirty();
       return { ok: ids.length > 0, ids, cost, refund };
@@ -1070,7 +1311,7 @@ export function bulldozeTool(S) {
           const path = S.edgePath(t.id);
           if (path) g.setGhostAlt(path, t.width || 16, 'invalid');
         } else {
-          g.doomVolume(t.x, t.z, t.w, t.d, t.heading || 0, t.height || 6, GC.bulldoze, 0.35);
+          g.doomVolume(t.x, t.z, t.w, t.d, t.heading || 0, t.height || 6, GC.bulldoze, 0.35, t.baseY);
         }
       }
       const T = S.ctx.world.terrain;
@@ -1082,7 +1323,7 @@ export function bulldozeTool(S) {
       for (const t of list) refund += S.refundOf(t);
       const y = T.getHeight(anchor.x, anchor.z);
       S.chips.add(anchor.x, y + 6, anchor.z, ICON.minus, `${list.length} items`, 'bad', 0, -40, '', 5);
-      if (refund > 0) S.chips.add(anchor.x, y + 6, anchor.z, ICON.cost, `+${money(refund)}`, 'cost', 0, -18, '', 4);
+      S.chips.add(anchor.x, y + 6, anchor.z, ICON.cost, `+${money(refund)}`, 'cost', 0, -18, '', 4);
     },
     _setMarquee(m) { st.marquee = m; },
   };
@@ -1090,15 +1331,93 @@ export function bulldozeTool(S) {
 
 // ------------------------------------------------------- pass-through tools (transit / infoview)
 
+// Candidate tools-owned adapter. Integrator applies after transit owner freeze.
+function transitTool(S) {
+  const owner = () => S.ctx.modules.transit;
+  const empty = () => ({ active: false, stops: [], valid: false, reason: 'Transit unavailable', length: 0, hovered: null });
+  const snapshot = () => owner()?.draftState?.() || empty();
+  let intent = {}, failure = null;
+  const begin = () => {
+    if (snapshot().active) return true;
+    const ok = owner()?.beginLine?.(intent) === true;
+    failure = ok ? null : 'Cannot start this line';
+    return ok;
+  };
+  const cancel = () => { owner()?.cancelLine?.(); failure = null; S.dirty(); };
+  const marker = (p, radius, color) => {
+    const ground = S.ctx.world.terrain.getHeight(p.x, p.z);
+    S.giz.marker(p.x, p.z, radius, color, (Number.isFinite(p.y) ? p.y - ground : 0) + 0.18);
+  };
+  return {
+    name: 'transit',
+    activate(opts) {
+      intent = { ...opts }; failure = null;
+      if (owner()?.beginLine?.(intent) !== true) failure = 'Cannot start this line';
+      S.dirty();
+    },
+    deactivate: cancel,
+    cancel,
+    pointer(point) {
+      // Hover never starts a new draft or publishes stops.
+      if (snapshot().active) owner()?.previewDraft?.(point?.x ?? NaN, point?.z ?? NaN);
+      failure = null; S.dirty();
+    },
+    click(button = 0) {
+      if (button === 2) return this.rightClick();
+      if (button !== 0 || !S.cursor) return { ok: false, cost: 0, reason: 'Click a roadside to add a stop' };
+      if (!begin()) return { ok: false, cost: 0, reason: failure };
+      const id = owner()?.addStopToDraft?.(S.cursor.x, S.cursor.z);
+      const ok = Number.isInteger(id) && id > 0;
+      const d = snapshot();
+      failure = ok ? null : (d.hovered?.reason || d.reason || 'No valid stop here');
+      S.dirty();
+      return { ok, id: ok ? id : null, cost: 0, reason: failure };
+    },
+    rightClick() { const active = snapshot().active; cancel(); return { ok: active, cost: 0, reason: active ? null : 'No line draft' }; },
+    commit() {
+      const id = owner()?.commitLine?.();
+      const ok = Number.isInteger(id) && id > 0;
+      failure = ok ? null : (snapshot().reason || 'Add at least two connected stops');
+      if (ok) intent = { mode: 'line', kind: intent.kind || 'bus' };
+      S.dirty();
+      return { ok, ids: ok ? [id] : [], cost: 0, reason: failure };
+    },
+    state() {
+      const d = snapshot();
+      return {
+        phase: d.active ? 'drawing' : 'idle', points: d.stops, valid: d.valid,
+        reason: failure || d.reason, cost: 0, refund: 0, snap: d.hovered,
+        metrics: { length: d.length, angle: 0, grade: 0, cells: 0, volume: 0, items: d.stops.length },
+      };
+    },
+    draw() {
+      const d = snapshot();
+      if (!d.active) return;
+      for (let i = 0; i < d.stops.length; i++) {
+        const p = d.stops[i];
+        marker(p, 2.1, GC.cyan);
+        S.chips.add(p.x, p.y + 2, p.z, ICON.info, `Stop ${i + 1}`, '', 0, -18, '', 1);
+      }
+      const p = d.hovered || d.stops[d.stops.length - 1];
+      if (!p) return;
+      if (d.hovered) marker(p, 2.6, p.valid ? GC.validEdge : GC.invalidEdge);
+      const reason = failure || (d.hovered && !d.hovered.valid ? d.hovered.reason : (!d.valid ? d.reason : null));
+      S.chips.add(p.x, p.y + 4, p.z, ICON.info, 'Click: stop · Enter: finish · ESC/right-click: cancel', '', 0, -58, '', 5);
+      if (reason) S.chips.add(p.x, p.y + 4, p.z, ICON.bad, reason, 'bad', 0, -34, '', 6);
+    },
+  };
+}
+
 export function forwardTool(S, name) {
+  if (name === 'transit') return transitTool(S);
   return {
     name,
     activate(opts) {
       try {
         if (name === 'transit') S.ctx.modules.transit?.beginLine?.(opts);
-        else S.ctx.modules.infoviews?.setActive?.(opts?.view);
+        else S.ctx.modules.infoviews?.setView?.(opts?.view ?? null);
       } catch (e) { S.ctx.log.warn(`${name} forward failed: ${e?.message}`); }
-      S.ctx.log.info(`${name}: forwarded to the ${name} module (a stub today — no-op)`);
+      S.ctx.log.info(`${name}: activation forwarded to its module`);
     },
     deactivate() {}, cancel() {}, pointer() {},
     click() { return { ok: false, cost: 0, reason: `${name} unavailable` }; },

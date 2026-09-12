@@ -1,0 +1,4 @@
+import {spawnSync} from 'node:child_process';
+const jobs=[['src/modules/democity/tools/census-r3.mjs'],['src/modules/democity/tools/cityfill-r3.mjs'],['src/modules/democity/tools/contracts-r3.mjs'],['src/modules/democity/tools/aliases-r3.mjs'],['tools/gauntlet.mjs','--module','democity','--round','dev3','--times','6.5,12,17.5,22','--measure','12'],['tools/gauntlet.mjs','--module','democity','--round','dev3s7','--seed','7','--times','12','--measure','12'],['src/modules/democity/tools/presets-r3.mjs']];
+for(const args of jobs){const r=spawnSync('node',args,{stdio:'inherit'});if(r.status!==0){console.error(`Verification failed: ${args.join(' ')}`);process.exit(r.status||1);}}
+for(const time of[12,22]){const r=spawnSync('node',['tools/screenshot.mjs','--showcase','all','--camera','aerial','--time',String(time),'--out',`shots/democity/rdev3/all_aerial_${time}.png`,'--timeout','240','--measure','12'],{stdio:'inherit'});if(r.status!==0)process.exit(r.status||1);}

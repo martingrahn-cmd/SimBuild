@@ -1,0 +1,630 @@
+{
+  "module": "democity",
+  "round": "r9a",
+  "reviewType": "independent bounded product review",
+  "decision": "ACCEPT",
+  "score": 6.0,
+  "verdict": "FAIL",
+  "pass": false,
+  "wholeGamePass": false,
+  "passThreshold": 8.5,
+  "scoreChange": 0,
+  "reason": "Visible local improvement in near-impostor depth, strongest in park daylight, with a verified one-line owner-scoped range change and no demonstrated material regression in the supplied views. Acceptance does not clear whole-game gates.",
+  "source": {
+    "path": "src/modules/props/chunks.js",
+    "preSha256": "123bd2b7d723899efcac8e882ad81e6a8f59efeb9efd60b4382c4d876c1ca3ba",
+    "candidateAndCurrentSha256": "60ae70eb2d9249f07e01dc9af0d832ff7c4756ea0b14789fbb09348d42e93834",
+    "exactSingleReplacementVerified": true,
+    "before": "const LOD0_R = 60, LOD1_R = 175, BAND = 12;",
+    "after": "const LOD0_R = 60, LOD1_R = 205, BAND = 12;",
+    "oldTransitionIntervalM": [
+      163,
+      187
+    ],
+    "newTransitionIntervalM": [
+      193,
+      217
+    ],
+    "subBucketM": 32,
+    "cap1": 520,
+    "topDownThreshold": 0.62
+  },
+  "census": [
+    {
+      "range": 175,
+      "camera": "park",
+      "lod": {
+        "lod0": 0,
+        "lod1": 160,
+        "impostor": 2175
+      },
+      "drawCalls": 335,
+      "triangles": 1344979
+    },
+    {
+      "range": 175,
+      "camera": "riverfront",
+      "lod": {
+        "lod0": 18,
+        "lod1": 135,
+        "impostor": 546
+      },
+      "drawCalls": 204,
+      "triangles": 1154224
+    },
+    {
+      "range": 175,
+      "camera": "aerial",
+      "lod": {
+        "lod0": 0,
+        "lod1": 1939,
+        "impostor": 0
+      },
+      "drawCalls": 321,
+      "triangles": 1548741
+    },
+    {
+      "range": 190,
+      "camera": "park",
+      "lod": {
+        "lod0": 0,
+        "lod1": 178,
+        "impostor": 2158
+      },
+      "drawCalls": 335,
+      "triangles": 1347431
+    },
+    {
+      "range": 190,
+      "camera": "riverfront",
+      "lod": {
+        "lod0": 18,
+        "lod1": 156,
+        "impostor": 533
+      },
+      "drawCalls": 203,
+      "triangles": 1161148
+    },
+    {
+      "range": 190,
+      "camera": "aerial",
+      "lod": {
+        "lod0": 0,
+        "lod1": 1939,
+        "impostor": 0
+      },
+      "drawCalls": 321,
+      "triangles": 1548741
+    },
+    {
+      "range": 205,
+      "camera": "park",
+      "lod": {
+        "lod0": 0,
+        "lod1": 204,
+        "impostor": 2127
+      },
+      "drawCalls": 334,
+      "triangles": 1351071
+    },
+    {
+      "range": 205,
+      "camera": "riverfront",
+      "lod": {
+        "lod0": 18,
+        "lod1": 179,
+        "impostor": 507
+      },
+      "drawCalls": 203,
+      "triangles": 1165956
+    },
+    {
+      "range": 205,
+      "camera": "aerial",
+      "lod": {
+        "lod0": 0,
+        "lod1": 1939,
+        "impostor": 0
+      },
+      "drawCalls": 321,
+      "triangles": 1548741
+    },
+    {
+      "range": 220,
+      "camera": "park",
+      "lod": {
+        "lod0": 0,
+        "lod1": 223,
+        "impostor": 2106
+      },
+      "drawCalls": 334,
+      "triangles": 1353875
+    },
+    {
+      "range": 220,
+      "camera": "riverfront",
+      "lod": {
+        "lod0": 18,
+        "lod1": 200,
+        "impostor": 477
+      },
+      "drawCalls": 203,
+      "triangles": 1170396
+    },
+    {
+      "range": 220,
+      "camera": "aerial",
+      "lod": {
+        "lod0": 0,
+        "lod1": 1939,
+        "impostor": 0
+      },
+      "drawCalls": 321,
+      "triangles": 1548741
+    }
+  ],
+  "censusSidecarsExact": true,
+  "visualSidecarsExact": true,
+  "allImageMetricsRecomputed": true,
+  "imageMetrics": {
+    "park_12": {
+      "normalizedMAE": 0.006182498436617445,
+      "changedPixelPercent": 17.704957561728396,
+      "pixelsDeltaAbove16Percent": 2.3547935956790123,
+      "maxChannelDelta": 215
+    },
+    "park_22": {
+      "normalizedMAE": 0.0019312231451222464,
+      "changedPixelPercent": 6.963879243827161,
+      "pixelsDeltaAbove16Percent": 1.521556712962963,
+      "maxChannelDelta": 196
+    },
+    "riverfront_12": {
+      "normalizedMAE": 0.0017731393226014687,
+      "changedPixelPercent": 1.5823206018518519,
+      "pixelsDeltaAbove16Percent": 0.7301793981481481,
+      "maxChannelDelta": 203
+    },
+    "riverfront_22": {
+      "normalizedMAE": 0.0006784456195029452,
+      "changedPixelPercent": 3.9440586419753085,
+      "pixelsDeltaAbove16Percent": 0.4578028549382716,
+      "maxChannelDelta": 193
+    }
+  },
+  "directed": [
+    {
+      "variant": "accepted",
+      "camera": "park",
+      "time": 12,
+      "lod": {
+        "lod0": 0,
+        "lod1": 160,
+        "impostor": 2175
+      },
+      "drawCalls": 335,
+      "triangles": 1344979,
+      "fps": 30.5,
+      "rawHeapMB": 483.5
+    },
+    {
+      "variant": "accepted",
+      "camera": "park",
+      "time": 22,
+      "lod": {
+        "lod0": 0,
+        "lod1": 160,
+        "impostor": 2175
+      },
+      "drawCalls": 314,
+      "triangles": 1715331,
+      "fps": 43.5,
+      "rawHeapMB": 730.5
+    },
+    {
+      "variant": "accepted",
+      "camera": "riverfront",
+      "time": 12,
+      "lod": {
+        "lod0": 18,
+        "lod1": 135,
+        "impostor": 546
+      },
+      "drawCalls": 204,
+      "triangles": 1154224,
+      "fps": 50.6,
+      "rawHeapMB": 499.4
+    },
+    {
+      "variant": "accepted",
+      "camera": "riverfront",
+      "time": 22,
+      "lod": {
+        "lod0": 18,
+        "lod1": 135,
+        "impostor": 546
+      },
+      "drawCalls": 180,
+      "triangles": 1532706,
+      "fps": 47.5,
+      "rawHeapMB": 494.8
+    },
+    {
+      "variant": "candidate",
+      "camera": "park",
+      "time": 12,
+      "lod": {
+        "lod0": 0,
+        "lod1": 204,
+        "impostor": 2127
+      },
+      "drawCalls": 334,
+      "triangles": 1351071,
+      "fps": 52.7,
+      "rawHeapMB": 486.2
+    },
+    {
+      "variant": "candidate",
+      "camera": "park",
+      "time": 22,
+      "lod": {
+        "lod0": 0,
+        "lod1": 204,
+        "impostor": 2127
+      },
+      "drawCalls": 313,
+      "triangles": 1721423,
+      "fps": 46.9,
+      "rawHeapMB": 522.6
+    },
+    {
+      "variant": "candidate",
+      "camera": "riverfront",
+      "time": 12,
+      "lod": {
+        "lod0": 18,
+        "lod1": 179,
+        "impostor": 507
+      },
+      "drawCalls": 203,
+      "triangles": 1165956,
+      "fps": 48.4,
+      "rawHeapMB": 508.8
+    },
+    {
+      "variant": "candidate",
+      "camera": "riverfront",
+      "time": 22,
+      "lod": {
+        "lod0": 18,
+        "lod1": 179,
+        "impostor": 507
+      },
+      "drawCalls": 179,
+      "triangles": 1544438,
+      "fps": 50.9,
+      "rawHeapMB": 543.7
+    }
+  ],
+  "finalSummaryIndependentlyRecomputed": {
+    "files": 16,
+    "ready": 16,
+    "errors": 0,
+    "maxDrawCalls": 468,
+    "maxTriangles": 2275778,
+    "minFps": 49.5,
+    "below50": 1,
+    "maxHeapMB": 730.2,
+    "rows": [
+      {
+        "camera": "downtown",
+        "time": 12,
+        "fps": 51.8,
+        "draws": 426,
+        "triangles": 1896768,
+        "heapMB": 471.8,
+        "errors": 0
+      },
+      {
+        "camera": "downtown",
+        "time": 17.5,
+        "fps": 50.8,
+        "draws": 431,
+        "triangles": 1894832,
+        "heapMB": 678.4,
+        "errors": 0
+      },
+      {
+        "camera": "downtown",
+        "time": 22,
+        "fps": 56.6,
+        "draws": 411,
+        "triangles": 2275778,
+        "heapMB": 492.8,
+        "errors": 0
+      },
+      {
+        "camera": "downtown",
+        "time": 6.5,
+        "fps": 53.9,
+        "draws": 439,
+        "triangles": 1899590,
+        "heapMB": 647.7,
+        "errors": 0
+      },
+      {
+        "camera": "industry",
+        "time": 12,
+        "fps": 59.9,
+        "draws": 205,
+        "triangles": 1168278,
+        "heapMB": 483.3,
+        "errors": 0
+      },
+      {
+        "camera": "industry",
+        "time": 17.5,
+        "fps": 60,
+        "draws": 224,
+        "triangles": 1201830,
+        "heapMB": 548.5,
+        "errors": 0
+      },
+      {
+        "camera": "industry",
+        "time": 22,
+        "fps": 58,
+        "draws": 203,
+        "triangles": 1562952,
+        "heapMB": 491.1,
+        "errors": 0
+      },
+      {
+        "camera": "industry",
+        "time": 6.5,
+        "fps": 58.6,
+        "draws": 193,
+        "triangles": 1196268,
+        "heapMB": 614.3,
+        "errors": 0
+      },
+      {
+        "camera": "park",
+        "time": 12,
+        "fps": 53.8,
+        "draws": 468,
+        "triangles": 1828094,
+        "heapMB": 511.1,
+        "errors": 0
+      },
+      {
+        "camera": "park",
+        "time": 17.5,
+        "fps": 50.5,
+        "draws": 467,
+        "triangles": 1829476,
+        "heapMB": 492.4,
+        "errors": 0
+      },
+      {
+        "camera": "park",
+        "time": 22,
+        "fps": 51.8,
+        "draws": 442,
+        "triangles": 2195456,
+        "heapMB": 473.2,
+        "errors": 0
+      },
+      {
+        "camera": "park",
+        "time": 6.5,
+        "fps": 50.3,
+        "draws": 465,
+        "triangles": 1814022,
+        "heapMB": 519.3,
+        "errors": 0
+      },
+      {
+        "camera": "suburb",
+        "time": 12,
+        "fps": 49.5,
+        "draws": 364,
+        "triangles": 1764976,
+        "heapMB": 474.1,
+        "errors": 0
+      },
+      {
+        "camera": "suburb",
+        "time": 17.5,
+        "fps": 60,
+        "draws": 388,
+        "triangles": 1804640,
+        "heapMB": 730.2,
+        "errors": 0
+      },
+      {
+        "camera": "suburb",
+        "time": 22,
+        "fps": 60,
+        "draws": 329,
+        "triangles": 2144922,
+        "heapMB": 491.4,
+        "errors": 0
+      },
+      {
+        "camera": "suburb",
+        "time": 6.5,
+        "fps": 58.7,
+        "draws": 360,
+        "triangles": 1798884,
+        "heapMB": 704.5,
+        "errors": 0
+      }
+    ]
+  },
+  "contracts": {
+    "api": true,
+    "moduleDoubleDeserializeReturns": [
+      true,
+      true
+    ],
+    "baselineAfterCountsExact": true,
+    "tourReturnCount": 8,
+    "invalidTourRejected": true,
+    "mixedUseThreeProjectionsExact": true,
+    "mixedUseCount": 32,
+    "restageSeedSequence": [
+      1337,
+      7,
+      1337,
+      7
+    ],
+    "restageDigestExactBothRepeatedSeeds": true,
+    "restageRawHeapsMB": [
+      481.1,
+      899.4,
+      931.7,
+      1024.8
+    ],
+    "build": "retained build.log inspected: Vite success,163 modules,323ms; not personally rerun"
+  },
+  "inspection": {
+    "all24OriginalsIndividuallyInspected": true,
+    "originals": [
+      "shots/democity/r9a-lod1-range/accepted_park_12.png",
+      "shots/democity/r9a-lod1-range/accepted_park_22.png",
+      "shots/democity/r9a-lod1-range/accepted_riverfront_12.png",
+      "shots/democity/r9a-lod1-range/accepted_riverfront_22.png",
+      "shots/democity/r9a-lod1-range/candidate_park_12.png",
+      "shots/democity/r9a-lod1-range/candidate_park_22.png",
+      "shots/democity/r9a-lod1-range/candidate_riverfront_12.png",
+      "shots/democity/r9a-lod1-range/candidate_riverfront_22.png",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_12.png",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_17p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_22.png",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_6p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_12.png",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_17p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_22.png",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_6p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/park_12.png",
+      "shots/democity/r9a-lod1-range/final-matrix/park_17p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/park_22.png",
+      "shots/democity/r9a-lod1-range/final-matrix/park_6p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_12.png",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_17p5.png",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_22.png",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_6p5.png"
+    ],
+    "all4CropPairsInspected": true,
+    "cropPairs": [
+      "shots/democity/r9a-lod1-range/park_12_crop_pair.png",
+      "shots/democity/r9a-lod1-range/park_22_crop_pair.png",
+      "shots/democity/r9a-lod1-range/riverfront_12_crop_pair.png",
+      "shots/democity/r9a-lod1-range/riverfront_22_crop_pair.png"
+    ],
+    "jsonFilesReadAndParsed": [
+      "shots/democity/r9a-lod1-range/accepted_park_12.json",
+      "shots/democity/r9a-lod1-range/accepted_park_22.json",
+      "shots/democity/r9a-lod1-range/accepted_riverfront_12.json",
+      "shots/democity/r9a-lod1-range/accepted_riverfront_22.json",
+      "shots/democity/r9a-lod1-range/candidate_park_12.json",
+      "shots/democity/r9a-lod1-range/candidate_park_22.json",
+      "shots/democity/r9a-lod1-range/candidate_riverfront_12.json",
+      "shots/democity/r9a-lod1-range/candidate_riverfront_22.json",
+      "shots/democity/r9a-lod1-range/census.json",
+      "shots/democity/r9a-lod1-range/comparison-metrics.json",
+      "shots/democity/r9a-lod1-range/contracts/apicheck.json",
+      "shots/democity/r9a-lod1-range/contracts/mixed-use.json",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_12.json",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_17p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_22.json",
+      "shots/democity/r9a-lod1-range/final-matrix/downtown_6p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_12.json",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_17p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_22.json",
+      "shots/democity/r9a-lod1-range/final-matrix/industry_6p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/park_12.json",
+      "shots/democity/r9a-lod1-range/final-matrix/park_17p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/park_22.json",
+      "shots/democity/r9a-lod1-range/final-matrix/park_6p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_12.json",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_17p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_22.json",
+      "shots/democity/r9a-lod1-range/final-matrix/suburb_6p5.json",
+      "shots/democity/r9a-lod1-range/final-matrix/summary.json",
+      "shots/democity/r9a-lod1-range/range175_aerial.json",
+      "shots/democity/r9a-lod1-range/range175_park.json",
+      "shots/democity/r9a-lod1-range/range175_riverfront.json",
+      "shots/democity/r9a-lod1-range/range190_aerial.json",
+      "shots/democity/r9a-lod1-range/range190_park.json",
+      "shots/democity/r9a-lod1-range/range190_riverfront.json",
+      "shots/democity/r9a-lod1-range/range205_aerial.json",
+      "shots/democity/r9a-lod1-range/range205_park.json",
+      "shots/democity/r9a-lod1-range/range205_riverfront.json",
+      "shots/democity/r9a-lod1-range/range220_aerial.json",
+      "shots/democity/r9a-lod1-range/range220_park.json",
+      "shots/democity/r9a-lod1-range/range220_riverfront.json",
+      "shots/democity/r9a-lod1-range/restage/restage-cycle.json",
+      "shots/democity/r9a-lod1-range/visual-summary.json"
+    ],
+    "sourceAndTools": [
+      "docs/builds/democity_r9a_lod1_range.md",
+      "src/modules/props/chunks.js",
+      "src/modules/props/index.js (lodHistogram)",
+      "tools/lod1-range-census.mjs",
+      "tools/lod1-range-visual.mjs",
+      "tools/democity-apicheck.mjs",
+      "tools/democity-mixed-use-probe.mjs",
+      "tools/democity-restage-cycle.mjs",
+      "tools/screenshot.mjs (measurement)"
+    ],
+    "otherFiles": [
+      "shots/democity/r9a-lod1-range/build.log"
+    ]
+  },
+  "rankedOpenIssues": [
+    {
+      "rank": 1,
+      "owner": "democity + roads/zoning/buildings",
+      "status": "open",
+      "finding": "Whole-game urban fabric remains sparse and repetitive; this foliage-range change does not address the leading density/frontage/layout issue."
+    },
+    {
+      "rank": 2,
+      "owner": "props",
+      "status": "partially improved; open",
+      "finding": "Nearest planar impostors in the directed park become the existing multi-card crowns, improving local depth/coherence. Isolated coarse leaf clumps, remaining distant impostors and dark night vegetation remain conspicuous. No rank2 closure."
+    },
+    {
+      "rank": 3,
+      "owner": "props; core/rendering",
+      "status": "verification limit/open",
+      "finding": "New boundary motion and cap-saturated views are untested. Preserve failed FPS/memory gates and diagnose retained-memory/long-duration performance separately without attributing noisy differences to this constant."
+    }
+  ],
+  "nextPriority": {
+    "owner": "props",
+    "action": "Validate moving-camera traversal of the new193\u2013217m transition and a cap-stressed view before extending range further; continue crown/impostor coherence diagnosis within current rendering budget.",
+    "wholeGame": "Urban fabric remains the higher-ranked quality problem; score remains6.0FAIL."
+  },
+  "limitations": [
+    "Independent static/source and supplied-evidence audit, not a newly rerun browser experiment, reference calibration, blind A/B judgment or whole-game review.",
+    "Only seed1337 has LOD census and directed image comparisons. No species sweep, low-quality/weather matrix, temporal traversal across the new 193\u2013217 m band, CAP1 saturation or top-down pitch-boundary transition is tested.",
+    "lodHistogram reports copied instance counts, including fade-hidden complementary copies, rather than unique visible-tree identities. Positive LOD1 deltas do not establish exact counts of distinct trees promoted.",
+    "BAND=12 is the half-width of a 24 m interval. Top-down forces tier1 at pitch>0.62 with no normal range/CAP1 check; CAP1 also does not intercept LOD0 blend copies. Existing behavior is retained, not certified as an unconditional 520-instance ceiling.",
+    "Directed/census stats are endpoints; final matrix draw/triangle stats are sampled maxima across a short measurement window. Their different magnitudes are not product regressions. No per-pass ledger fully allocates the triangle deltas.",
+    "Single pages in fixed accepted-then-candidate order are not causal timing evidence. Final suburb_12 reports49.5FPS and the strict50FPS gate remains unpassed; no sustained-motion/long-duration timing proof exists.",
+    "Raw endpoint heap is not forced-GC retained memory or a proved leak. Final730.2MB and restage1024.8MB do not satisfy the512MB project gate, but do not establish a candidate-caused memory regression.",
+    "API counts and two module deserialize returns are checked; tour evidence is eight gotoStop return values plus invalid-index rejection, not settled visual traversal.",
+    "Mixed-use equality covers32 sampled building/plan/link projections after two full-save restore calls; restore return values and complete plans/full-world serialized equality are not recorded.",
+    "Restage equality covers building[id,x,y,z,level,type], service[id,kind,x,y,z] and authored transit plan, with cached repeated-seed restoration. It does not compare Props records/RNG, economy, full road topology, all simulation state, or independently regenerate each repeated seed.",
+    "Raw current/reconstructed-pre hashes match saved provenance; Vite-transformed served bodies and a full-repository capture hash ledger are not retained. The two routed diagnostic tools require the old175 marker and intentionally fail if rerun unchanged on installed205 source.",
+    "Retained build.log substantiates successful163-module build in323ms. The critic reviewed the log but did not personally rerun it."
+  ],
+  "builderCorrectionsReviewed": [
+    "fade-inclusive submitted histogram entries",
+    "BAND=12 half-width /24m interval",
+    "CAP1 normal-tier guard rather than unconditional ceiling"
+  ]
+}

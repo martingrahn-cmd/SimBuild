@@ -8,8 +8,12 @@
 import * as THREE from 'three';
 import { hash2 } from '../../core/rng.js';
 import { GRASS_PALETTE_GLSL } from './material.js';
+import { LotClutterMask } from './clutter-mask.js';
 
-const BLADE = { max: 14000, spacing: 0.45, radius: 30, fade: [17, 30] };
+// The terrain material already carries close-range grass grain.  A slightly wider
+// deterministic scatter keeps the authored clumps readable without turning every
+// lawn into a dense field of visible spikes at the city street cameras.
+const BLADE = { max: 14000, spacing: 0.55, radius: 26, fade: [17, 30] };
 const TUFT = { max: 9000, spacing: 2.3, inner: 16, radius: 140, fade: [100, 138] };
 
 /** clump of tapered blades: 3 rows (root/mid/tip) x 2 columns per blade, leaning outward, rotated around the pivot */
@@ -101,6 +105,7 @@ bc = mix(bc, bc * vec3(1.35, 1.2, 0.75), vDry * vRoot * 0.7);
 diffuseColor.rgb *= bc;`);
   };
   mat.customProgramCacheKey = () => 'terrain-clutter-v4';
+  mat.userData.uniforms = uniforms;
   return mat;
 }
 
@@ -120,7 +125,7 @@ class Layer {
 }
 
 export class GrassScatter {
-  constructor(data, rng, { seaLevel = 0, layer = 1, macro = null, land = null, world = null } = {}) {
+  constructor(data, rng, { seaLevel = 0, layer = 1, macro = null, land = null, world = null, modules = null } = {}) {
     this.data = data;
     this.seaLevel = seaLevel;
     const shared = {
@@ -133,6 +138,7 @@ export class GrassScatter {
     this.blades = new Layer(makeBladeGeometry(rng.fork('blade'), 7), this.bladeMat, BLADE.max, BLADE);
     this.tufts = new Layer(makeBladeGeometry(rng.fork('clump'), 5, 1.6), this.tuftMat, TUFT.max, TUFT);
     this.world = world;
+    this.lotMask = new LotClutterMask(world, modules);
     this._coverageVersion = -1;
     this.group = new THREE.Group();
     this.group.name = 'grass-clutter';
@@ -153,6 +159,7 @@ export class GrassScatter {
   update(camera, dt, terrainVersion) {
     if (dt > 0) this.uTime.value += dt;
     if (!this.enabled) { this.blades.mesh.count = 0; this.tufts.mesh.count = 0; return; }
+    if (this.lotMask.sync()) this.invalidate();
     const cx = camera.position.x, cz = camera.position.z;
     const cov = this.world?.roads?.coverage;
     const covV = cov ? cov.version : -1;
@@ -180,6 +187,7 @@ export class GrassScatter {
       if (x < -d.half + 8 || x > d.half - 8 || z < -d.half + 8 || z > d.half - 8) continue;
       const y = d.getHeight(x, z);
       if (y < this.seaLevel + 1.8) continue;
+      if (this.lotMask.contains(x, z)) continue; // occupied lot surfaces belong to buildings
       if (this._isRoad && this._isRoad(x, z)) continue;   // asphalt / sidewalks / verges
       const nrm = d.getNormal(x, z, this._p);
       if (nrm.y < 0.88) continue;                 // no clutter on rock/steep dirt

@@ -1,0 +1,84 @@
+{
+  "module": "tools",
+  "round": 4,
+  "score": 8.0,
+  "consoleErrors": 0,
+  "maxDrawCalls": 8,
+  "apiContractOk": true,
+  "reportFile": "/Users/martingrahn/Documents/SimBuild/docs/critic/tools_r4.md",
+  "pass": false,
+  "acceptanceFailed": [
+    "2. Ghost ribbon conforms to terrain, never z-fights, never floats \u2014 literal raw-terrain band",
+    "6. Night reads without glowing \u2014 declared street crop is occluded",
+    "13. Draw calls and per-frame cost \u2014 one sample exceeds architecture hard ceiling",
+    "22. Golden hour is not white-out \u2014 declared street crop is occluded"
+  ],
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "minor",
+      "title": "The declared street ribbon landmark samples foreground foliage and a chip",
+      "detail": "The required unmodified street crop [1029,474,64,64] has night p50 20.7456 and ribbon/ground ratio 0.359753 (required190\u2013225 and >=2.5); dawn median saturation0.328244 (>0.10). These literal failed samples are caused by visible tree/chip occlusion. Actual exposed white paint stays neutral. Roadtool/closeup night medians202.0722 and ratios3.905864/3.826560 pass. Make the declared surface landmark robust to occlusion without selecting pixels by brightness or hand-cropping.",
+      "evidence": "shots/tools/r4/critic-probe/pixels.json; street_22.png; street_6p5.png"
+    },
+    {
+      "rank": 2,
+      "severity": "minor",
+      "title": "A single drag frame still exceeds the architecture ceiling",
+      "detail": "Fresh identical 60-frame avenue drag now averages0.99ms, improving from1.771667ms and passing the <=1.2ms target. Maximum2.300000001ms exceeds the2ms hard ceiling. A second path averages0.806667ms/max1.0. Static six-pose0.021667ms and idle0.010ms pass; geometry delta0. Timing is from concurrent host verification, not a universal latency guarantee; retain the measured outlier instead of hiding it.",
+      "evidence": "shots/tools/r4/critic-probe/dynamic-repeat.json; supplement.json"
+    },
+    {
+      "rank": 3,
+      "severity": "minor",
+      "title": "The literal raw-terrain lift band remains unmet over pavement",
+      "detail": "Every unique indexed live ghost vertex was sampled. Raw terrain lift is 0.149999142\u20130.560679765 m, with 2718 vertices outside 0.10\u20130.20 m; stats report the actual range. Lift above max(terrain,pavement) is 0.149999137\u20130.150000869 m, and the roadtool/closeup images show continuous previews without prior asphalt holes. At (73,10), pavement is 0.408883079 m above terrain: these two vertical constraints cannot both hold there. Acceptance 2 is literally unmet, but this is not evidence of visible floating above pavement. Preserve the penetration fix; resolve the contract with the integrator instead of returning to the broken terrain-only geometry.",
+      "evidence": "shots/tools/r4/critic-probe/supplement.json; roadtool_12.png; docs/core-requests/roads.md"
+    }
+  ],
+  "strengths": [
+    "The expensive landmark nearest-edge search now runs on demand; the previously failing continuous path averages0.99ms.",
+    "All six previews and functional public APIs work. Two independent eight-action traces restore all263169 terrain heights and four world counters exactly.",
+    "18 demolition victims are removed; a final fresh probe confirms zero reappearing retired prop IDs and zero aliases of surviving IDs after regeneration.",
+    "Continuous white preview covers elevated pavement without asphalt holes; 720p chips remain26px and world ribbon crop scales43/64.",
+    "Three stable visibility pairs attribute8calls/8940triangles; event deduplication, HUD controls, cancellation, clean disposal, snapping and unavailable-neighbour handling pass."
+  ],
+  "summary": "8.0/10, FAIL. Continuous-drag average is fixed and functional contracts pass. A single2.3ms sample, occluded declared street pixel crops and the raw-terrain/pavement lift conflict remain. All35 fresh captures were viewed; zero errors.",
+  "shots": [
+    "shots/tools/r4/critic-probe/aerial_6p5.png",
+    "shots/tools/r4/critic-probe/aerial_12.png",
+    "shots/tools/r4/critic-probe/aerial_17p5.png",
+    "shots/tools/r4/critic-probe/aerial_22.png",
+    "shots/tools/r4/critic-probe/street_6p5.png",
+    "shots/tools/r4/critic-probe/street_12.png",
+    "shots/tools/r4/critic-probe/street_17p5.png",
+    "shots/tools/r4/critic-probe/street_22.png",
+    "shots/tools/r4/critic-probe/skyline_6p5.png",
+    "shots/tools/r4/critic-probe/skyline_12.png",
+    "shots/tools/r4/critic-probe/skyline_17p5.png",
+    "shots/tools/r4/critic-probe/skyline_22.png",
+    "shots/tools/r4/critic-probe/closeup_6p5.png",
+    "shots/tools/r4/critic-probe/closeup_12.png",
+    "shots/tools/r4/critic-probe/closeup_17p5.png",
+    "shots/tools/r4/critic-probe/closeup_22.png",
+    "shots/tools/r4/critic-probe/roadtool_12.png",
+    "shots/tools/r4/critic-probe/roadtool_22.png",
+    "shots/tools/r4/critic-probe/zonetool_12.png",
+    "shots/tools/r4/critic-probe/zonetool_22.png",
+    "shots/tools/r4/critic-probe/sculpt_12.png",
+    "shots/tools/r4/critic-probe/sculpt_22.png",
+    "shots/tools/r4/critic-probe/bulldoze_12.png",
+    "shots/tools/r4/critic-probe/bulldoze_22.png",
+    "shots/tools/r4/critic-probe/service_12.png",
+    "shots/tools/r4/critic-probe/service_22.png",
+    "shots/tools/r4/critic-probe/invalid_12.png",
+    "shots/tools/r4/critic-probe/invalid_22.png",
+    "shots/tools/r4/critic-probe/roadtool_6p5.png",
+    "shots/tools/r4/critic-probe/roadtool_12_720.png",
+    "shots/tools/r4/critic-probe/roadtool_22_720.png",
+    "shots/tools/r4/critic-probe/closeup_12_720.png",
+    "shots/tools/r4/critic-probe/closeup_22_720.png",
+    "shots/tools/r4/critic-probe/all_aerial_12.png",
+    "shots/tools/r4/critic-probe/all_night_street_22.png"
+  ]
+}

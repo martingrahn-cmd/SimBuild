@@ -1,0 +1,110 @@
+{
+  "module": "zoning",
+  "round": 2,
+  "score": 8.0,
+  "pass": false,
+  "consoleErrors": 0,
+  "maxDrawCalls": 72,
+  "apiContractOk": true,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "title": "The visible cell lattice is displaced four metres from the cell data",
+      "detail": "Item 5 requires the 8 m cell borders. overlay.js computes abs(fract(worldXZ/8)-0.5), which draws at x/z=4+8k; the actual cell borders are x/z=8k. Thus the light lattice crosses cell centres and disagrees with lot and region edges by half a cell. For example the residential-low probe (-20,28), pixel (814,569) in zones_12, lies on a lattice intersection while its true cell corners are (-24,24) and (-16,32). Align the lattice phase with aCell/the world grid before retuning widths. This is a visual/data registration defect, not a lot API failure.",
+      "evidence": "src/modules/zoning/overlay.js:92-100; shots/zoning/r2/zones_12.png; shots/zoning/r2/zonesclose_12.png; shots/zoning/r2/extra-probe.json"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "title": "Sunset region outlines exceed the luminance ceiling",
+      "detail": "The bright-white perimeter is too dominant against the translucent fill. In zoneslope_17p5, the wholly zoned 100x100 rectangle [1013,663,100,100] has p99 luminance 247.86/255, above the section 8 limit of 235. Overlay-mask p99 is 242.78 in zones_17p5, 246.14 in zonesclose_17p5 and 246.00 in zoneslope_17p5. Reduce the near-white outline/pulse peak while preserving the measured boundary contrast and dark-hour read. This is a localized outline ceiling failure, not a whole-frame clipped-area hard fail.",
+      "evidence": "shots/zoning/r2/zoneslope_17p5.png, rect [1013,663,100,100]; shots/zoning/r2/imgstats.json; src/modules/zoning/overlay.js:136-142"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "title": "Night attenuation remains uneven across the eight classes",
+      "detail": "Using the required 200x200 mean(on-off) estimator, L22/L12 is 0.509, 0.317, 0.534, 0.440, 0.430, 0.274, 0.621, 0.723 in residential/commercial/industrial/office low/high order. Residential-high and industrial-high fall below 0.35; both office classes exceed 0.55. The night coefficient is 0.53, not the required 0.42. The full night scene is now convincingly dark (p99 113.58 and brightest pixel outside the overlay), so preserve that improvement while matching the per-class attenuation.",
+      "evidence": "shots/zoning/r2/sessionA_on.png; shots/zoning/r2/sessionA_off.png; shots/zoning/r2/sessionB_on.png; shots/zoning/r2/sessionB_off.png; shots/zoning/r2/imgstats.json"
+    },
+    {
+      "rank": 4,
+      "severity": "minor",
+      "title": "Wide-view line contrast exceeds the density criterion in four probe crops",
+      "detail": "At zoneswide noon, the eight required 100x100 on/off luminance-std ratios are 1.900, 2.015, 1.653, 1.014, 2.068, 1.438, 1.333, 1.380. Four exceed 1.6. Inspection shows structural lattice/outline contrast rather than temporal static: the two temporal tests pass. Reduce minified line/outline contrast without erasing the hatch. High-density hatch is correctly 3 m at 45 degrees with 18% darkening; visible projected periods are at least 9.69 px. Residential-high and commercial-high probes are outside zonesclose, so those requested close-crop measurements have no visible subject; move the probe/staging selections into both prescribed views.",
+      "evidence": "shots/zoning/r2/zoneswide_12.png; shots/zoning/r2/sessionC_off.png; shots/zoning/r2/imgstats.json; shots/zoning/r2/detailstats.json"
+    },
+    {
+      "rank": 5,
+      "severity": "minor",
+      "title": "The declared river boundary run misses the contour-complexity floor",
+      "detail": "Walking the recorded river run from 118,112 through the final occurrence of 119,112 reproduces 20 cells and 8 direction changes, below item 13\u2019s 12. The hillside run is 57 cells and 30 changes and passes. Retain correct water/slope exclusion and stage a longer genuinely shoreline-following run with at least 12 changes; do not fill excluded terrain merely to alter the count. Also refresh the build record: junctionCount is 44 but junctionNodeIds contains 39 ids, 23 of which are absent in the current staged graph, so it cannot fully identify the claimed 44-node coverage set.",
+      "evidence": "docs/builds/zoning_r2.json:staging; shots/zoning/r2/apicheck.json:api.loops; shots/zoning/r2/detailstats.json:boundaryRuns; shots/zoning/r2/zoneslope_12.png"
+    }
+  ],
+  "strengths": [
+    "All eight palette classes remain identifiable; all 28 between-hatch RGB distances pass (minimum 44.18). Terrain detail survives alpha 0.52 fill.",
+    "Road-parallel frontage geometry has a consistent 1.548\u20131.550 m geometric setback; lane markings and crosswalks remain readable.",
+    "142 lots have valid preferred dimensions and road-facing frames; 1,246 of 1,757 painted cells are claimed (70.92%). Lot IDs and buildingId survive refresh and persistence.",
+    "No zoning console errors, observed temporal flicker or overlay detachment. Five attributable draws and 17,896 triangles; measured rebuilds at most 19 ms.",
+    "Correctly hidden in the full-game view; graceful empty-road and flat-terrain degradation. Night is substantially darker than noon."
+  ],
+  "summary": "8.0/10, FAIL. Functional zoning and a major improvement over round 1, but the half-cell lattice offset, excessive outline peaks and inconsistent night attenuation keep it below the 8.5 visual gate. API, console, stability and runtime budgets pass.",
+  "shots": [
+    "shots/zoning/r2/aerial_6p5.png",
+    "shots/zoning/r2/aerial_12.png",
+    "shots/zoning/r2/aerial_17p5.png",
+    "shots/zoning/r2/aerial_22.png",
+    "shots/zoning/r2/street_6p5.png",
+    "shots/zoning/r2/street_12.png",
+    "shots/zoning/r2/street_17p5.png",
+    "shots/zoning/r2/street_22.png",
+    "shots/zoning/r2/skyline_6p5.png",
+    "shots/zoning/r2/skyline_12.png",
+    "shots/zoning/r2/skyline_17p5.png",
+    "shots/zoning/r2/skyline_22.png",
+    "shots/zoning/r2/closeup_6p5.png",
+    "shots/zoning/r2/closeup_12.png",
+    "shots/zoning/r2/closeup_17p5.png",
+    "shots/zoning/r2/closeup_22.png",
+    "shots/zoning/r2/zones_6p5.png",
+    "shots/zoning/r2/zones_12.png",
+    "shots/zoning/r2/zones_17p5.png",
+    "shots/zoning/r2/zones_22.png",
+    "shots/zoning/r2/zonesclose_6p5.png",
+    "shots/zoning/r2/zonesclose_12.png",
+    "shots/zoning/r2/zonesclose_17p5.png",
+    "shots/zoning/r2/zonesclose_22.png",
+    "shots/zoning/r2/zoneswide_6p5.png",
+    "shots/zoning/r2/zoneswide_12.png",
+    "shots/zoning/r2/zoneswide_17p5.png",
+    "shots/zoning/r2/zoneswide_22.png",
+    "shots/zoning/r2/zoneslope_6p5.png",
+    "shots/zoning/r2/zoneslope_12.png",
+    "shots/zoning/r2/zoneslope_17p5.png",
+    "shots/zoning/r2/zoneslope_22.png",
+    "shots/zoning/r2/crops_zones_12.png",
+    "shots/zoning/r2/crops_zoneswide_12.png",
+    "shots/zoning/r2/all12.png",
+    "shots/zoning/r2/degrade_noroads.png",
+    "shots/zoning/r2/degrade_noterrain.png",
+    "shots/zoning/r2/sessionA_off.png",
+    "shots/zoning/r2/sessionA_on.png",
+    "shots/zoning/r2/sessionB_off.png",
+    "shots/zoning/r2/sessionB_on.png",
+    "shots/zoning/r2/sessionC_off.png",
+    "shots/zoning/r2/sessionC_on.png",
+    "shots/zoning/r2/sessionE_0.png",
+    "shots/zoning/r2/sessionE_1.png",
+    "shots/zoning/r2/sessionF_0.png",
+    "shots/zoning/r2/sessionF_1.png"
+  ],
+  "acceptanceFailed": [
+    "3 \u2014 Density is legible by pattern, not only by value",
+    "4 \u2014 Night is night",
+    "5 \u2014 Cell lattice present and screen-space stable",
+    "13 \u2014 Slope and water are respected, organically",
+    "\u00a78 \u2014 17.5-hour overlay crop p99 \u2264 235/255"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "module": "democity",
+  "round": "r7l",
+  "score": 6.0,
+  "pass": false,
+  "decision": "accepted",
+  "change": "environment-owned visible night dome factor after clouds and horizon fog; PMREM radiance remains unchanged",
+  "evidence": [
+    "shots/democity/r7l-night-exposure/baseline-stats.json",
+    "shots/democity/r7l-night-exposure/official-night-stats.json",
+    "shots/democity/r7l-night-exposure/summary.json",
+    "shots/democity/r7l-night-exposure/apicheck.json",
+    "shots/democity/r7l-night-exposure/restage-cycle.json",
+    "shots/democity/r7l-night-exposure/night_street_22.png",
+    "shots/democity/r7l-night-exposure/night_downtown_22.png"
+  ],
+  "verified": {
+    "skylineBaselineMean": 59.4418,
+    "skylineFinalMean": 41.0132,
+    "skylineBaselineMedian": 49.6882,
+    "skylineFinalMedian": 39.0372,
+    "skylineBaselineP99P50": 3.3278,
+    "skylineFinalP99P50": 4.2382,
+    "aerialBrightPercent": 0.6381,
+    "skylineBrightPercent": 0.6636,
+    "nightStreetBrightPercent": 1.0725,
+    "nightDowntownBrightPercent": 1.5764,
+    "matrixErrors": 0,
+    "maxDrawCalls": 532,
+    "maxTriangles": 2997270,
+    "minMatrixFps": 46.6,
+    "apiPass": true,
+    "exactRestageCyclePass": true,
+    "buildModules": 163
+  },
+  "remaining": [
+    "aerial and skyline bright-source fractions remain below 0.8 percent",
+    "50 fps remains failed",
+    "city scale, golden lighting, seating, district grain, activity and spatial seed variation remain failed"
+  ]
+}
