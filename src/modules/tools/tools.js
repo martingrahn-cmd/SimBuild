@@ -1001,7 +1001,7 @@ export function terrainTool(S) {
 // ------------------------------------------------------------------------------------- service tool
 
 export function serviceTool(S) {
-  const st = { heading: 0 };
+  const st = { heading: 0, manual: false };
   const def = (o = S.options) => serviceDef(o.kind || (S.ctx.world.services.kinds || [])[0] || 'clinic', S.ctx.modules);
 
   function headingFor(x, z) {
@@ -1051,17 +1051,18 @@ export function serviceTool(S) {
 
   function draftOf() {
     const c = S.cursor ? { x: S.cursor.x, z: S.cursor.z } : null;
-    const heading = c && !S.mods.shift ? headingFor(c.x, c.z) : st.heading;
+    const heading = c && !S.mods.shift && !st.manual ? headingFor(c.x, c.z) : st.heading;
     return { tool: 'service', kind: S.options.kind || 'clinic', def: def(), cursor: c, heading };
   }
 
   return {
     name: 'service',
     evalDraft,
-    activate() { st.heading = 0; },
+    activate() { st.heading = 0; st.manual = false; },
     deactivate() {},
     cancel() { S.dirty(); },
-    pointer() { if (S.cursor && !S.mods.shift) st.heading = headingFor(S.cursor.x, S.cursor.z); S.dirty(); },
+    pointer() { if (S.cursor && !S.mods.shift && !st.manual) st.heading = headingFor(S.cursor.x, S.cursor.z); S.dirty(); },
+    rotate(step=Math.PI/4) { st.heading=(st.heading+step)%(Math.PI*2);st.manual=true;S.dirty();return st.heading; },
     click(button = 0) {
       if (button === 2) return this.rightClick();
       const r = this.commit();

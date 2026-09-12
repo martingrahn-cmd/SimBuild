@@ -613,6 +613,7 @@ function bindInput(ctx) {
     }
     if (e.altKey) return;
     if (enter) { api.commit(); e.preventDefault(); return; }
+    if (e.code === 'KeyR' && S.toolName === 'service' && typeof S.tool?.rotate === 'function') { S.tool.rotate(); e.preventDefault(); return; }
     // Numeric keys belong to the HUD's simulation speed controls; the toolbar selects tools.
     if (e.code === 'KeyB') api.select('bulldoze');
   };
@@ -713,6 +714,7 @@ const api = {
     } catch (e) { S.ctx.log.error(`${S.toolName}.commit failed`, e); return { ok: false, ids: [], cost: 0, reason: 'error' }; }
   },
   cancel() { S.cursor = null; S.failure = null; try { S.tool?.cancel(); S.tool?.pointer(null); } catch (e) { /* isolated */ } S.dirty(); },
+  rotatePlacement(step) { return S.toolName === 'service' && typeof S.tool?.rotate === 'function' ? S.tool.rotate(step) : null; },
 
   state() {
     if (!S.tool && S.poses.length) {

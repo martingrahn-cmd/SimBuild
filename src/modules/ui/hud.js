@@ -53,8 +53,9 @@ export const SERVICE_KINDS = {
   park_large: { cat: 'parks', label: 'Large Park', cost: 12000, unlock: 'large_parks' },
   plaza: { cat: 'parks', label: 'Plaza', cost: 8000, unlock: 'plazas' },
 };
+const SERVICE_HINT = [['LMB', 'Place'], ['R', 'Rotate 45°'], ['Esc', 'Close']];
 const SERVICE_CATS = [
-  { id: 'electricity', label: 'Electricity', icon: 'electricity', unlock: 'power', hint: [['LMB', 'Place'], ['Esc', 'Close']], guide: 'Electricity follows connected roads; no separate cables are needed. Paid outside power covers the city until a connected local system can serve every building.' },
+  { id: 'electricity', label: 'Electricity', icon: 'electricity', unlock: 'power', hint: SERVICE_HINT, guide: 'Electricity follows connected roads; no separate cables are needed. Paid outside power covers the city until a connected local system can serve every building.' },
   { id: 'water', label: 'Water & Sewage', icon: 'water', unlock: 'water', guide: 'Water and sewage follow connected roads; no separate pipes are needed. Paid outside service remains until connected pumps and sewage capacity cover every building.' },
   { id: 'garbage', label: 'Garbage', icon: 'garbage', unlock: 'garbage', guide: 'Waste collection follows connected roads. Paid outside collection remains until connected local capacity covers every building.' },
   { id: 'health', label: 'Healthcare', icon: 'health', unlock: 'healthcare' },
@@ -64,6 +65,7 @@ const SERVICE_CATS = [
   { id: 'parks', label: 'Parks & Recreation', icon: 'parks', unlock: 'parks' },
   { id: 'transit', label: 'Transportation', icon: 'transit', unlock: 'transit' },
 ];
+for (const c of SERVICE_CATS) if (c.id !== 'transit' && !c.hint) c.hint = SERVICE_HINT;
 /** Info views (world.infoview.active names). */
 export const INFOVIEWS = [
   { id: 'traffic', label: 'Traffic Flow', icon: 'vehicle', desc: 'Congestion on every road segment.', lo: 'Free flow', hi: 'Gridlock', grad: ['#3fbf5a', '#f2c230', '#e5484d'] },

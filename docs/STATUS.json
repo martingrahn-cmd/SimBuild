@@ -4202,7 +4202,7 @@
       },
       {
         "rank": 3,
-        "issue": "Prefab roundabout placement, manual service-building rotation and a visible frontage/buildable-depth guide remain missing usability features."
+        "issue": "Prefab roundabout placement and a visible frontage/buildable-depth guide remain missing usability features. Manual service-building rotation is fixed in R12 with R in 45-degree steps."
       },
       {
         "rank": 4,
@@ -4234,7 +4234,7 @@
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
     ],
-    "nextAutonomousStep": "Run the user's human replay of PT-23/PT-27/PT-28 on a fresh small city. If density and pace pass, improve PT-26 close vehicle LOD0 art next; otherwise capture the exact save/road state and tune only the failed traffic or settlement term. Then implement manual service rotation, prefab roundabout placement and the frontage-depth guide in that order.",
+    "nextAutonomousStep": "Run the user's human replay of PT-23/PT-27/PT-28 on a fresh small city. If density and pace pass, improve PT-26 close vehicle LOD0 art next; otherwise capture the exact save/road state and tune only the failed traffic or settlement term. Then implement prefab roundabout placement and the frontage-depth guide in that order; manual service rotation is already fixed with R in 45-degree steps.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4620,7 +4620,8 @@
       "catalogueVisual": "shots/playtest-checkpoint-2026-09-12/pt23-catalogue-fixed.png",
       "earlyGrowth": "shots/playtest-fixes-r12/early-growth.json",
       "daylight": "shots/playtest-fixes-r12/daylight-lock.json",
-      "daylightVisual": "shots/playtest-fixes-r12/daylight-at-23.png"
+      "daylightVisual": "shots/playtest-fixes-r12/daylight-at-23.png",
+      "serviceRotation": "shots/playtest-fixes-r12/service-rotation.json"
     }
   }
 }

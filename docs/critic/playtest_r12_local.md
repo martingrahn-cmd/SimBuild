@@ -5,3 +5,5 @@
 The evidence does not prove that the revised traffic or settlement pace feels correct in the user's existing city. Route purpose remains aggregate at frontage level rather than household/business agent simulation, freight has no cargo inventory, and vehicles still recycle routes. Vehicle LOD0 art is unchanged. Daylight lock avoids an unreadable night but does not improve night rendering. The issue form hands reporting to GitHub but does not attach saves or diagnostics automatically.
 
 Keep Traffic 7.2 FAIL, Simulation 6.5 FAIL, UI 7.0 FAIL and whole game 6.0 FAIL. Require a human replay before closing PT-23/PT-27/PT-28 as subjective findings.
+
+The service-rotation follow-up is also accepted without a score change. It exposes the already-owned heading through a bounded placement control and does not create a second transform or service record. The probe verifies the angle and persistence; final usability remains subject to human play.

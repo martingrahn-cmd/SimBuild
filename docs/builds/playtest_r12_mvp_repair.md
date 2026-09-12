@@ -33,3 +33,7 @@ Accept four bounded player-facing repairs. Critic scores stay unchanged: Traffic
 4. Base night readability and river surface quality remain below the visual bar; Always daylight is a player option, not a repair of those scenes.
 5. Cold startup is still several seconds despite the honest early loading view.
 6. Sustained 50 fps, memory, city density, transit/traffic interaction and exact Props restoration retain their recorded failed gates.
+
+## Follow-up: manual service rotation
+
+Accepted after the same R12 gate. While placing any service building, **R** rotates the footprint 45 degrees and keeps that manual heading as the cursor moves. Automatic road-facing placement remains the default after selecting a new service. The service owner still validates and stores the final heading, so capacity, coverage and restore behavior are unchanged. `tools/service-rotation-probe.mjs` verifies 0→45 degrees, persistence after cursor movement and errors 0.
