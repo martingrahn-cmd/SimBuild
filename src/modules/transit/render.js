@@ -244,7 +244,7 @@ export class TransitRender {
     }
   }
   update(fleet, lines, overlay) {
-    const night = this.ctx.world.time.hour < 6 || this.ctx.world.time.hour > 19;
+    const hour=this.ctx.world.weather.displayHour??this.ctx.world.time.hour,night=hour < 6 || hour > 19;
     this.paintNight.value = night ? 1 : 0;
     this.materials[3].emissiveIntensity = night ? 0.55 : 0;
     this.overlayGroup.visible = overlay;

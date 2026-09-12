@@ -133,7 +133,8 @@ export default {
     const clock = ctx.clock;
     const cam = ctx.camera.camera;
     S.time += dt;
-    const hour = clock.hour;
+    const hour = S.daylightHour ?? clock.hour;
+    w.displayHour = hour;
 
     // ---- celestial directions. The moon lags the sun by half a day plus a lunar-phase offset that
     // advances with the calendar day (day 1 = full moon; new moon ~15 days later).
@@ -328,6 +329,8 @@ export default {
     getLightDirection() { return S.lightDir.clone(); },
     getExposure() { return S.exposure; },
     getNight() { return S.night; },
+    setDaylightLock(on) { S.daylightHour = on ? 12 : null; S.ctx.world.weather.displayHour = S.daylightHour ?? S.ctx.clock.hour; return S.daylightHour !== null; },
+    daylightLocked() { return S.daylightHour !== null; },
     /** Hook a material for cascaded shadows + fog uniforms (done automatically for scene materials; explicit for ShaderMaterials). */
     setupMaterial(material) { S.lighting?.setupMaterial(material); },
     /** Re-scan the scene for new materials now (also happens automatically on module:ready / *:changed). */

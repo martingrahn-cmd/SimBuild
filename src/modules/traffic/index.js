@@ -29,7 +29,7 @@ function population(){
   // A real hamlet still needs enough moving vehicles to read across a player-sized road network.
   // Keep exact zero for a city with no residents/jobs, then add a small local fleet floor that
   // continues to scale from real activity instead of road length or showcase density.
-  const localCapacity=activity>0?6+Math.ceil(activity/2):0;
+  const localCapacity=activity>0?Math.max(1,Math.ceil(activity*.28)):0;
   const vehicleCapacity=Math.min(240,localCapacity+through);
   const pedestrianCapacity=Math.min(260,Math.ceil((Math.max(0,eco.population||0)+Math.max(0,eco.jobs||0)*.25)/2.5));
   S.traffic.target=Math.round(Math.min(240*p.traffic,vehicleCapacity)*mult);
@@ -113,9 +113,9 @@ const api={
     for(const r of S.graph.edges.values()){let found=false;for(let i=1;i<r.n-1;i++){const x=r.cx[i],y=r.cy[i]+.08,z=r.cz[i],d=Math.hypot(x-cp.x,y-cp.y,z-cp.z);if(d<200||d>400)continue;const p=project(x,y,z);if(p[2]>-1&&p[2]<1&&p[0]>64&&p[0]<width-64&&p[1]>64&&p[1]<height-64){out.far_asphalt=[p[0]-64,p[1]-64,128,128];found=true;break;}}if(found)break;}
     return out;
   },
-  serialize(){const t=S.traffic;return {module:'traffic',version:2,density:S.density,vehicles:[...t.vehicles.values()].map(v=>({kind:v.kind,edgeId:v.rec.id,lane:v.lane,t:v.t,speed:v.speed,dir:v.dir,paint:v.paint,route:v.route,ri:v.ri,loop:v.loop,explicit:v.explicit,external:v.external})),peds:t.peds.map(p=>({edgeId:p.rec.id,side:p.side,t:p.t,dir:p.dir,phase:p.phase}))};},
+  serialize(){const t=S.traffic;return {module:'traffic',version:2,density:S.density,vehicles:[...t.vehicles.values()].map(v=>({kind:v.kind,edgeId:v.rec.id,lane:v.lane,t:v.t,speed:v.speed,dir:v.dir,paint:v.paint,route:v.route,ri:v.ri,purpose:v.purpose,loop:v.loop,explicit:v.explicit,external:v.external})),peds:t.peds.map(p=>({edgeId:p.rec.id,side:p.side,t:p.t,dir:p.dir,phase:p.phase}))};},
   deserialize(data){if(data?.module!=='traffic'||!Array.isArray(data.vehicles))return false;if(S.dirty||S.graph.dirty)rebuild();api.setDensity(0);S.density=data.density??null;
-    for(const d of data.vehicles){const rec=S.graph.edges.get(d.edgeId),ci=MIX.findIndex(m=>m[0]===d.kind);if(!rec||ci<0)continue;const dir=d.dir??(d.lane<rec.per?1:-1),v=S.traffic.spawn({rec,dir,s:(dir>0?d.t:1-d.t)*rec.len,ci,route:d.route,explicit:d.explicit,loop:d.loop,external:d.external,restore:true,lane:d.lane});if(v){v.v=d.speed;v.paint=d.paint??v.paint;v.ri=d.ri??0;}}
+    for(const d of data.vehicles){const rec=S.graph.edges.get(d.edgeId),ci=MIX.findIndex(m=>m[0]===d.kind);if(!rec||ci<0)continue;const dir=d.dir??(d.lane<rec.per?1:-1),v=S.traffic.spawn({rec,dir,s:(dir>0?d.t:1-d.t)*rec.len,ci,purpose:d.purpose,route:d.route,explicit:d.explicit,loop:d.loop,external:d.external,restore:true,lane:d.lane});if(v){v.v=d.speed;v.paint=d.paint??v.paint;v.ri=d.ri??0;}}
     for(const d of data.peds??[]){const r=S.graph.edges.get(d.edgeId);if(!r?.swR)continue;const p=S.traffic.spawnPed({w:{id:r.id,side:d.side==='right'?1:-1},s:(d.dir>0?d.t:1-d.t)*r.len});if(p){p.dir=d.dir;p.phase=d.phase;}}
     S.reseed=false;S.traffic.stepPeds(0);population();sync();return true;
   },
@@ -125,5 +125,5 @@ export default {
  async init(ctx){S.ctx=ctx;S.graph=new LaneGraph(ctx.world,ctx.log,ctx.modules.roads);S.traffic=new Traffic(ctx,S.graph);S.traffic.buildMeshes(240,260);ctx.world.traffic.kinds=Object.freeze(MIX.map(m=>m[0]));ctx.events.on('roads:changed',()=>{S.dirty=true;},'traffic');ctx.events.on('props:changed',()=>mastGate(S),'traffic');ctx.events.on('app:ready',()=>mastGate(S),'traffic');},
  update(dt){if(!S.traffic)return;if(S.dirty||S.graph.dirty)rebuild();population();if(!S.frozen){S.acc+=Math.min(.2,dt);let n=0;while(S.acc>=.05&&n++<4){stepOne();S.acc-=.05;}}sync(S.frozen?1:S.acc/.05);},
  dispose(){S.traffic?.dispose();S.masts?.dispose();S.traffic=null;},api,
- showcase:{description:'Signalised crossroads, a fed roundabout, highway merge and four outside connections with walking pedestrians and a fleet line-up.',cameras:CAMERAS,async setup(ctx){await stage(ctx);rebuild();population();api.step(120);stageQueue();ctx.modules.environment?.hookScene?.();}}
+ showcase:{description:'Signalised crossroads, a fed roundabout, highway merge and four outside connections with walking pedestrians and a fleet line-up.',cameras:CAMERAS,async setup(ctx){S.traffic.showcaseCatalogue=true;await stage(ctx);rebuild();population();api.step(120);stageQueue();ctx.modules.environment?.hookScene?.();}}
 };

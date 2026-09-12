@@ -37,7 +37,8 @@ export const TUNING = {
   // rather than charging the city a second per-building upkeep bill.
   buildingUpkeep: { residential: 0, commercial: 0, industrial: 0, office: 0 },
   roadUpkeepPerKm: { street: 120, avenue: 200, highway: 420, alley: 60, gravel: 40 },
-  moveInRate: 0.82,           // quicker early settlement while housing and jobs remain available
+  moveInRate: 0.82,
+  earlyMoveInRate: 1.35,      // let a newly built hamlet fill promptly; established-city balance stays unchanged
   outsideJobs: 220,           // jobs reachable via outside connections
   moveOutBase: 0.006,
   birthRate: 0.0004,          // net natural growth per day
@@ -292,7 +293,8 @@ export class Economy {
 
     // -- population flow
     const noise = 0.85 + 0.3 * rng.float();
-    const moveIn = Math.min(vacancy, 80 + pop * 0.09) * desire * T.moveInRate * noise * (0.5 + 0.5 * utilities);
+    const moveRate = pop < 150 ? T.earlyMoveInRate : T.moveInRate;
+    const moveIn = Math.min(vacancy, 80 + pop * 0.09) * desire * moveRate * noise * (0.5 + 0.5 * utilities);
     const moveOut = pop * (T.moveOutBase + 0.09 * Math.max(0, unemployment - 0.08) + 0.08 * Math.max(0, 0.42 - e.happiness) + 0.02 * (1 - utilities));
     const natural = pop * T.birthRate;
     let overflow = 0;

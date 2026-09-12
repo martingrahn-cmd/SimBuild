@@ -70,6 +70,7 @@ export class LaneGraph {
         speed: (T.speed || 50) / 3.6, lx, ly, lz, cx, cy, cz, swR, swL, bucket: bucketBase,
         trimA: e.trimA || 0, trimB: e.trimB || 0,
         dirA: { x: 0, z: 0 }, dirB: { x: 0, z: 0 }, big: e.type === 'highway' || e.type === 'ramp',
+        activity: { residential: 0, commercial: 0, industrial: 0, office: 0 },
       };
       // tangents at the ends (pointing away from the node)
       rec.dirA = norm(cx[1] - cx[0], cz[1] - cz[0]);
@@ -307,6 +308,19 @@ export class LaneGraph {
     return null;
   }
 
+  /** Pick an occupied frontage of one of the requested land-use kinds. */
+  randomActivityEdge(rng, kinds, excludeId = -1) {
+    this.refreshActivityWeights();
+    const wanted = Array.isArray(kinds) ? kinds : [kinds];
+    const weight = d => d.id === excludeId ? 0 : wanted.reduce((n, k) => n + (this.edges.get(d.id)?.activity?.[k] || 0), 0);
+    let total = 0;
+    for (const d of this.driveEdges) total += weight(d);
+    if (!(total > 0)) return null;
+    let r = rng.float() * total;
+    for (const d of this.driveEdges) { r -= weight(d); if (r <= 0) return this.edges.get(d.id); }
+    return null;
+  }
+
   randomSidewalk(rng) {
     this.refreshActivityWeights();
     let total = 0;
@@ -327,14 +341,22 @@ export class LaneGraph {
     const version = `${buildings?.version ?? buildings?.items?.size ?? 0}:${this.world.economy?.population ?? 0}:${this.world.economy?.jobs ?? 0}`;
     if (version === this.activityVersion) return;
     this.activityVersion = version;
-    const byEdge = new Map();
+    const byEdge = new Map(), byKind = new Map();
     for (const building of buildings?.items?.values?.() || []) {
       const lot = this.world.zones?.lots?.get?.(building.lotId);
       if (!lot || !this.edges.has(lot.edgeId)) continue;
       const active = Math.max(0, building.occupants || 0) + Math.max(0, building.jobs || 0);
       byEdge.set(lot.edgeId, (byEdge.get(lot.edgeId) || 0) + active);
+      const kind = building.type || lot.type;
+      if (['residential','commercial','industrial','office'].includes(kind)) {
+        let row = byKind.get(lot.edgeId); if (!row) byKind.set(lot.edgeId, row = { residential:0, commercial:0, industrial:0, office:0 });
+        row[kind] += kind === 'residential' ? Math.max(0, building.occupants || 0) : Math.max(0, building.jobs || 0);
+      }
     }
-    for (const edge of this.driveEdges) edge.active = byEdge.get(edge.id) || 0;
+    for (const edge of this.driveEdges) {
+      edge.active = byEdge.get(edge.id) || 0;
+      const rec = this.edges.get(edge.id); if (rec) rec.activity = byKind.get(edge.id) || { residential:0, commercial:0, industrial:0, office:0 };
+    }
     for (const sidewalk of this.sidewalks) sidewalk.active = byEdge.get(sidewalk.id) || 0;
   }
 }

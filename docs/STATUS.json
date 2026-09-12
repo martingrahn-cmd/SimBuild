@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-12T12:05:00.000Z",
+  "updatedAt": "2026-09-12T14:30:00.000Z",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4119,7 +4119,7 @@
   },
   "playtestCheckpoint": {
     "id": "human-playtest-r10-2026-09-11",
-    "state": "R11_ALL_RECORDED_PLAYTEST_FIXES_VERIFIED_THROUGH_PT22; HUMAN_RETEST_PENDING",
+    "state": "R12 MVP repair accepted locally; awaiting human replay",
     "playerSource": "R11 human-feedback fixes on accepted R9u architecture; production build and bounded contracts pass",
     "criticScores": {
       "terrain": 6,
@@ -4155,6 +4155,11 @@
         "id": "R9u",
         "decision": "accepted bounded single straight-road demolition history",
         "score": "6.0 FAIL"
+      },
+      {
+        "id": "R12",
+        "decision": "accepted bounded traffic-purpose, early-settlement, daylight and GitHub-reporting repair",
+        "score": "whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4189,27 +4194,31 @@
     "rankedKnownIssues": [
       {
         "rank": 1,
-        "issue": "Live human retest fails traffic/progression coherence: a 5-person hamlet queues vehicles on an implausible outlying route, a built-up hamlet still has only 13 residents, and trip purposes/vehicle classes are not tied sufficiently to land use. Reproduce and repair PT-23/PT-27/PT-28 together without losing the zero-traffic empty-road contract."
+        "issue": "Human replay is required for PT-23/PT-27/PT-28: fixtures now remove the leaked showcase fleet, reduce 22-resident traffic to 7 passenger vehicles, add land-use trip purposes and accelerate settlement below 150, but subjective density and pace remain ungraded."
       },
       {
         "rank": 2,
-        "issue": "Close-range vehicle art remains visibly provisional, especially white vans and box trucks; current evidence confirms real LOD0 is loaded, so repair authored geometry/material differentiation rather than loading or cache behavior."
+        "issue": "Close-range vehicle art remains visibly provisional, especially vans and box trucks; current evidence confirms real LOD0 is loaded."
       },
       {
         "rank": 3,
-        "issue": "Underlying startup time remains several seconds even though the shell and honest progress appear immediately; profile initialization stages before changing ownership or asset quality."
+        "issue": "Prefab roundabout placement, manual service-building rotation and a visible frontage/buildable-depth guide remain missing usability features."
       },
       {
         "rank": 4,
-        "issue": "In-game bug reporting and Always daylight remain open. GitHub/portal publishing is implemented; never embed client credentials. Sustained sub-50fps performance, raw heap, sparse city fabric and Props exactness also remain open."
+        "issue": "Base night readability, river surface quality and cold-start duration remain weak. Always daylight is now available as a preference; it does not close the base visual defects."
+      },
+      {
+        "rank": 5,
+        "issue": "Sustained sub-50fps performance, raw heap, sparse city fabric, transit/traffic interaction and Props exactness retain their recorded failed gates."
       }
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 163 modules after PT-14/PT-20/PT-22 fixes",
-      "startup": "PASS: all 16 modules ready, 0 errors, player menu, toolbar and fullscreen control visible",
-      "saveLoad": "PASS: IndexedDB save/load/delete, camera, time and 13/14 tested owner payloads restore; Props semantic exactness remains disclosed",
-      "evidence": "shots/playtest-checkpoint-2026-09-10/verification.json; shots/playtest-checkpoint-2026-09-10/gameplay-entry.png; shots/playtest-fixes-r10"
+      "build": "PASS: Vite 8.2.2, 164 modules after R12",
+      "startup": "PASS: all 16 modules ready, 0 errors; main/pause menus include version, fullscreen, settings and Report a bug",
+      "saveLoad": "PASS retained; Traffic mixed-purpose serialization restores exactly and Simulation 90-day self-test remains exact",
+      "evidence": "shots/playtest-fixes-r10/traffic-causality.json; shots/playtest-fixes-r12/early-growth.json; shots/playtest-fixes-r12/daylight-lock.json; docs/builds/playtest_r12_mvp_repair.md"
     },
     "observeDuringPlaytest": [
       "Start a new city and judge whether the first road, zoning and utility choices are understandable without prior instructions.",
@@ -4224,7 +4233,7 @@
       "Place a prefab roundabout, connect roads to its nodes, zone around it, save/load and judge whether the ring and connections behave naturally.",
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear."
     ],
-    "nextAutonomousStep": "Reproduce PT-23/PT-27/PT-28 with a deterministic small-city fixture. Attribute fleet target, land-use origin/destination choice, freight class selection and dead-end queue capacity separately; then make one bounded Traffic/Simulation change that preserves empty isolated road=0, save/load and determinism. PT-24 NumpadEnter is already fixed and must remain verified.",
+    "nextAutonomousStep": "Run the user's human replay of PT-23/PT-27/PT-28 on a fresh small city. If density and pace pass, improve PT-26 close vehicle LOD0 art next; otherwise capture the exact save/road state and tune only the failed traffic or settlement term. Then implement manual service rotation, prefab roundabout placement and the frontage-depth guide in that order.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4407,7 +4416,7 @@
       {
         "id": "PT-2026-09-12-23",
         "severity": "critical traffic realism",
-        "status": "new human-playtest failure; reproduced visually, root attribution in progress",
+        "status": "R12 objective repair accepted: showcase fleet leak removed and 22-resident target reduced 17→7; human replay pending",
         "finding": "A very small 5-person hamlet produces a dense stationary queue on an outlying road with no plausible destination. The fleet count, route destination and dead-end turn capacity must be measured separately; local traffic may not be added solely to make roads look busy.",
         "evidence": "shots/playtest-checkpoint-2026-09-12/human-implausible-traffic-queue.png",
         "evidenceSha256": "180c4a2c97a90293b70fd39f1dd3afd4c49fd7d07abf6fb0090bf93a0538b6a6"
@@ -4421,7 +4430,7 @@
       {
         "id": "PT-2026-09-12-25",
         "severity": "requested setting",
-        "status": "recorded; not implemented",
+        "status": "R12 fixed locally: persistent Always daylight keeps environment/audio readable while clock and simulation continue",
         "finding": "Add an Always daylight display setting that fixes environmental lighting at a readable daytime hour while simulation time, dates, economy, construction and traffic continue normally. Persist the preference without altering saved simulation time."
       },
       {
@@ -4435,7 +4444,7 @@
       {
         "id": "PT-2026-09-12-27",
         "severity": "critical progression feel",
-        "status": "PT-09 human retest FAIL; objective R10 fixture improvement was insufficient",
+        "status": "R12 objective repair accepted: sub-150 settlement fixture reaches 28 at 0.25 day and 97 at day 1; human replay pending",
         "finding": "A visually established hamlet with many completed homes and businesses still reports only 13 residents. Occupancy and arrival pacing do not match the visible settlement, while traffic simultaneously looks excessive.",
         "evidence": "shots/playtest-checkpoint-2026-09-12/human-population-pacing-13.png",
         "evidenceSha256": "7e90917b6539d35db14c7c1ff35cf096bbcbd9929d93f4fd1d0d541f5e759efa"
@@ -4443,7 +4452,7 @@
       {
         "id": "PT-2026-09-12-28",
         "severity": "critical simulation realism",
-        "status": "confirmed architecture gap; not implemented",
+        "status": "R12 objective repair accepted: deterministic land-use purposes, freight class gating and exact Traffic restore; human replay pending",
         "finding": "Traffic origin, destination and vehicle class are not sufficiently tied to land use. Freight selection is mainly time-based and general routes use aggregate activity, so trucks can target residential streets or tiny shops. Implement deterministic home/work/shop/industry/external trip purposes: commuter cars between residences and jobs, customer and delivery trips for commerce, and freight between industry, commerce and outside connections."
       }
     ],
@@ -4600,6 +4609,16 @@
         "shots/playtest-fixes-r11/utility-warning-markers.png",
         "shots/playtest-fixes-r11/utility-road-guide.png"
       ]
+    },
+    "r12Evidence": {
+      "build": "docs/builds/playtest_r12_mvp_repair.md",
+      "critic": "docs/critic/playtest_r12_local.md",
+      "traffic": "shots/playtest-fixes-r10/traffic-causality.json",
+      "catalogueContract": "shots/playtest-checkpoint-2026-09-12/pt23-catalogue-contract.json",
+      "catalogueVisual": "shots/playtest-checkpoint-2026-09-12/pt23-catalogue-fixed.png",
+      "earlyGrowth": "shots/playtest-fixes-r12/early-growth.json",
+      "daylight": "shots/playtest-fixes-r12/daylight-lock.json",
+      "daylightVisual": "shots/playtest-fixes-r12/daylight-at-23.png"
     }
   }
 }

@@ -73,7 +73,7 @@ function trigger(name, x, z, volume = 1, rate = 1) {
 /** Ambient targets from the clock, camera and weather. Allocation-free. */
 function computeMix(ctx) {
   const f = S.mix.factors, w = ctx.world.weather, cam = ctx.camera;
-  const hour = ctx.clock.hour, el = ctx.clock.sunElevation(hour);
+  const hour = ctx.world.weather.displayHour ?? ctx.clock.hour, el = ctx.clock.sunElevation(hour);
   f.hour = hour;
   f.night = 1 - smooth(-0.12, 0.05, el);
   f.day = smooth(-0.05, 0.16, el);

@@ -186,3 +186,15 @@ Varje punkt följer projektets befintliga flöde: implementera → kör → veri
 31. **Resmål och fordonstyp följer inte markanvändningen** (`PT-2026-09-12-28`, critical)
    - Nuvarande källkod väger startvägar mot sammanlagda boende/jobb, men skiljer inte tillräckligt på bostad, handel, kontor och industri. Lastbilsandelen styrs främst av tid på dygnet och generella resmål väljs från vägnoder.
    - Inför deterministiska resesyften: pendling mellan bostäder och jobb, kund-/leveransresor till handel samt gods mellan industri, handel och externa anslutningar.
+
+## R12 repair status — 2026-09-12
+
+The parked row in PT-23 was traced to the Traffic showcase catalogue leaking into ordinary play, not simulated parking. It is now showcase-only. The remaining traffic contract was corrected at the same time: 22 residential occupants produce 7 passenger vehicles rather than 17 forced mixed classes; empty isolated roads remain zero; mixed land use produces deterministic commute, return-home, customer and freight purposes; heavy vehicles occur only for freight/delivery; dead-end U-turns and portal turnover still pass; save/restore is exact.
+
+PT-27 has an accepted objective pacing repair pending human replay. Settlement below 150 residents uses a separate early rate; the fixed fixture reaches 28 residents after 0.25 game day and 97 after one day. The normal established-city rate remains unchanged. A global rate change was tested and rejected.
+
+PT-25 is fixed locally. Settings contains persistent **Always daylight**; at actual clock 23:00 the rendered environment is noon-bright while simulation ticks continue. Ambient audio and transit lighting follow the display setting.
+
+The requested GitHub reporting entry is implemented in the main and pause menus. **Report a bug** opens `.github/ISSUE_TEMPLATE/bug_report.yml` with the visible New Dollarton version in the title. It does not yet attach a save or diagnostics automatically.
+
+Evidence and the unchanged-score review are in `docs/builds/playtest_r12_mvp_repair.md` and `docs/critic/playtest_r12_local.md`. Human replay is still required before PT-23/PT-27/PT-28 can be closed subjectively.

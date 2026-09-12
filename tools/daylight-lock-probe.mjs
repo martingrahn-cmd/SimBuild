@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+import { chromium } from 'playwright';
+import fs from 'node:fs';
+const base=process.env.SIM_URL||'http://127.0.0.1:5173',out='shots/playtest-fixes-r12/daylight-lock.json',errors=[];
+const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--use-angle=metal','--use-gl=angle','--enable-webgl','--enable-gpu','--ignore-gpu-blocklist','--no-sandbox']});
+const page=await browser.newPage({viewport:{width:1280,height:720}});page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+try{await page.addInitScript(()=>localStorage.setItem('new-dollarton:always-daylight','1'));await page.goto(`${base}/?mode=play&headless=1&speed=0&time=23&seed=6300`,{waitUntil:'domcontentloaded',timeout:240000});await page.waitForFunction(()=>window.__sim?.ready===true,null,{timeout:240000});
+ await page.waitForTimeout(1200);await page.screenshot({path:'shots/playtest-fixes-r12/daylight-at-23.png'});await page.keyboard.press('Escape');await page.getByRole('button',{name:/Settings/}).click();
+ const result=await page.evaluate(()=>{const s=window.__sim,a=s.registry.apis,env=a.environment,sim=a.simulation,before={clockHour:s.clock.hour,day:s.clock.day,tick:sim.tick(),night:s.world.weather.night,displayHour:s.world.weather.displayHour,locked:env.daylightLocked()};sim.step(100);const after={clockHour:s.clock.hour,day:s.clock.day,tick:sim.tick(),night:s.world.weather.night,displayHour:s.world.weather.displayHour,locked:env.daylightLocked()};return{before,after,settingLabel:[...document.querySelectorAll('.sb-k')].some(e=>e.textContent==='Always daylight'),errors:[...s.errors]};});
+ const record={...result,browserErrors:errors,pass:!errors.length&&!result.errors.length&&result.settingLabel&&result.before.locked&&result.before.clockHour===23&&result.before.displayHour===12&&result.before.night<.1&&result.after.tick-result.before.tick===100&&result.after.clockHour===23};fs.mkdirSync(out.slice(0,out.lastIndexOf('/')),{recursive:true});fs.writeFileSync(out,JSON.stringify(record,null,2));console.log(JSON.stringify(record,null,2));if(!record.pass)process.exitCode=1;
+}finally{await browser.close();}

@@ -51,11 +51,38 @@ export class Traffic {
   buildMeshes(...args){return buildMeshes.apply(this,args);}
 
   // ------------------------------------------------------------------ spawning
-  pickClass() {
+  pickClass(purpose = 'general') {
+    if (purpose === 'freight') return this.rng.float() < .72 ? 6 : 8;
+    if (purpose === 'delivery') {
+      const r=this.rng.float(); return r<.38?5:r<.72?4:r<.91?6:8;
+    }
+    if (purpose !== 'general') {
+      let total=0;for(let i=0;i<MIX.length;i++)if(i!==6&&i!==8)total+=MIX[i][1];
+      let r=this.rng.float()*total;for(let i=0;i<MIX.length;i++){if(i===6||i===8)continue;r-=MIX[i][1];if(r<=0)return i;}return 0;
+    }
     const h=this.world.time.hour,freight=h<9?.24:h>15&&h<20?.055:.10;
     if(this.rng.float()<freight)return this.rng.float()<.7?6:8;
     let total=0;for(let i=0;i<MIX.length;i++)if(i!==6&&i!==8)total+=MIX[i][1];
     let r=this.rng.float()*total;for(let i=0;i<MIX.length;i++){if(i===6||i===8)continue;r-=MIX[i][1];if(r<=0)return i;}return 0;
+  }
+
+  tripPurpose(rec) {
+    const a=rec.activity||{}, weighted=[];
+    for(const k of ['residential','commercial','industrial','office'])if(a[k]>0)weighted.push([k,a[k]]);
+    let origin='general';if(weighted.length){let r=this.rng.float()*weighted.reduce((n,v)=>n+v[1],0);for(const v of weighted){r-=v[1];if(r<=0){origin=v[0];break;}}}
+    if(origin==='industrial')return this.rng.float()<.72?'freight':'commute';
+    if(origin==='commercial')return this.rng.float()<.18?'delivery':'customer';
+    if(origin==='office')return 'commute-home';
+    if(origin==='residential')return (this.world.time.hour>=6&&this.world.time.hour<18)?'commute':'customer';
+    return 'general';
+  }
+
+  destinationKinds(purpose) {
+    if(purpose==='freight')return ['commercial','industrial'];
+    if(purpose==='delivery')return ['industrial'];
+    if(purpose==='commute')return ['commercial','industrial','office'];
+    if(purpose==='commute-home'||purpose==='customer')return ['residential'];
+    return null;
   }
 
   paintFor(ci) {
@@ -73,9 +100,16 @@ export class Traffic {
     return PAINTS[0];
   }
 
-  randomDestNode(fromNode) {
+  randomDestNode(fromNode, purpose = 'general', originEdge = -1) {
     const nodes = this.g.nodes;
     const from = nodes.get(fromNode);
+    const kinds=this.destinationKinds(purpose),destEdge=kinds&&this.g.randomActivityEdge(this.rng,kinds,originEdge);
+    if(destEdge){
+      const candidates=[destEdge.a,destEdge.b].filter(id=>id!==fromNode).sort((a,b)=>{
+        const aa=nodes.get(a),bb=nodes.get(b);return Math.hypot((bb?.x||0)-(from?.x||0),(bb?.z||0)-(from?.z||0))-Math.hypot((aa?.x||0)-(from?.x||0),(aa?.z||0)-(from?.z||0));
+      });
+      for(const id of candidates)if(this.g.route(fromNode,id,originEdge)?.length)return id;
+    }
     if (this._keys === undefined || this._keysVer !== this.g.version) { this._keys = [...nodes.keys()]; this._keysVer = this.g.version; }
     const keys = this._keys;
     if (!keys.length) return -1;
@@ -91,11 +125,11 @@ export class Traffic {
     return best;
   }
 
-  makeRoute(rec, dir) {
+  makeRoute(rec, dir, purpose = 'general') {
     const startNode = this.g.nodeAhead(rec, dir);
     // A border is a valid destination: the final road need not have a successor.
     if(this.g.portals.some(p=>p.nodeId===startNode))return [{edgeId:rec.id,dir}];
-    const dest = this.randomDestNode(startNode);
+    const dest = this.randomDestNode(startNode,purpose,rec.id);
     let tail = dest >= 0 ? this.g.route(startNode, dest, rec.id) : null;
     if (!tail || !tail.length) {
       const nd = this.g.nodes.get(startNode);
@@ -135,10 +169,11 @@ export class Traffic {
       if (!rec) return null;
       s = this.rng.float() * rec.len;
     }
-    const ci = opts.ci !== undefined ? opts.ci : this.pickClass(rec.big ? 0.25 : 0);
+    const purpose=opts.purpose||this.tripPurpose(rec);
+    const ci = opts.ci !== undefined ? opts.ci : this.pickClass(purpose);
     const cls = this.classes[ci];
     if (cls.count >= cls.cap) return null;
-    const route = opts.route || this.makeRoute(rec, dir);
+    const route = opts.route || this.makeRoute(rec, dir, purpose);
     if (!route) return null;
     const [l0, ln] = g.laneRange(rec, dir);
     if (ln <= 0) return null;
@@ -161,7 +196,7 @@ export class Traffic {
       s: Math.min(s, rec.len - 0.5), t: 0, v: rec.speed * 0.55,
       v0: rec.speed * (this.world.time.hour>=21||this.world.time.hour<5 ? (this.rng.float()<.2?this.rng.range(.76,.84):this.rng.range(1.04,1.14)) : this.rng.range(.76,1)*(cls.big?.86:1)),
       speedFactor:0, len: spec.L, half: spec.L * 0.5, wheelR: spec.wheelR,
-      route, ri: 0, explicit:!!opts.explicit,loop:!!opts.loop,loopRoute:opts.loop?route.slice():null, external: !!opts.external||g.portals.some(p=>p.nodeId===g.nodeAhead(rec,dir)),
+      route, ri: 0, purpose, explicit:!!opts.explicit,loop:!!opts.loop,loopRoute:opts.loop?route.slice():null, external: !!opts.external||g.portals.some(p=>p.nodeId===g.nodeAhead(rec,dir)),
       paint, spin: 0, brake: 0, pitch: 0,
       x: 0, y: 0, z: 0, heading: 0, lightsOn: 0, claim: -1, wait: 0, turn:{active:false,u:0,len:1,points:new Float64Array(12),rec:null,lane:0,dir:1,start:0},
     };
@@ -195,8 +230,8 @@ export class Traffic {
     const dir = this.seeding&&(this.world.time.hour>=21||this.world.time.hour<5)?-p.out.dir:p.out.dir;
     const [, ln] = this.g.laneRange(rec, dir);
     if (ln <= 0) return null;
-    const ci = this.pickClass();
-    return this.spawn({ rec, dir, s: this.seeding ? this.rng.range(20,rec.len-20):1, ci, external: true });
+    const purpose=this.rng.float()<.42?'freight':'general',ci=this.pickClass(purpose);
+    return this.spawn({ rec, dir, s: this.seeding ? this.rng.range(20,rec.len-20):1, ci, purpose, external: true });
   }
 
   // ------------------------------------------------------------------ pedestrians
@@ -511,7 +546,7 @@ export class Traffic {
       v.route.push({edgeId:v.rec.id,dir:-v.dir});
       return true;
     }
-    const dest = this.randomDestNode(node);
+    const dest = this.randomDestNode(node,v.purpose,v.rec.id);
     if (dest < 0) return false;
     const tail = this.g.route(node, dest, v.rec.id);
     if (!tail || !tail.length) return false;
@@ -534,7 +569,6 @@ export class Traffic {
       const dir=rec.b===node.id?1:-1;
       this.spawn({rec,dir,ci:1,s:rec.len-(dir>0?rec.trimB:rec.trimA)-14});
     }
-    for(let ci=0;ci<MIX.length&&this.vehicles.size<this.target;ci++)for(let n=0;n<40;n++)if(this.spawn({ci}))break;
     while(this.vehicles.size<this.target&&attempts++<this.target*40){if(this.g.portals.length&&this.rng.float()<.23)this.spawnExternal();else this.spawn();}
     this.seeding=false;
     while(this.peds.length<this.pedTarget){if(!this.spawnPed())break;}

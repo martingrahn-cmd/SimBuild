@@ -4,9 +4,9 @@
 
 The main and pause menus display `Version 0.1.0 · build <7-character source commit>`. The GameVolt sync action injects the source commit into the compiled bundle, so the label identifies the code actually running even while an older Cloudflare-cached page is being served.
 
-The 2026-09-12 live playtest added PT-23 through PT-28. Numpad Enter is fixed locally and verified to dispatch one tool commit. The current highest-priority failure is traffic/progression coherence: a 5-person hamlet produced a dense outlying queue, a visually established hamlet still reported 13 residents, and source inspection confirms that general traffic does not yet bind trip purpose and vehicle class to residential/commercial/office/industrial land use. Close vehicle LOD0 quality and an Always daylight display preference are also recorded. Preserve the three resized human screenshots under `shots/playtest-checkpoint-2026-09-12/` and their hashes in STATUS.
+R12 accepts a bounded MVP repair without changing scores. The phantom parked row was the traffic showcase catalogue leaking into normal play and is now showcase-only. A 22-resident residential fixture now produces 7 passenger vehicles instead of 17 mixed vehicles; empty roads remain zero, mixed land use produces deterministic commute/customer/freight purposes, dead-end U-turns remain valid, and Traffic restores exactly. Settlement below 150 residents is faster (28 after 0.25 day, 97 after one day in the fixed fixture) while the established-city rate is unchanged. Settings now includes persistent **Always daylight**, and main/pause menus include **Report a bug** linked to the new GitHub Issue Form. See [R12 build evidence](builds/playtest_r12_mvp_repair.md) and [local review](critic/playtest_r12_local.md). Human replay of traffic density and population feel is still required; scores remain whole-game 6.0 FAIL, Traffic 7.2 FAIL, Simulation 6.5 FAIL and UI 7.0 FAIL.
 
-## Current boundary — R10 ready for human retest
+## Current boundary — R12 ready for human retest
 
 The bounded R10 response to the 2026-09-10 playtest is implemented and verified. Use `http://127.0.0.1:5180/?mode=play`; port 5173 currently belongs to an unrelated project and is not the SimBuild server. A new city gives the clearest test of progression, imports and construction, although existing saves remain supported.
 

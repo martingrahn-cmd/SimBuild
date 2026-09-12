@@ -1,0 +1,40 @@
+name: New Dollarton bug report
+description: Tell us what went wrong while playing New Dollarton.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve New Dollarton. The visible version number is in the main and pause menus.
+  - type: input
+    id: version
+    attributes:
+      label: Game version
+      description: Copy the version shown at the bottom of the pause menu.
+      placeholder: 0.1.0 · build abc1234
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe what you did, what happened, and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open ...\n2. Build ...\n3. See ..."
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshot or save information
+      description: Drag screenshots here. Add the city name, save slot and approximate in-game date if useful.
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options: [Chrome, Edge, Safari, Firefox, Other]
+    validations:
+      required: true

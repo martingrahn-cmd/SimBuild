@@ -25,9 +25,10 @@ export class Menus {
   constructor(hud) {
     this.hud = hud; this.ctx = hud.ctx;
     this.el = null; this.kind = null; this._wasRunning = false; this._stack = []; this._openOpts = {};
-    this.settings = { quality: this.ctx.quality || 'high', volume: 80, muted: false };
+    this.settings = { quality: this.ctx.quality || 'high', volume: 80, muted: false, daylight: false };
     this._rng = this.ctx.rng.fork('menu');
     try { const a = this.ctx.modules?.audio; if (a?.getMasterVolume) this.settings.volume = Math.round(a.getMasterVolume() * 100); if (a?.isMuted) this.settings.muted = !!a.isMuted(); } catch (e) { /* optional */ }
+    try { this.settings.daylight=localStorage.getItem('new-dollarton:always-daylight')==='1'; this.ctx.modules?.environment?.setDaylightLock?.(this.settings.daylight); } catch { /* preference is optional */ }
   }
   isOpen() { return !!this.el; }
   saves() { return window.__sim?.saves || null; }
@@ -83,6 +84,13 @@ export class Menus {
       }
     });
   }
+  _reportBug(body) {
+    this._mbtn(body, ICONS.noteWarn(), 'Report a bug', 'GitHub', () => {
+      const title=encodeURIComponent(`[Bug] New Dollarton ${VERSION_LABEL}`);
+      window.open(`https://github.com/martingrahn-cmd/SimBuild/issues/new?template=bug_report.yml&title=${title}`,'_blank','noopener,noreferrer');
+      this.hud.action('reportBug',VERSION_LABEL);
+    });
+  }
 
   _cloudPromo(body) {
     const cloud = window.__sim?.cloudSaves?.state;
@@ -112,6 +120,7 @@ export class Menus {
     if (!slots.length) lb.disabled = true;
     this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', `${this.settings.quality} quality`, () => this.open('settings', { push: true }));
+    this._reportBug(body);
     this._cloudPromo(body);
     const foot = this._foot(menu);
     foot.appendChild(el('span', 'sb-version', VERSION_LABEL));
@@ -176,6 +185,7 @@ export class Menus {
     if (!slots.length) lb.disabled = true;
     this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', '', () => this.open('settings', { push: true }));
+    this._reportBug(body);
     this._mbtn(body, ICONS.camera(), 'Photo Mode', 'P', () => { this.close(); this.hud.setPhotoMode(true); });
     this._mbtn(body, ICONS.map(), 'Main Menu', '', () => this.open('main', { push: true }));
     const foot = this._foot(menu);
@@ -236,6 +246,7 @@ export class Menus {
     // interface
     const saves = this.saves();
     field('Autosave', toggle(saves ? saves.autosave !== false : true, (on) => { if (saves) saves.autosave = on; this.hud.action('setAutosave', on); }), 'Saves to the Autosave slot every game day.');
+    field('Always daylight', toggle(this.settings.daylight, (on) => { this.settings.daylight=on; try { localStorage.setItem('new-dollarton:always-daylight',on?'1':'0'); } catch { /* optional */ } this.ctx.modules?.environment?.setDaylightLock?.(on); this.hud.action('setDaylightLock',on); }), 'Keeps the view bright while dates, growth, traffic and the economy continue.');
     field('Minimap', toggle(!this.hud.minimap.collapsed, (on) => this.hud.minimap.toggle(on)));
     field('Dev corner', toggle(!this.hud.devBox.classList.contains('sb-hidden'), (on) => this.hud.devBox.classList.toggle('sb-hidden', !on)), 'fps / draw calls / triangles, showcase switcher.');
     body.appendChild(form);

@@ -9,7 +9,7 @@ function decalMaterial(pool){
  m.onBeforeCompile=sh=>{sh.vertexShader='varying vec2 vDecal;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvDecal=uv;');sh.fragmentShader='varying vec2 vDecal;\n'+sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>\nvec2 q=vDecal*2.-1.;\n${pool?'float a=pow(max(0.,1.-abs(q.x)),1.8)*smoothstep(0.,.14,vDecal.y)*pow(1.-vDecal.y,1.7);':'float a=smoothstep(1.,.27,length(q))*.55;'}\ndiffuseColor.a*=a;`);};m.customProgramCacheKey=()=>pool?'traffic-pool-2':'traffic-contact-2';return m;
 }
 export function buildMeshes(maxVehicles,maxPeds){
- this.visible={vehicles:true,pedestrians:true,pools:true,lamps:true,masts:true,shadows:true};this.forcedLod=null;this.byLod={0:0,1:0,2:0};this.byKindTris={};this.batches=[];
+ this.visible={vehicles:true,pedestrians:true,pools:true,lamps:true,masts:true,shadows:true};this.forcedLod=null;this.showcaseCatalogue=false;this.byLod={0:0,1:0,2:0};this.byKindTris={};this.batches=[];
  this.vehMat=createVehicleMaterial();this.depthMat=createVehicleDepthMaterial();this.pedMat=createPedestrianMaterial();this.poolMat=decalMaterial(true);this.contactMat=decalMaterial(false);
  for(const m of [this.vehMat,this.pedMat,this.poolMat,this.contactMat])this.ctx.modules.environment?.setupMaterial?.(m);
  for(let ci=0;ci<this.mix.length;ci++){
@@ -73,7 +73,7 @@ export function render(alpha=1){
   }
  }
  // Parked catalogue specimens share the same authored geometry and instance batches.
- if(this.target>0&&this.visible.vehicles)for(const c of this.catalogue){
+ if(this.showcaseCatalogue&&this.target>0&&this.visible.vehicles)for(const c of this.catalogue){
    const d=Math.hypot(c.x-cp.x,c.z-cp.z);if(d>95)continue;
    const road=this.world.roads.nearestEdge(c.x,c.z,30);if(!road)continue;
    const b=this.classes[c.ci].lods[this.forcedLod??0],i=b.count++,y=road.point.y+.08;
