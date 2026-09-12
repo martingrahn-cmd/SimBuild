@@ -42,7 +42,7 @@ export default {
       ev.on('app:ready', () => {
         if (S.staged || ctx.headless) return;
         const showcase = ctx.world.flags.showcase;
-        if (!showcase || showcase === 'democity' || showcase === 'all') hud.menus.open('main', { boot: true });
+        if ((!showcase || showcase === 'democity' || showcase === 'all') && param('new') !== '1') hud.menus.open('main', { boot: true });
         hud.notify({ type: 'info', title: `Welcome to ${hud.cityName}`, body: 'Power, water/sewage and waste start as paid outside imports. Their facilities are available now. Build roads, then paint zones beside them.', ttl: 14 });
       }, own),
     );

@@ -3,7 +3,7 @@ const PREFIX = 'simbuild.save.';
 export function createSlotStorage(onFailure = () => {}) {
   const cache = new Map(), tombstones = new Map(), legacy = new Map();
   let db = null, unavailable = null;
-  const metadata = (slot, data) => ({ slot, savedAt: data?.savedAt, day: data?.time?.day });
+  const metadata = (slot, data) => ({ slot, savedAt: data?.savedAt, day: data?.time?.day, cityName: data?.modules?.ui?.cityName || null });
   const envelope = raw => { const d = JSON.parse(raw); if (d?.version !== 1 || !d.modules || typeof d.modules !== 'object' || Array.isArray(d.modules)) throw Error('unsupported or invalid save'); return d; };
   try {
     for (let i = 0; i < localStorage.length; i++) {
@@ -55,6 +55,13 @@ export function createSlotStorage(onFailure = () => {}) {
       db = await open();
       db.onversionchange = () => { db.close(); db = null; unavailable = Error('Save storage changed in another game. Reload before saving.'); };
       const stored = await transaction('readonly', (tx, result) => { const r = tx.objectStore('metadata').getAll(); r.onsuccess = () => result(r.result); });
+      for (let i = 0; i < stored.length; i++) {
+        const info = stored[i]; if (info.deleted || Object.hasOwn(info, 'cityName')) continue;
+        try {
+          const row = await transaction('readonly', (tx, result) => { const r = tx.objectStore('slots').get(info.slot); r.onsuccess = () => result(r.result); });
+          if (row?.raw) { stored[i] = metadata(info.slot, envelope(row.raw)); await transaction('readwrite', tx => tx.objectStore('metadata').put(stored[i])); }
+        } catch { /* A readable save remains usable even if its display metadata cannot be upgraded. */ }
+      }
       const existing = new Set(stored.map(s => s.slot)); for (const info of stored) { if (info.deleted) { cache.delete(info.slot); tombstones.set(info.slot, info.deletedAt || 0); } else { cache.set(info.slot, info); tombstones.delete(info.slot); } }
       for (const [slot, raw] of legacy) {
         if (existing.has(slot)) continue;

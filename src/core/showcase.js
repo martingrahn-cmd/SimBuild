@@ -3,6 +3,7 @@ export function parseParams(search = window.location.search) {
   const p = new URLSearchParams(search);
   const num = (k, d) => (p.has(k) && p.get(k) !== '' && !Number.isNaN(+p.get(k)) ? +p.get(k) : d);
   const startingMoney = num('money', null);
+  const slot = p.get('slot');
   return {
     money: Number.isFinite(startingMoney) && startingMoney >= 0 ? startingMoney : null,
     showcase: p.get('showcase') || null,
@@ -16,6 +17,8 @@ export function parseParams(search = window.location.search) {
     verbose: p.get('verbose') === '1',
     weather: p.get('weather') || null, // 'clear' | 'cloudy' | 'rain' | 'fog'
     mode: p.get('mode') || 'demo', // 'demo' stages the demo city; 'play' starts an empty map
+    slot: /^slot[1-3]$/.test(slot || '') ? slot : null,
+    newGame: p.get('new') === '1',
   };
 }
 

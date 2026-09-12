@@ -1,10 +1,23 @@
 // Save/load: committed IndexedDB slots, legacy localStorage import, JSON download/upload.
 import { createSlotStorage } from './save-storage.js';
 export const SAVE_VERSION = 1;
+const ACTIVE_SLOT_KEY = 'simbuild.active.slot';
+const validSlot = slot => slot === 'auto' || /^slot[1-3]$/.test(slot || '');
 
 export function createSaveSystem(core, registry) {
   const { world, clock, events } = core;
   const storage = createSlotStorage((action, slot, e) => events.emit('save:failed', { action, slot, error: e?.message || String(e) }));
+  let activeSlot = validSlot(core.params?.slot) ? core.params.slot : null;
+  if (!activeSlot) { try { const remembered = localStorage.getItem(ACTIVE_SLOT_KEY); if (validSlot(remembered)) activeSlot = remembered; } catch { /* Optional convenience only. */ } }
+  function remember(slot) {
+    activeSlot = validSlot(slot) ? slot : null;
+    try { if (activeSlot) localStorage.setItem(ACTIVE_SLOT_KEY, activeSlot); else localStorage.removeItem(ACTIVE_SLOT_KEY); } catch { /* Saves remain authoritative. */ }
+    if (!core.headless && typeof history?.replaceState === 'function') {
+      const p = new URLSearchParams(location.search);
+      if (activeSlot && activeSlot !== 'auto') p.set('slot', activeSlot); else p.delete('slot');
+      history.replaceState(null, '', `${location.pathname}${p.size ? `?${p}` : ''}${location.hash}`);
+    }
+  }
   function collect() {
     const modules = {};
     for (const [name, rec] of registry.modules) {
@@ -80,10 +93,16 @@ export function createSaveSystem(core, registry) {
   const api = {
     serialize: collect,
     ready: storage.ready,
+    get activeSlot() { return activeSlot; },
+    latestSlot() {
+      const slots = storage.slots();
+      return slots.find(s => s.slot === activeSlot) || slots.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0))[0] || null;
+    },
     async save(slot = 'auto') {
       try {
         const data = collect(), raw = JSON.stringify(data);
         await storage.write(slot, raw, data);
+        if (slot !== 'auto') remember(slot);
         events.emit('save:saved', { slot, savedAt: data.savedAt });
         return data;
       } catch (e) { events.emit('save:failed', { action: 'save', slot, error: e?.message || String(e) }); return null; }
@@ -93,6 +112,7 @@ export function createSaveSystem(core, registry) {
         const raw = await storage.read(slot);
         if (!raw) throw new Error('Save slot not found');
         await restore(JSON.parse(raw));
+        remember(slot);
         return true;
       } catch (e) {
         events.emit('save:failed', { action: 'load', slot, error: e?.message || String(e) });
@@ -110,7 +130,7 @@ export function createSaveSystem(core, registry) {
       catch (e) { events.emit('save:failed', { action: 'cloud-write', error: e?.message || String(e) }); return false; }
     },
     async remove(slot) {
-      try { await storage.remove(slot); events.emit('save:removed', { slot }); return true; }
+      try { await storage.remove(slot); if (slot === activeSlot) remember(null); events.emit('save:removed', { slot }); return true; }
       catch (e) { events.emit('save:failed', { action: 'delete', slot, error: e?.message || String(e) }); return false; }
     },
     download(name = 'city.json') {
@@ -120,7 +140,7 @@ export function createSaveSystem(core, registry) {
     async upload(file) { const text = await file.text(); await restore(JSON.parse(text)); },
     autosave: true,
   };
-  events.on('time:day', () => { if (api.autosave && !core.headless) api.save('auto'); });
+  events.on('time:day', () => { if (api.autosave && !core.headless) api.save(activeSlot || 'auto'); });
   events.on('ui:action', (a) => {
     if (a?.action === 'save') api.save(a.args?.[0] || 'slot1');
     else if (a?.action === 'load') api.load(a.args?.[0] || 'slot1');

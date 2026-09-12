@@ -399,6 +399,13 @@ button.sb-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .sb-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
 .sb-inrow { display: flex; gap: 6px; }
 .sb-inrow .sb-input { flex: 1 1 auto; min-width: 0; }
+.sb-new-slots { display: flex; flex-direction: column; gap: 4px; }
+.sb-slot-choice { min-height: 38px; padding: 5px 9px; border-radius: 6px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; color: var(--text-2); background: rgba(255,255,255,.045); border: 1px solid var(--line); text-align: left; }
+.sb-slot-choice:hover { background: rgba(255,255,255,.08); }
+.sb-slot-choice.is-active { color: #fff; background: var(--accent-dim); border-color: var(--accent-2); }
+.sb-slot-choice b { font-size: 12px; }
+.sb-slot-choice span { max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 10.5px; }
+.sb-slot-choice.is-active span { color: var(--text-2); }
 .sb-seg { display: flex; gap: 2px; padding: 2px; background: rgba(0,0,0,.35); border-radius: 6px; }
 .sb-seg .sb-btn { flex: 1 1 0; height: 26px; border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-2); }
 .sb-seg .sb-btn:hover { background: rgba(255,255,255,.08); }

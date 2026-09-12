@@ -132,9 +132,18 @@ async function boot() {
   const settled = await assets.settle(20000);
   if (!settled) console.error('[main] asset loading timed out after 20 s; pending=' + assets.pending);
 
+  if (playMode && params.newGame && params.slot) {
+    bootMsg('CREATING CITY SAVE', 97);
+    await saveSystem.save(params.slot);
+  }
+
   bootMsg('READY', 100);
   events.emit('app:ready', {});
   document.getElementById('boot')?.classList.add('hidden');
+  if (params.newGame && typeof history?.replaceState === 'function') {
+    const p = new URLSearchParams(location.search); p.delete('new');
+    history.replaceState(null, '', `${location.pathname}${p.size ? `?${p}` : ''}${location.hash}`);
+  }
 
   // frame loop
   let last = performance.now();

@@ -95,14 +95,17 @@ export class Menus {
   }
 
   _main(menu, { boot = false } = {}) {
-    const c = this.ctx.clock;
     this._head(menu, `<div class="sb-brand">SIM<b>BUILD</b></div><div class="sb-sub">City builder · seed ${this.ctx.world.seed}</div>`);
     const body = this._body(menu);
     const slots = this.saves()?.slots?.() || [];
-    const auto = slots.find((s) => s.slot === 'auto');
-    this._mbtn(body, ICONS.play(), boot ? 'Continue' : 'Back to game', `${esc(this.hud.cityName)} · day ${c.day}`, () => { this.hud.action('continue'); this.close(); }, 'primary');
+    const latest = this.saves()?.latestSlot?.() || null;
+    const resume = this._mbtn(body, ICONS.play(), 'Continue', latest ? `${latest.cityName || SLOT_NAMES[latest.slot] || 'Saved city'} · day ${latest.day ?? '?'}` : 'no saved cities', () => {
+      if (!latest) return;
+      this.hud.action('load', latest.slot); this.hud.notify({ type: 'info', title: 'Loading latest city', body: latest.cityName || SLOT_NAMES[latest.slot], ttl: 4 }); this.close();
+    }, 'primary');
+    if (!latest) resume.disabled = true;
     this._mbtn(body, ICONS.plus(), 'New Game', 'seed & map', () => this.open('new', { push: true }));
-    const lb = this._mbtn(body, ICONS.load(), 'Load Game', auto ? `autosave ${ago(auto.savedAt)}` : (slots.length ? `${slots.length} saves` : 'no saves'), () => this.open('load', { push: true }));
+    const lb = this._mbtn(body, ICONS.load(), 'Load / Manage Cities', slots.length ? `${slots.length} saved ${slots.length === 1 ? 'city' : 'cities'}` : 'no saved cities', () => this.open('load', { push: true }));
     if (!slots.length) lb.disabled = true;
     this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', `${this.settings.quality} quality`, () => this.open('settings', { push: true }));
@@ -120,6 +123,8 @@ export class Menus {
     const presets = Object.keys(this.ctx.world.terrain?.presets || {});
     const maps = presets.length ? presets : ['procedural'];
     let map = maps[0], money = 150000;
+    const existing = new Map((this.saves()?.slots?.() || []).filter(s => /^slot[1-3]$/.test(s.slot)).map(s => [s.slot, s]));
+    let saveSlot = ['slot1', 'slot2', 'slot3'].find(id => !existing.has(id)) || 'slot1';
     const seg = (items, cur, onPick) => { const g = el('div', 'sb-seg'); const bs = items.map(([v, l]) => { const b = btn('sb-btn' + (v === cur ? ' is-active' : ''), l); b.addEventListener('click', () => { bs.forEach((x) => x.classList.toggle('is-active', x === b)); onPick(v); }); g.appendChild(b); return b; }); return g; };
     const field = (k, node, help) => { const f = el('div', 'sb-field'); f.appendChild(el('span', 'sb-k', k)); f.appendChild(node); if (help) f.appendChild(el('span', 'sb-h', help)); form.appendChild(f); };
     field('City name', name);
@@ -127,18 +132,32 @@ export class Menus {
     field('Seed', seedRow, 'Same seed + same actions = identical city.');
     field('Map', seg(maps.map((m) => [m, m.replace(/\b\w/g, (c) => c.toUpperCase())]), map, (v) => { map = v; }));
     field('Budget', seg([[500000, 'Easy ¢500k'], [150000, 'Normal ¢150k'], [50000, 'Hard ¢50k']], money, (v) => { money = v; }));
+    const slotChoices = el('div', 'sb-new-slots');
+    const choices = ['slot1', 'slot2', 'slot3'].map(id => {
+      const saved = existing.get(id), choice = btn(`sb-slot-choice${id === saveSlot ? ' is-active' : ''}`);
+      choice.innerHTML = `<b>${esc(SLOT_NAMES[id])}</b><span>${saved ? `${esc(saved.cityName || 'Saved city')} · day ${saved.day ?? '?'}` : 'Empty'}</span>`;
+      choice.addEventListener('click', () => { saveSlot = id; choices.forEach(c => c.classList.toggle('is-active', c === choice)); start.dataset.confirm = ''; start.querySelector('span').textContent = existing.has(id) ? 'Replace & start' : 'Start city'; });
+      slotChoices.appendChild(choice); return choice;
+    });
+    field('Save slot', slotChoices, 'Choosing an occupied slot replaces that city after confirmation.');
     body.appendChild(form);
     const foot = this._foot(menu);
     this._backBtn(foot);
     const start = btn('sb-action primary', ICONS.play() + '<span>Start city</span>');
+    start.querySelector('span').textContent = existing.has(saveSlot) ? 'Replace & start' : 'Start city';
     start.addEventListener('click', () => {
+      if (existing.has(saveSlot) && start.dataset.confirm !== saveSlot) {
+        start.dataset.confirm = saveSlot; start.querySelector('span').textContent = 'Confirm replace';
+        this.hud.notify({ type: 'warning', title: `${SLOT_NAMES[saveSlot]} already has a city`, body: 'Press Confirm replace to start over in this slot.', ttl: 7 });
+        return;
+      }
       const s = Math.max(1, Math.floor(+seed.value || 1337));
-      const cfg = { name: name.value.trim() || 'New City', seed: s, map, money };
+      const cfg = { name: name.value.trim() || 'New City', seed: s, map, money, slot: saveSlot };
       this.hud.cityName = cfg.name; this.hud.cityEl.textContent = cfg.name;
       this.hud.action('newGame', cfg);
       if (this.ctx.headless) { this.close(); return; }
       const p = new URLSearchParams(window.location.search);
-      p.delete('showcase'); p.delete('time'); p.delete('camera'); p.set('mode', 'play'); p.set('seed', String(s)); p.set('map', map); p.set('city', cfg.name); p.set('money', String(money));
+      p.delete('showcase'); p.delete('time'); p.delete('camera'); p.set('mode', 'play'); p.set('seed', String(s)); p.set('map', map); p.set('city', cfg.name); p.set('money', String(money)); p.set('slot', saveSlot); p.set('new', '1');
       window.location.search = p.toString();
     });
     foot.appendChild(start);
@@ -148,9 +167,9 @@ export class Menus {
     this._head(menu, `<div class="sb-h1">Paused</div><div class="sb-h2">${esc(this.hud.cityName)} · ${esc(this.hud.dateString())} · day ${c.day}</div>`);
     const body = this._body(menu);
     this._mbtn(body, ICONS.play(), 'Resume', 'Esc', () => this.close(), 'primary');
-    this._mbtn(body, ICONS.save(), 'Save Game', '', () => this.open('save', { push: true }));
+    this._mbtn(body, ICONS.save(), 'Save Game', this.saves()?.activeSlot ? SLOT_NAMES[this.saves().activeSlot] : '', () => this.open('save', { push: true }));
     const slots = this.saves()?.slots?.() || [];
-    const lb = this._mbtn(body, ICONS.load(), 'Load Game', slots.length ? `${slots.length} saves` : 'no saves', () => this.open('load', { push: true }));
+    const lb = this._mbtn(body, ICONS.load(), 'Load / Manage Cities', slots.length ? `${slots.length} saved ${slots.length === 1 ? 'city' : 'cities'}` : 'no saved cities', () => this.open('load', { push: true }));
     if (!slots.length) lb.disabled = true;
     this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', '', () => this.open('settings', { push: true }));
@@ -162,19 +181,23 @@ export class Menus {
     const cloud = window.__sim?.cloudSaves?.state;
     const existing = new Map((saves?.slots?.() || []).map((s) => [s.slot, s]));
     const ids = [...SLOTS, ...[...existing.keys()].filter((k) => !SLOTS.includes(k))];
-    const location = cloud?.signedIn ? 'Signed in · slots sync across your devices.' : 'Saved on this device · sign in with GameVolt for cloud sync.';
-    this._head(menu, `<div class="sb-h1">${mode === 'save' ? 'Save Game' : 'Load Game'}</div><div class="sb-h2">${mode === 'save' ? `Pick a slot. ${location}` : `Pick a save to restore. ${location}`}</div>`);
+    const location = cloud?.signedIn ? 'Signed in · cities sync across your devices.' : 'Saved on this device · sign in with GameVolt for cloud sync.';
+    this._head(menu, `<div class="sb-h1">${mode === 'save' ? 'Save Game' : 'Load / Manage Cities'}</div><div class="sb-h2">${mode === 'save' ? `Pick a slot. ${location}` : `Open or delete a saved city. ${location}`}</div>`);
     const body = this._body(menu);
     const list = el('div', 'sb-slots');
     for (const id of ids) {
       const s = existing.get(id);
       const row = el('div', 'sb-slot' + (id === 'auto' ? ' is-autosave' : ''));
-      row.innerHTML = `<div class="sb-sic">${id === 'auto' ? ICONS.check() : ICONS.save()}</div><div class="sb-st"><div class="sb-s1">${esc(SLOT_NAMES[id] || id)}</div><div class="sb-s2${s ? '' : ' empty'}">${s ? `Day ${s.day ?? '?'} · saved ${ago(s.savedAt)}` : 'Empty slot'}</div></div>`;
+      row.innerHTML = `<div class="sb-sic">${id === 'auto' ? ICONS.check() : ICONS.save()}</div><div class="sb-st"><div class="sb-s1">${esc(s?.cityName || SLOT_NAMES[id] || id)}</div><div class="sb-s2${s ? '' : ' empty'}">${s ? `${esc(SLOT_NAMES[id] || id)} · day ${s.day ?? '?'} · ${ago(s.savedAt)}` : `${esc(SLOT_NAMES[id] || id)} · empty`}</div></div>`;
       const bb = el('div', 'sb-sb');
       if (mode === 'save' && id !== 'auto') { const b = btn('sb-action small primary', ICONS.save() + '<span>Save</span>'); b.addEventListener('click', () => { this.hud.action('save', id); }); bb.appendChild(b); }
       if (s) {
         const l = btn('sb-action small' + (mode === 'load' ? ' primary' : ''), ICONS.load() + '<span>Load</span>'); l.addEventListener('click', () => { this.hud.action('load', id); this.hud.notify({ type: 'info', title: 'Loading game', body: `${SLOT_NAMES[id] || id}`, ttl: 4 }); this.close(); }); bb.appendChild(l);
-        const d = btn('sb-action small danger', ICONS.trash()); d.setAttribute('data-tip', 'Delete'); d.addEventListener('click', async () => { d.disabled = true; this.hud.action('deleteSave', id); const removed = await saves?.remove?.(id); if (removed) this.refresh(); else d.disabled = false; }); bb.appendChild(d);
+        const d = btn('sb-action small danger', ICONS.trash()); d.setAttribute('data-tip', 'Delete city'); let armed = false, reset;
+        d.addEventListener('click', async () => {
+          if (!armed) { armed = true; d.classList.add('is-confirm'); d.innerHTML = '<span>Delete?</span>'; clearTimeout(reset); reset = setTimeout(() => { armed = false; d.classList.remove('is-confirm'); d.innerHTML = ICONS.trash(); }, 5000); return; }
+          clearTimeout(reset); d.disabled = true; this.hud.action('deleteSave', id); const removed = await saves?.remove?.(id); if (removed) this.refresh(); else d.disabled = false;
+        }); bb.appendChild(d);
       }
       row.appendChild(bb); list.appendChild(row);
     }
