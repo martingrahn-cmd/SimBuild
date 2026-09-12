@@ -3,6 +3,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import { makeNoise2D } from './rng.js';
 
+const PUBLIC_ASSET_BASE = `${import.meta.env.BASE_URL}assets/`;
+
 // CC0 asset loader. Every loader resolves even on failure (procedural fallback + warning).
 // PBR sets live in public/assets/<name>/ and are described by public/assets/manifest.json.
 export class Assets {
@@ -21,7 +23,7 @@ export class Assets {
   }
   async loadManifest() {
     try {
-      const r = await fetch('/assets/manifest.json');
+      const r = await fetch(`${PUBLIC_ASSET_BASE}manifest.json`);
       this.manifest = r.ok ? await r.json() : { assets: [] };
     } catch (e) { this.manifest = { assets: [] }; }
     this._byName = new Map((this.manifest.assets || []).map((a) => [a.name, a]));
@@ -69,7 +71,7 @@ export class Assets {
         this.log?.warn(`pbr set "${name}" not in manifest; using procedural fallback`);
         return this.procedural.pbrFallback(name, opts);
       }
-      const base = `/assets/${entry.name}/`;
+      const base = `${PUBLIC_ASSET_BASE}${entry.name}/`;
       const files = entry.files || {};
       const load = (k, srgb) => files[k] ? this.texture(base + files[k], { ...opts, srgb }) : Promise.resolve(null);
       const [map, normalMap, roughnessMap, aoMap, displacementMap, metalnessMap, armMap] = await Promise.all([
@@ -101,7 +103,7 @@ export class Assets {
     const key = `hdri:${name}`;
     if (this.cache.has(key)) return this.cache.get(key);
     const p = this._track(new Promise((resolve) => {
-      this._hdr.load(`/assets/${name}.hdr`, (t) => { t.mapping = THREE.EquirectangularReflectionMapping; resolve(t); }, undefined, () => {
+      this._hdr.load(`${PUBLIC_ASSET_BASE}${name}.hdr`, (t) => { t.mapping = THREE.EquirectangularReflectionMapping; resolve(t); }, undefined, () => {
         this.log?.warn(`hdri failed: ${name}`); resolve(null);
       });
     }));
