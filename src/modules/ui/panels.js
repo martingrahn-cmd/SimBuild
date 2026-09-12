@@ -21,7 +21,7 @@ function ago(ts) {
 export class Menus {
   constructor(hud) {
     this.hud = hud; this.ctx = hud.ctx;
-    this.el = null; this.kind = null; this._wasRunning = false; this._stack = [];
+    this.el = null; this.kind = null; this._wasRunning = false; this._stack = []; this._openOpts = {};
     this.settings = { quality: this.ctx.quality || 'high', volume: 80, muted: false };
     this._rng = this.ctx.rng.fork('menu');
     try { const a = this.ctx.modules?.audio; if (a?.getMasterVolume) this.settings.volume = Math.round(a.getMasterVolume() * 100); if (a?.isMuted) this.settings.muted = !!a.isMuted(); } catch (e) { /* optional */ }
@@ -33,7 +33,7 @@ export class Menus {
     if (this.el && this.kind !== 'pause' && this.kind !== 'main' && !opts.push) this._stack.length = 0;
     if (this.el && opts.push) this._stack.push(this.kind);
     this._destroy();
-    this.kind = kind;
+    this.kind = kind; this._openOpts = { ...opts };
     if (kind === 'pause' && !this._pausing) { const c = this.ctx.clock; this._pausing = true; this._wasRunning = !(c.paused || c.speed === 0); c.pause(); this.hud._syncSpeed(); this.hud.action('pauseMenu', true); }
     const modal = this.el = el('div', `sb-modal sb-pe is-${kind === 'main' || kind === 'new' ? 'main' : 'pause'}`);
     modal.addEventListener('click', (e) => { if (e.target === modal && kind !== 'main' && kind !== 'new') this.close(); });
@@ -52,7 +52,11 @@ export class Menus {
     this.hud.action('menu', null);
   }
   _destroy() { this.el?.remove(); this.el = null; this.hud.root.classList.remove('is-menu'); }
-  refresh() { if (this.kind === 'save' || this.kind === 'load') this.open(this.kind); }
+  refresh() {
+    if (!['main', 'pause', 'save', 'load'].includes(this.kind)) return;
+    const stack = this._stack.slice(), opts = { ...this._openOpts };
+    this.open(this.kind, opts); this._stack = stack;
+  }
 
   // ---------------------------------------------------------------- pieces
   _head(menu, html) { const h = el('div', 'sb-menu-head', html); menu.appendChild(h); return h; }
@@ -77,6 +81,19 @@ export class Menus {
     });
   }
 
+  _cloudPromo(body) {
+    const cloud = window.__sim?.cloudSaves?.state;
+    if (!cloud?.available) return;
+    const card = el('div', `sb-cloud-promo${cloud.signedIn ? ' is-on' : ''}`);
+    card.innerHTML = `${ICONS.cloud()}<div class="sb-cloud-title">${cloud.signedIn ? 'Your city travels with you' : 'Keep your city with you'}</div><div class="sb-cloud-copy">${cloud.signedIn ? 'Cloud saves are on. Continue from any computer where you sign in.' : 'Sign in to continue on any computer and keep your city safe if this browser is cleared.'}</div>`;
+    if (!cloud.signedIn) {
+      const signIn = btn('sb-action small primary', '<span>Sign in to GameVolt</span>');
+      signIn.addEventListener('click', () => window.GameVolt?.auth?.login?.());
+      card.appendChild(signIn);
+    }
+    body.appendChild(card);
+  }
+
   _main(menu, { boot = false } = {}) {
     const c = this.ctx.clock;
     this._head(menu, `<div class="sb-brand">SIM<b>BUILD</b></div><div class="sb-sub">City builder · seed ${this.ctx.world.seed}</div>`);
@@ -89,6 +106,7 @@ export class Menus {
     if (!slots.length) lb.disabled = true;
     this._fullscreen(body);
     this._mbtn(body, ICONS.sliders(), 'Settings', `${this.settings.quality} quality`, () => this.open('settings', { push: true }));
+    this._cloudPromo(body);
     const foot = this._foot(menu);
     foot.appendChild(el('span', 'sb-version', 'three.js r185 · Vite · CC0 assets'));
   }

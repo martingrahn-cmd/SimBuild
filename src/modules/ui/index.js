@@ -30,6 +30,7 @@ export default {
       ev.on('save:saved', (p) => { hud.menus.refresh(); hud.notify({ type: p?.slot === 'auto' ? 'info' : 'success', title: p?.slot === 'auto' ? 'Autosaved' : 'Game saved', body: `Day ${ctx.clock.day} · ${hud.dateString()}`, ttl: 5 }); }, own),
       ev.on('save:slots-changed', () => hud.menus.refresh(), own),
       ev.on('save:cloud-synced', () => hud.menus.refresh(), own),
+      ev.on('save:cloud-status', () => hud.menus.refresh(), own),
       ev.on('save:cloud-failed', (p) => hud.notify({ type: 'warning', title: 'Cloud sync paused', body: `${String(p?.error || 'Connection unavailable')}. Your local saves are safe.`, ttl: 8 }), own),
       ev.on('save:failed', (p) => hud.notify({ type: 'error', title: p?.action === 'load' ? 'Could not load game' : p?.action === 'delete' ? 'Could not delete save' : p?.action === 'migration' ? 'Existing save kept in legacy storage' : p?.action === 'storage' ? 'Save storage unavailable' : 'Could not save game', body: String(p?.error || 'Storage unavailable'), ttl: 10 }), own),
       ev.on('save:loaded', () => { hud.notify({ type: 'success', title: 'Game loaded', body: `${hud.cityName} · day ${ctx.clock.day}`, ttl: 6 }); hud.hideInfo(); hud.setSource({}); hud.minimap.setSample(null); }, own),

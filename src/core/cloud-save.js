@@ -181,10 +181,12 @@ export function connectCloudSaves(core, saves) {
     gameVolt = sdk; state.available = true;
     sdk.auth.onStateChange(user => {
       state.signedIn = !!user; state.userId = user?.id || null;
+      core.events.emit('save:cloud-status', { available: true, signedIn: state.signedIn });
       if (user) sync();
     });
     sdk.onReady(() => {
       const user = sdk.auth.getUser?.(); state.signedIn = !!user; state.userId = user?.id || null;
+      core.events.emit('save:cloud-status', { available: true, signedIn: state.signedIn });
       if (user) sync();
     });
     sdk.init('simbuild');
