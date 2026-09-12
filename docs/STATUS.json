@@ -4218,7 +4218,8 @@
       "build": "PASS: Vite 8.2.2, 164 modules after R12",
       "startup": "PASS: all 16 modules ready, 0 errors; main/pause menus include version, fullscreen, settings and Report a bug",
       "saveLoad": "PASS retained; Traffic mixed-purpose serialization restores exactly and Simulation 90-day self-test remains exact",
-      "evidence": "shots/playtest-fixes-r10/traffic-causality.json; shots/playtest-fixes-r12/early-growth.json; shots/playtest-fixes-r12/daylight-lock.json; docs/builds/playtest_r12_mvp_repair.md"
+      "evidence": "shots/playtest-fixes-r10/traffic-causality.json; shots/playtest-fixes-r12/early-growth.json; shots/playtest-fixes-r12/daylight-lock.json; docs/builds/playtest_r12_mvp_repair.md",
+      "live": "PASS: gamevolt.io/simbuild reports version 77bfd55; all 16 modules ready, zero errors; Report a bug and Always daylight visible"
     },
     "observeDuringPlaytest": [
       "Start a new city and judge whether the first road, zoning and utility choices are understandable without prior instructions.",
@@ -4459,12 +4460,13 @@
     "humanPlaytestSession": "Findings PT-01 through PT-28 retained through the live 2026-09-12 playtest. PT-24 numeric-keypad Enter is fixed locally; PT-23 and PT-27 fail traffic/progression feel; PT-25, PT-26 and PT-28 remain open.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
-      "remoteCheckpoint": "c5d3195 (2026-09-06); current verified work remains local/unpublished",
+      "remoteCheckpoint": "77bfd55 (R12 product commit on SimBuild main)",
       "publish": "GitHub Actions builds the curated Vite player artifact and deploys dist to the owner game portal; GitHub Pages remains an optional preview channel",
       "bugReporting": "In-game button previews/copies diagnostics, then opens GitHub Issue Form or posts to a protected portal API; no client token",
       "repositoryHygiene": "Do not publish the 5.2GB local shots corpus; curate tracked evidence and keep large verification archives external",
       "primaryHosting": "Owner game portal at a stable HTTPS origin and public path; direct hosting is preferred over an iframe where practical",
-      "portalRequirements": "Configure Vite base for the chosen subpath, immutable hashed-asset caching plus no-cache index.html, HTTPS, deployment rollback, and a stable origin for IndexedDB saves"
+      "portalRequirements": "Configure Vite base for the chosen subpath, immutable hashed-asset caching plus no-cache index.html, HTTPS, deployment rollback, and a stable origin for IndexedDB saves",
+      "latestDeployment": "GameVolt b712126; sync run 34695172075 and Pages run 34695195397 PASS; gamevolt.io version.json reports source 77bfd55"
     },
     "acceptedR10": [
       {
