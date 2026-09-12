@@ -1,4 +1,4 @@
-# SimBuild — Architecture
+# New Dollarton — Architecture
 
 A Cities: Skylines II–class city builder in **Three.js (r185) + Vite 8**, plain ES modules, no framework.
 Target look: photographic PBR, physically plausible sun/sky/shadows, atmospheric depth, a living city at night.

@@ -1,6 +1,6 @@
-# SimBuild
+# New Dollarton
 
-Cities: Skylines II–class city builder in Three.js + Vite, built by orchestrated agents.
+New Dollarton is a city builder in Three.js + Vite. The repository, deployment path and internal save identifiers retain the original SimBuild technical name for compatibility.
 
 **Picking this up cold? Read [`docs/HANDOFF.md`](docs/HANDOFF.md) first** — current state, how to resume the
 build loop, and the traps. Then `ARCHITECTURE.md` (the contract) and `docs/STATUS.json` (live scores).

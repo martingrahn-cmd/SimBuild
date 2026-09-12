@@ -95,7 +95,7 @@ export class Menus {
   }
 
   _main(menu, { boot = false } = {}) {
-    this._head(menu, `<div class="sb-brand">SIM<b>BUILD</b></div><div class="sb-sub">City builder · seed ${this.ctx.world.seed}</div>`);
+    this._head(menu, `<div class="sb-brand">NEW <b>DOLLARTON</b></div><div class="sb-sub">City builder · seed ${this.ctx.world.seed}</div>`);
     const body = this._body(menu);
     const slots = this.saves()?.slots?.() || [];
     const latest = this.saves()?.latestSlot?.() || null;

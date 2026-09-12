@@ -1,6 +1,8 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-12T09:41:14.102Z",
+  "playerTitle": "New Dollarton",
+  "technicalId": "simbuild",
+  "updatedAt": "2026-09-12T10:27:35.000Z",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",

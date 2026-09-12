@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.." || exit 1
 PORT="${SIM_PORT:-5173}"
 URL="http://127.0.0.1:$PORT"
-is_simbuild() { curl -fsS --max-time 5 "$URL/" 2>/dev/null | grep -q '<title>SimBuild</title>'; }
+is_simbuild() { curl -fsS --max-time 5 "$URL/" 2>/dev/null | grep -q '<title>New Dollarton</title>'; }
 if is_simbuild; then
   echo "dev server already up"; exit 0
 fi

@@ -1,4 +1,6 @@
-# SimBuild human-playtest checkpoint — R10, 2026-09-11
+# New Dollarton human-playtest checkpoint — R10, 2026-09-11
+
+**Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
 
 ## Current boundary — R10 ready for human retest
 
