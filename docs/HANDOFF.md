@@ -2,6 +2,8 @@
 
 **Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
 
+The main and pause menus display `Version 0.1.0 · build <7-character source commit>`. The GameVolt sync action injects the source commit into the compiled bundle, so the label identifies the code actually running even while an older Cloudflare-cached page is being served.
+
 ## Current boundary — R10 ready for human retest
 
 The bounded R10 response to the 2026-09-10 playtest is implemented and verified. Use `http://127.0.0.1:5180/?mode=play`; port 5173 currently belongs to an unrelated project and is not the SimBuild server. A new city gives the clearest test of progression, imports and construction, although existing saves remain supported.

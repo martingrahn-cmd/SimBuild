@@ -7,6 +7,9 @@ import { el, btn, esc } from './dom.js';
 const SLOTS = ['auto', 'slot1', 'slot2', 'slot3'];
 const SLOT_NAMES = { auto: 'Autosave', slot1: 'Slot 1', slot2: 'Slot 2', slot3: 'Slot 3' };
 const QUALITIES = ['low', 'medium', 'high', 'ultra'];
+const APP_VERSION = import.meta.env?.VITE_APP_VERSION || '0.1.0';
+const BUILD_ID = String(import.meta.env?.VITE_BUILD_ID || 'development').slice(0, 7);
+const VERSION_LABEL = `Version ${APP_VERSION} · build ${BUILD_ID}`;
 const KEYS = [['Esc', 'Pause menu / close panel'], ['Space', 'Pause / resume'], ['1 2 3', 'Game speed'], ['P', 'Photo mode'], ['M', 'Toggle minimap'], ['W A S D', 'Pan camera'], ['Q E', 'Rotate camera'], ['RMB drag', 'Orbit'], ['MMB drag', 'Pan'], ['Wheel', 'Zoom'], ['`', 'Dev corner']];
 
 function ago(ts) {
@@ -111,7 +114,7 @@ export class Menus {
     this._mbtn(body, ICONS.sliders(), 'Settings', `${this.settings.quality} quality`, () => this.open('settings', { push: true }));
     this._cloudPromo(body);
     const foot = this._foot(menu);
-    foot.appendChild(el('span', 'sb-version', 'three.js r185 · Vite · CC0 assets'));
+    foot.appendChild(el('span', 'sb-version', VERSION_LABEL));
   }
   _new(menu) {
     this._head(menu, `<div class="sb-h1">New Game</div><div class="sb-h2">Choose a map, a seed and a starting budget.</div>`);
@@ -175,6 +178,8 @@ export class Menus {
     this._mbtn(body, ICONS.sliders(), 'Settings', '', () => this.open('settings', { push: true }));
     this._mbtn(body, ICONS.camera(), 'Photo Mode', 'P', () => { this.close(); this.hud.setPhotoMode(true); });
     this._mbtn(body, ICONS.map(), 'Main Menu', '', () => this.open('main', { push: true }));
+    const foot = this._foot(menu);
+    foot.appendChild(el('span', 'sb-version', VERSION_LABEL));
   }
   _slots(mode, menu) {
     const saves = this.saves();
