@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-18T22:30:00+02:00",
+  "updatedAt": "2026-09-18T23:25:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4075,25 +4075,25 @@
   "handoff": {
     "document": "docs/HANDOFF.md",
     "sessionEnded": "2026-09-10T12:20:00+02:00",
-    "state": "Autonomous R27 accepted: Services night light pools are warmer and softer while exact lamp/contact geometry, serialized state and daytime behavior remain preserved; scores unchanged.",
-    "resumeWith": "Start R28 with fresh current-source diagnosis of the highest visible whole-frame defect. Prefer a measurable owner-safe foliage-structure or occupied-block-fabric change; preserve state, budgets and deterministic restore and avoid exhausted R8/R9 paths.",
+    "state": "Autonomous R28 accepted after separately repairing four truncated repository source tails; close passenger LOD0 detail improves with exact Traffic state and scores unchanged.",
+    "resumeWith": "Start R29 from fresh whole-frame evidence. Target a larger owner-safe occupied-block, foliage or measured performance weakness; do not continue isolated vehicle trim or repeat exhausted R8/R9 paths.",
     "neverVerified": "Subjective ordinary-play pacing and choice quality; curved road history; persistent/second-owner failure beyond the tested matrix; pending-history save; long unpaused play; sustained 50fps; whole-game/reference parity.",
-    "notRun": "No formal whole-game/blind rerating or full 16-frame sustained matrix for the bounded R27 light-pool change. Subjective ordinary-play findings remain pending."
+    "notRun": "No formal whole-game/blind rerating or full 16-frame sustained matrix for the bounded R27/R28 presentation changes. Subjective ordinary-play findings remain pending."
   },
   "executionControl": {
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 27,
+    "lastAuthorizedRound": 28,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
     "pendingAfterStop": [
       "Reproduce the hosted Slot1 failure if a player payload becomes available; current local rollback and compatibility gates pass",
-      "Measure a visible current-source whole-game defect in foliage structure or occupied block fabric and implement only a bounded owner-safe candidate",
+      "Measure a larger current-source whole-frame defect in occupied block fabric, foliage structure or sustained performance and implement only a bounded owner-safe candidate",
       "Re-run whole-game and blind comparison after a visible integrated improvement large enough to affect full-frame judgment"
     ],
-    "updatedAt": "2026-09-18T22:30:00+02:00",
+    "updatedAt": "2026-09-18T23:25:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r27-2026-09-18",
-    "state": "R27 Services light-pool repair accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R27 on verified R26: Services-owned night pools use a measured warm soft falloff while lamp/contact geometry, service state, budgets and daytime rendering remain unchanged",
+    "id": "human-playtest-r28-2026-09-18",
+    "state": "R28 passenger LOD0 detail accepted after clean-source recovery; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R28 on verified R27: complete buildable repository source plus bounded Traffic-owned passenger/pickup side detail; simulation, Traffic state and farther ownership contracts remain exact",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4143,7 +4143,7 @@
       "score": 6,
       "pass": false,
       "blindR2": "SimBuild 0–4 CS2, high confidence",
-      "note": "R27 local critic holds all scores; no formal whole-game/blind rerating."
+      "note": "R28 local critic holds all scores; no formal whole-game/blind rerating."
     },
     "acceptedCurrentCycle": [
       {
@@ -4235,6 +4235,16 @@
         "id": "R27",
         "decision": "accepted Services-owned independent warm light-pool texture/falloff with exact lamp/contact geometry, service state and daytime visibility contract",
         "score": "Services 7.0 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R27-SOURCE-RECOVERY",
+        "decision": "restored four tracked Services/Tools source endings that were truncated in GitHub while the verified runtime bundle remained complete; clean clone build restored",
+        "score": "correctness hotfix; all scores unchanged"
+      },
+      {
+        "id": "R28",
+        "decision": "accepted bounded Traffic-owned LOD0 passenger side breaks/handles and pickup bed/cabin cues with exact serialized state and unaffected vehicle classes",
+        "score": "Traffic 7.2 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4274,7 +4284,8 @@
       "r24Fleet": "matched close fleet: 112 draws unchanged; 875,698 -> 876,298 triangles (+600); after 59.5fps, errors=0; bus LOD1/2 unchanged at 254/36 triangles; not a whole-scene sustained baseline",
       "r25TerrainStartup": "six interleaved 1024² land-cover pairs: 1,099.9ms -> 1,004.3ms median (-8.692%), exact hashes; production stage 901–909ms, Terrain 1,678–1,733ms, menu ready 2,643–2,772ms. End-to-end loading gate remains open.",
       "r26FoundersPark": "Matched noon park: 483→493 draws, 1,846,476→1,903,498 triangles, candidate 60.0fps/errors=0; directed night 58.3fps and overview 54.6fps, errors=0. Not a sustained whole-game matrix.",
-      "r27ServiceLightPools": "Matched night park: 453 draws and 2,258,608 triangles exactly unchanged, candidate 60.0fps/errors=0 versus R26 58.3fps. Day remains 493/1,903,498 with normalized MAE 1.37615e-06. No performance gain claimed."
+      "r27ServiceLightPools": "Matched night park: 453 draws and 2,258,608 triangles exactly unchanged, candidate 60.0fps/errors=0 versus R26 58.3fps. Day remains 493/1,903,498 with normalized MAE 1.37615e-06. No performance gain claimed.",
+      "r28PassengerDetail": "Matched fleet: 112 draws unchanged; 876,298 -> 879,058 triangles (+2,760); candidate 60.1fps/errors=0. Only six intended LOD0 classes change; not a whole-scene sustained baseline."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4309,10 +4320,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite8.2.2, 164 modules after R27, canonical public assets, output on ExtDrive.",
+      "build": "PASS: Vite8.2.2, 164 modules after repository source-tail recovery and R28, clean external GitHub clone, canonical public assets.",
       "startup": "PASS behavior, gate still open: R25 land-cover 901–909ms; Terrain 1,678–1,733ms; menu ready 2,643–2,772ms. Exact stage gain is established, end-to-end gain is not.",
-      "saveLoad": "PASS: R27 exact Services state and R26 two-seed owner restore plus Simulation exact mid-run save/load; retained R21 clean-browser all-14-owner checkpoint.",
-      "evidence": "docs/builds/playtest_r27_service_light_pools.md; docs/critic/playtest_r27_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r27; prior R26/R23/R21 contracts retained",
+      "saveLoad": "PASS: R28 exact Traffic serialized state/repeat, full Traffic causality restore, R27 exact Services state and Simulation exact mid-run save/load.",
+      "evidence": "docs/builds/playtest_r27_source_recovery.md; docs/builds/playtest_r28_passenger_detail.md; docs/critic/playtest_r28_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r28; prior R27/R23/R21 contracts retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4329,7 +4340,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Start R28 from fresh current-source whole-frame evidence. Diagnose foliage structure or occupied block fabric first; accept only a bounded owner-safe change that preserves state, budgets, deterministic restore and render integrity. Avoid exhausted R8/R9 paths.",
+    "nextAutonomousStep": "Start R29 from fresh whole-frame evidence. Prefer a larger owner-safe occupied-block-fabric, foliage-structure or measured performance change. Do not continue isolated vehicle trim or repeat exhausted R8/R9 paths.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4641,7 +4652,7 @@
         ]
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R27 repairs the verified pale night light pools without closing whole-game foliage, fabric, performance or subjective-play findings. Autonomous development remains active under the 2026-09-18 instruction.",
+    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R27 repairs pale night light pools and R28 improves close passenger shells; repository clean-clone build is restored. Whole-game foliage, fabric, performance and subjective-play findings remain open.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "ad645dd (R16 product commit) with d669f33 documentation integration on SimBuild main",
@@ -4914,6 +4925,20 @@
       "dayComparison": "day-mae.txt",
       "productionBuild": "Vite production build PASS, 164 modules, canonical public assets",
       "determinism": "Simulation selftest PASS: deterministic repeat and exact mid-run save/load",
+      "result": "ACCEPT; scores unchanged"
+    },
+    "r28Evidence": {
+      "build": "docs/builds/playtest_r28_passenger_detail.md",
+      "critic": "docs/critic/playtest_r28_local.md",
+      "sourceRecovery": "docs/builds/playtest_r27_source_recovery.md",
+      "sourceRecoveryCommit": "4c44c18a941f00b7050ec35a60e3ab5129a7d36d",
+      "directory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r28",
+      "baseline": "fleet-baseline.png",
+      "candidate": "fleet-candidate.png",
+      "detailContract": "passenger-detail-contract.json",
+      "trafficContract": "traffic-causality.json",
+      "simulationSelftest": "simulation-selftest.txt",
+      "productionBuild": "Vite production build PASS, 164 modules, clean externally cloned source",
       "result": "ACCEPT; scores unchanged"
     }
   }

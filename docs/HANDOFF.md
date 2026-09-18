@@ -339,3 +339,15 @@ The dedicated production probe confirms exactly60 pools,179 contact shadows, ide
 Accept R27 with **Services7.0** and **whole-game6.0**, both FAIL unchanged. This repairs one verified surface but does not provide physically based illumination or solve broader night composition, stylized foliage, sparse/repeated block fabric, sustained performance or subjective play quality. Evidence and review are `docs/builds/playtest_r27_service_light_pools.md`, `docs/critic/playtest_r27_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r27/`.
 
 Continue R28 with fresh current-source diagnosis of the highest visible whole-frame defect. Prefer a measurable owner-safe foliage-structure or occupied-block-fabric change; preserve state, budgets, deterministic restore and existing render contracts. Do not repeat the rejected R8/R9 global road-order, scalar emissive or generic LOD-material experiments.
+
+## R27 repository source recovery — 2026-09-18
+
+A clean GitHub clone exposed four tracked source files ending mid-token even though the accepted R27 runtime bundle was complete: Services index plus Tools index, tool fallback and undo stack. The complete local source endings were restored without redesigning behavior. A fresh external clone then transformed all164 modules and completed the canonical build. The recovery is separately pushed as `4c44c18a941f00b7050ec35a60e3ab5129a7d36d`; scores are unchanged. See `docs/builds/playtest_r27_source_recovery.md`.
+
+## R28 close passenger-vehicle detail — 2026-09-18
+
+Traffic's passenger LOD0 set now has bounded side detail: window/rocker breaks and handles on sedan, hatchback, SUV, taxi and police, plus cabin/bed separation on the pickup. Authoritative dimensions, axles, routes and farther LODs remain unchanged. The matched fleet image stays at112 draws and60.1fps with zero errors; submitted geometry changes876,298→879,058 triangles (+2,760). The visual gain is clear at close range but modest in ordinary aerial play.
+
+The dedicated probe reports exact Traffic state hash across baseline and repeated candidate. Only the intended six LOD0 classes change (+96 triangles for each passenger shell, +72 pickup); van, box truck, bus, semi and motorbike remain exact. The full causality/determinism/restore probe,90-day Simulation selftest and clean164-module production build pass.
+
+Accept R28 with **Traffic7.2** and **whole-game6.0**, both FAIL unchanged. Do not spend R29 on another isolated vehicle-trim pass. Return to fresh whole-frame evidence and target a larger owner-safe weakness such as occupied block fabric, foliage structure or a measured performance bottleneck. Evidence and review are `docs/builds/playtest_r28_passenger_detail.md`, `docs/critic/playtest_r28_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r28/`.

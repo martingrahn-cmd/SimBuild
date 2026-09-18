@@ -525,6 +525,18 @@ export function buildVehicleGeometry(kind, lod=0) {
       addBox(acc,sign*(spec.HW+.003),spec.H*.49,spec.L*.045,.012,.045,.11,MAT.RIM);
       addBox(acc,sign*(spec.HW*.99),spec.H*.38,spec.L*.13,.009,spec.H*.18,.009,MAT.DARK);
     }
+    if(['sedan','hatchback','suv','taxi','police'].includes(kind))for(const side of[-1,1]){
+      // Close-range body breaks keep the shared loft from reading as a single smooth toy shell.
+      // These sit on the existing skin and deliberately leave authoritative dimensions and LOD1/2 alone.
+      addBox(acc,side*(spec.HW+.006),spec.H*.69,-spec.L*.015,.010,.018,spec.L*.285,MAT.DARK);
+      addBox(acc,side*(spec.HW+.008),.31,spec.L*.015,.011,.026,spec.L*.345,MAT.TRIM);
+      for(const z of[-spec.L*.16,spec.L*.19])addBox(acc,side*(spec.HW+.014),spec.H*.57,z,.016,.026,.105,MAT.TRIM);
+    }
+    if(kind==='pickup')for(const side of[-1,1]){
+      addBox(acc,side*(spec.HW+.010),1.18,spec.L*.36,.014,.035,spec.L*.17,MAT.DARK);
+      addBox(acc,side*(spec.HW+.014),1.28,-spec.L*.13,.016,.028,.115,MAT.TRIM);
+      addBox(acc,side*(spec.HW+.008),.34,-spec.L*.10,.011,.028,spec.L*.27,MAT.TRIM);
+    }
   }
   if(kind==='motorbike'){
     addBox(acc,0,.87,.05,.18,.19,.15,MAT.PAINT);
