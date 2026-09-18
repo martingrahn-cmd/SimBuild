@@ -89,7 +89,9 @@ class MeshAccum {
     g.setAttribute('normal', new THREE.Float32BufferAttribute(this.nrm, 3));
     g.setAttribute('uv', new THREE.Float32BufferAttribute(this.uv, 2));
     if (this.uv1) g.setAttribute('uv1', new THREE.Float32BufferAttribute(this.uv1, 2));
-    g.setAttribute('color', new THREE.Float32BufferAttribute(this.col, 3));
+    const color = new Uint16Array(this.col.length);
+    for (let i = 0; i < this.col.length; i++) color[i] = Math.round(Math.min(1, Math.max(0, this.col[i])) * 65535);
+    g.setAttribute('color', new THREE.BufferAttribute(color, 3, true));
     g.setIndex(this.idx);
     g.computeBoundingSphere();
     return g;

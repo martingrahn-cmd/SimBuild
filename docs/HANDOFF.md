@@ -368,3 +368,11 @@ Buildings' four-component window attribute now uses normalized Uint16 storage wi
 The matched night block remains93 draws/691,812 triangles/errors0 with normalized MAE2.12444e-07. Inspection finds the same window pattern, brightness and facade presentation. The canonical164-module build and90-day deterministic/exact-save Simulation selftest pass.
 
 Accept R30 with **Buildings7.4** and **whole-game6.0**, both FAIL. Sustained512MB remains uncertified. Continue immediately with fresh profiling of the next measured retained-memory owner or a larger full-frame visual defect; preserve the explicit R29/R30 formats and do not retry the rejected Float16 path. See `docs/builds/playtest_r30_building_window_buffers.md`, `docs/critic/playtest_r30_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r30/`.
+
+## R31 Props merged-colour memory reduction — 2026-09-19
+
+Props'103 merged furniture/foliage geometries now store their audited0–1 RGB values as normalized Uint16. The exact933,646-vertex representation removes5,601,876 retained bytes; Props CPU buffers fall52,859,208→47,257,332 and fresh browser backing storage follows within416 bytes. Shared tree base geometry and every placement, LOD, material and save contract remain unchanged.
+
+Props state hash `e9ab36bc…6d03` is exact across deserialize/rebuild. Matched day/night park views retain493/453 draws and1,903,498/2,258,608 triangles with errors0. All originals and amplified differences were inspected; no presentation regression is visible. Build and90-day deterministic/exact-save Simulation selftest pass.
+
+Accept R31 with **Props6.4** and **whole-game6.0**, both FAIL. Continue R32 with fresh current-source visual evidence. Prefer a bounded improvement to the still-planar foliage or occupied block/site composition; do not continue attribute packing without a new measured gate and do not repeat rejected R8/R9 foliage-material/range trials. See `docs/builds/playtest_r31_props_color_buffers.md`, `docs/critic/playtest_r31_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r31/`.
