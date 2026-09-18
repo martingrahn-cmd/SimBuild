@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const base = process.env.SIM_URL || 'http://127.0.0.1:5173';
 const out = process.env.OUT_FILE || 'shots/building-color-buffer.json';
+const expectedWinType = process.env.EXPECTED_WIN_TYPE || 'Float32Array';
 const executablePath = process.env.SIM_CHROME || [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', chromium.executablePath(),
 ].find((p) => fs.existsSync(p));
@@ -44,7 +45,8 @@ try {
     return { beforeHash, afterHash, exactRestore: beforeHash === afterHash, first, second, stats: s.stats(), errors: [...s.errors] };
   });
   result.browserErrors = browserErrors;
-  result.pass = result.exactRestore && result.first.colorTypes.length === 1 && result.first.colorTypes[0] === 'Uint16Array:true' && result.first.winTypes.length === 1 && result.first.winTypes[0] === 'Float32Array' && result.first.colorBytes === result.first.vertices * 6 && result.second.colorBytes === result.first.colorBytes && result.errors.length === 0 && browserErrors.length === 0;
+  const expectedWinBytes = result.first.vertices * (expectedWinType === 'Uint16Array' ? 8 : 16);
+  result.pass = result.exactRestore && result.first.colorTypes.length === 1 && result.first.colorTypes[0] === 'Uint16Array:true' && result.first.winTypes.length === 1 && result.first.winTypes[0] === expectedWinType && result.first.colorBytes === result.first.vertices * 6 && result.first.winBytes === expectedWinBytes && result.second.colorBytes === result.first.colorBytes && result.second.winBytes === result.first.winBytes && result.errors.length === 0 && browserErrors.length === 0;
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result, null, 2));

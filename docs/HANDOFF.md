@@ -360,3 +360,11 @@ Accept R28 with **Traffic7.2** and **whole-game6.0**, both FAIL unchanged. Do no
 The same 2,643,278 current Democity building vertices now retain facade colour/contact-AO in normalized Uint16 form. Buildings buffer storage falls15.86MB and browser backing storage falls by the same amount; geometry, window state and serialized ownership remain unchanged. Day/night block evidence is visually equivalent and zero-error. The attempted half-float colour/window representation was rejected for severe dark-facade/night-window regressions. Two horizon candidates and a0.26% byte-exact Terrain micro-optimization were also rejected as immaterial.
 
 Accept R29 with **Buildings7.4** and **whole-game6.0**, both FAIL. The next autonomous round should target a larger current-source full-frame defect or the next measured retained-memory owner, with fresh evidence before code changes.
+
+## R30 Buildings window-buffer memory reduction — 2026-09-18
+
+Buildings' four-component window attribute now uses normalized Uint16 storage with explicit reconstruction scales for the audited tier and bias domains. The same2,643,278 vertices retain21,146,224 fewer bytes than R29; together R29/R30 remove37,005,892 bytes from the current Buildings CPU-buffer inventory. All111 geometries use the intended representation and exact Buildings state hash `972e8066…2289c` survives deserialize/flush.
+
+The matched night block remains93 draws/691,812 triangles/errors0 with normalized MAE2.12444e-07. Inspection finds the same window pattern, brightness and facade presentation. The canonical164-module build and90-day deterministic/exact-save Simulation selftest pass.
+
+Accept R30 with **Buildings7.4** and **whole-game6.0**, both FAIL. Sustained512MB remains uncertified. Continue immediately with fresh profiling of the next measured retained-memory owner or a larger full-frame visual defect; preserve the explicit R29/R30 formats and do not retry the rejected Float16 path. See `docs/builds/playtest_r30_building_window_buffers.md`, `docs/critic/playtest_r30_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r30/`.

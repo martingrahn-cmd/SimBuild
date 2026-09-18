@@ -7,6 +7,9 @@
 
 import * as THREE from 'three';
 
+export const WIN_TIER_SCALE = 1.5;
+export const WIN_BIAS_SCALE = 1.4;
+
 export class MeshBuilder {
   constructor() {
     this.pos = []; this.nor = []; this.uv = []; this.col = []; this.win = []; this.bid = []; this.idx = [];
@@ -186,7 +189,14 @@ export class MeshBuilder {
     g.setAttribute('uv', new THREE.Uint16BufferAttribute(uvs, 2, true));
     const colors = Uint16Array.from(this.col, v => Math.round(Math.max(0, Math.min(1, v)) * 65535));
     g.setAttribute('color', new THREE.Uint16BufferAttribute(colors, 3, true));
-    g.setAttribute('win', new THREE.Float32BufferAttribute(this.win, 4));
+    const windows = new Uint16Array(this.win.length);
+    for (let i = 0; i < this.win.length; i += 4) {
+      windows[i] = Math.round(Math.max(0, Math.min(1, this.win[i])) * 65535);
+      windows[i + 1] = Math.round(Math.max(0, Math.min(1, this.win[i + 1] / WIN_TIER_SCALE)) * 65535);
+      windows[i + 2] = Math.round(Math.max(0, Math.min(1, this.win[i + 2])) * 65535);
+      windows[i + 3] = Math.round(Math.max(0, Math.min(1, this.win[i + 3] / WIN_BIAS_SCALE)) * 65535);
+    }
+    g.setAttribute('win', new THREE.Uint16BufferAttribute(windows, 4, true));
     g.setAttribute('bidx', new THREE.Uint16BufferAttribute(this.bid, 1));
     g.setIndex(this.v > 65535 ? new THREE.Uint32BufferAttribute(this.idx, 1) : new THREE.Uint16BufferAttribute(this.idx, 1));
     g.computeBoundingSphere();

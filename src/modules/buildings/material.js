@@ -11,6 +11,7 @@
 
 import * as THREE from 'three';
 import { RENDER_ORDER } from '../../core/constants.js';
+import { WIN_TIER_SCALE, WIN_BIAS_SCALE } from './geom.js';
 
 export const TINT_SLOTS = 512;
 
@@ -45,7 +46,7 @@ varying vec4 vWin;
 varying float vBIdx;
 varying float vDist;`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
-	vWin = win;
+	vWin = vec4( win.x, win.y * ${WIN_TIER_SCALE.toFixed(1)}, win.z, win.w * ${WIN_BIAS_SCALE.toFixed(1)} );
 	vBIdx = bidx;
 	vDist = length( ( modelViewMatrix * vec4( transformed, 1.0 ) ).xyz );`);
 
