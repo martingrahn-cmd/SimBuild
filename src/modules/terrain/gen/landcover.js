@@ -8,21 +8,38 @@ import { hash2 } from '../../../core/rng.js';
 
 const FIELD = 175;   // metres, mean field size
 
+/** Cache the tiny set of field features used by the whole map. Their positions and orientations depend only
+ * on integer cell coordinates, so recalculating three hashes plus sin/cos for all nine neighbours of every
+ * texel wasted most of the land-cover startup budget. */
+function makeWorleyGrid(half, seed) {
+  const min = Math.floor(-half / FIELD) - 1;
+  const max = Math.floor(half / FIELD) + 1;
+  const width = max - min + 1;
+  const features = new Array(width * width);
+  for (let gz = min; gz <= max; gz++) for (let gx = min; gx <= max; gx++) {
+    const a = hash2(gx, gz, seed + 2) * Math.PI;
+    features[(gz - min) * width + gx - min] = {
+      px: (gx + 0.15 + 0.7 * hash2(gx, gz, seed)) * FIELD,
+      pz: (gz + 0.15 + 0.7 * hash2(gx, gz, seed + 1)) * FIELD,
+      ca: Math.cos(a), sa: Math.sin(a),
+      dry: hash2(gx, gz, 7), kind: hash2(gx, gz, 9),
+    };
+  }
+  return { min, width, features };
+}
+
 /** Worley cell search: nearest and second-nearest feature points on a jittered grid. */
-function worley(x, z, seed, out) {
+function worley(x, z, grid, out) {
   const cx = Math.floor(x / FIELD), cz = Math.floor(z / FIELD);
   let f1 = 1e9, f2 = 1e9, id1x = 0, id1z = 0;
   for (let oz = -1; oz <= 1; oz++) for (let ox = -1; ox <= 1; ox++) {
     const gx = cx + ox, gz = cz + oz;
-    const px = (gx + 0.15 + 0.7 * hash2(gx, gz, seed)) * FIELD;
-    const pz = (gz + 0.15 + 0.7 * hash2(gx, gz, seed + 1)) * FIELD;
-    const dx = px - x, dz = pz - z;
+    const feature = grid.features[(gz - grid.min) * grid.width + gx - grid.min];
+    const dx = feature.px - x, dz = feature.pz - z;
     // anisotropic metric: fields are longer than wide, rotated per cell so the patchwork is not a grid
-    const a = hash2(gx, gz, seed + 2) * Math.PI;
-    const ca = Math.cos(a), sa = Math.sin(a);
-    const u = dx * ca + dz * sa, v = -dx * sa + dz * ca;
+    const u = dx * feature.ca + dz * feature.sa, v = -dx * feature.sa + dz * feature.ca;
     const d = Math.sqrt(u * u * 0.55 + v * v * 1.6);
-    if (d < f1) { f2 = f1; f1 = d; id1x = gx; id1z = gz; } else if (d < f2) f2 = d;
+    if (d < f1) { f2 = f1; f1 = d; id1x = gx; id1z = gz; out.dry = feature.dry; out.kind = feature.kind; } else if (d < f2) f2 = d;
   }
   out.f1 = f1; out.f2 = f2; out.idx = id1x; out.idz = id1z;
   return out;
@@ -38,7 +55,8 @@ export function generateLandcover(rng, gen, size = 512) {
   const world = gen.size, half = world / 2;
   const data = new Uint8Array(size * size * 4);
   const nA = new Noise2D(rng.fork('patch')), nB = new Noise2D(rng.fork('dry')), nC = new Noise2D(rng.fork('lush')), nD = new Noise2D(rng.fork('fine')), nE = new Noise2D(rng.fork('track'));
-  const w = { f1: 0, f2: 0, idx: 0, idz: 0 };
+  const w = { f1: 0, f2: 0, idx: 0, idz: 0, dry: 0, kind: 0 };
+  const worleyGrid = makeWorleyGrid(half, 101);
   const hAt = (x, z) => {
     let fx = (x + half) / cell, fz = (z + half) / cell;
     fx = clamp(fx, 0, res - 1.001); fz = clamp(fz, 0, res - 1.001);
@@ -68,9 +86,9 @@ export function generateLandcover(rng, gen, size = 512) {
       const flowV = flow ? flow[clamp(Math.round((z + half) / cell), 0, res - 1) * res + clamp(Math.round((x + half) / cell), 0, res - 1)] : 0;
 
       // ---- fields: Worley patchwork with a per-cell dryness, softened edges, and dirt tracks on the boundaries
-      worley(x, z, 101, w);
-      const cellDry = hash2(w.idx, w.idz, 7);
-      const cellKind = hash2(w.idx, w.idz, 9);                       // < 0.45 meadow (no fence line), else pasture/crop
+      worley(x, z, worleyGrid, w);
+      const cellDry = w.dry;
+      const cellKind = w.kind;                                       // < 0.45 meadow (no fence line), else pasture/crop
       const edge = w.f2 - w.f1;                                      // metres to the cell boundary (approx)
       const regional = 0.5 + 0.5 * nB.fbm(x / 520 + 3, z / 520 - 1, 3, 2.0, 0.5);
       let dry = regional * 0.38 + (cellDry - 0.5) * 0.75 * plains + 0.22 * (0.5 + 0.5 * nB.fbm(x / 95, z / 95, 3)) - 0.06;

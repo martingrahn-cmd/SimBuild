@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-18T15:45:00+02:00",
+  "updatedAt": "2026-09-18T16:15:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4084,7 +4084,7 @@
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 18,
+    "lastAuthorizedRound": 19,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
@@ -4093,7 +4093,7 @@
       "Compare complete serialized Props by kind, identity and generated ID before any product change",
       "Resume the rejected R9v mixed-victim marquee transaction only after Props determinism is understood"
     ],
-    "updatedAt": "2026-09-18T15:45:00+02:00",
+    "updatedAt": "2026-09-18T16:15:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r18-2026-09-18",
-    "state": "R18 close-range fleet detail accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R18 Traffic-owned LOD0 van/semi detail on verified R17; matched visual, production build and complete traffic contract pass",
+    "id": "human-playtest-r19-2026-09-18",
+    "state": "R19 byte-exact terrain startup cache accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R19 deterministic Terrain land-cover cache on verified R18; byte-exact two-seed output, pixel-exact frame, production build and simulation determinism pass",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4190,6 +4190,11 @@
         "id": "R18",
         "decision": "accepted bounded Traffic-owned LOD0 van and semi-trailer detail repair",
         "score": "Traffic 7.2 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R19",
+        "decision": "accepted byte-exact Terrain Worley feature cache and expanded production startup attribution",
+        "score": "Terrain 6.0, UI 7.0 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4210,7 +4215,8 @@
       "r10Build": "Vite 8.2.2 production build, 163 modules, 208ms",
       "r11Build": "Vite 8.2.2 production build PASS, 163 modules after PT-20 presentation",
       "r11LoadingReprofile": "normal-entry directed capture: Terrain 1,863ms, Props 397ms, Audio 289ms, Environment 35ms; UI 3ms; total readiness remains about 3.1s while shell appears immediately. No quality-reducing startup candidate accepted.",
-      "r18Fleet": "matched close fleet: 112 draws unchanged; 874,678 → 875,698 triangles; after 59.9fps, errors=0; not a whole-scene sustained baseline"
+      "r18Fleet": "matched close fleet: 112 draws unchanged; 874,678 → 875,698 triangles; after 59.9fps, errors=0; not a whole-scene sustained baseline",
+      "r19Startup": "production baseline ready 3.21–3.37s; Terrain 1.83–1.88s with land-cover 1.087s. Exact cache: land-cover 1.006–1.016s in browser and 10.9% lower interleaved Node median; full candidate ready 3.30–3.79s remains noisy, so cold-start gate stays failed."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4237,7 +4243,7 @@
       },
       {
         "rank": 4,
-        "issue": "Cold start still reaches the main menu in about 3.1 seconds. Terrain is the measured dominant stage; perform internal terrain-stage attribution before changing product quality."
+        "issue": "Cold start still reaches the main menu in about 3.2–3.4 seconds. R19 attributes Terrain at 1.8–1.9 seconds and accepts a byte-exact ~7–11% land-cover substage cache, but end-to-end readiness remains inside run variance. Props (~0.4s) and Audio (~0.3s) are the next measured owners."
       },
       {
         "rank": 5,
@@ -4246,10 +4252,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 164 modules after R18",
-      "startup": "PASS: all 16 modules ready, 0 errors; main/pause menus each expose one accented 366 × 54 px Report a bug action",
+      "build": "PASS: Vite 8.2.2, 164 modules after R19",
+      "startup": "PASS behavior, gate still open: production shell visible in ~70ms and menu ready in baseline 3.21–3.37s; R19 candidate preserves pixel output exactly but end-to-end readiness remains 3.30–3.79s",
       "saveLoad": "PASS: R17 financial state exact after restore and one-day continuation; legacy payload without financial state restores Stable; injected late-owner rollback remains exact for all 14 modules",
-      "evidence": "tools/playtest-traffic-causality.mjs; shots/playtest-fixes-r18/fleet-before.png; shots/playtest-fixes-r18/fleet-after.png; docs/builds/playtest_r18_fleet_detail.md; R17 financial and atomicity evidence retained",
+      "evidence": "tools/terrain-landcover-cache-probe.mjs; tools/playtest-r10-loading.mjs; shots/playtest-fixes-r19/terrain-landcover-cache.json; shots/playtest-fixes-r19/terrain-cache.png; docs/builds/playtest_r19_startup_terrain_cache.md; prior R18/R17 contract evidence retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4266,7 +4272,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Remeasure cold-start stages and attribute the ~3.1s normal-entry delay, starting with Terrain. Accept only an owner-safe change that improves time-to-menu/interactive without reducing terrain quality, determinism, restore behavior or visual integrity; otherwise record rejection and continue to the next measured lowest-score whole-game issue.",
+    "nextAutonomousStep": "Profile the measured ~0.3s Audio synthesis startup cost and test an owner-safe off-critical-path or cache strategy that preserves every generated sound, first-interaction responsiveness, settings, deterministic behavior and save contracts. Reject it if audio readiness regresses; then continue to the next ranked whole-game issue.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4574,7 +4580,7 @@
         ]
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R18 adds a verified bounded fleet-art improvement after R17 closes PT-33 objectively. Subjective replay findings remain pending; autonomous development remains active under the 2026-09-18 instruction.",
+    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R19 improves a byte-exact Terrain startup substage but does not close the cold-start finding. Subjective replay findings remain pending; autonomous development remains active under the 2026-09-18 instruction.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "ad645dd (R16 product commit) with d669f33 documentation integration on SimBuild main",
@@ -4776,6 +4782,16 @@
       "trafficContract": "shots/playtest-fixes-r10/traffic-causality.json",
       "productionBuild": "Vite production build PASS, 164 modules",
       "matchedCost": "112 draws unchanged; +1,020 triangles; after 59.9fps; errors=0"
+    },
+    "r19Evidence": {
+      "build": "docs/builds/playtest_r19_startup_terrain_cache.md",
+      "critic": "docs/critic/playtest_r19_local.md",
+      "loadingProbe": "tools/playtest-r10-loading.mjs",
+      "landcoverContract": "shots/playtest-fixes-r19/terrain-landcover-cache.json",
+      "visual": "shots/playtest-fixes-r19/terrain-cache.png",
+      "pixelComparison": "ImageMagick MAE 0 (0) against shots/smoke.png",
+      "productionBuild": "Vite production build PASS, 164 modules",
+      "determinism": "Simulation selftest PASS"
     }
   }
 }
