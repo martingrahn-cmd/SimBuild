@@ -955,4 +955,48 @@ export default {
     ctx.events.on('roads:changed', (p) => {
       S.dirty();
       const sel = ctx.world.selection;
-      if (sel.kind === 'road' && p?.removed?.in
+      if (sel.kind === 'road' && p?.removed?.includes(sel.id)) setSelection(null, null);
+    }, 'tools');
+    ctx.events.on('terrain:changed', () => S.dirty(), 'tools');
+    ctx.events.on('buildings:changed', () => S.dirty(), 'tools');
+    ctx.events.on('props:changed', () => S.dirty(), 'tools');
+    ctx.events.on('services:changed', () => S.dirty(), 'tools');
+
+    if (!ctx.headless) bindInput(ctx);
+    ctx.log.info(`ready — ${ACCEPTED.length} tools, budget ${this.budget.drawCalls} draws / ${this.budget.triangles} tris`);
+  },
+
+  update(dt, ctx) {
+    const t0 = performance.now();
+    S.clock += dt;
+    S.giz.update(dt);
+    if (S._dirty) rebuild();
+    S.chips.flush();
+    maybeEmitPreview();
+    S._ms = performance.now() - t0;
+    void ctx;
+  },
+
+  dispose(ctx) {
+    S._bound?.(); S._bound = null;
+    ctx.events.offOwner?.('tools');
+    if (!S._cameraHadHelpers) ctx.camera.camera.layers.disable(LAYERS.HELPERS);
+    S.chips?.dispose();
+    S.giz?.dispose();
+    S.undo?.clear();
+    S.tool = null; S.tools = null; S.giz = null; S.chips = null; S.poses = []; S.poseSpec = null; S.ctx = null;
+  },
+
+  api,
+
+  showcase: {
+    description: DESCRIPTION,
+    cameras: CAMERAS,
+    async setup(ctx) {
+      S.poseSpec = () => POSES(ctx, S, api);
+      await stage(ctx, S, api);
+    },
+  },
+};
+
+export { S as _state, GC as _colors, money as _money };

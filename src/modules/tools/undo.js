@@ -162,4 +162,20 @@ export class UndoStack {
       from.pop();
       to.push(entry);
       return entry;
-    } finally { th
+    } finally { this._busy = false; }
+  }
+  undo() { return this._move('undo'); }
+  redo() { return this._move('redo'); }
+  clear() {
+    if (this._busy || this.recovery) return false;
+    this.done.length = 0; this.undone.length = 0; this.group = null; this.failure = null;
+  }
+  report() {
+    const result = { undo: this.done.length, redo: this.undone.length, capacity: this.limit,
+      entries: this.done.map((e) => ({ label: e.label, cost: e.cost })) };
+    if (this.failure) result.failure = { ...this.failure };
+    if (this.recovery) result.recovery = { label: this.recovery.entry.label, direction: this.recovery.direction,
+      inverse: this.recovery.inverse, pending: this.recovery.pending.map((e) => e.label) };
+    return result;
+  }
+}

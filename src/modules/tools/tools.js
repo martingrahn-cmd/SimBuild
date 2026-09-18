@@ -1430,4 +1430,13 @@ export function forwardTool(S, name) {
     deactivate() {}, cancel() {}, pointer() {},
     click() { return { ok: false, cost: 0, reason: `${name} unavailable` }; },
     rightClick() { return { ok: false, reason: `${name} unavailable` }; },
-    commit() { return { ok: false, ids: [], cost: 0, reason: `${name} 
+    commit() { return { ok: false, ids: [], cost: 0, reason: `${name} unavailable` }; },
+    state() {
+      return {
+        phase: 'idle', points: [], valid: false, reason: `${name} unavailable`, cost: 0, refund: 0, snap: null,
+        metrics: { length: 0, angle: 0, grade: 0, cells: 0, volume: 0, items: 0 },
+      };
+    },
+    draw() {},
+  };
+}
