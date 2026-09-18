@@ -531,7 +531,20 @@ export function buildVehicleGeometry(kind, lod=0) {
     addBox(acc,0,1.17,-.07,.12,.13,.12,MAT.DARK);
   }
   if(['hatchback','suv','bus'].includes(kind)){const cy=kind==='bus'?1.93:kind==='suv'?1.26:1.08,hh=kind==='bus'?.30:.19;addLensQuad(acc,0,cy,spec.L/2+.014,spec.HW*.74,hh,1,MAT.GLASS);}
-  if(kind==='van')for(const side of [-1,1])addBox(acc,side*spec.HW*.80,.95,spec.L/2+.02,.065,.30,.02,MAT.TAIL);
+  if(kind==='van'){
+    for(const side of [-1,1])addBox(acc,side*spec.HW*.80,.95,spec.L/2+.02,.065,.30,.02,MAT.TAIL);
+    if(!lod){
+      // Rear split doors, high stop lamp and step bumper give the panel van a commercial read
+      // without changing its authoritative body, footprint or any farther LOD.
+      addBox(acc,0,1.35,spec.L/2+.027,.014,.72,.014,MAT.DARK);
+      addBox(acc,0,1.94,spec.L/2+.030,.30,.045,.016,MAT.TAIL);
+      addBox(acc,0,.43,spec.L/2+.035,.72,.075,.045,MAT.TRIM);
+      for(const side of [-1,1]){
+        addBox(acc,side*(spec.HW+.008),1.63,.68,.012,.025,1.20,MAT.DARK);
+        addBox(acc,side*(spec.HW+.012),1.36,1.30,.016,.16,.035,MAT.TRIM);
+      }
+    }
+  }
   if(kind==='police'){
     for(const side of [-1,1]){addBox(acc,side*spec.HW*.997,.78,.1,.009,.20,.65,MAT.WHITE);addBox(acc,side*.27,1.54,0,.25,.07,.12,side<0?MAT.BLUE:MAT.RED);}
     addBox(acc,0,1.48,0,.56,.02,.14,MAT.DARK);
@@ -610,7 +623,16 @@ function buildSemi(lod){
   const begin=a.pos.length;addBody(a,trailer);for(let i=begin+2;i<a.pos.length;i+=3)a.pos[i]+=2.2;
   for(const z of [5.75,6.9,8.05])for(const side of [-1,1])addWheel(a,side*1.12,.505,z,.505,.16,lod?3:12,side<0);
   addBox(a,0,.86,2.2,1,.14,6.8,MAT.DARK);
-  if(!lod){for(const side of [-1,1])addBox(a,side*1.28,1.32,2.2,.012,.045,6.7,MAT.WHITE);addBox(a,0,2.6,9.015,.012,1.35,.016,MAT.TRIM);for(const side of [-1,1])addBox(a,side*.63,2.6,9.035,.025,1.2,.025,MAT.TRIM);}
+  if(!lod){
+    for(const side of [-1,1])addBox(a,side*1.28,1.32,2.2,.012,.045,6.7,MAT.WHITE);
+    addBox(a,0,2.6,9.015,.012,1.35,.016,MAT.TRIM);
+    for(const side of [-1,1])addBox(a,side*.63,2.6,9.035,.025,1.2,.025,MAT.TRIM);
+    // Trailer door rails, hinges and underride bar remain close-LOD details only.
+    for(const y of [1.22,2.58,3.72])addBox(a,0,y,9.043,1.10,.025,.018,MAT.TRIM);
+    for(const side of [-1,1])for(const y of [1.55,3.20])addBox(a,side*.68,y,9.057,.10,.055,.025,MAT.DARK);
+    addBox(a,0,.43,9.08,1.03,.09,.06,MAT.DARK);
+    for(const side of [-1,1])addBox(a,side*1.10,.62,9.065,.10,.08,.035,MAT.TAIL);
+  }
   for(const side of [-1,1])addLensQuad(a,side*.94,.91,9.03,.23,.12,1,MAT.TAIL);
   addBox(a,0,.65,9.05,.24,.07,.02,MAT.PLATE);
   return{geometry:a.toGeometry(),spec,lamps:{},tris:a.tris};

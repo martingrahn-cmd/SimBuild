@@ -1,8 +1,10 @@
-# New Dollarton development checkpoint — R17, 2026-09-18
+# New Dollarton development checkpoint — R18, 2026-09-18
 
 **Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
 
 The main and pause menus display `Version 0.1.0 · build <7-character source commit>`. The GameVolt sync action injects the source commit into the compiled bundle, so the label identifies the code actually running even while an older Cloudflare-cached page is being served.
+
+R18 accepts a bounded close-range fleet-art repair. Only the existing Traffic-owned LOD0 panel van and semi-trailer gain rear-door, lamp, bumper, rail and hinge cues; dimensions, routing, spawning, simulation, serialization and farther LODs are unchanged. The matched capture stays at 112 draw calls and changes 874,678 → 875,698 triangles while holding 59.9fps with zero errors. The complete traffic causality, dead-end, portal, deterministic and exact-restore probe passes. See [R18 build evidence](builds/playtest_r18_fleet_detail.md) and [local review](critic/playtest_r18_local.md). Traffic remains **7.2 FAIL** and whole-game remains **6.0 FAIL**; the complete fleet still does not meet the final bar.
 
 R17 resumes the verified development loop under the user's 2026-09-18 authorization. It closes PT-33 with deterministic Deficit warning → Budget crisis → Recovery states and one explicit, debt-backed emergency recovery plan. Production build, 90-day determinism, exact current rollback, optional legacy-state restore and real Statistics UI evidence pass. See [R17 build evidence](builds/playtest_r17_financial_recovery.md) and [local review](critic/playtest_r17_local.md). Simulation remains **6.5 FAIL**, UI **7.0 FAIL** and whole-game **6.0 FAIL**; no score was raised.
 
