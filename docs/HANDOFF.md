@@ -1,6 +1,8 @@
-# New Dollarton development checkpoint — R20, 2026-09-18
+# New Dollarton development checkpoint — R21, 2026-09-18
 
 **Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
+
+R21 accepts a byte-exact Props startup optimization. Alpha dilation now visits only the one-pixel frontier that can change on each pass instead of rescanning every transparent atlas pixel. The high-quality texture median improves 330.2 → 218.7ms (33.8%); three production starts record Props at 287–294ms and the menu at 2.731–2.812s with zero errors. Combined and per-texture hashes are exact, the inspected frame retains 183 draws / 1,029,476 triangles, and a clean-browser New Game plus save/load restores all 14 owners including 2,500 Props items exactly. Props remains **6.4 FAIL**, UI **7.0 FAIL** and whole-game **6.0 FAIL**. See [R21 evidence](builds/playtest_r21_props_texture_startup.md) and [local review](critic/playtest_r21_local.md).
 
 R20 accepts an owner-safe Audio startup deferral. The twelve interface sounds remain ready for the first user gesture; the remaining exact catalogue now renders in yielded work after the menu is ready, while the Audio showcase still waits for all 23 sounds. Final production evidence records Audio initialization at 21ms versus the earlier 289–307ms, menu readiness at 3.240s and full catalogue readiness at 3.430s. The complete browser catalogue hash is byte exact, first-click playback and settings restore pass, and simulation determinism/save-load remain exact. Audio stays unscored, UI stays **7.0 FAIL**, whole-game stays **6.0 FAIL**, and the cold-start gate remains open because Terrain still dominates. See [R20 evidence](builds/playtest_r20_audio_startup.md) and [local review](critic/playtest_r20_local.md).
 

@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-18T16:35:10+02:00",
+  "updatedAt": "2026-09-18T16:49:15+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4084,7 +4084,7 @@
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 20,
+    "lastAuthorizedRound": 21,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
@@ -4093,7 +4093,7 @@
       "Compare complete serialized Props by kind, identity and generated ID before any product change",
       "Resume the rejected R9v mixed-victim marquee transaction only after Props determinism is understood"
     ],
-    "updatedAt": "2026-09-18T16:35:10+02:00",
+    "updatedAt": "2026-09-18T16:49:15+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r20-2026-09-18",
-    "state": "R20 exact-catalogue Audio startup deferral accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R20 deferred Audio synthesis on verified R19; browser catalogue byte exact, first gesture/settings/showcase contracts and simulation determinism pass",
+    "id": "human-playtest-r21-2026-09-18",
+    "state": "R21 byte-exact Props texture-frontier startup optimization accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R21 exact Props atlas optimization on verified R20; texture bytes, visual output, clean New Game, all-owner save/load and simulation determinism pass",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4200,6 +4200,11 @@
         "id": "R20",
         "decision": "accepted owner-safe non-interface Audio synthesis after app readiness with dispose/reinitialize epoch guard",
         "score": "Audio unscored, UI 7.0 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R21",
+        "decision": "accepted byte-exact Props atlas dilation frontier and clean-browser checkpoint flow repair",
+        "score": "Props 6.4, UI 7.0 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4222,7 +4227,8 @@
       "r11LoadingReprofile": "normal-entry directed capture: Terrain 1,863ms, Props 397ms, Audio 289ms, Environment 35ms; UI 3ms; total readiness remains about 3.1s while shell appears immediately. No quality-reducing startup candidate accepted.",
       "r18Fleet": "matched close fleet: 112 draws unchanged; 874,678 → 875,698 triangles; after 59.9fps, errors=0; not a whole-scene sustained baseline",
       "r19Startup": "production baseline ready 3.21–3.37s; Terrain 1.83–1.88s with land-cover 1.087s. Exact cache: land-cover 1.006–1.016s in browser and 10.9% lower interleaved Node median; full candidate ready 3.30–3.79s remains noisy, so cold-start gate stays failed.",
-      "r20Audio": "production Audio init 21ms in final run versus prior 289–307ms; menu ready 3.240s and exact 23-sound catalogue ready 3.430s. Exact browser SHA-256, first-gesture playback, settings restore and showcase PASS. Overall cold-start gate remains open."
+      "r20Audio": "production Audio init 21ms in final run versus prior 289–307ms; menu ready 3.240s and exact 23-sound catalogue ready 3.430s. Exact browser SHA-256, first-gesture playback, settings restore and showcase PASS. Overall cold-start gate remains open.",
+      "r21Props": "high-quality procedural texture median 330.2ms baseline to 218.7ms candidate (-33.8%) with exact combined/per-texture browser hashes. Three production runs: Props 287–294ms, menu 2.731–2.812s, errors=0; short-run attribution only."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4231,8 +4237,7 @@
       "sustained 50fps",
       "512MB memory",
       "city scale/frontage",
-      "R10 subjective human retest pending",
-      "Props semantic serialization is not exact in the normal checkpoint probe"
+      "R10 subjective human retest pending"
     ],
     "rankedKnownIssues": [
       {
@@ -4249,7 +4254,7 @@
       },
       {
         "rank": 4,
-        "issue": "Cold start still reaches the main menu in roughly 3.2 seconds. R19 accepts an exact Terrain land-cover cache but Terrain remains dominant at about 1.8–2.1 seconds. R20 moves exact non-interface Audio synthesis off the critical path (about 0.30s to 0.02s init; full catalogue about 0.19s after menu). Props around 0.4s is the next measured owner, constrained by its unresolved semantic restore divergence."
+        "issue": "Cold start now reaches the main menu in 2.73–2.81 seconds in the three-run R21 production sample. R19 keeps Terrain byte exact and R20 moves exact Audio work off-path; R21 reduces exact Props atlas generation median 33.8%, leaving Props at 287–294ms. Terrain at 1.70–1.73s remains dominant, so the cold-start gate stays open."
       },
       {
         "rank": 5,
@@ -4258,10 +4263,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 164 modules after R20",
-      "startup": "PASS behavior, gate still open: R20 Audio init 21ms versus prior 289–307ms; final production menu 3.240s and exact full catalogue 3.430s. Terrain remains dominant.",
-      "saveLoad": "PASS: R17 financial state exact after restore and one-day continuation; legacy payload without financial state restores Stable; injected late-owner rollback remains exact for all 14 modules",
-      "evidence": "tools/audio-deferred-startup-probe.mjs; shots/playtest-fixes-r20/audio-deferred-startup.json; docs/builds/playtest_r20_audio_startup.md; docs/critic/playtest_r20_local.md; prior R19/R18/R17 contract evidence retained",
+      "build": "PASS: Vite 8.2.2, 164 modules after R21",
+      "startup": "PASS behavior, gate still open: three production runs reach the menu in 2.731–2.812s; Props 287–294ms, Audio 17–18ms, Terrain 1.698–1.730s.",
+      "saveLoad": "PASS: clean-browser New Game plus save/load/delete restores camera, time and all 14 serialized modules exactly; Props restores 2,500/2,500 items exactly. R17 legacy financial and injected rollback gates remain retained.",
+      "evidence": "tools/props-texture-dilation-probe.mjs; tools/playtest-checkpoint-probe.mjs; shots/playtest-fixes-r21; docs/builds/playtest_r21_props_texture_startup.md; docs/critic/playtest_r21_local.md; prior R20/R19 contracts retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4278,7 +4283,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Profile the measured Props initialization cost and identify an owner-safe bounded candidate. Preserve item identity, visual placement, determinism and exact restore behavior; reject any speed change that worsens the known Props semantic serialization divergence. Then capture evidence, review critically and continue to the next ranked whole-game issue.",
+    "nextAutonomousStep": "Run the dedicated seed-7 Props same-topology rebuild diagnosis against the current verified source. If the historic 5,972→6,021 divergence reproduces, compare generated identities/kinds and repair only the owning deterministic rule; if it no longer reproduces, document the closure with exact repeated-rebuild evidence. Then continue to the highest-ranked measured whole-game issue.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4805,6 +4810,14 @@
       "probe": "shots/playtest-fixes-r20/audio-deferred-startup.json",
       "catalogueSha256": "e81aaf8e2fa94c527015db03e5ad552c700cf85326db29844ea75e3d26e3fc5d",
       "result": "ACCEPT; all Audio and simulation contracts pass; scores unchanged"
+    },
+    "r21Evidence": {
+      "build": "docs/builds/playtest_r21_props_texture_startup.md",
+      "critic": "docs/critic/playtest_r21_local.md",
+      "textureProbe": "shots/playtest-fixes-r21/props-texture-dilation.json",
+      "checkpointProbe": "shots/playtest-fixes-r21/checkpoint/verification.json",
+      "visual": "shots/playtest-fixes-r21/props-texture.png",
+      "result": "ACCEPT; exact texture bytes and all-owner save/load pass; scores unchanged"
     }
   }
 }

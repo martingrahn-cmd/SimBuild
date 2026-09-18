@@ -39,28 +39,51 @@ function hsl(h, s, l) { return `hsl(${h.toFixed(0)},${(s * 100).toFixed(0)}%,${(
 function dilateAlpha(ctx2d, w, h, passes = 8) {
   const img = ctx2d.getImageData(0, 0, w, h);
   const d = img.data;
-  const known = new Uint8Array(w * h);
-  for (let i = 0; i < w * h; i++) known[i] = d[i * 4 + 3] > 4 ? 1 : 0;
-  for (let p = 0; p < passes; p++) {
-    const next = known.slice();
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const i = y * w + x;
-        if (known[i]) continue;
-        let r = 0, g = 0, b = 0, n = 0;
-        for (let dy = -1; dy <= 1; dy++) {
-          const yy = y + dy; if (yy < 0 || yy >= h) continue;
-          for (let dx = -1; dx <= 1; dx++) {
-            const xx = x + dx; if (xx < 0 || xx >= w) continue;
-            const j = yy * w + xx;
-            if (!known[j]) continue;
-            r += d[j * 4]; g += d[j * 4 + 1]; b += d[j * 4 + 2]; n++;
-          }
-        }
-        if (n) { d[i * 4] = r / n; d[i * 4 + 1] = g / n; d[i * 4 + 2] = b / n; next[i] = 1; }
+  const count = w * h;
+  const known = new Uint8Array(count);
+  for (let i = 0; i < count; i++) known[i] = d[i * 4 + 3] > 4 ? 1 : 0;
+
+  // Only the one-pixel frontier can change on each pass. The previous implementation rescanned every
+  // transparent atlas pixel for all 6–10 passes even though the result grows by one pixel per pass.
+  // `known` is still committed after the full pass, so neighbour membership, averaging order and bytes
+  // remain identical to the original synchronous dilation.
+  const queued = new Uint8Array(count);
+  const addNeighbours = (i, out) => {
+    const x = i % w, y = (i / w) | 0;
+    for (let dy = -1; dy <= 1; dy++) {
+      const yy = y + dy; if (yy < 0 || yy >= h) continue;
+      for (let dx = -1; dx <= 1; dx++) {
+        const xx = x + dx; if (xx < 0 || xx >= w) continue;
+        const j = yy * w + xx;
+        if (!known[j] && !queued[j]) { queued[j] = 1; out.push(j); }
       }
     }
-    known.set(next);
+  };
+  let frontier = [];
+  for (let i = 0; i < count; i++) if (known[i]) addNeighbours(i, frontier);
+  for (let p = 0; p < passes; p++) {
+    if (!frontier.length) break;
+    const became = [];
+    for (const i of frontier) {
+      queued[i] = 0;
+      if (known[i]) continue;
+      const x = i % w, y = (i / w) | 0;
+      let r = 0, g = 0, b = 0, n = 0;
+      for (let dy = -1; dy <= 1; dy++) {
+        const yy = y + dy; if (yy < 0 || yy >= h) continue;
+        for (let dx = -1; dx <= 1; dx++) {
+          const xx = x + dx; if (xx < 0 || xx >= w) continue;
+          const j = yy * w + xx;
+          if (!known[j]) continue;
+          r += d[j * 4]; g += d[j * 4 + 1]; b += d[j * 4 + 2]; n++;
+        }
+      }
+      if (n) { d[i * 4] = r / n; d[i * 4 + 1] = g / n; d[i * 4 + 2] = b / n; became.push(i); }
+    }
+    for (const i of became) known[i] = 1;
+    const next = [];
+    for (const i of became) addNeighbours(i, next);
+    frontier = next;
   }
   ctx2d.putImageData(img, 0, 0);
 }

@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 
 const base = process.env.SIM_URL || 'http://127.0.0.1:5173';
-const outDir = 'shots/playtest-checkpoint-2026-09-10';
+const outDir = process.env.OUT_DIR || 'shots/playtest-checkpoint-2026-09-10';
 const slot = '__playtest_checkpoint_probe__';
 fs.mkdirSync(outDir, { recursive: true });
 const result = { url: `${base}/?mode=play`, errors: [], warnings: [], startup: null, saveLoad: null, pass: false };
@@ -44,7 +44,20 @@ try {
     };
   });
   await page.screenshot({ path: `${outDir}/normal-entry.png`, timeout: 180000 });
-  await page.getByText('Continue', { exact: true }).click();
+  const continueButton = page.getByRole('button', { name: /Continue/ });
+  if (await continueButton.isEnabled()) {
+    await continueButton.click();
+  } else {
+    // A clean browser has no latest slot. Exercise the normal New Game path instead of treating the
+    // deliberately disabled Continue button as a product failure.
+    await page.getByRole('button', { name: /New Game/ }).click();
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 240000 }),
+      page.getByRole('button', { name: /Start city/ }).click(),
+    ]);
+    await page.waitForFunction(() => window.__sim?.ready === true, null, { timeout: 240000 });
+    await page.waitForFunction(() => document.getElementById('boot')?.classList.contains('hidden'), null, { timeout: 30000 });
+  }
   await page.waitForFunction(() => !document.querySelector('.sb-root')?.classList.contains('is-menu'));
   await page.waitForTimeout(500);
   result.gameplay = await page.evaluate(() => ({
