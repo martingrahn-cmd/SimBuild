@@ -376,3 +376,11 @@ Props'103 merged furniture/foliage geometries now store their audited0–1 RGB v
 Props state hash `e9ab36bc…6d03` is exact across deserialize/rebuild. Matched day/night park views retain493/453 draws and1,903,498/2,258,608 triangles with errors0. All originals and amplified differences were inspected; no presentation regression is visible. Build and90-day deterministic/exact-save Simulation selftest pass.
 
 Accept R31 with **Props6.4** and **whole-game6.0**, both FAIL. Continue R32 with fresh current-source visual evidence. Prefer a bounded improvement to the still-planar foliage or occupied block/site composition; do not continue attribute packing without a new measured gate and do not repeat rejected R8/R9 foliage-material/range trials. See `docs/builds/playtest_r31_props_color_buffers.md`, `docs/critic/playtest_r31_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r31/`.
+
+## R32 Founders Plaza — 2026-09-19
+
+The reserved civic foreground beside Founders Arena and the R26 large park now contains one real48×48 Services plaza at `(432,348)`. A public validation sweep found it as the only tested8m-grid site that passes slope/frontage in both seeds1337/7 without intersecting the arena or park. It carries real cost, upkeep, coverage, paths, fountain, seating, trees and lamps; no Democity-only scenery was added.
+
+Two-seed evidence preserves exact604/646 roads,612/648 lots and612/648 buildings, exact population/jobs and deterministic service id33. Services restore is exact and staged finances remain positive after about¢113.67/day added upkeep. The inspected day/night/overview images are errors0. The matched park frame remains493 draws and rises1,902,568→1,935,258 triangles; overview reaches580/2,983,078, leaving only16,922 triangles under3M. No fps gain is claimed.
+
+Accept R32 with **Democity6.0**, **Services7.0** and **whole-game6.0**, all FAIL. Continue R33 with a measured visual weakness that does not consume the remaining overview geometry margin casually. Prefer ground/contact, building/site material variation or a lower-cost foliage presentation path; preserve R29-R31 formats and do not repeat exhausted R8/R9 trials. See `docs/builds/playtest_r32_founders_plaza.md`, `docs/critic/playtest_r32_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r32/`.

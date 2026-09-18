@@ -83,6 +83,10 @@ async function stage({seed=S.ctx.world.seed,density=1}={}){
   // established road, lot or building identity elsewhere in the city.
   const parkDef=ctx.modules.services?.catalog?.().park_large,parkX=460,parkZ=268,parkHeading=0;
   if(parkDef){const v=ctx.modules.services?.validate?.('park_large',parkX,parkZ,parkHeading);if(v?.ok){const f=parkDef.footprint;sites.push({kind:'park_large',x:parkX,z:parkZ,heading:parkHeading,w:Math.max(f.w,f.d)+8,d:Math.max(f.w,f.d)+8,score:0,cost:parkDef.cost});}else warning(`Founders Park placement rejected (${v?.reason??'unknown'})`);}
+  // Complete the reserved civic site with a real plaza at the only cross-seed position that passes
+  // public frontage/slope validation without intersecting either the arena or the large park.
+  const plazaDef=ctx.modules.services?.catalog?.().plaza,plazaX=432,plazaZ=348,plazaHeading=0;
+  if(plazaDef){const v=ctx.modules.services?.validate?.('plaza',plazaX,plazaZ,plazaHeading);if(v?.ok){const f=plazaDef.footprint;sites.push({kind:'plaza',x:plazaX,z:plazaZ,heading:plazaHeading,w:Math.max(f.w,f.d)+8,d:Math.max(f.w,f.d)+8,score:0,cost:plazaDef.cost});}else warning(`Founders Plaza placement rejected (${v?.reason??'unknown'})`);}
   const lots=[...ctx.world.zones.lots.values()].sort((a,b)=>Math.hypot(a.x,a.z)-Math.hypot(b.x,b.z));
   // Use the buildings owner's real mixed-use programme on a bounded set of central avenue lots.
   // These remain ordinary residential/office buildings with unchanged simulation capacity rules.
