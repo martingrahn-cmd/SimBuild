@@ -4075,25 +4075,25 @@
   "handoff": {
     "document": "docs/HANDOFF.md",
     "sessionEnded": "2026-09-10T12:20:00+02:00",
-    "state": "Human-playtest checkpoint paused on independently accepted R9u source. R9v failed local owner verification, was preserved as a rejected patch/evidence set, and was reverted from player-facing code.",
-    "resumeWith": "After the human playtest and a new user instruction: isolate Props same-topology rebuild divergence on fresh seed 7 with complete kind/identity/ID rows. Do not resume R9v implementation until that owner defect is understood.",
+    "state": "Autonomous R22 accepted: Democity Props staging is now same-topology deterministic; R9v mixed marquee remains rejected on road selection and grouped restore/failure atomicity.",
+    "resumeWith": "Run bounded R23 on the rejected mixed marquee transaction: add true road-edge/rectangle intersection to product selection, repair exact building-lot and grouped owner restoration, and require the full success/undo/redo/repeat plus initial-commit and undo-time injected-failure verifier to pass before integration.",
     "neverVerified": "Subjective ordinary-play pacing and choice quality; mixed-victim marquee atomicity; curved road history; persistent/second-owner failure; pending-history save; long unpaused play; sustained 50fps; whole-game/reference parity.",
-    "notRun": "No R9v critic or integration occurred. No new optimization, polish or development round was started after the playtest-stop instruction."
+    "notRun": "No formal R22 score rerating. The full R9v verifier was rerun and remains failed; no R23 product change has yet been accepted."
   },
   "executionControl": {
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 21,
+    "lastAuthorizedRound": 22,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
     "pendingAfterStop": [
-      "Reproduce Props same-topology rebuild divergence from 5,972 to 6,021 items on fresh seed 7",
-      "Compare complete serialized Props by kind, identity and generated ID before any product change",
-      "Resume the rejected R9v mixed-victim marquee transaction only after Props determinism is understood"
+      "Extend product marquee selection to include geometrically intersecting road edges without selecting merely adjacent roads",
+      "Repair mixed building/service/road grouped undo so building-lot backlinks and all owner payloads restore exactly",
+      "Pass initial-commit and undo-time injected owner failures with exact compensation before reconsidering R9v integration"
     ],
-    "updatedAt": "2026-09-18T16:49:15+02:00",
+    "updatedAt": "2026-09-18T17:24:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r21-2026-09-18",
-    "state": "R21 byte-exact Props texture-frontier startup optimization accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R21 exact Props atlas optimization on verified R20; texture bytes, visual output, clean New Game, all-owner save/load and simulation determinism pass",
+    "id": "human-playtest-r22-2026-09-18",
+    "state": "R22 deterministic Democity Props canonicalization accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R22 on verified R21: final Democity landscaping canonicalized through the public Props rebuild; exact repeated topology, IDs and identities pass",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4205,6 +4205,11 @@
         "id": "R21",
         "decision": "accepted byte-exact Props atlas dilation frontier and clean-browser checkpoint flow repair",
         "score": "Props 6.4, UI 7.0 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R22",
+        "decision": "accepted final public Props rebuild after complete Democity landscaping transaction",
+        "score": "Props 6.4, Democity 6.0 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4228,7 +4233,8 @@
       "r18Fleet": "matched close fleet: 112 draws unchanged; 874,678 → 875,698 triangles; after 59.9fps, errors=0; not a whole-scene sustained baseline",
       "r19Startup": "production baseline ready 3.21–3.37s; Terrain 1.83–1.88s with land-cover 1.087s. Exact cache: land-cover 1.006–1.016s in browser and 10.9% lower interleaved Node median; full candidate ready 3.30–3.79s remains noisy, so cold-start gate stays failed.",
       "r20Audio": "production Audio init 21ms in final run versus prior 289–307ms; menu ready 3.240s and exact 23-sound catalogue ready 3.430s. Exact browser SHA-256, first-gesture playback, settings restore and showcase PASS. Overall cold-start gate remains open.",
-      "r21Props": "high-quality procedural texture median 330.2ms baseline to 218.7ms candidate (-33.8%) with exact combined/per-texture browser hashes. Three production runs: Props 287–294ms, menu 2.731–2.812s, errors=0; short-run attribution only."
+      "r21Props": "high-quality procedural texture median 330.2ms baseline to 218.7ms candidate (-33.8%) with exact combined/per-texture browser hashes. Three production runs: Props 287–294ms, menu 2.731–2.812s, errors=0; short-run attribution only.",
+      "r22DemocityProps": "production seed-7 repeated rebuilds remain 6,021 items with exact content excluding only version increments; inspected Democity 60fps, 424 draws, 2,076,882 triangles, errors=0; not a whole-game sustained baseline"
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4242,31 +4248,35 @@
     "rankedKnownIssues": [
       {
         "rank": 1,
-        "issue": "Obtain or reproduce the reported hosted Slot1 failure if it recurs. R15/R17 prove current exact rollback, local previous-version recovery, an actual R13-to-R15 restore and optional legacy financial-state restore, but a second recovery revision is not synced to a new computer."
+        "issue": "R9v mixed marquee remains rejected: product marquee omits roads, mixed building/service undo leaves the building-to-lot backlink non-exact, and injected owner failures do not compensate atomically. R22 closes the separate Props same-topology divergence."
       },
       {
         "rank": 2,
-        "issue": "Human replay remains required for population/traffic pacing, construction feel, cricket mix, distant vehicles, zoning guidance, loan/recovery feel and the R11 river/night/frontage/roundabout repairs."
+        "issue": "Obtain or reproduce the reported hosted Slot1 failure if it recurs. R15/R17 prove current exact rollback, local previous-version recovery, an actual R13-to-R15 restore and optional legacy financial-state restore, but a second recovery revision is not synced to a new computer."
       },
       {
         "rank": 3,
-        "issue": "Close-range fleet art remains below the final bar. R13 repairs the rigid box truck and R18 improves the panel-van and semi-trailer rear at LOD0; buses, front/side treatment, animation and broader variation remain open."
+        "issue": "Human replay remains required for population/traffic pacing, construction feel, cricket mix, distant vehicles, zoning guidance, loan/recovery feel and the R11 river/night/frontage/roundabout repairs."
       },
       {
         "rank": 4,
-        "issue": "Cold start now reaches the main menu in 2.73–2.81 seconds in the three-run R21 production sample. R19 keeps Terrain byte exact and R20 moves exact Audio work off-path; R21 reduces exact Props atlas generation median 33.8%, leaving Props at 287–294ms. Terrain at 1.70–1.73s remains dominant, so the cold-start gate stays open."
+        "issue": "Close-range fleet art remains below the final bar. R13 repairs the rigid box truck and R18 improves the panel-van and semi-trailer rear at LOD0; buses, front/side treatment, animation and broader variation remain open."
       },
       {
         "rank": 5,
+        "issue": "Cold start now reaches the main menu in 2.73–2.81 seconds in the three-run R21 production sample. R19 keeps Terrain byte exact and R20 moves exact Audio work off-path; R21 reduces exact Props atlas generation median 33.8%, leaving Props at 287–294ms. Terrain at 1.70–1.73s remains dominant, so the cold-start gate stays open."
+      },
+      {
+        "rank": 6,
         "issue": "Sustained sub-50fps performance, raw heap, sparse city fabric and transit/traffic interaction retain their recorded failed gates."
       }
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 164 modules after R21",
+      "build": "PENDING R22 rerun after a transient macOS file-provider build stall; R21 production build remains the last completed build.",
       "startup": "PASS behavior, gate still open: three production runs reach the menu in 2.731–2.812s; Props 287–294ms, Audio 17–18ms, Terrain 1.698–1.730s.",
       "saveLoad": "PASS: clean-browser New Game plus save/load/delete restores camera, time and all 14 serialized modules exactly; Props restores 2,500/2,500 items exactly. R17 legacy financial and injected rollback gates remain retained.",
-      "evidence": "tools/props-texture-dilation-probe.mjs; tools/playtest-checkpoint-probe.mjs; shots/playtest-fixes-r21; docs/builds/playtest_r21_props_texture_startup.md; docs/critic/playtest_r21_local.md; prior R20/R19 contracts retained",
+      "evidence": "tools/r9v-props-rebuild-diagnosis.mjs; shots/playtest-fixes-r22/props-rebuild-production.json; shots/playtest-fixes-r22/democity-canonical-props.png; docs/builds/playtest_r22_democity_props_canonicalization.md; docs/critic/playtest_r22_local.md; prior R21 contracts retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4283,7 +4293,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Run the dedicated seed-7 Props same-topology rebuild diagnosis against the current verified source. If the historic 5,972→6,021 divergence reproduces, compare generated identities/kinds and repair only the owning deterministic rule; if it no longer reproduces, document the closure with exact repeated-rebuild evidence. Then continue to the highest-ranked measured whole-game issue.",
+    "nextAutonomousStep": "Run bounded R23 on the rejected mixed marquee transaction: add true road-edge/rectangle intersection to product selection, repair exact building-lot and grouped owner restoration, and require the full success/undo/redo/repeat plus initial-commit and undo-time injected-failure verifier to pass before integration.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {

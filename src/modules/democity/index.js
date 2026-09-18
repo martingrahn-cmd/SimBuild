@@ -107,7 +107,11 @@ async function stage({seed=S.ctx.world.seed,density=1}={}){
   // Landscape the physical public forecourt and landmark footprints through the props owner.
   const removed=[];for(const v of [...ctx.world.props.items.values()])if(v.kind.startsWith('tree')&&(Math.hypot(v.x-86,v.z-77)<18||Math.hypot(v.x-78,v.z-105)<14||Math.hypot(v.x-46,v.z-84)<12||(v.x>-35&&v.x<55&&Math.abs(v.z-(60+(v.x+40)*24/86))<11)||S.plan.landmarks.some(l=>Math.abs(v.x-l.x)<l.w/2+3&&Math.abs(v.z-l.z)<l.d/2+3))){if(ctx.modules.props?.remove?.(v.id))removed.push(v.id);}const planted=[],park=S.plan.districts.find(d=>d.kind==='park'),species=['oak','birch','maple','beech','spruce','pine','willow'];let trees=[...ctx.world.props.items.values()].filter(v=>v.kind.startsWith('tree')&&Math.abs(v.x-park.x)<park.w/2&&Math.abs(v.z-park.z)<park.d/2).length;
   for(let z=park.z-park.d/2+9;z<park.z+park.d/2-8&&trees<126;z+=12)for(let x=park.x-park.w/2+9;x<park.x+park.w/2-8&&trees<126;x+=12){const q={x:x+rng.range(-3,3),z:z+rng.range(-3,3)},sp=species[(planted.length+trees)%species.length];if(S.plan.landmarks.some(l=>Math.abs(q.x-l.x)<l.w/2+6&&Math.abs(q.z-l.z)<l.d/2+6))continue;const id=ctx.modules.props?.place?.(['spruce','pine'].includes(sp)?'tree_pine':'tree_oak',q.x,q.z,{species:sp,heading:rng.range(0,Math.PI*2),scale:rng.range(.75,1.12)});if(id>=0){planted.push(id);trees++;}}
-  S.plan.landscaping={forestDensity:.65,removedTreeIds:removed,plantedParkTreeIds:planted};ctx.modules.traffic?.step?.(60);phase('propsTraffic');
+  S.plan.landscaping={forestDensity:.65,removedTreeIds:removed,plantedParkTreeIds:planted};
+  // Democity's manual removals/plants alter the clearance field after the density rebuild. Canonicalise
+  // once after the complete landscaping transaction so later owner rebuilds and undo/restore do not
+  // discover 49 previously unfilled placements or assign new generated identities.
+  ctx.modules.props?.rebuild?.();ctx.modules.traffic?.step?.(60);phase('propsTraffic');
   // Refresh real coverage/occupancy after final services, using a fixed deterministic extra hour.
   sim?.step?.(100);steps+=100;
   S.preroll={method:'public simulation.step; deterministic initial settlement before final service expansion',steps,population:ctx.world.economy.population,jobs:ctx.world.economy.jobs,money:ctx.world.economy.money,net:ctx.world.economy.net,taxRate:ctx.world.economy.taxRate,loans:clone(ctx.world.economy.loans),milestones:clone(ctx.world.economy.milestones)};phase('simulation');
