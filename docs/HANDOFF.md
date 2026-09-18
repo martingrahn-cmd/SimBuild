@@ -1,6 +1,8 @@
-# New Dollarton development checkpoint — R23, 2026-09-18
+# New Dollarton development checkpoint — R29, 2026-09-18
 
 **Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
+
+R29 accepts a measured Buildings memory repair. Static facade colour/contact-AO now uses normalized 16-bit storage while window state, positions, indices, ownership and saves remain unchanged. The exact current Democity inventory drops Buildings CPU buffers **146,454,272→130,594,604 bytes** and total browser backing storage **409,626,160→393,766,568 bytes**. Matched day/night block views keep exact draw/triangle counts, zero errors and normalized MAE below `4.7e-7`; Buildings restore is hash exact. Buildings remains **7.4 FAIL** and whole-game remains **6.0 FAIL**. See [R29 evidence](builds/playtest_r29_building_color_buffers.md) and [local review](critic/playtest_r29_local.md).
 
 R23 closes the mixed-marquee transaction defect that remained after R22. The real bulldozer now includes geometrically intersecting Roads edges, restores buildings through their targeted transaction API so zoning backlinks remain exact, aborts and compensates a partially rejected group, and serializes Services in stable ID order. The production verifier passes exact persistent-owner and treasury comparisons for commit/undo/redo/fresh repeat, exact initial-failure rollback with empty history, and exact inverse-failure compensation with retained history and successful retry. The inspected before/after pair removes the intended Building 236, Service 7 and Road 432 only. Tools remains **8.0 FAIL**, Roads **6.0 FAIL** and whole-game **6.0 FAIL**. See [R23 evidence](builds/playtest_r23_mixed_marquee_transaction.md) and [local review](critic/playtest_r23_local.md).
 
@@ -351,3 +353,10 @@ Traffic's passenger LOD0 set now has bounded side detail: window/rocker breaks a
 The dedicated probe reports exact Traffic state hash across baseline and repeated candidate. Only the intended six LOD0 classes change (+96 triangles for each passenger shell, +72 pickup); van, box truck, bus, semi and motorbike remain exact. The full causality/determinism/restore probe,90-day Simulation selftest and clean164-module production build pass.
 
 Accept R28 with **Traffic7.2** and **whole-game6.0**, both FAIL unchanged. Do not spend R29 on another isolated vehicle-trim pass. Return to fresh whole-frame evidence and target a larger owner-safe weakness such as occupied block fabric, foliage structure or a measured performance bottleneck. Evidence and review are `docs/builds/playtest_r28_passenger_detail.md`, `docs/critic/playtest_r28_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r28/`.
+
+
+## R29 Buildings colour-buffer memory reduction — 2026-09-18
+
+The same 2,643,278 current Democity building vertices now retain facade colour/contact-AO in normalized Uint16 form. Buildings buffer storage falls15.86MB and browser backing storage falls by the same amount; geometry, window state and serialized ownership remain unchanged. Day/night block evidence is visually equivalent and zero-error. The attempted half-float colour/window representation was rejected for severe dark-facade/night-window regressions. Two horizon candidates and a0.26% byte-exact Terrain micro-optimization were also rejected as immaterial.
+
+Accept R29 with **Buildings7.4** and **whole-game6.0**, both FAIL. The next autonomous round should target a larger current-source full-frame defect or the next measured retained-memory owner, with fresh evidence before code changes.

@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-18T23:25:00+02:00",
+  "updatedAt": "2026-09-18T23:59:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4075,8 +4075,8 @@
   "handoff": {
     "document": "docs/HANDOFF.md",
     "sessionEnded": "2026-09-10T12:20:00+02:00",
-    "state": "Autonomous R28 accepted after separately repairing four truncated repository source tails; close passenger LOD0 detail improves with exact Traffic state and scores unchanged.",
-    "resumeWith": "Start R29 from fresh whole-frame evidence. Target a larger owner-safe occupied-block, foliage or measured performance weakness; do not continue isolated vehicle trim or repeat exhausted R8/R9 paths.",
+    "state": "Autonomous R29 accepted: normalized Buildings colour storage removes 15.86MB backing storage with exact state and visually equivalent day/night evidence; scores unchanged.",
+    "resumeWith": "Start R30 from fresh evidence. Target a larger full-frame foliage/city-fabric/site weakness or the next measured retained-memory owner; preserve R29 and avoid rejected horizon/half-float/Terrain micro-optimization paths.",
     "neverVerified": "Subjective ordinary-play pacing and choice quality; curved road history; persistent/second-owner failure beyond the tested matrix; pending-history save; long unpaused play; sustained 50fps; whole-game/reference parity.",
     "notRun": "No formal whole-game/blind rerating or full 16-frame sustained matrix for the bounded R27/R28 presentation changes. Subjective ordinary-play findings remain pending."
   },
@@ -4084,16 +4084,16 @@
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 28,
+    "lastAuthorizedRound": 29,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
     "pendingAfterStop": [
       "Reproduce the hosted Slot1 failure if a player payload becomes available; current local rollback and compatibility gates pass",
-      "Measure a larger current-source whole-frame defect in occupied block fabric, foliage structure or sustained performance and implement only a bounded owner-safe candidate",
+      "Measure the next larger current-source full-frame foliage/city-fabric/site defect or retained-memory owner and implement only a bounded owner-safe candidate",
       "Re-run whole-game and blind comparison after a visible integrated improvement large enough to affect full-frame judgment"
     ],
-    "updatedAt": "2026-09-18T23:25:00+02:00",
+    "updatedAt": "2026-09-18T23:59:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r28-2026-09-18",
-    "state": "R28 passenger LOD0 detail accepted after clean-source recovery; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R28 on verified R27: complete buildable repository source plus bounded Traffic-owned passenger/pickup side detail; simulation, Traffic state and farther ownership contracts remain exact",
+    "id": "human-playtest-r29-2026-09-18",
+    "state": "R29 normalized Buildings colour buffers accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R29 on verified R28: normalized Uint16 building facade colour/contact-AO storage with unchanged geometry, window state, ownership, simulation and restore",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4245,6 +4245,11 @@
         "id": "R28",
         "decision": "accepted bounded Traffic-owned LOD0 passenger side breaks/handles and pickup bed/cabin cues with exact serialized state and unaffected vehicle classes",
         "score": "Traffic 7.2 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R29",
+        "decision": "accepted normalized Uint16 Buildings facade colour/contact-AO buffers with exact restore and visually equivalent matched day/night evidence",
+        "score": "Buildings 7.4 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4262,6 +4267,21 @@
         "id": "R26-DEMOCITY-FORECOURT",
         "decision": "rejected and reverted before integration",
         "reason": "owner-local hardscape remained an isolated slab; an inspected first draft also exposed incorrect box argument order"
+      },
+      {
+        "id": "R29-HORIZON",
+        "decision": "rejected and reverted before integration",
+        "reason": "two Terrain-owned water-horizon fade variants changed pixels but did not materially improve the locked waterfront seam"
+      },
+      {
+        "id": "R29-LANDCOVER-SQRT",
+        "decision": "rejected and reverted before integration",
+        "reason": "byte-exact Worley squared-distance search improved the six-pair seed-1337 median only 994.75 to 992.15ms (0.26%), inside measurement noise"
+      },
+      {
+        "id": "R29-BUILDING-F16",
+        "decision": "rejected and reverted before integration",
+        "reason": "Float16 colour/window attributes caused severe dark-facade and missing-night-window visual regressions despite zero WebGL errors"
       }
     ],
     "decisionLedger": "All prior accepted/rejected work remains in modules.* histories, docs/builds, docs/critic and HANDOFF. R10 adds no formal critic rerating; report: docs/builds/human_playtest_r10.md.",
@@ -4285,7 +4305,8 @@
       "r25TerrainStartup": "six interleaved 1024² land-cover pairs: 1,099.9ms -> 1,004.3ms median (-8.692%), exact hashes; production stage 901–909ms, Terrain 1,678–1,733ms, menu ready 2,643–2,772ms. End-to-end loading gate remains open.",
       "r26FoundersPark": "Matched noon park: 483→493 draws, 1,846,476→1,903,498 triangles, candidate 60.0fps/errors=0; directed night 58.3fps and overview 54.6fps, errors=0. Not a sustained whole-game matrix.",
       "r27ServiceLightPools": "Matched night park: 453 draws and 2,258,608 triangles exactly unchanged, candidate 60.0fps/errors=0 versus R26 58.3fps. Day remains 493/1,903,498 with normalized MAE 1.37615e-06. No performance gain claimed.",
-      "r28PassengerDetail": "Matched fleet: 112 draws unchanged; 876,298 -> 879,058 triangles (+2,760); candidate 60.1fps/errors=0. Only six intended LOD0 classes change; not a whole-scene sustained baseline."
+      "r28PassengerDetail": "Matched fleet: 112 draws unchanged; 876,298 -> 879,058 triangles (+2,760); candidate 60.1fps/errors=0. Only six intended LOD0 classes change; not a whole-scene sustained baseline.",
+      "r29BuildingBuffers": "Current Democity exact inventory: Buildings CPU buffers 146,454,272 -> 130,594,604 bytes (-15,859,668); browser backing storage 409,626,160 -> 393,766,568 bytes by the same delta. Geometry 2,643,278 vertices / 1,313,894 triangles unchanged. Sustained 512MB gate remains uncertified."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4320,10 +4341,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite8.2.2, 164 modules after repository source-tail recovery and R28, clean external GitHub clone, canonical public assets.",
+      "build": "PASS: Vite8.2.2, 164 modules after R29, clean external build with canonical public assets.",
       "startup": "PASS behavior, gate still open: R25 land-cover 901–909ms; Terrain 1,678–1,733ms; menu ready 2,643–2,772ms. Exact stage gain is established, end-to-end gain is not.",
-      "saveLoad": "PASS: R28 exact Traffic serialized state/repeat, full Traffic causality restore, R27 exact Services state and Simulation exact mid-run save/load.",
-      "evidence": "docs/builds/playtest_r27_source_recovery.md; docs/builds/playtest_r28_passenger_detail.md; docs/critic/playtest_r28_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r28; prior R27/R23/R21 contracts retained",
+      "saveLoad": "PASS: R29 exact Buildings serialized hash across deserialize/flush; R28 exact Traffic state; R27 exact Services state; Simulation exact mid-run save/load.",
+      "evidence": "docs/builds/playtest_r29_building_color_buffers.md; docs/critic/playtest_r29_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r29; prior R28/R27/R23 contracts retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4340,7 +4361,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Start R29 from fresh whole-frame evidence. Prefer a larger owner-safe occupied-block-fabric, foliage-structure or measured performance change. Do not continue isolated vehicle trim or repeat exhausted R8/R9 paths.",
+    "nextAutonomousStep": "Start R30 with fresh evidence for the next measured owner. Prefer a larger current-source full-frame foliage/city-fabric/site defect or retained-memory owner; preserve R29 Uint16 colour, do not retry half-float attributes, and do not repeat the rejected horizon or 0.26% Terrain micro-optimization.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {

@@ -184,7 +184,8 @@ export class MeshBuilder {
     const uvs = Uint16Array.from(this.uv, v => Math.round(Math.max(0, Math.min(1, v)) * 65535));
     g.setAttribute('normal', new THREE.Int16BufferAttribute(normals, 3, true));
     g.setAttribute('uv', new THREE.Uint16BufferAttribute(uvs, 2, true));
-    g.setAttribute('color', new THREE.Float32BufferAttribute(this.col, 3));
+    const colors = Uint16Array.from(this.col, v => Math.round(Math.max(0, Math.min(1, v)) * 65535));
+    g.setAttribute('color', new THREE.Uint16BufferAttribute(colors, 3, true));
     g.setAttribute('win', new THREE.Float32BufferAttribute(this.win, 4));
     g.setAttribute('bidx', new THREE.Uint16BufferAttribute(this.bid, 1));
     g.setIndex(this.v > 65535 ? new THREE.Uint32BufferAttribute(this.idx, 1) : new THREE.Uint16BufferAttribute(this.idx, 1));
