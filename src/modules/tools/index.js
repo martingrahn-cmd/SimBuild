@@ -68,6 +68,7 @@ const S = {
   pushUndo(e) { return S.undo.push(e, S.clock); },
   beginGroup(label) { S.undo.beginGroup(label); },
   endGroup() { S.undo.endGroup(); },
+  abortGroup() { return S.undo.abortGroup(); },
   setSelection(kind, id) { return setSelection(kind, id); },
   clearSelection() { setSelection(null, null); },
   pick(x, z) { return pick(x, z); },
@@ -184,6 +185,23 @@ function pick(x, z) {
 function pickArea(x0, z0, x1, z1) {
   const w = S.ctx.world, res = [];
   const inside = (x, z) => x >= x0 && x <= x1 && z >= z0 && z <= z1;
+  const pathIntersects = (path) => {
+    if (!path?.length) return false;
+    if (path.some(p => inside(p.x, p.z))) return true;
+    const crosses = (a, b) => {
+      let lo = 0, hi = 1;
+      const dx = b.x - a.x, dz = b.z - a.z;
+      for (const [p, q] of [[-dx, a.x - x0], [dx, x1 - a.x], [-dz, a.z - z0], [dz, z1 - a.z]]) {
+        if (p === 0) { if (q < 0) return false; continue; }
+        const r = q / p;
+        if (p < 0) { if (r > hi) return false; lo = Math.max(lo, r); }
+        else { if (r < lo) return false; hi = Math.min(hi, r); }
+      }
+      return lo <= hi;
+    };
+    for (let i = 1; i < path.length; i++) if (crosses(path[i - 1], path[i])) return true;
+    return false;
+  };
   for (const b of w.buildings.items.values()) {
     if (!inside(b.x, b.z)) continue;
     res.push({
@@ -196,6 +214,13 @@ function pickArea(x0, z0, x1, z1) {
     if (!inside(s.x, s.z)) continue;
     const def = serviceDef(s.kind, S.ctx.modules);
     res.push({ kind: 'service', id: s.id, x: s.x, z: s.z, heading: -(s.heading || 0), w: def.w, d: def.d, height: def.h, label: def.label });
+  }
+  for (const e of w.roads.edges.values()) {
+    const path = edgePath(e.id);
+    if (!pathIntersects(path)) continue;
+    const p = w.roads.sample?.(e.id, 0.5);
+    if (!p) continue;
+    res.push({ kind: 'road', id: e.id, x: p.x, z: p.z, heading: 0, w: e.width || 16, d: 6, height: 3, width: e.width || 16, label: `${e.type} · ${Math.round(e.length)} m` });
   }
   for (const p of w.props.items.values()) {
     if (!inside(p.x, p.z)) continue;
@@ -331,16 +356,27 @@ function demolish(t) {
   }
   if (t.kind === 'building') {
     const b = w.buildings.items.get(t.id);
-    const sourceLot = b?.lotId != null ? w.zones.lots?.get(b.lotId) : null;
-    const lot = b ? { ...(sourceLot || b.lot), type: b.type, density: b.density, level: b.level, buildingId: null } : null;
-    const x = t.x, z = t.z;
-    w.buildings.demolish?.(t.id);
-    S.ctx.modules.buildings?.flush?.();
+    const B = S.ctx.modules.buildings;
+    if (!b || typeof B?.serialize !== 'function' || typeof B?.restoreTransaction !== 'function') return null;
+    const clone = (value) => typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+    const before = clone(B.serialize());
+    if (!w.buildings.demolish?.(t.id) || w.buildings.items.has(t.id)) return null;
+    B.flush?.();
+    const after = clone(B.serialize());
+    const lotId = b.lotId;
     S.spend(DEMOLISH.building, 'demolish');
     S.pushUndo({
       label: 'demolish:building', cost: DEMOLISH.building, key: 'demolish', fromDrag: false,
-      undo() { if (lot) S.ctx.modules.buildings?.requestSpawn?.(lot); S.ctx.modules.buildings?.flush?.(); S.refund(DEMOLISH.building); },
-      redo() { const nb = w.buildings.at?.(x, z); if (nb) w.buildings.demolish?.(nb.id); S.ctx.modules.buildings?.flush?.(); S.spend(DEMOLISH.building, 'demolish'); },
+      undo() {
+        if (B.restoreTransaction(before, [lotId]) === false) return false;
+        S.refund(DEMOLISH.building);
+        return true;
+      },
+      redo() {
+        if (B.restoreTransaction(after, [lotId]) === false) return false;
+        S.spend(DEMOLISH.building, 'demolish');
+        return true;
+      },
     });
     if (w.selection.kind === 'building' && w.selection.id === t.id) setSelection(null, null);
     return { refund: 0, cost: DEMOLISH.building };
@@ -919,48 +955,4 @@ export default {
     ctx.events.on('roads:changed', (p) => {
       S.dirty();
       const sel = ctx.world.selection;
-      if (sel.kind === 'road' && p?.removed?.includes(sel.id)) setSelection(null, null);
-    }, 'tools');
-    ctx.events.on('terrain:changed', () => S.dirty(), 'tools');
-    ctx.events.on('buildings:changed', () => S.dirty(), 'tools');
-    ctx.events.on('props:changed', () => S.dirty(), 'tools');
-    ctx.events.on('services:changed', () => S.dirty(), 'tools');
-
-    if (!ctx.headless) bindInput(ctx);
-    ctx.log.info(`ready — ${ACCEPTED.length} tools, budget ${this.budget.drawCalls} draws / ${this.budget.triangles} tris`);
-  },
-
-  update(dt, ctx) {
-    const t0 = performance.now();
-    S.clock += dt;
-    S.giz.update(dt);
-    if (S._dirty) rebuild();
-    S.chips.flush();
-    maybeEmitPreview();
-    S._ms = performance.now() - t0;
-    void ctx;
-  },
-
-  dispose(ctx) {
-    S._bound?.(); S._bound = null;
-    ctx.events.offOwner?.('tools');
-    if (!S._cameraHadHelpers) ctx.camera.camera.layers.disable(LAYERS.HELPERS);
-    S.chips?.dispose();
-    S.giz?.dispose();
-    S.undo?.clear();
-    S.tool = null; S.tools = null; S.giz = null; S.chips = null; S.poses = []; S.poseSpec = null; S.ctx = null;
-  },
-
-  api,
-
-  showcase: {
-    description: DESCRIPTION,
-    cameras: CAMERAS,
-    async setup(ctx) {
-      S.poseSpec = () => POSES(ctx, S, api);
-      await stage(ctx, S, api);
-    },
-  },
-};
-
-export { S as _state, GC as _colors, money as _money };
+      if (sel.kind === 'road' && p?.removed?.in

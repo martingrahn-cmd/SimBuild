@@ -1276,12 +1276,19 @@ export function bulldozeTool(S) {
       const ids = [];
       let refund = 0, cost = 0;
       S.beginGroup(`bulldoze:${list.length}`);
-      try {
-        for (const t of list) {
-          const r = S.demolish(t);
-          if (r) { ids.push(t.id); refund += r.refund || 0; cost += r.cost || 0; }
-        }
-      } finally { S.endGroup(); }
+      let rejected = null;
+      for (const t of list) {
+        const r = S.demolish(t);
+        if (!r) { rejected = t; break; }
+        ids.push(t.id); refund += r.refund || 0; cost += r.cost || 0;
+      }
+      if (rejected) {
+        const restored = S.abortGroup();
+        st.marquee = null; S.dirty();
+        return { ok: false, ids: [], cost: 0, refund: 0,
+          reason: restored ? 'Demolition rejected' : 'Demolition rollback requires Undo' };
+      }
+      S.endGroup();
       st.marquee = null;
       S.dirty();
       return { ok: ids.length > 0, ids, cost, refund };
@@ -1423,13 +1430,4 @@ export function forwardTool(S, name) {
     deactivate() {}, cancel() {}, pointer() {},
     click() { return { ok: false, cost: 0, reason: `${name} unavailable` }; },
     rightClick() { return { ok: false, reason: `${name} unavailable` }; },
-    commit() { return { ok: false, ids: [], cost: 0, reason: `${name} unavailable` }; },
-    state() {
-      return {
-        phase: 'idle', points: [], valid: false, reason: `${name} unavailable`, cost: 0, refund: 0, snap: null,
-        metrics: { length: 0, angle: 0, grade: 0, cells: 0, volume: 0, items: 0 },
-      };
-    },
-    draw() {},
-  };
-}
+    commit() { return { ok: false, ids: [], cost: 0, reason: `${name} 

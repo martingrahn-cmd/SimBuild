@@ -39,6 +39,24 @@ export class UndoStack {
     return entry;
   }
 
+  /** Cancel the group being authored and compensate every successful leaf in reverse order. */
+  abortGroup() {
+    if (this._busy || this.recovery) return false;
+    const g = this.group;
+    this.group = null;
+    if (!g || !g.items.length) return true;
+    const entry = this._compound({ label: g.label, cost: g.cost, key: g.label, fromDrag: false, t: 0 }, g.items);
+    this._busy = true;
+    try {
+      if (this._call(entry, 'undo')) return true;
+      // Preserve a failed compensation as history so the recovery contract remains actionable.
+      this.done.push(entry);
+      if (this.done.length > this.limit) this.done.shift();
+      this.undone.length = 0;
+      return false;
+    } finally { this._busy = false; }
+  }
+
   push(entry, now = 0) {
     if (this._busy || this.recovery || !entry || typeof entry.undo !== 'function') return null;
     entry.t = now;
@@ -144,20 +162,4 @@ export class UndoStack {
       from.pop();
       to.push(entry);
       return entry;
-    } finally { this._busy = false; }
-  }
-  undo() { return this._move('undo'); }
-  redo() { return this._move('redo'); }
-  clear() {
-    if (this._busy || this.recovery) return false;
-    this.done.length = 0; this.undone.length = 0; this.group = null; this.failure = null;
-  }
-  report() {
-    const result = { undo: this.done.length, redo: this.undone.length, capacity: this.limit,
-      entries: this.done.map((e) => ({ label: e.label, cost: e.cost })) };
-    if (this.failure) result.failure = { ...this.failure };
-    if (this.recovery) result.recovery = { label: this.recovery.entry.label, direction: this.recovery.direction,
-      inverse: this.recovery.inverse, pending: this.recovery.pending.map((e) => e.label) };
-    return result;
-  }
-}
+    } finally { th
