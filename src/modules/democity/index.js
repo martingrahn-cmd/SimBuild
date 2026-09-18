@@ -78,6 +78,11 @@ async function stage({seed=S.ctx.world.seed,density=1}={}){
    if(Math.hypot(x,z)>430&&density<1&&rng.float()>density)continue;
    if(ctx.world.terrain.getSlope(x,z)>.38)continue;const[type,dens]=zoneType(S.P,x,z);rect(x-.01,z-.01,x+.01,z+.01,type,dens);
   }});ctx.modules.zoning?.setOverlayVisible?.(false);phase('zones');
+  // Founders Park is deliberately excluded from zoning. Add its real large-park service only after
+  // the accepted parcel allocation, so the public space gains gameplay value without perturbing any
+  // established road, lot or building identity elsewhere in the city.
+  const parkDef=ctx.modules.services?.catalog?.().park_large,parkX=460,parkZ=268,parkHeading=0;
+  if(parkDef){const v=ctx.modules.services?.validate?.('park_large',parkX,parkZ,parkHeading);if(v?.ok){const f=parkDef.footprint;sites.push({kind:'park_large',x:parkX,z:parkZ,heading:parkHeading,w:Math.max(f.w,f.d)+8,d:Math.max(f.w,f.d)+8,score:0,cost:parkDef.cost});}else warning(`Founders Park placement rejected (${v?.reason??'unknown'})`);}
   const lots=[...ctx.world.zones.lots.values()].sort((a,b)=>Math.hypot(a.x,a.z)-Math.hypot(b.x,b.z));
   // Use the buildings owner's real mixed-use programme on a bounded set of central avenue lots.
   // These remain ordinary residential/office buildings with unchanged simulation capacity rules.

@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-18T20:08:00+02:00",
+  "updatedAt": "2026-09-18T21:10:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4075,10 +4075,10 @@
   "handoff": {
     "document": "docs/HANDOFF.md",
     "sessionEnded": "2026-09-10T12:20:00+02:00",
-    "state": "Autonomous R25 accepted: byte-exact Terrain height/land-cover kernels reduce the isolated land-cover median 8.692%; R24 bus repair retained; scores unchanged.",
-    "resumeWith": "Start R26 with a fresh measured visible whole-game target. Prefer real city fabric/ground-contact or foliage evidence from the current Democity source; do not repeat exhausted global road-order, scalar LOD-material or emissive trials.",
+    "state": "Autonomous R26 accepted: one real Services-owned large park repairs the verified empty Founders Park site; exact roads/lots/buildings preserved on both fixed seeds; scores unchanged.",
+    "resumeWith": "Start R27 with a bounded current-source diagnosis of Services night light-pool presentation. Preserve real lamps, night readability, owner budgets and restore; otherwise return to measured foliage or occupied parcel fabric without repeating R8/R9 rejected paths.",
     "neverVerified": "Subjective ordinary-play pacing and choice quality; curved road history; persistent/second-owner failure beyond the tested matrix; pending-history save; long unpaused play; sustained 50fps; whole-game/reference parity.",
-    "notRun": "No formal R25 score rerating or fresh whole-game/blind critic because R25 is deliberately pixel/content exact. Subjective ordinary-play findings remain pending."
+    "notRun": "No formal whole-game/blind rerating or full 16-frame sustained matrix for the bounded R26 park change. Subjective ordinary-play findings remain pending."
   },
   "executionControl": {
     "state": "autonomous-quality-loop-active",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r25-2026-09-18",
-    "state": "R25 byte-exact Terrain startup optimization accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R25 on verified R24: exact Terrain sampling/noise kernels reduce the dominant land-cover startup stage; gameplay and rendered world bytes preserved",
+    "id": "human-playtest-r26-2026-09-18",
+    "state": "R26 real Founders Park service accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R26 on verified R25: deterministic Services-owned large park adds real public-space function and upkeep after parcel allocation; roads, lots and buildings remain exact",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4143,7 +4143,7 @@
       "score": 6,
       "pass": false,
       "blindR2": "SimBuild 0–4 CS2, high confidence",
-      "note": "No formal R10 critic rerating; scores are unchanged."
+      "note": "R26 local critic holds all scores; no formal whole-game/blind rerating."
     },
     "acceptedCurrentCycle": [
       {
@@ -4225,6 +4225,11 @@
         "id": "R25",
         "decision": "accepted byte-exact Terrain axis sampling and common fBm startup kernels",
         "score": "Terrain 6.0, UI 7.0 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R26",
+        "decision": "accepted Services-owned Founders Park large facility after established parcel allocation; exact two-seed roads/lots/buildings and deterministic service restore",
+        "score": "Democity 6.0, Services 7.0 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4232,6 +4237,16 @@
         "id": "R9v",
         "decision": "rejected before critic; reverted",
         "reason": "original candidate rejected and reverted on unreliable live-Traffic comparison, Props staging divergence and non-exact owner restoration; R22/R23 later isolate and close these defects with corrected evidence"
+      },
+      {
+        "id": "R26-PROPS-FURNITURE",
+        "decision": "rejected and reverted before integration",
+        "reason": "deterministic benches/bins were disconnected objects on grass and did not materially repair the park composition"
+      },
+      {
+        "id": "R26-DEMOCITY-FORECOURT",
+        "decision": "rejected and reverted before integration",
+        "reason": "owner-local hardscape remained an isolated slab; an inspected first draft also exposed incorrect box argument order"
       }
     ],
     "decisionLedger": "All prior accepted/rejected work remains in modules.* histories, docs/builds, docs/critic and HANDOFF. R10 adds no formal critic rerating; report: docs/builds/human_playtest_r10.md.",
@@ -4252,7 +4267,8 @@
       "r22DemocityProps": "production seed-7 repeated rebuilds remain 6,021 items with exact content excluding only version increments; inspected Democity 60fps, 424 draws, 2,076,882 triangles, errors=0; not a whole-game sustained baseline",
       "r23Marquee": "production mixed Building/Service/Road transaction PASS across exact persistent-owner undo/redo/repeat and two injected failure paths; visual before/after inspected; correctness evidence, not a performance baseline",
       "r24Fleet": "matched close fleet: 112 draws unchanged; 875,698 -> 876,298 triangles (+600); after 59.5fps, errors=0; bus LOD1/2 unchanged at 254/36 triangles; not a whole-scene sustained baseline",
-      "r25TerrainStartup": "six interleaved 1024² land-cover pairs: 1,099.9ms -> 1,004.3ms median (-8.692%), exact hashes; production stage 901–909ms, Terrain 1,678–1,733ms, menu ready 2,643–2,772ms. End-to-end loading gate remains open."
+      "r25TerrainStartup": "six interleaved 1024² land-cover pairs: 1,099.9ms -> 1,004.3ms median (-8.692%), exact hashes; production stage 901–909ms, Terrain 1,678–1,733ms, menu ready 2,643–2,772ms. End-to-end loading gate remains open.",
+      "r26FoundersPark": "Matched noon park: 483→493 draws, 1,846,476→1,903,498 triangles, candidate 60.0fps/errors=0; directed night 58.3fps and overview 54.6fps, errors=0. Not a sustained whole-game matrix."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4619,7 +4635,7 @@
         ]
       }
     ],
-    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R24 improves the bus at close range without closing the fleet-art finding. Subjective replay findings remain pending; autonomous development remains active under the 2026-09-18 instruction.",
+    "humanPlaytestSession": "Findings PT-01 through PT-34 retained. R26 improves the real Founders Park site without closing whole-game city-fabric or subjective-play findings. Autonomous development remains active under the 2026-09-18 instruction.",
     "distributionProposal": {
       "repository": "https://github.com/martingrahn-cmd/SimBuild.git",
       "remoteCheckpoint": "ad645dd (R16 product commit) with d669f33 documentation integration on SimBuild main",
@@ -4866,6 +4882,19 @@
       "loadingRuns": "loading-1..3/loading.json",
       "productionBuild": "Vite production build PASS, 164 modules",
       "determinism": "Simulation selftest PASS",
+      "result": "ACCEPT; scores unchanged"
+    },
+    "r26Evidence": {
+      "build": "docs/builds/playtest_r26_founders_park.md",
+      "critic": "docs/critic/playtest_r26_local.md",
+      "directory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r26",
+      "contract": "park-contract.json",
+      "baseline": "park-baseline.png",
+      "candidate": "park-service-candidate-v3.png",
+      "night": "park-service-night.png",
+      "overview": "overview-candidate.png",
+      "productionBuild": "Vite production build PASS, 164 modules",
+      "determinism": "Simulation selftest PASS: deterministic repeat and exact mid-run save/load",
       "result": "ACCEPT; scores unchanged"
     }
   }
