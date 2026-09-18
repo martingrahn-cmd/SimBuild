@@ -10,6 +10,7 @@ import { setupScene, updateScene, disposeScene, CAMERAS } from './scene.js';
 
 const STORAGE_KEY = 'simbuild.audio';
 const LAYER_NAMES = ['wind', 'leaves', 'traffic', 'crickets', 'rain'];
+const CATALOGUE_NAMES = new Set(CATALOGUE.map((entry) => entry.name));
 const UI_MAP = { closeInfo: 'ui_close', dismissNotification: 'ui_close', save: 'ui_confirm', load: 'ui_open', infoview: 'ui_open', download: 'ui_confirm', category: 'ui_open', tab: 'ui_click', pause: 'ui_click', resume: 'ui_click' };
 
 const S = {
@@ -25,7 +26,8 @@ const S = {
   timers: { bird: 0.25, owl: 1.5, thunder: 3, car: 0.8 },
   sched: null, applyAcc: 0, zoneAcc: 9,
   events: [], eventPool: [], maxEvents: 4,
-  unsub: [], gesture: null, enabling: null, stats: { renderMs: 0, sampleRate: SR },
+  unsub: [], gesture: null, enabling: null, priming: null, primed: false, primeTimer: 0, primeEpoch: 0,
+  stats: { renderMs: 0, bootRenderMs: 0, sampleRate: SR },
 };
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
 const smooth = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -53,7 +55,10 @@ function logEvent(name, volume) {
 
 /** Positional trigger relative to the camera target; returns whether the mixer played it. */
 function trigger(name, x, z, volume = 1, rate = 1) {
-  if (!S.sounds.has(name)) { S.ctx.log.warn(`unknown sound "${name}"`); return false; }
+  if (!S.sounds.has(name)) {
+    if (!S.primed && CATALOGUE_NAMES.has(name)) return false;
+    S.ctx.log.warn(`unknown sound "${name}"`); return false;
+  }
   let pan = 0, vol = volume;
   if (typeof x === 'number' && typeof z === 'number') {
     const cam = S.ctx.camera;
@@ -68,6 +73,31 @@ function trigger(name, x, z, volume = 1, rate = 1) {
   logEvent(name, vol);
   S.panel?.flash(name);
   return S.mixer ? S.mixer.play(name, { volume: vol, pan, rate }) : false;
+}
+
+function primeSounds() {
+  if (S.primed) return Promise.resolve(true);
+  if (S.priming) return S.priming;
+  const epoch = S.primeEpoch;
+  S.priming = (async () => {
+    const t0 = performance.now();
+    for (const entry of CATALOGUE) {
+      if (epoch !== S.primeEpoch || !S.ctx) return false;
+      if (S.sounds.has(entry.name)) continue;
+      const sound = renderOne(entry, S.ctx.rng, S.ctx.log);
+      if (epoch !== S.primeEpoch || !S.ctx) return false;
+      S.sounds.set(entry.name, sound);
+      S.mixer?.registerSound(sound);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+    if (epoch !== S.primeEpoch || !S.ctx) return false;
+    S.stats.renderMs += performance.now() - t0;
+    S.primed = true;
+    S.priming = null;
+    S.ctx.log.info(`synthesised ${S.sounds.size} sounds in ${Math.round(S.stats.renderMs)} ms (${SR} Hz)`);
+    return true;
+  })();
+  return S.priming;
 }
 
 /** Ambient targets from the clock, camera and weather. Allocation-free. */
@@ -144,7 +174,8 @@ function enable() {
     for (const k of Object.keys(S.bus)) S.mixer.busLevel[k] = S.bus[k];
     const ok = await S.mixer.enable();
     if (ok) {
-      S.ctx.log.info(`audio live: ${S.mixer.sampleRate} Hz, ${S.sounds.size} sounds`);
+      primeSounds();
+      S.ctx.log.info(`audio live: ${S.mixer.sampleRate} Hz, ${S.sounds.size}/${CATALOGUE.length} sounds prepared`);
       if (S.gesture) { for (const [ev, fn] of S.gesture) window.removeEventListener(ev, fn); S.gesture = null; }
       for (const n of LAYER_NAMES) S.mixer.setLayer(n, S.mix[n], S.mix.cutoff[n]);
     }
@@ -162,23 +193,28 @@ export default {
 
   async init(ctx) {
     S.ctx = ctx; S.headless = !!ctx.headless;
+    S.primeEpoch += 1;
     S.sched = ctx.rng.fork('scheduler');
+    S.sounds.clear(); S.primed = false; S.priming = null; S.primeTimer = 0; S.stats.renderMs = 0; S.stats.bootRenderMs = 0;
     loadSettings();
-    // synthesis: one catalogue entry per macrotask so boot stays responsive
+    // Keep UI feedback ready for the first gesture. The expensive ambient/world catalogue is generated after
+    // app:ready in yielded tasks; the audio showcase still awaits the complete catalogue it presents.
     const t0 = performance.now();
-    for (const e of CATALOGUE) {
-      S.sounds.set(e.name, renderOne(e, ctx.rng, ctx.log));
-      await new Promise((r) => setTimeout(r, 0));
-    }
-    S.stats.renderMs = performance.now() - t0;
-    ctx.log.info(`synthesised ${S.sounds.size} sounds in ${Math.round(S.stats.renderMs)} ms (${SR} Hz)`);
+    for (const entry of CATALOGUE) if (entry.group === 'ui') S.sounds.set(entry.name, renderOne(entry, ctx.rng, ctx.log));
+    S.stats.bootRenderMs = performance.now() - t0;
+    S.stats.renderMs = S.stats.bootRenderMs;
+    if (ctx.world.flags.showcase === 'audio') await primeSounds();
+    else ctx.log.info(`prepared ${S.sounds.size} interface sounds in ${Math.round(S.stats.bootRenderMs)} ms; ambient/world synthesis deferred`);
     computeMix(ctx);
     for (const n of LAYER_NAMES) S.mix[n] = S.target[n];
 
     const ev = ctx.events, own = 'audio';
     const ready = () => S.live;
     S.unsub.push(
-      ev.on('app:ready', () => { S.live = true; }, own),
+      ev.on('app:ready', () => {
+        S.live = true;
+        if (!S.primed) S.primeTimer = window.setTimeout(() => { S.primeTimer = 0; primeSounds(); }, 0);
+      }, own),
       ev.on('audio:play', (p) => { if (p?.sound) trigger(p.sound, p.x, p.z, p.volume ?? 1, p.rate ?? 1); }, own),
       ev.on('ui:action', (p) => { if (!ready() || !p?.action) return; trigger(UI_MAP[p.action] || 'ui_click'); }, own),
       ev.on('selection:changed', (p) => { if (ready() && p?.kind) trigger('ui_hover'); }, own),
@@ -225,13 +261,15 @@ export default {
   },
 
   dispose(ctx) {
+    S.primeEpoch += 1;
     for (const u of S.unsub) { try { u(); } catch (e) { /* ignore */ } }
     S.unsub.length = 0;
     if (S.gesture) { for (const [ev, fn] of S.gesture) window.removeEventListener(ev, fn); S.gesture = null; }
+    if (S.primeTimer) { clearTimeout(S.primeTimer); S.primeTimer = 0; }
     S.panel?.dispose(); S.panel = null;
     S.mixer?.dispose(); S.mixer = null;
     if (S.staged) disposeScene(ctx);
-    S.staged = false; S.live = false;
+    S.staged = false; S.live = false; S.priming = null; S.primed = false; S.ctx = null;
   },
 
   api: {
@@ -254,6 +292,7 @@ export default {
     getBusVolume(bus) { return S.bus[bus]; },
     /** Names + metadata of every sound. */
     sounds() { return [...S.sounds.values()].map((s) => ({ name: s.name, group: s.group, label: s.label, desc: s.desc, loop: s.loop, seconds: s.seconds, channels: s.channels.length, sampleRate: s.sampleRate })); },
+    isPrepared() { return S.primed; },
     /** Raw synthesised buffer: {channels:[Float32Array…], sampleRate, loop, gain, seconds}. */
     getBuffer(name) { return S.sounds.get(name) || null; },
     /** Live ambient mix (read-only object, updated every frame): layer levels, birdRate, cutoffs, factors. */

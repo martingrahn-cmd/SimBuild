@@ -1,6 +1,8 @@
-# New Dollarton development checkpoint — R19, 2026-09-18
+# New Dollarton development checkpoint — R20, 2026-09-18
 
 **Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
+
+R20 accepts an owner-safe Audio startup deferral. The twelve interface sounds remain ready for the first user gesture; the remaining exact catalogue now renders in yielded work after the menu is ready, while the Audio showcase still waits for all 23 sounds. Final production evidence records Audio initialization at 21ms versus the earlier 289–307ms, menu readiness at 3.240s and full catalogue readiness at 3.430s. The complete browser catalogue hash is byte exact, first-click playback and settings restore pass, and simulation determinism/save-load remain exact. Audio stays unscored, UI stays **7.0 FAIL**, whole-game stays **6.0 FAIL**, and the cold-start gate remains open because Terrain still dominates. See [R20 evidence](builds/playtest_r20_audio_startup.md) and [local review](critic/playtest_r20_local.md).
 
 The main and pause menus display `Version 0.1.0 · build <7-character source commit>`. The GameVolt sync action injects the source commit into the compiled bundle, so the label identifies the code actually running even while an older Cloudflare-cached page is being served.
 
@@ -14,7 +16,7 @@ R16 makes the existing GitHub **Report a bug** action clearly visible in both th
 
 R12 accepts a bounded MVP repair without changing scores. The phantom parked row was the traffic showcase catalogue leaking into normal play and is now showcase-only. A 22-resident residential fixture now produces 7 passenger vehicles instead of 17 mixed vehicles; empty roads remain zero, mixed land use produces deterministic commute/customer/freight purposes, dead-end U-turns remain valid, and Traffic restores exactly. Settlement below 150 residents is faster (28 after 0.25 day, 97 after one day in the fixed fixture) while the established-city rate is unchanged. Settings now includes persistent **Always daylight**, and main/pause menus include **Report a bug** linked to the new GitHub Issue Form. See [R12 build evidence](builds/playtest_r12_mvp_repair.md) and [local review](critic/playtest_r12_local.md). Manual service placement rotation is also implemented with **R** in 45-degree steps. Human replay of traffic density and population feel is still required; scores remain whole-game 6.0 FAIL, Traffic 7.2 FAIL, Simulation 6.5 FAIL and UI 7.0 FAIL. The R12 product commit is `77bfd55`; GameVolt sync run `34695172075` and Pages run `34695195397` passed, and the live version endpoint reports source `77bfd55`.
 
-## Current boundary — R12 ready for human retest
+## Historical R12 human-retest boundary
 
 The bounded R10 response to the 2026-09-10 playtest is implemented and verified. Use `http://127.0.0.1:5180/?mode=play`; port 5173 currently belongs to an unrelated project and is not the SimBuild server. A new city gives the clearest test of progression, imports and construction, although existing saves remain supported.
 

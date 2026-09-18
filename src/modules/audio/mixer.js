@@ -70,6 +70,15 @@ export class Mixer {
     this.layers.set(s.name, { src, filter, gain, level: 0, cutoff: 8000 });
   }
 
+  /** Register a sound rendered after the graph went live. Ambient beds start once and one-shots are buffered
+   * lazily, so deferred synthesis can leave the boot path without losing the first user gesture. */
+  registerSound(s) {
+    if (!this.enabled || !this.ctx || !s) return false;
+    this._buffer(s);
+    if (s.loop && !this.layers.has(s.name)) this._startLayer(s);
+    return true;
+  }
+
   _masterGain() { return this.muted ? 0 : this.masterLevel * this.masterLevel * this._duck; }
   _applyMaster() { if (this.master) this.master.gain.setTargetAtTime(this._masterGain(), this.ctx.currentTime, 0.05); }
   setMasterVolume(v) { this.masterLevel = Math.min(1, Math.max(0, +v || 0)); this._applyMaster(); }
