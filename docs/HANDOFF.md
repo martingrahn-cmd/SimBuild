@@ -1,8 +1,10 @@
-# New Dollarton human-playtest checkpoint — R16, 2026-09-12
+# New Dollarton development checkpoint — R17, 2026-09-18
 
 **Current player-facing title: New Dollarton.** `SimBuild` remains the repository name, hosted path, cloud-save game ID and internal compatibility prefix; changing those identifiers would break existing links or saves.
 
 The main and pause menus display `Version 0.1.0 · build <7-character source commit>`. The GameVolt sync action injects the source commit into the compiled bundle, so the label identifies the code actually running even while an older Cloudflare-cached page is being served.
+
+R17 resumes the verified development loop under the user's 2026-09-18 authorization. It closes PT-33 with deterministic Deficit warning → Budget crisis → Recovery states and one explicit, debt-backed emergency recovery plan. Production build, 90-day determinism, exact current rollback, optional legacy-state restore and real Statistics UI evidence pass. See [R17 build evidence](builds/playtest_r17_financial_recovery.md) and [local review](critic/playtest_r17_local.md). Simulation remains **6.5 FAIL**, UI **7.0 FAIL** and whole-game **6.0 FAIL**; no score was raised.
 
 R16 makes the existing GitHub **Report a bug** action clearly visible in both the main and pause menus. It has a distinct warm accent, a 54px target and the explanation **Help improve the game**. The automated probe confirms the unchanged Issue Form destination and both inspected captures are zero-error. See [R16 build evidence](builds/playtest_r16_bug_report_visibility.md) and [local review](critic/playtest_r16_local.md). UI remains **7.0 FAIL** and whole-game remains **6.0 FAIL**; this is a discoverability acceptance, not a rerating. Product commit `ad645dd` is published in GameVolt source `d669f33`; sync run `34715641937` and Pages run `34715661435` passed.
 

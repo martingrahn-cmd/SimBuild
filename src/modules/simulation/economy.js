@@ -49,6 +49,10 @@ export const TUNING = {
   lookahead: 0.25,            // demand plans for pop × (1 + lookahead) + lookaheadPop
   lookaheadPop: 90,
   loanRate: 0.08,             // total interest over the term
+  restructuringRate: 0.12,    // one explicit emergency consolidation; never free money
+  restructuringDays: 90,
+  crisisDays: 3,              // consecutive negative budget closes before formal crisis
+  recoveryDays: 3,            // consecutive solvent closes needed to leave recovery
   loanMax: [30000, 60000, 100000, 160000, 250000, 400000, 600000, 900000, 1300000, 2000000, 3000000, 4500000, 6000000], // by milestone level
   // persons (residential) or jobs (others) per m² of floor area, by density
   floorAreaPer: { residential: { low: 45, high: 28 }, commercial: { low: 45, high: 38 }, industrial: { low: 70, high: 60 }, office: { low: 22, high: 18 } },
@@ -157,6 +161,7 @@ export class Economy {
     e.milestone = { level: 0, name: MILESTONES[0].name, next: MILESTONES[1].name, nextPop: MILESTONES[1].pop, progress: 0, unlocked: MILESTONES[0].unlocks.slice() };
     e.loans = [];                     // [{id, principal, remaining, dailyPayment, daysLeft}]
     e.loanCapacity = TUNING.loanMax[0];
+    e.financial = { state: 'stable', deficitDays: 0, recoveryDays: 0, restructures: 0, lastChangeDay: 1 };
     e.pollutionExposure = 0;          // mean ground+air pollution at homes 0..1
     e.services = this.services;
     e.servicesActive = false;
@@ -391,6 +396,7 @@ export class Economy {
       this.fine.push(f);
     }
     if (this.tick % TICKS_PER_DAY === 0) {
+      this._updateFinancialState();
       const h = e.history;
       h.push({ day: e.day - 1, money: Math.round(e.money), population: e.population, jobs: e.jobs, employed: Math.round(employed), happiness: +e.happiness.toFixed(3), income: Math.round(e.income), expenses: Math.round(e.expenses), landValue: +e.landValue.toFixed(3) });
       if (h.length > DAILY_MAX) h.splice(0, h.length - DAILY_MAX);
@@ -493,6 +499,55 @@ export class Economy {
   }
   earn(amount) { if (amount > 0) this.econ.money += amount; }
 
+  // ---------------------------------------------------------------- financial failure / recovery
+  _setFinancialState(state, type) {
+    const f = this.econ.financial;
+    if (f.state === state) return;
+    const previous = f.state;
+    f.state = state; f.lastChangeDay = this.econ.day;
+    this.events.push({ type, state, previous, day: this.econ.day, money: this.econ.money, net: this.econ.net });
+  }
+  _updateFinancialState() {
+    const e = this.econ, f = e.financial;
+    const losing = e.money < 0 && e.net < 0;
+    if (losing) {
+      f.deficitDays++; f.recoveryDays = 0;
+      const hardFloor = -Math.max(10000, e.loanCapacity * 0.5);
+      if (f.deficitDays >= TUNING.crisisDays || e.money <= hardFloor) this._setFinancialState('crisis', 'financial_crisis');
+      else if (f.state !== 'crisis') this._setFinancialState('warning', 'financial_warning');
+      return;
+    }
+    f.deficitDays = 0;
+    if (e.money >= 0 && e.net >= 0) {
+      if (f.state === 'crisis') this._setFinancialState('recovery', 'financial_recovery');
+      if (f.state === 'recovery') {
+        f.recoveryDays++;
+        if (f.recoveryDays >= TUNING.recoveryDays) { f.recoveryDays = 0; this._setFinancialState('stable', 'financial_stable'); }
+      } else if (f.state === 'warning') this._setFinancialState('stable', 'financial_stable');
+    }
+  }
+
+  /** Consolidate one crisis into explicit debt plus working capital. Never silently erases a deficit. */
+  restructureFinances() {
+    const e = this.econ, f = e.financial;
+    if (f.state !== 'crisis' || e.loans.some((loan) => loan.kind === 'restructuring')) return null;
+    const outstanding = e.loans.reduce((sum, loan) => sum + Math.max(0, +loan.remaining || 0), 0);
+    const overdraft = Math.max(0, -e.money);
+    const workingCapital = Math.max(15000, Math.min(50000, Math.floor(e.loanCapacity * 0.25)));
+    const principal = Math.round(outstanding + overdraft + workingCapital);
+    const total = principal * (1 + TUNING.restructuringRate);
+    const loan = { id: this._nextLoanId++, kind: 'restructuring', principal, remaining: total,
+      dailyPayment: total / TUNING.restructuringDays, daysLeft: TUNING.restructuringDays, day: e.day };
+    e.loans.length = 0; e.loans.push(loan);
+    e.money = workingCapital;
+    e.taxRate = Math.max(e.taxRate, 0.12);
+    e.happiness = Math.max(0, e.happiness - 0.05);
+    f.state = 'recovery'; f.deficitDays = 0; f.recoveryDays = 0; f.restructures++; f.lastChangeDay = e.day;
+    this.events.push({ type: 'financial_restructured', state: f.state, day: e.day, principal,
+      workingCapital, dailyPayment: loan.dailyPayment, taxRate: e.taxRate });
+    return { ...loan, workingCapital, taxRate: e.taxRate };
+  }
+
   // ---------------------------------------------------------------- loans
   /** Borrow `amount` over `days`; returns the loan record or null (limit: 3 loans, milestone-based capacity). */
   takeLoan(amount, days = 30) {
@@ -535,6 +590,7 @@ export class Economy {
         demand: { ...e.demand }, growthRequests: e.growthRequests, levelUps: e.levelUps,
         milestone: { level: e.milestone.level, unlocked: e.milestone.unlocked.slice() },
         loans: e.loans.map((l) => ({ ...l })), nextLoanId: this._nextLoanId, pollutionExposure: e.pollutionExposure, refreshHappiness: this._refreshHappiness,
+        financial: { ...e.financial },
       },
       target: { ...this._target }, growthAcc: { ...this._growthAcc },
       roadKm: { ...this.roadKm },
@@ -562,6 +618,7 @@ export class Economy {
       e.loanCapacity = TUNING.loanMax[Math.min(lvl, TUNING.loanMax.length - 1)];
     }
     e.loans.length = 0; for (const l of s.econ.loans || []) e.loans.push({ ...l });
+    if (s.econ.financial) Object.assign(e.financial, s.econ.financial);
     this._nextLoanId = s.econ.nextLoanId | 0 || 1;
     this.buildings.clear();
     for (const b of s.buildings) this.setBuilding({ id: b.id, type: b.type, density: b.density, level: b.level, footprint: null, x: b.x ?? undefined, z: b.z ?? undefined }, !!b.virtual).capacity = b.capacity;
@@ -589,5 +646,6 @@ export class Economy {
     this._refreshEnvironment(s.econ.refreshHappiness ?? e.happiness);
     e.pollutionExposure = s.econ.pollutionExposure || 0;
     this.distribute();
+    return true;
   }
 }

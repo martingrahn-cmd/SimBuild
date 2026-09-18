@@ -101,6 +101,7 @@ function runTick() {
       const mp = S.milestonePayload; mp.level = evt.level; mp.name = evt.name; mp.unlocks = evt.unlocks; mp.reward = evt.reward; mp.population = evt.population;
       ev.emit('sim:milestone', mp);
     } else if (evt.type === 'loan' || evt.type === 'loan_paid') ev.emit('sim:loan', evt);
+    else if (evt.type.startsWith('financial_')) ev.emit('sim:financial', evt);
   }
   // mirror occupancy + levels onto world.buildings items (documented fields occupants/jobs) at the distribute cadence
   if (tick % 20 === 0) mirrorOccupancy();
@@ -212,6 +213,12 @@ export default {
         } else if (p.action === 'repayLoan') {
           const id = +p.args?.[0]; const paid = S.eco.repayLoan(id);
           ev.emit('sim:loan', paid ? { type: 'loan_paid_early', id } : { type: 'loan_refused', reason: 'The city does not have enough cash to repay this loan.' });
+        } else if (p.action === 'restructureFinances') {
+          const plan = S.eco.restructureFinances();
+          const event = S.eco.events.find((item) => item.type === 'financial_restructured');
+          S.eco.events.length = 0;
+          ev.emit('sim:financial', plan && event ? event : { type: 'financial_restructure_refused', state: S.eco.econ.financial.state,
+            reason: S.eco.econ.loans.some((loan) => loan.kind === 'restructuring') ? 'The existing recovery loan must be repaid before another restructuring.' : 'Emergency restructuring is available only during a budget crisis.' });
         }
       }, own),
     );
@@ -264,6 +271,7 @@ export default {
     // loans
     takeLoan(amount, days = 30) { return S.eco ? S.eco.takeLoan(amount, days) : null; },
     repayLoan(id) { return S.eco ? S.eco.repayLoan(id) : false; },
+    restructureFinances() { return S.eco ? S.eco.restructureFinances() : null; },
     loans() { return S.ctx?.world.economy.loans || []; },
     // grids (256², also at world.economy.grids)
     grids() { return S.eco ? S.eco.grids.expose() : null; },

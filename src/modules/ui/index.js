@@ -25,6 +25,7 @@ export default {
       ev.on('sim:demand', (p) => hud.refreshDemand(p), own),
       ev.on('sim:milestone', (p) => hud.onMilestone(p), own),
       ev.on('sim:loan', (p) => hud.onLoan(p), own),
+      ev.on('sim:financial', (p) => hud.onFinancial(p), own),
       ev.on('weather:changed', () => { hud._wKind = -1; }, own),
       ev.on('transit:changed', () => hud.onTransitChanged(), own),
       ev.on('save:saved', (p) => { hud.menus.refresh(); hud.notify({ type: p?.slot === 'auto' ? 'info' : 'success', title: p?.slot === 'auto' ? 'Autosaved' : 'Game saved', body: `Day ${ctx.clock.day} · ${hud.dateString()}`, ttl: 5 }); }, own),

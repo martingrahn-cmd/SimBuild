@@ -633,6 +633,14 @@ export class Hud {
     else this.notify({ type: 'money', title: 'Loan approved', body: `¢${Math.round(p.amount || 0).toLocaleString('en-US')} added to the treasury.`, ttl: 7 });
     if (this.sideKind === 'stats') this._renderStats();
   }
+  onFinancial(p = {}) {
+    if (p.type === 'financial_crisis') this.notify({ type: 'error', title: 'Budget crisis', body: 'The city has closed three periods below zero while still losing money. Open Statistics to balance the budget or restructure the debt.', ttl: 0 });
+    else if (p.type === 'financial_warning') this.notify({ type: 'warning', title: 'Deficit warning', body: 'The treasury is below zero and the daily balance is negative. New purchases are blocked.', ttl: 10 });
+    else if (p.type === 'financial_restructured') this.notify({ type: 'money', title: 'Recovery plan started', body: `Debts and the overdraft are now one 90-day loan. ¢${fmtInt.format(Math.round(p.workingCapital || 0))} working capital was borrowed; tax is at least 12%.`, ttl: 12 });
+    else if (p.type === 'financial_stable') this.notify({ type: 'success', title: 'Budget stabilised', body: 'The city has completed three solvent budget periods.', ttl: 8 });
+    else if (p.type === 'financial_restructure_refused') this.notify({ type: 'warning', title: 'Recovery plan unavailable', body: p.reason || 'The city cannot restructure now.', ttl: 8 });
+    if (this.sideKind === 'stats') this._renderStats();
+  }
   toast({ title, kicker = 'Milestone reached', body = '', sticky = false }) {
     this.toastEl?.remove();
     const t = this.toastEl = el('div', 'sb-toast sb-glass' + (sticky ? ' is-sticky' : ''), `<div class="sb-tic">${ICONS.trophy()}</div><div class="sb-tt"><div class="sb-t0">${esc(kicker)}</div><div class="sb-t1">${esc(title)}</div><div class="sb-t2">${body}</div></div>`);
@@ -834,7 +842,9 @@ export class Hud {
     const eco = this.source.eco || {}, net = Math.round(this._budgetNet());
     const imports = eco.utilityImports || {};
     const importedNames = ['power', 'water', 'garbage'].filter((key) => imports[key]).map((key) => ({ power: 'power', water: 'water/sewage', garbage: 'waste' })[key]);
-    return [['Population', fmtInt.format(Math.round(eco.population || 0))], ['Jobs', fmtInt.format(Math.round(eco.jobs || 0))], ['Happiness', `${Math.round(clamp01(eco.happiness) * 100)}%`], ['Treasury', `¢${fmtInt.format(Math.round(eco.money || 0))}`], ['Income / day', `+¢${fmtInt.format(Math.round(eco.income || 0))}`, 'good'], ['Expenses / day', `−¢${fmtInt.format(Math.round(eco.expenses || 0))}`, 'bad'], ['Daily balance', `${net >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(net))}`, net >= 0 ? 'good' : 'bad'], ['Tax rate', `${Math.round((eco.taxRate ?? 0.1) * 100)}%`], ['Utility imports', importedNames.length ? importedNames.join(', ') : 'None']];
+    const f=eco.financial||{state:'stable',deficitDays:0,recoveryDays:0};
+    const financialLabel=f.state==='crisis'?'Budget crisis':f.state==='warning'?`Deficit warning (${f.deficitDays}/${3})`:f.state==='recovery'?`Recovery (${f.recoveryDays}/${3})`:'Stable';
+    return [['Population', fmtInt.format(Math.round(eco.population || 0))], ['Jobs', fmtInt.format(Math.round(eco.jobs || 0))], ['Happiness', `${Math.round(clamp01(eco.happiness) * 100)}%`], ['Treasury', `¢${fmtInt.format(Math.round(eco.money || 0))}`], ['Financial status', financialLabel, f.state==='stable'?'good':f.state==='crisis'?'bad':''], ['Income / day', `+¢${fmtInt.format(Math.round(eco.income || 0))}`, 'good'], ['Expenses / day', `−¢${fmtInt.format(Math.round(eco.expenses || 0))}`, 'bad'], ['Daily balance', `${net >= 0 ? '+' : '−'}¢${fmtInt.format(Math.abs(net))}`, net >= 0 ? 'good' : 'bad'], ['Tax rate', `${Math.round((eco.taxRate ?? 0.1) * 100)}%`], ['Utility imports', importedNames.length ? importedNames.join(', ') : 'None']];
   }
   _budgetRows() {
     const eco=this.source.eco||{},inc=eco.incomeBreakdown||{},exp=eco.expenseBreakdown||{};
@@ -846,7 +856,8 @@ export class Hud {
   _budgetGuidance() {
     const eco=this.source.eco||{}, net=this._budgetNet(), expenses=this._budgetRows().expenses;
     const largest=expenses.reduce((best,row)=>(+row[1]||0)>(+best[1]||0)?row:best,['Other costs',0]);
-    if((eco.money||0)<0) return `The treasury is below zero, so new purchases are blocked. The city is losing ¢${fmtInt.format(Math.abs(Math.round(net)))}/day; its largest current cost is ${largest[0].toLowerCase()} (¢${fmtInt.format(Math.round(largest[1]||0))}/day). A loan adds cash immediately, but repayments increase daily expenses.`;
+    if(eco.financial?.state==='crisis') return `Budget crisis: the city has remained below zero while losing money. Its largest current cost is ${largest[0].toLowerCase()} (¢${fmtInt.format(Math.round(largest[1]||0))}/day). Balance the budget or use one emergency restructuring; every recovered credit becomes visible debt.`;
+    if((eco.money||0)<0) return `The treasury is below zero, so new purchases are blocked. The city is losing ¢${fmtInt.format(Math.abs(Math.round(net)))}/day; its largest current cost is ${largest[0].toLowerCase()} (¢${fmtInt.format(Math.round(largest[1]||0))}/day). Three losing closes trigger a budget crisis.`;
     if(net<0) return `The city is losing ¢${fmtInt.format(Math.abs(Math.round(net)))}/day. Its largest current cost is ${largest[0].toLowerCase()} (¢${fmtInt.format(Math.round(largest[1]||0))}/day). Loans provide short-term cash and add a daily repayment.`;
     return 'Higher tax raises revenue per resident and filled job, but reduces happiness and demand. The daily balance accrues continuously.';
   }
@@ -916,6 +927,14 @@ export class Hud {
     loan.disabled = offer < 1000 || loans.length >= 3;
     loan.addEventListener('click', () => this.action('takeLoan', offer, 30));
     body.appendChild(loan);
+    if (eco.financial?.state === 'crisis') {
+      const existingRecovery = loans.some((item) => item.kind === 'restructuring');
+      const restructure = btn('sb-action small danger', ICONS.noteWarn() + '<span>Start emergency recovery plan</span>');
+      restructure.disabled = existingRecovery;
+      restructure.title = existingRecovery ? 'The existing recovery loan must be repaid first.' : 'Consolidates debt and overdraft into a 90-day loan, borrows working capital, raises tax to at least 12%, and reduces happiness.';
+      restructure.addEventListener('click', () => this.action('restructureFinances'));
+      body.appendChild(restructure);
+    }
     this._drawSparks();
   }
   _drawSparks() {

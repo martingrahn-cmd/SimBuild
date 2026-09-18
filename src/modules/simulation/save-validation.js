@@ -27,9 +27,13 @@ export function validEconomySave(s, { zoneTypes, roadTypes, fineLen, fineWidth }
       if (!Array.isArray(e.loans)) return false;
       const loanIds = new Set();
       for (const l of e.loans) {
-        if (!object(l) || !id(l.id) || loanIds.has(l.id) || !nonnegative(l.principal) || !nonnegative(l.remaining) || !nonnegative(l.dailyPayment) || !finite(l.daysLeft) || !optional(l, 'day', nonnegative)) return false;
+        if (!object(l) || !id(l.id) || loanIds.has(l.id) || !nonnegative(l.principal) || !nonnegative(l.remaining) || !nonnegative(l.dailyPayment) || !finite(l.daysLeft) || !optional(l, 'day', nonnegative) || !optional(l, 'kind', v => v === 'restructuring')) return false;
         loanIds.add(l.id);
       }
+    }
+    if (e.financial != null) {
+      const f = e.financial;
+      if (!object(f) || !['stable', 'warning', 'crisis', 'recovery'].includes(f.state) || !count(f.deficitDays) || !count(f.recoveryDays) || !count(f.restructures) || !nonnegative(f.lastChangeDay)) return false;
     }
     if (!object(s.roadKm) || !roadTypes.every(k => optional(s.roadKm, k, nullable(nonnegative)))) return false;
     if (!Array.isArray(s.buildings)) return false;
