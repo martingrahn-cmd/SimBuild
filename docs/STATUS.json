@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-18T19:53:16+02:00",
+  "updatedAt": "2026-09-18T20:08:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4075,25 +4075,25 @@
   "handoff": {
     "document": "docs/HANDOFF.md",
     "sessionEnded": "2026-09-10T12:20:00+02:00",
-    "state": "Autonomous R24 accepted: bounded bus LOD0 transit detail passes visual, geometry, Traffic causality, determinism and save/load gates; scores unchanged.",
-    "resumeWith": "Run a bounded R25 against the measured cold-start bottleneck: profile and optimize Terrain land-cover sampling only if byte-exact outputs and matched visual evidence are preserved. Then apply the critic gate and continue to the next measured whole-game issue.",
+    "state": "Autonomous R25 accepted: byte-exact Terrain height/land-cover kernels reduce the isolated land-cover median 8.692%; R24 bus repair retained; scores unchanged.",
+    "resumeWith": "Start R26 with a fresh measured visible whole-game target. Prefer real city fabric/ground-contact or foliage evidence from the current Democity source; do not repeat exhausted global road-order, scalar LOD-material or emissive trials.",
     "neverVerified": "Subjective ordinary-play pacing and choice quality; curved road history; persistent/second-owner failure beyond the tested matrix; pending-history save; long unpaused play; sustained 50fps; whole-game/reference parity.",
-    "notRun": "No formal R24 score rerating and no fresh whole-game/blind critic; this bounded fleet improvement does not warrant either. Subjective ordinary-play fleet quality remains pending."
+    "notRun": "No formal R25 score rerating or fresh whole-game/blind critic because R25 is deliberately pixel/content exact. Subjective ordinary-play findings remain pending."
   },
   "executionControl": {
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 24,
+    "lastAuthorizedRound": 25,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
     "pendingAfterStop": [
       "Reproduce the hosted Slot1 failure if a player payload becomes available; current local rollback and compatibility gates pass",
-      "Profile the remaining Terrain cold-start cost and accept only byte-exact owner-local work",
-      "Re-run the whole-game critic and blind comparison only after a visible bounded whole-game improvement"
+      "Measure a visible current-source whole-game defect in city fabric/ground contact or foliage and implement only a bounded owner-safe candidate",
+      "Re-run whole-game and blind comparison after a visible integrated improvement large enough to affect full-frame judgment"
     ],
-    "updatedAt": "2026-09-18T19:53:16+02:00",
+    "updatedAt": "2026-09-18T20:08:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r24-2026-09-18",
-    "state": "R24 bus LOD0 detail accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R24 on verified R23: close-range bus rear/side transit cues accepted with Traffic causality, determinism and exact restore preserved",
+    "id": "human-playtest-r25-2026-09-18",
+    "state": "R25 byte-exact Terrain startup optimization accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R25 on verified R24: exact Terrain sampling/noise kernels reduce the dominant land-cover startup stage; gameplay and rendered world bytes preserved",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4220,6 +4220,11 @@
         "id": "R24",
         "decision": "accepted bounded Traffic-owned bus LOD0 rear/side detail and external-output verifier repair",
         "score": "Traffic 7.2 FAIL and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R25",
+        "decision": "accepted byte-exact Terrain axis sampling and common fBm startup kernels",
+        "score": "Terrain 6.0, UI 7.0 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4246,7 +4251,8 @@
       "r21Props": "high-quality procedural texture median 330.2ms baseline to 218.7ms candidate (-33.8%) with exact combined/per-texture browser hashes. Three production runs: Props 287–294ms, menu 2.731–2.812s, errors=0; short-run attribution only.",
       "r22DemocityProps": "production seed-7 repeated rebuilds remain 6,021 items with exact content excluding only version increments; inspected Democity 60fps, 424 draws, 2,076,882 triangles, errors=0; not a whole-game sustained baseline",
       "r23Marquee": "production mixed Building/Service/Road transaction PASS across exact persistent-owner undo/redo/repeat and two injected failure paths; visual before/after inspected; correctness evidence, not a performance baseline",
-      "r24Fleet": "matched close fleet: 112 draws unchanged; 875,698 -> 876,298 triangles (+600); after 59.5fps, errors=0; bus LOD1/2 unchanged at 254/36 triangles; not a whole-scene sustained baseline"
+      "r24Fleet": "matched close fleet: 112 draws unchanged; 875,698 -> 876,298 triangles (+600); after 59.5fps, errors=0; bus LOD1/2 unchanged at 254/36 triangles; not a whole-scene sustained baseline",
+      "r25TerrainStartup": "six interleaved 1024² land-cover pairs: 1,099.9ms -> 1,004.3ms median (-8.692%), exact hashes; production stage 901–909ms, Terrain 1,678–1,733ms, menu ready 2,643–2,772ms. End-to-end loading gate remains open."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4272,7 +4278,7 @@
       },
       {
         "rank": 4,
-        "issue": "Cold start now reaches the main menu in 2.73–2.81 seconds in the three-run R21 production sample. R19 keeps Terrain byte exact and R20 moves exact Audio work off-path; R21 reduces exact Props atlas generation median 33.8%, leaving Props at 287–294ms. Terrain at 1.70–1.73s remains dominant, so the cold-start gate stays open."
+        "issue": "Cold start reaches the menu in 2.643–2.772 seconds in the three-run R25 production sample. R25 reduces the byte-exact 1024² Terrain land-cover stage to 901–909ms from retained 1,006–1,016ms; total Terrain 1.678–1.733s still dominates and end-to-end variance prevents closing the loading gate."
       },
       {
         "rank": 5,
@@ -4281,10 +4287,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 164 modules after R24; canonical public-asset build completed to ExtDrive after tracked iCloud placeholders were restored byte-for-byte from GitHub.",
-      "startup": "PASS behavior, gate still open: three production runs reach the menu in 2.731–2.812s; Props 287–294ms, Audio 17–18ms, Terrain 1.698–1.730s.",
+      "build": "PASS: Vite8.2.2, 164 modules after R25, canonical public assets, output on ExtDrive.",
+      "startup": "PASS behavior, gate still open: R25 land-cover 901–909ms; Terrain 1,678–1,733ms; menu ready 2,643–2,772ms. Exact stage gain is established, end-to-end gain is not.",
       "saveLoad": "PASS: R24 Traffic deterministic repeat/exact restore plus Simulation exact mid-run save/load; retained R21 clean-browser all-14-owner checkpoint.",
-      "evidence": "docs/builds/playtest_r24_bus_detail.md; docs/critic/playtest_r24_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r24; prior R23/R21 contracts retained",
+      "evidence": "docs/builds/playtest_r25_terrain_startup.md; docs/critic/playtest_r25_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r25; prior R24/R23/R21 contracts retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4301,7 +4307,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Run a bounded R25 against the measured cold-start bottleneck: attribute and optimize Terrain land-cover sampling only if both seed outputs remain byte exact and matched visual evidence is preserved; then apply the critic gate and continue.",
+    "nextAutonomousStep": "Start R26 from current-source visible evidence. Prefer a bounded real city-fabric/ground-contact or foliage improvement; preserve existing owner contracts and avoid exhausted global road-order, LOD-material and emissive scalar trials.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -4848,6 +4854,18 @@
       "trafficContract": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r24/traffic-causality.json",
       "productionBuild": "Vite production build PASS, 164 modules, canonical public assets",
       "determinism": "Simulation selftest PASS: deterministic repeat and exact mid-run save/load",
+      "result": "ACCEPT; scores unchanged"
+    },
+    "r25Evidence": {
+      "build": "docs/builds/playtest_r25_terrain_startup.md",
+      "critic": "docs/critic/playtest_r25_local.md",
+      "directory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r25",
+      "landcoverContract": "landcover-contract.json",
+      "noiseHeightContract": "noise-height-contract.json",
+      "benchmark": "interleaved-benchmark.json",
+      "loadingRuns": "loading-1..3/loading.json",
+      "productionBuild": "Vite production build PASS, 164 modules",
+      "determinism": "Simulation selftest PASS",
       "result": "ACCEPT; scores unchanged"
     }
   }

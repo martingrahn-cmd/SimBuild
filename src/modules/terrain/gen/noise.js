@@ -1,11 +1,8 @@
 // Seeded 2D simplex noise + fbm / ridged / warp helpers. Pure JS, no three dependency (also runs in node tests).
 // Seeding goes through the module rng (ctx.rng) — never Math.random.
 
-const GRAD = [
-  [1, 1], [-1, 1], [1, -1], [-1, -1],
-  [1, 0], [-1, 0], [0, 1], [0, -1],
-  [0.7071, 0.7071], [-0.7071, 0.7071], [0.7071, -0.7071], [-0.7071, -0.7071],
-];
+const GRAD_X = [1, -1, 1, -1, 1, -1, 0, 0, 0.7071, -0.7071, 0.7071, -0.7071];
+const GRAD_Y = [1, 1, -1, -1, 0, 0, 1, -1, 0.7071, 0.7071, -0.7071, -0.7071];
 const F2 = 0.5 * (Math.sqrt(3) - 1);
 const G2 = (3 - Math.sqrt(3)) / 6;
 
@@ -32,11 +29,11 @@ export class Noise2D {
     const x2 = x0 - 1 + 2 * G2, y2 = y0 - 1 + 2 * G2;
     const ii = i & 255, jj = j & 255;
     let t0 = 0.5 - x0 * x0 - y0 * y0;
-    if (t0 >= 0) { const g = GRAD[permMod[ii + perm[jj]]]; t0 *= t0; n0 = t0 * t0 * (g[0] * x0 + g[1] * y0); }
+    if (t0 >= 0) { const g = permMod[ii + perm[jj]]; t0 *= t0; n0 = t0 * t0 * (GRAD_X[g] * x0 + GRAD_Y[g] * y0); }
     let t1 = 0.5 - x1 * x1 - y1 * y1;
-    if (t1 >= 0) { const g = GRAD[permMod[ii + i1 + perm[jj + j1]]]; t1 *= t1; n1 = t1 * t1 * (g[0] * x1 + g[1] * y1); }
+    if (t1 >= 0) { const g = permMod[ii + i1 + perm[jj + j1]]; t1 *= t1; n1 = t1 * t1 * (GRAD_X[g] * x1 + GRAD_Y[g] * y1); }
     let t2 = 0.5 - x2 * x2 - y2 * y2;
-    if (t2 >= 0) { const g = GRAD[permMod[ii + 1 + perm[jj + 1]]]; t2 *= t2; n2 = t2 * t2 * (g[0] * x2 + g[1] * y2); }
+    if (t2 >= 0) { const g = permMod[ii + 1 + perm[jj + 1]]; t2 *= t2; n2 = t2 * t2 * (GRAD_X[g] * x2 + GRAD_Y[g] * y2); }
     return 70 * (n0 + n1 + n2);
   }
   /** standard fbm, roughly [-1,1] */
@@ -47,6 +44,28 @@ export class Noise2D {
       norm += amp; amp *= gain; freq *= lacunarity;
     }
     return sum / norm;
+  }
+  /** Exact common 2x/0.5 fBm kernels for startup-scale texture generation. */
+  fbm2(x, y) {
+    let sum = 0;
+    sum += this.noise(x, y);
+    sum += 0.5 * this.noise(x * 2, y * 2);
+    return sum / 1.5;
+  }
+  fbm3(x, y) {
+    let sum = 0;
+    sum += this.noise(x, y);
+    sum += 0.5 * this.noise(x * 2, y * 2);
+    sum += 0.25 * this.noise(x * 4, y * 4);
+    return sum / 1.75;
+  }
+  fbm4(x, y) {
+    let sum = 0;
+    sum += this.noise(x, y);
+    sum += 0.5 * this.noise(x * 2, y * 2);
+    sum += 0.25 * this.noise(x * 4, y * 4);
+    sum += 0.125 * this.noise(x * 8, y * 8);
+    return sum / 1.875;
   }
   /** ridged multifractal in [0,1]: sharp crests, eroded-looking flanks */
   ridged(x, y, octaves = 5, lacunarity = 2.05, gain = 0.5, sharpness = 2.0) {

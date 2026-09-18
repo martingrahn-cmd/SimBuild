@@ -57,67 +57,81 @@ export function generateLandcover(rng, gen, size = 512) {
   const nA = new Noise2D(rng.fork('patch')), nB = new Noise2D(rng.fork('dry')), nC = new Noise2D(rng.fork('lush')), nD = new Noise2D(rng.fork('fine')), nE = new Noise2D(rng.fork('track'));
   const w = { f1: 0, f2: 0, idx: 0, idz: 0, dry: 0, kind: 0 };
   const worleyGrid = makeWorleyGrid(half, 101);
-  const hAt = (x, z) => {
-    let fx = (x + half) / cell, fz = (z + half) / cell;
-    fx = clamp(fx, 0, res - 1.001); fz = clamp(fz, 0, res - 1.001);
-    const ix = fx | 0, iz = fz | 0, u = fx - ix, v = fz - iz, i = iz * res + ix;
+  const step = world / size;
+  const worldCoord = new Float64Array(size);
+  for (let i = 0; i < size; i++) worldCoord[i] = -half + (i + 0.5) * step;
+  // The nine terrain samples per texel reuse just five x and five z coordinates. Cache their
+  // clamped grid index/fraction pairs once; interpolation order stays byte-for-byte identical.
+  const sampleAxis = (offset) => {
+    const index = new Int32Array(size), mix = new Float64Array(size);
+    for (let i = 0; i < size; i++) {
+      let f = (worldCoord[i] + offset + half) / cell;
+      f = clamp(f, 0, res - 1.001);
+      index[i] = f | 0; mix[i] = f - index[i];
+    }
+    return { index, mix };
+  };
+  const m40 = sampleAxis(-40), m6 = sampleAxis(-6), zero = sampleAxis(0), p6 = sampleAxis(6), p40 = sampleAxis(40);
+  const hAt = (sx, sz, tx, ty) => {
+    const ix = sx.index[tx], iz = sz.index[ty], u = sx.mix[tx], v = sz.mix[ty], i = iz * res + ix;
     return (heights[i] * (1 - u) + heights[i + 1] * u) * (1 - v) + (heights[i + res] * (1 - u) + heights[i + res + 1] * u) * v;
   };
-  const step = world / size;
+  const nearest = new Int32Array(size);
+  for (let i = 0; i < size; i++) nearest[i] = clamp(Math.round((worldCoord[i] + half) / cell), 0, res - 1);
   for (let ty = 0; ty < size; ty++) {
-    const z = -half + (ty + 0.5) * step;
+    const z = worldCoord[ty];
     for (let tx = 0; tx < size; tx++) {
-      const x = -half + (tx + 0.5) * step;
-      const h = hAt(x, z);
+      const x = worldCoord[tx];
+      const h = hAt(zero, zero, tx, ty);
       const e = 6;
-      const hx = hAt(x + e, z) - hAt(x - e, z), hz = hAt(x, z + e) - hAt(x, z - e);
+      const hx = hAt(p6, zero, tx, ty) - hAt(m6, zero, tx, ty), hz = hAt(zero, p6, tx, ty) - hAt(zero, m6, tx, ty);
       const slope = Math.sqrt(hx * hx + hz * hz) / (2 * e);
       // large-scale curvature (hollows > 0) from a 40 m ring
-      const ring = (hAt(x + 40, z) + hAt(x - 40, z) + hAt(x, z + 40) + hAt(x, z - 40)) * 0.25;
+      const ring = (hAt(p40, zero, tx, ty) + hAt(m40, zero, tx, ty) + hAt(zero, p40, tx, ty) + hAt(zero, m40, tx, ty)) * 0.25;
       const hollow = clamp((ring - h) / 6, -1, 1);
       const northFacing = clamp(-hz / (2 * e) * 6, 0, 1);           // -Z is north: slopes falling toward -Z
       const low = smoothstep(2.4, 6.5, h);                          // above the beach / shore
       const plains = low * (1 - smoothstep(0.10, 0.22, slope)) * (1 - smoothstep(60, 140, h));
       let riverD = 1e9;
       if (gen.river) {
-        const ix = clamp(Math.round((x + half) / cell), 0, res - 1);
+        const ix = nearest[tx];
         if (Math.abs(z - gen.river.zAt[ix]) < 200) riverD = gen.river.distance(x, z, ix);   // cheap reject far from the river
       }
-      const flowV = flow ? flow[clamp(Math.round((z + half) / cell), 0, res - 1) * res + clamp(Math.round((x + half) / cell), 0, res - 1)] : 0;
+      const flowV = flow ? flow[nearest[ty] * res + nearest[tx]] : 0;
 
       // ---- fields: Worley patchwork with a per-cell dryness, softened edges, and dirt tracks on the boundaries
       worley(x, z, worleyGrid, w);
       const cellDry = w.dry;
       const cellKind = w.kind;                                       // < 0.45 meadow (no fence line), else pasture/crop
       const edge = w.f2 - w.f1;                                      // metres to the cell boundary (approx)
-      const regional = 0.5 + 0.5 * nB.fbm(x / 520 + 3, z / 520 - 1, 3, 2.0, 0.5);
-      let dry = regional * 0.38 + (cellDry - 0.5) * 0.75 * plains + 0.22 * (0.5 + 0.5 * nB.fbm(x / 95, z / 95, 3)) - 0.06;
+      const regional = 0.5 + 0.5 * nB.fbm3(x / 520 + 3, z / 520 - 1);
+      let dry = regional * 0.38 + (cellDry - 0.5) * 0.75 * plains + 0.22 * (0.5 + 0.5 * nB.fbm3(x / 95, z / 95)) - 0.06;
       dry += smoothstep(80, 220, h) * 0.5;                            // straw at altitude
       dry -= 0.15 * smoothstep(420, 150, Math.hypot(x, z));           // the city centre plain is a little greener
       dry += smoothstep(0.08, 0.2, slope) * 0.2;                      // thin dry grass on slopes
       dry = clamp(dry, 0, 1);
 
       // ---- lush / forest floor: hollows, floodplain, north slopes, and blobby forest patches
-      const forestBlob = smoothstep(0.52, 0.72, 0.5 + 0.5 * nC.fbm(x / 150 + 8, z / 150 + 2, 4, 2.1, 0.5) + 0.12 * nC.fbm(x / 35, z / 35, 2));
+      const forestBlob = smoothstep(0.52, 0.72, 0.5 + 0.5 * nC.fbm(x / 150 + 8, z / 150 + 2, 4, 2.1, 0.5) + 0.12 * nC.fbm2(x / 35, z / 35));
       let lush = 0.55 * Math.max(0, hollow) + 0.35 * northFacing * smoothstep(0.03, 0.12, slope)
         + 0.7 * forestBlob + 0.4 * smoothstep(140, 40, riverD) * low;
       lush *= low * (1 - smoothstep(120, 220, h));
       lush = clamp(lush * (1 - dry * 0.5), 0, 1);
 
       // ---- dirt: bare patches, worn tracks along field boundaries and ridge lines of a noise field, deposits
-      const patchN = 0.5 + 0.5 * nA.fbm(x / 80 + 1, z / 80 + 5, 4, 2.0, 0.5) + 0.15 * nA.fbm(x / 18, z / 18, 2);
+      const patchN = 0.5 + 0.5 * nA.fbm4(x / 80 + 1, z / 80 + 5) + 0.15 * nA.fbm2(x / 18, z / 18);
       let dirt = smoothstep(0.70, 0.81, patchN) * 0.75 * plains;
-      const trackN = 1 - Math.abs(nE.fbm(x / 260 + 2, z / 260 + 4, 2, 2.0, 0.5));
+      const trackN = 1 - Math.abs(nE.fbm2(x / 260 + 2, z / 260 + 4));
       const track = smoothstep(0.968, 0.99, trackN) * plains * (1 - smoothstep(0.06, 0.12, slope));
       const fence = (cellKind > 0.45 ? 1 : 0) * (1 - smoothstep(2.0, 6.0, edge)) * plains * 0.6;
       dirt = Math.max(dirt, track * 0.7, fence * (0.45 + 0.4 * cellKind));
       dirt = Math.max(dirt, smoothstep(0.25, 0.8, flowV) * 0.6);
       // bare ground where the forest floor is deepest (leaf litter) and on cattle-trodden field corners
-      dirt = Math.max(dirt, smoothstep(0.75, 1.0, lush) * 0.35 * (0.5 + 0.5 * nA.fbm(x / 30, z / 30, 2)));
+      dirt = Math.max(dirt, smoothstep(0.75, 1.0, lush) * 0.35 * (0.5 + 0.5 * nA.fbm2(x / 30, z / 30)));
       dirt = clamp(dirt, 0, 1);
 
       // ---- fine variation (8..25 m) breaks tiling and gives the 1-20 m grain CS2 has
-      const fine = clamp(0.5 + 0.5 * (0.6 * nD.fbm(x / 22, z / 22, 3, 2.0, 0.5) + 0.4 * nD.fbm(x / 7 + 3, z / 7, 2)), 0, 1);
+      const fine = clamp(0.5 + 0.5 * (0.6 * nD.fbm3(x / 22, z / 22) + 0.4 * nD.fbm2(x / 7 + 3, z / 7)), 0, 1);
 
       const o = (ty * size + tx) * 4;
       data[o] = Math.round(dirt * 255);

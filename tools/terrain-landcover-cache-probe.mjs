@@ -2,6 +2,7 @@
 // R19 contract: cache deterministic Worley feature data without changing any generated land-cover byte.
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
+import path from 'node:path';
 import { RNG } from '../src/core/rng.js';
 import { generateHeightmap } from '../src/modules/terrain/gen/heightmap.js';
 import { generateLandcover } from '../src/modules/terrain/gen/landcover.js';
@@ -28,7 +29,8 @@ for (const [seed, referenceSha256] of expected) {
   });
 }
 result.pass = result.rows.every((row) => row.exact);
-fs.mkdirSync('shots/playtest-fixes-r19', { recursive: true });
-fs.writeFileSync('shots/playtest-fixes-r19/terrain-landcover-cache.json', JSON.stringify(result, null, 2));
+const out = process.env.TERRAIN_LANDCOVER_OUT || 'shots/playtest-fixes-r19/terrain-landcover-cache.json';
+fs.mkdirSync(path.dirname(out), { recursive: true });
+fs.writeFileSync(out, JSON.stringify(result, null, 2));
 console.log(JSON.stringify(result, null, 2));
 if (!result.pass) process.exitCode = 1;
