@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
 import fs from 'node:fs';
+import path from 'node:path';
 
 const base = process.env.SIM_URL || 'http://127.0.0.1:5173';
-const out = 'shots/playtest-fixes-r10/traffic-causality.json';
-fs.mkdirSync('shots/playtest-fixes-r10', { recursive: true });
+const out = process.env.SIM_TRAFFIC_CAUSALITY_OUT || 'shots/playtest-fixes-r10/traffic-causality.json';
+fs.mkdirSync(path.dirname(out), { recursive: true });
 const result = { errors: [], emptyRoad: null, smallCity: null, mixedUse: null, deadEnd: null, portals: null, pass: false };
 const browser = await chromium.launch({
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',

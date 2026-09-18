@@ -559,6 +559,19 @@ export function buildVehicleGeometry(kind, lod=0) {
     const mid = secs[Math.round(secs.length * 0.5)];
     addBox(acc, 0, mid.y1 + 0.10, mid.z - 1.4, 0.62, 0.10, 1.3, MAT.PANEL); // roof HVAC
     addBox(acc, 0, f.y1 + 0.44, f.z + 0.30, 0.55, 0.11, 0.06, MAT.SIGN);   // destination blind
+    if (!lod) {
+      // Close-range transit cues. These sit on the existing body and keep the authoritative
+      // footprint, axle placement and farther LODs unchanged.
+      addBox(acc, 0, 2.63, b.z + 0.026, 0.62, 0.16, 0.016, MAT.SIGN);       // rear route display
+      addBox(acc, 0, 1.05, b.z + 0.029, 0.72, 0.43, 0.018, MAT.DARK);       // engine hatch / grille
+      addBox(acc, 0, 0.43, b.z + 0.040, 0.88, 0.075, 0.055, MAT.TRIM);      // rear bumper
+      addBox(acc, 0, 1.05, b.z + 0.050, 0.012, 0.40, 0.014, MAT.PANEL);     // hatch split
+      for (const side of [-1, 1]) {
+        addBox(acc, side * (spec.HW + 0.008), 1.55, -3.55, 0.012, 0.92, 0.58, MAT.DARK);
+        addBox(acc, side * (spec.HW + 0.018), 1.30, -3.55, 0.014, 0.015, 0.57, MAT.TRIM);
+        addBox(acc, side * (spec.HW + 0.008), 0.82, 0.15, 0.012, 0.055, 4.58, MAT.TRIM);
+      }
+    }
   }
   if (kind === 'box_truck') {
     const cab = secs[Math.round(secs.length * 0.22)];
