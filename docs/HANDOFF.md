@@ -392,3 +392,11 @@ Fresh current-source evidence showed the rare brightest baked window tier clippi
 The locked night-downtown frame stays395 draws/2,827,820 triangles/errors0 while pixels above85% luminance fall0.622637%→0.462095% and above90% fall0.287375%→0.209057%. The matched street night stays392/3,005,400/errors0 and shows the same direction. Inspection finds less flat-white clipping while mid/dim windows and street readability remain. Exact Buildings restore, build and90-day Simulation determinism/save-load pass.
 
 Accept R33 with **Buildings7.4**, **Democity6.0** and **whole-game6.0**, all FAIL. The directed street frame newly confirms the3M gate still fails by5,400 triangles. Continue R34 from that measured geometry excess or another larger current-source defect; preserve the selective rolloff and do not retry broad emissive scalars. See `docs/builds/playtest_r33_window_highlight_rolloff.md`, `docs/critic/playtest_r33_local.md` and `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r33/`.
+
+## R34 render-budget diagnosis — rejected candidates, product unchanged (2026-09-19)
+
+R33 is the current accepted product checkpoint and is pushed as `216ab89`. R34 reproduced the directed street-night geometry peak and recorded fresh owner masks in `/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r34`. R31 already peaks at 3,011,174 triangles; R32/R33 are about 3,005,384–3,005,400, so the R32 Founders Plaza did not create the failure.
+
+Two disposable Props lamp-pool reductions were rejected after original-resolution inspection. 11×11 created pronounced triangular/star gaps; symmetric 10×10 still hardened the pool contour relative to accepted 12×12. Both were reverted. Product source is exactly R33; do not resurrect either candidate or claim a performance gain.
+
+Resume with a fresh current-source visual defect from the ranked whole-game list, or first build a pass-specific submission ledger if revisiting the narrow 3M peak. Preserve the accepted pavement-fitted pools, R29–R31 packed buffers, R32 plaza and R33 window response. Scores remain unchanged.

@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-19T02:00:00+02:00",
+  "updatedAt": "2026-09-19T02:40:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4081,19 +4081,19 @@
     "notRun": "No formal whole-game/blind rerating or full 16-frame sustained matrix for the bounded R27/R28 presentation changes. Subjective ordinary-play findings remain pending."
   },
   "executionControl": {
-    "state": "autonomous-quality-loop-active",
+    "state": "paused-at-clean-r34-diagnostic-checkpoint",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 33,
-    "allowNewDevelopmentWave": true,
+    "lastAuthorizedRound": 34,
+    "allowNewDevelopmentWave": false,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
     "pendingAfterStop": [
-      "Reproduce the hosted Slot1 failure if a player payload becomes available; current local rollback and compatibility gates pass",
-      "Attribute the exact 3,005,400-triangle R33 directed street-night frame by production owner, then make only a bounded owner-safe change if evidence identifies one",
-      "Re-run whole-game and blind comparison after a visible integrated improvement large enough to affect full-frame judgment"
+      "Resume from accepted R33 commit 216ab89",
+      "Choose a fresh ranked visible defect from current evidence",
+      "If revisiting street-night geometry, build a pass-specific ledger before proposing a product change"
     ],
-    "updatedAt": "2026-09-19T02:00:00+02:00",
+    "updatedAt": "2026-09-19T02:40:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r33-2026-09-19",
-    "state": "R33 selective brightest-window rolloff accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R33 on verified R32: selective Buildings display rolloff only above the brightest window tier; geometry, state, restore and packed representations preserved",
+    "id": "human-playtest-r34-2026-09-19",
+    "state": "R33 remains accepted product; R34 diagnosis closed with both pool candidates rejected and reverted",
+    "playerSource": "R33 commit 216ab89; R34 made no accepted product change",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4302,6 +4302,16 @@
         "id": "R29-BUILDING-F16",
         "decision": "rejected and reverted before integration",
         "reason": "Float16 colour/window attributes caused severe dark-facade and missing-night-window visual regressions despite zero WebGL errors"
+      },
+      {
+        "id": "R34-PROPS-POOL-11",
+        "decision": "rejected and reverted before integration",
+        "reason": "11x11 tessellation reduced geometry but introduced obvious triangular/star-shaped kerb gaps and lost symmetric centre sampling"
+      },
+      {
+        "id": "R34-PROPS-POOL-10",
+        "decision": "rejected and reverted before integration",
+        "reason": "10x10 retained a centre point but still produced harder polygonal pool segmentation than the accepted 12x12 pavement-fitted surface"
       }
     ],
     "decisionLedger": "All prior accepted/rejected work remains in modules.* histories, docs/builds, docs/critic and HANDOFF. R10 adds no formal critic rerating; report: docs/builds/human_playtest_r10.md.",
@@ -4330,7 +4340,8 @@
       "r30BuildingBuffers": "Current Democity exact inventory: Buildings CPU buffers 130,594,604 -> 109,448,380 bytes (-21,146,224); browser backing storage 393,766,568 -> 372,623,355 bytes. R29+R30 reduce Buildings buffers by 37,005,892 bytes. Geometry 2,643,278 vertices / 1,313,894 triangles unchanged. Sustained 512MB gate remains uncertified.",
       "r31PropsBuffers": "Current Democity exact inventory: Props CPU buffers 52,859,208 -> 47,257,332 bytes (-5,601,876); browser backing storage 372,623,355 -> 367,021,063 bytes. Geometry 1,030,627 vertices / 709,470 triangles unchanged. Sustained 512MB gate remains uncertified.",
       "r32FoundersPlaza": "Matched park: 493 draws unchanged; 1,902,568 -> 1,935,258 triangles (+32,690), errors=0. Candidate night 453/2,290,384 and overview 580/2,983,078, errors=0; overview leaves only 16,922 triangles under 3M. No fps gain claimed.",
-      "r33CurrentMatrix": "Fresh current-source matrix: downtown day 468 draws / 1,963,908 triangles / 59.1fps; street day 427 / 2,712,432 / 60.0fps; downtown night 395 / 2,827,820 / 59.9fps; overview day 580 / 2,983,078 / 54.1fps. Directed street night is 392 / 3,005,400 / errors=0, failing the 3M geometry gate by 5,400 triangles. Short fps samples are not sustained claims."
+      "r33CurrentMatrix": "Fresh current-source matrix: downtown day 468 draws / 1,963,908 triangles / 59.1fps; street day 427 / 2,712,432 / 60.0fps; downtown night 395 / 2,827,820 / 59.9fps; overview day 580 / 2,983,078 / 54.1fps. Directed street night is 392 / 3,005,400 / errors=0, failing the 3M geometry gate by 5,400 triangles. Short fps samples are not sustained claims.",
+      "r34StreetDiagnosis": "R31 same-camera 90-frame peak 393 draws / 3,011,174 triangles; R32/R33 about 392 / 3,005,384-3,005,400. Single quiet endpoints around 2.576M are render-phase samples and do not replace the recurring peak. Complete-owner R33 masks are diagnostic/non-additive: Terrain ~901.6k, Props ~1.099M, Roads ~712.2k, Services ~383.4k, Buildings ~200.1k, Transit ~56.9k, Traffic ~42.1k triangles removed from sampled peaks."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4366,10 +4377,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite 8.2.2, 164 modules after R33, clean external build with canonical public assets.",
+      "build": "PASS: accepted R33 Vite 8.2.2 production build, 164 modules; R34 product candidates fully reverted.",
       "startup": "PASS behavior, gate still open: R25 land-cover 901–909ms; Terrain 1,678–1,733ms; menu ready 2,643–2,772ms. Exact stage gain is established, end-to-end gain is not.",
       "saveLoad": "PASS: R33 exact Buildings geometry/state/hash; Simulation exact 90-day repeat and mid-run save/load; R32 Services plaza, R31 Props and prior owner restores retained.",
-      "evidence": "docs/builds/playtest_r33_window_highlight_rolloff.md; docs/critic/playtest_r33_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r33; prior R32/R31/R30/R29 contracts retained",
+      "evidence": "docs/builds/playtest_r34_render_budget_diagnosis.md; docs/critic/playtest_r34_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r34; accepted product remains R33 evidence",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4386,7 +4397,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Start R34 by attributing the measured 3,005,400-triangle directed street-night frame to production owners. Change nothing until the excess has a reproducible owner; then prefer the smallest owner-safe LOD/shadow/geometry repair that preserves visible integrity, architecture, state and deterministic restore. Do not repeat rejected generic service-range, foliage-range/material or broad emissive-scalar experiments.",
+    "nextAutonomousStep": "Resume from clean R33 product commit 216ab89. Select a fresh visible defect from the ranked whole-game list using current evidence; if revisiting the 3M street-night peak, first create a pass-specific submission ledger and do not simplify the accepted lamp pools solely from aggregate counts.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -5036,6 +5047,18 @@
       "determinism": "Simulation selftest PASS: deterministic repeat and exact 90-day mid-run save/load; Buildings exact hash and 111 geometries",
       "geometryGate": "directed street night 392 draws / 3,005,400 triangles / errors=0; 5,400 above 3M",
       "result": "ACCEPT; scores unchanged"
+    },
+    "r34Evidence": {
+      "build": "docs/builds/playtest_r34_render_budget_diagnosis.md",
+      "critic": "docs/critic/playtest_r34_local.md",
+      "directory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r34",
+      "ownerProfile": "street-owner-mainpass.json",
+      "r31Control": "r31-street-mainpass.json",
+      "rejected": [
+        "pools-candidate-lamp.png",
+        "pools-candidate-even-lamp.png"
+      ],
+      "result": "DIAGNOSIS ACCEPTED; both product candidates REJECTED and reverted; scores unchanged"
     }
   }
 }
