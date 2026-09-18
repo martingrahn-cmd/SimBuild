@@ -3,7 +3,7 @@
   "playerTitle": "New Dollarton",
   "technicalId": "simbuild",
   "visibleVersion": "0.1.0 + seven-character source commit embedded by the GameVolt build action",
-  "updatedAt": "2026-09-19T01:20:00+02:00",
+  "updatedAt": "2026-09-19T02:00:00+02:00",
   "passThreshold": 8.5,
   "maxRounds": 5,
   "gpuNote": "Historical SwiftShader, empty-stub and pre-W5 metrics remain historical. Fresh independent whole-game r2 on Chrome/M4 ANGLE Metal High covers35 images:32-frame matrix max473draws/2,807,186triangles, min46.2fps; including weather extras minimum44.5fps. Geometry/draw gates pass and50fps fails in14/32 matrix frames. Raw endpoint heap peaks764.3MB, distinct from the accepted509.1MB forced-GC retained-heap probe. Evidence: shots/democity/rwholegame2/summary-full.json and docs/critic/wholegame_r2_independent.md.",
@@ -4084,16 +4084,16 @@
     "state": "autonomous-quality-loop-active",
     "userRequestedStop": false,
     "currentWave": "post-playtest-bugfix-and-quality",
-    "lastAuthorizedRound": 32,
+    "lastAuthorizedRound": 33,
     "allowNewDevelopmentWave": true,
     "allowRound4": true,
     "stopAfter": "defined final gate, genuine blocker, or required subjective human playtest",
     "pendingAfterStop": [
       "Reproduce the hosted Slot1 failure if a player payload becomes available; current local rollback and compatibility gates pass",
-      "Measure an owner-safe ground/contact, material-variation or low-cost foliage presentation improvement without consuming the narrow overview geometry margin",
+      "Attribute the exact 3,005,400-triangle R33 directed street-night frame by production owner, then make only a bounded owner-safe change if evidence identifies one",
       "Re-run whole-game and blind comparison after a visible integrated improvement large enough to affect full-frame judgment"
     ],
-    "updatedAt": "2026-09-19T01:20:00+02:00",
+    "updatedAt": "2026-09-19T02:00:00+02:00",
     "integrationTransaction": {
       "state": "applied-and-verified",
       "path": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/integration/w3-candidate/transactions/2026-09-08T09-44-33.644Z-b553758c-ec1e-4da4-a811-6eaf07517210",
@@ -4118,9 +4118,9 @@
     "workflowComplete": "shots/workflows/w3/complete.json"
   },
   "playtestCheckpoint": {
-    "id": "human-playtest-r32-2026-09-19",
-    "state": "R32 real Founders Plaza accepted; autonomous bugfix and 8.5 quality loop active",
-    "playerSource": "R32 on verified R31: real Services-owned civic plaza plus accepted packed Buildings/Props representations; deterministic owners and restore preserved",
+    "id": "human-playtest-r33-2026-09-19",
+    "state": "R33 selective brightest-window rolloff accepted; autonomous bugfix and 8.5 quality loop active",
+    "playerSource": "R33 on verified R32: selective Buildings display rolloff only above the brightest window tier; geometry, state, restore and packed representations preserved",
     "criticScores": {
       "terrain": 6,
       "environment": 7,
@@ -4143,7 +4143,7 @@
       "score": 6,
       "pass": false,
       "blindR2": "SimBuild 0–4 CS2, high confidence",
-      "note": "R32 local critic holds all scores; no formal whole-game/blind rerating."
+      "note": "R33 local critic holds all scores; no formal whole-game/blind rerating."
     },
     "acceptedCurrentCycle": [
       {
@@ -4265,6 +4265,11 @@
         "id": "R32",
         "decision": "accepted real Services-owned Founders Plaza at the only tested cross-seed-valid non-overlapping civic site, with exact roads/lots/buildings and service restore",
         "score": "Democity 6.0, Services 7.0 and whole-game 6.0 FAIL unchanged"
+      },
+      {
+        "id": "R33",
+        "decision": "accepted selective brightest-tier Buildings window display rolloff with exact geometry/state and inspected matched night evidence",
+        "score": "Buildings 7.4, Democity 6.0 and whole-game 6.0 FAIL unchanged"
       }
     ],
     "rejectedCurrentCycle": [
@@ -4324,7 +4329,8 @@
       "r29BuildingBuffers": "Current Democity exact inventory: Buildings CPU buffers 146,454,272 -> 130,594,604 bytes (-15,859,668); browser backing storage 409,626,160 -> 393,766,568 bytes by the same delta. Geometry 2,643,278 vertices / 1,313,894 triangles unchanged. Sustained 512MB gate remains uncertified.",
       "r30BuildingBuffers": "Current Democity exact inventory: Buildings CPU buffers 130,594,604 -> 109,448,380 bytes (-21,146,224); browser backing storage 393,766,568 -> 372,623,355 bytes. R29+R30 reduce Buildings buffers by 37,005,892 bytes. Geometry 2,643,278 vertices / 1,313,894 triangles unchanged. Sustained 512MB gate remains uncertified.",
       "r31PropsBuffers": "Current Democity exact inventory: Props CPU buffers 52,859,208 -> 47,257,332 bytes (-5,601,876); browser backing storage 372,623,355 -> 367,021,063 bytes. Geometry 1,030,627 vertices / 709,470 triangles unchanged. Sustained 512MB gate remains uncertified.",
-      "r32FoundersPlaza": "Matched park: 493 draws unchanged; 1,902,568 -> 1,935,258 triangles (+32,690), errors=0. Candidate night 453/2,290,384 and overview 580/2,983,078, errors=0; overview leaves only 16,922 triangles under 3M. No fps gain claimed."
+      "r32FoundersPlaza": "Matched park: 493 draws unchanged; 1,902,568 -> 1,935,258 triangles (+32,690), errors=0. Candidate night 453/2,290,384 and overview 580/2,983,078, errors=0; overview leaves only 16,922 triangles under 3M. No fps gain claimed.",
+      "r33CurrentMatrix": "Fresh current-source matrix: downtown day 468 draws / 1,963,908 triangles / 59.1fps; street day 427 / 2,712,432 / 60.0fps; downtown night 395 / 2,827,820 / 59.9fps; overview day 580 / 2,983,078 / 54.1fps. Directed street night is 392 / 3,005,400 / errors=0, failing the 3M geometry gate by 5,400 triangles. Short fps samples are not sustained claims."
     },
     "failedQualityGates": [
       "8.5 critic threshold: no module passes",
@@ -4333,7 +4339,8 @@
       "sustained 50fps",
       "512MB memory",
       "city scale/frontage",
-      "R10 subjective human retest pending"
+      "R10 subjective human retest pending",
+      "directed R33 street-night geometry: 3,005,400 triangles, 5,400 above the 3M gate"
     ],
     "rankedKnownIssues": [
       {
@@ -4359,10 +4366,10 @@
     ],
     "normalEntryVerification": {
       "url": "http://127.0.0.1:5180/?mode=play",
-      "build": "PASS: Vite8.2.2, 164 modules after R32, clean external build with canonical public assets.",
+      "build": "PASS: Vite 8.2.2, 164 modules after R33, clean external build with canonical public assets.",
       "startup": "PASS behavior, gate still open: R25 land-cover 901–909ms; Terrain 1,678–1,733ms; menu ready 2,643–2,772ms. Exact stage gain is established, end-to-end gain is not.",
-      "saveLoad": "PASS: R32 exact Services round-trip on seeds 1337/7 with deterministic plaza id; exact roads/lots/buildings; R31 exact Props restore; R30 exact Buildings restore; Simulation exact mid-run save/load.",
-      "evidence": "docs/builds/playtest_r32_founders_plaza.md; docs/critic/playtest_r32_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r32; prior R31/R30/R29/R28/R27/R23 contracts retained",
+      "saveLoad": "PASS: R33 exact Buildings geometry/state/hash; Simulation exact 90-day repeat and mid-run save/load; R32 Services plaza, R31 Props and prior owner restores retained.",
+      "evidence": "docs/builds/playtest_r33_window_highlight_rolloff.md; docs/critic/playtest_r33_local.md; /Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r33; prior R32/R31/R30/R29 contracts retained",
       "live": "PASS: gamevolt.io/simbuild version source d669f33; R16 Report a bug visibility published after sync 34715641937 and Pages 34715661435"
     },
     "observeDuringPlaytest": [
@@ -4379,7 +4386,7 @@
       "Open Fullscreen from the main menu and from Pause; confirm the label and browser Escape behavior are clear.",
       "From both the main and pause menus, confirm Report a bug is easy to notice and that Help improve the game explains its purpose."
     ],
-    "nextAutonomousStep": "Start R33 from measured current-source evidence without casually consuming the remaining 16,922-triangle overview margin. Prefer an owner-safe ground/contact, material-variation or low-cost foliage presentation improvement; preserve state, deterministic restore and R29-R31 packed formats. Do not repeat rejected R8/R9 foliage material/range, global road-order or scalar-emissive experiments.",
+    "nextAutonomousStep": "Start R34 by attributing the measured 3,005,400-triangle directed street-night frame to production owners. Change nothing until the excess has a reproducible owner; then prefer the smallest owner-safe LOD/shadow/geometry repair that preserves visible integrity, architecture, state and deterministic restore. Do not repeat rejected generic service-range, foliage-range/material or broad emissive-scalar experiments.",
     "checkpointArtifact": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/checkpoints/human-playtest-r10-2026-09-11",
     "humanPlaytestFindings": [
       {
@@ -5014,6 +5021,20 @@
       "overview": "plaza-candidate-overview.png",
       "productionBuild": "Vite production build PASS, 164 modules",
       "determinism": "Simulation selftest PASS: deterministic repeat and exact mid-run save/load",
+      "result": "ACCEPT; scores unchanged"
+    },
+    "r33Evidence": {
+      "build": "docs/builds/playtest_r33_window_highlight_rolloff.md",
+      "critic": "docs/critic/playtest_r33_local.md",
+      "directory": "/Volumes/ExtDrive/SimBuild-verification-2026-09-06/evidence/playtest-fixes-r33",
+      "contract": "building-contract.json",
+      "night": "window-rolloff-night-candidate.png",
+      "street": "window-rolloff-street-candidate.png",
+      "day": "window-rolloff-day-candidate.png",
+      "dusk": "window-rolloff-dusk-candidate.png",
+      "productionBuild": "Vite production build PASS, 164 modules",
+      "determinism": "Simulation selftest PASS: deterministic repeat and exact 90-day mid-run save/load; Buildings exact hash and 111 geometries",
+      "geometryGate": "directed street night 392 draws / 3,005,400 triangles / errors=0; 5,400 above 3M",
       "result": "ACCEPT; scores unchanged"
     }
   }

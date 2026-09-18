@@ -85,8 +85,11 @@ uniform sampler2D uTintTex;`);
 	vec3 warm = vec3( 1.0, 0.58, 0.22 );
 	vec3 cool = vec3( 0.74, 0.86, 1.0 );
 	vec3 tint = mix( warm, cool, vWin.z );
+	// Preserve the established dim/mid tiers, but roll the rare brightest tier off before it clips
+	// into a flat white panel under the night exposure.
+	float displayTier = vWin.y <= 0.86 ? vWin.y : 0.86 + ( vWin.y - 0.86 ) * 0.35;
 	totalEmissiveRadiance = vec3( 0.0 );
-	if ( uNight > 0.0 ) totalEmissiveRadiance = winMask * on * uNight * uEmis * tint * vWin.y * mix( 1.0, 0.07, smoothstep( 200.0, 300.0, vDist ) );
+	if ( uNight > 0.0 ) totalEmissiveRadiance = winMask * on * uNight * uEmis * tint * displayTier * mix( 1.0, 0.07, smoothstep( 200.0, 300.0, vDist ) );
 	// a whisper of interior behind unlit glass — 2 % of the lit tier, inside window cells only
 	totalEmissiveRadiance += winMask * vWin.w * uNight * uEmis * 0.02 * vec3( 0.30, 0.34, 0.46 );
 	totalEmissiveRadiance *= ( 1.0 - uInfo * ivTint.a );
